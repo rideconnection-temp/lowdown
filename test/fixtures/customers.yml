@@ -1,0 +1,39 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  routematch_customer_id: 1
+  last_name: MyString
+  first_name: MyString
+  middle_initial: MyString
+  sex: MyString
+  race: MyString
+  mobility: MyString
+  telephone_primary: MyString
+  telephone_primary_extension: MyString
+  telephone_secondary: MyString
+  telephone_secondary_extension: MyString
+  language_preference: MyString
+  birthdate: 2010-11-09
+  email: MyString
+  type: MyString
+  monthy_household_income: 1
+  household_size: 1
+
+two:
+  routematch_customer_id: 1
+  last_name: MyString
+  first_name: MyString
+  middle_initial: MyString
+  sex: MyString
+  race: MyString
+  mobility: MyString
+  telephone_primary: MyString
+  telephone_primary_extension: MyString
+  telephone_secondary: MyString
+  telephone_secondary_extension: MyString
+  language_preference: MyString
+  birthdate: 2010-11-09
+  email: MyString
+  type: MyString
+  monthy_household_income: 1
+  household_size: 1

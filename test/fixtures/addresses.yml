@@ -1,0 +1,27 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  routematch_customer_id: 1
+  common_name: MyString
+  building_name: MyString
+  address_1: MyString
+  address2: MyString
+  city: MyString
+  state: MyString
+  zip: MyString
+  x_coordinate: MyString
+  y_coordinate: MyString
+  in_trimet_district: false
+
+two:
+  routematch_customer_id: 1
+  common_name: MyString
+  building_name: MyString
+  address_1: MyString
+  address2: MyString
+  city: MyString
+  state: MyString
+  zip: MyString
+  x_coordinate: MyString
+  y_coordinate: MyString
+  in_trimet_district: false

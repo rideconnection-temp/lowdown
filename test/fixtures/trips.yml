@@ -1,0 +1,49 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  date: 2010-11-09
+  cancelled: false
+  noshow: false
+  completed: false
+  start: 2010-11-09 09:38:59
+  end: 2010-11-09 09:38:59
+  odometer_start: 1
+  odometer_end: 1
+  fare: 1.5
+  customer_pay: false
+  trip_purpose_type: MyString
+  guest_count: 1
+  attendant_count: 1
+  trip_mobility: MyString
+  trip_mobility_kind: MyString
+  calculated_bpa_fare: 1.5
+  bpa_driver_name: MyString
+  volunteer_trip: false
+  in_trimet_district: false
+  bpa_billing_distance: 1.5
+  routematch_share_id: 1
+  override: false
+
+two:
+  date: 2010-11-09
+  cancelled: false
+  noshow: false
+  completed: false
+  start: 2010-11-09 09:38:59
+  end: 2010-11-09 09:38:59
+  odometer_start: 1
+  odometer_end: 1
+  fare: 1.5
+  customer_pay: false
+  trip_purpose_type: MyString
+  guest_count: 1
+  attendant_count: 1
+  trip_mobility: MyString
+  trip_mobility_kind: MyString
+  calculated_bpa_fare: 1.5
+  bpa_driver_name: MyString
+  volunteer_trip: false
+  in_trimet_district: false
+  bpa_billing_distance: 1.5
+  routematch_share_id: 1
+  override: false
