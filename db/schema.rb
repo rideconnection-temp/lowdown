@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101109153910) do
+ActiveRecord::Schema.define(:version => 20101117225932) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -51,9 +51,11 @@ ActiveRecord::Schema.define(:version => 20101109153910) do
     t.datetime "updated_at"
   end
 
-  create_table "customers_trips", :id => false, :force => true do |t|
-    t.integer "customer_id"
-    t.integer "trip_id"
+  create_table "runs", :force => true do |t|
+    t.date     "date"
+    t.integer  "routematch_share_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "trips", :force => true do |t|
@@ -86,6 +88,8 @@ ActiveRecord::Schema.define(:version => 20101109153910) do
     t.integer  "routematch_dropoff_address_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "customer_id"
+    t.integer  "run_id"
   end
 
 end

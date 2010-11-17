@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  date: 2010-11-17
+  routematch_share_id: 1
+
+two:
+  date: 2010-11-17
+  routematch_share_id: 1
