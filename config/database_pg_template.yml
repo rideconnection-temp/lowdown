@@ -2,7 +2,7 @@
 common: &common
   adapter: postgresql
   username: lowdown
-  password: lowdown
+  password: password
 
 development:
   <<: *common
