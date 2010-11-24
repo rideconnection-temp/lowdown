@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101123014348) do
+ActiveRecord::Schema.define(:version => 20101124201849) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(:version => 20101123014348) do
     t.date     "birthdate"
     t.string   "email"
     t.string   "customer_type"
-    t.integer  "monthy_household_income"
+    t.integer  "monthly_household_income"
     t.integer  "household_size"
     t.integer  "address_id"
     t.datetime "created_at"
