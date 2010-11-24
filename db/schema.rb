@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101117225932) do
+ActiveRecord::Schema.define(:version => 20101123014348) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -58,6 +58,13 @@ ActiveRecord::Schema.define(:version => 20101117225932) do
     t.datetime "updated_at"
   end
 
+  create_table "trip_imports", :force => true do |t|
+    t.date     "date"
+    t.string   "file_path"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "trips", :force => true do |t|
     t.date     "date"
     t.boolean  "cancelled"
@@ -90,6 +97,8 @@ ActiveRecord::Schema.define(:version => 20101117225932) do
     t.datetime "updated_at"
     t.integer  "customer_id"
     t.integer  "run_id"
+    t.integer  "trip_import_id"
+    t.integer  "routematch_trip_id"
   end
 
 end
