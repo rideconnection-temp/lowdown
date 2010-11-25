@@ -1,7 +1,8 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.0.3'
-gem 'pg'
+gem 'pg', '0.9.0'
+# gem 'fastercsv', '1.5.1' - Not needed, already included in Ruby 1.9
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
