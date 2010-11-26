@@ -1,5 +1,6 @@
 class Customer < ActiveRecord::Base
-  has_one :primary_address, :class_name => "Address", :foreign_key => "address_id"
+  belongs_to :primary_address, :class_name => "Address", :foreign_key => "address_id"
+  #has_one :primary_address, :class_name => "Address", :foreign_key => "address_id"
   has_many :trips
   
   # validations

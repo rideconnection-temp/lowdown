@@ -69,5 +69,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  pg (= 0.9.0)
   rails (= 3.0.3)
   sqlite3-ruby
