@@ -1,0 +1,326 @@
+/* Some Icons are taken from the Spirit20 set by Dale Morrell,
+released under a GPL license (http://19eighty7.com/icons) */
+
+/*-----------------------
+General styles
+-----------------------*/
+body {
+font: small "Helvetica Neue", Verdana, Helvetica, sans-serif;
+background: #fff;
+color: #222; 
+}
+
+a:link, a:visited {
+color: #09641f;
+}
+
+a:hover {
+color: #e09020;
+}
+
+/*-----------------------
+Utility Classes
+-----------------------*/
+/* self clearing float */
+.selfclear:after {
+content: ".";
+display: block;
+height: 0;
+clear: both;
+visibility: hidden;
+}
+
+.selfclear {
+display: inline-block; /*silly IE 7 */
+}
+
+.selfclear {
+display: block;
+}
+
+* hmtl .selfclear {
+height: 1px;
+}
+
+.leftwise {
+float:left;
+}
+
+.rightwise {
+float:right;
+}
+
+.nobreak {
+white-space: nowrap;
+}
+
+.noshow {
+display:none;
+}
+
+/*-----------------------
+jQuery UI overrides
+-----------------------*/
+input {
+padding: 3px;
+}
+
+body .ui-autocomplete-input {
+padding: 3px 0 3px 3px;
+}
+
+body .ui-button-icon-only .ui-button-text {
+padding: 1px 2px 2px;
+}
+
+body button.ui-button-icon-only {
+width: 20px;
+}
+
+.ui-datepicker-trigger {
+position: relative;
+left: -20px;
+top: 0;
+vertical-align: middle;
+}
+
+.ui-button { margin-left: -1px; }
+
+
+/*-----------------------
+General Page Structure
+-----------------------*/
+.wrap {
+width: 940px; 
+margin: 0 auto; 
+}
+
+#header {
+text-align: right;
+overflow: hidden;
+}
+
+#logo {
+float: left;
+text-decoration: none;
+font-size: 2em;
+font-weight: bold;
+position: relative;
+top: 0.1em;
+}
+
+#logo strong {
+position: relative;
+top: 0.2em;
+color: #000;
+}
+
+#login-area {
+margin: 0.5em 0 0;
+}
+
+#crossbar {
+background: #000;
+}
+
+ul#sitenav li {
+list-style-type: none;
+float: left;
+margin: 0 0.5em 0 0;
+}
+
+ul#sitenav li a {
+display: block;
+padding: 0.4em 0.2em;
+text-decoration: none;
+color: #fff;
+}
+
+ul#sitenav li a:hover {
+color: #e09020;
+}
+
+#main .wrap {
+padding: 1em 0 0;
+}
+
+#flash {
+width: 60%;
+margin: 0 auto;
+position: relative;
+top: -1em;
+}
+
+#flash a.closer {
+position: absolute;
+top: 5px;
+right: 5px;
+width: 9px;
+height: 9px;
+display: block;
+overflow: hidden;
+text-indent: -9999em;
+background: url(../images/spirit20/mini-close.png);
+}
+
+#flash div {
+padding: 1em 1em 1em 2em;
+border-width: 0 1px 1px 1px;
+border-style: solid;
+background-position: 5px 50%;
+background-repeat: no-repeat;
+}
+
+#flash div:last-child {
+-moz-border-radius: 0 0 4px 4px;
+-webkit-border-radius: 0 0 4px 4px;
+border-radius: 0 0 4px 4px;
+}
+
+#flash .confirm {
+background-image: url(../images/spirit20/system-tick-alt-02.png);
+background-color: rgba(40,161,0,0.15);
+color: #29a000;
+border-color: #29a000;
+}
+
+#flash .info {
+background-image: url(../images/spirit20/system-question-alt-02.png);
+background-color: rgba(0,26,184,0.15);
+color: #001ab8;
+border-color: #001ab8;
+}
+
+#flash .warn {
+background-image: url(../images/spirit20/system-warning.png);
+background-color: rgba(218,127,53,0.15);
+color: #da7f35;
+border-color: #da7f35;
+}
+
+#flash .error {
+background-image: url(../images/spirit20/system-error-alt-02.png);
+background-color: rgba(188,0,0,0.15);
+color: #bc0000;
+border-color: #bc0000;
+}
+
+#main .wrap h1 {
+font-size: 1.5em;
+font-weight: bold;
+}
+
+#trip-filter,
+#trip-import {
+margin: 0.25em 0 1em;
+}
+
+#startday,
+#endday {
+width: 6.5em;
+padding-right: 20px;
+}
+
+#file-import {
+opacity: 0.0;
+-moz-opacity: 0.0;
+filter: alpha(opacity=00);
+width: 24.5em;
+padding: 0;
+cursor: pointer;
+z-index:5;
+}
+
+.fakebrowse {
+margin-top: -2.25em;
+padding: 0;
+z-index: 1;
+}
+
+.fakebrowse .fakebrowseinput {
+width: 20em;
+}
+
+.fakebrowse .fakebutton {
+background-color: #e6e6e6;
+border: 1px solid #9c9c9c;
+color: #555;
+padding:3px;
+margin-left: -1px;
+-moz-border-radius: 0 4px 4px 0;
+-webkit-border-radius: 0 4px 4px 0;
+border-radius: 0 4px 4px 0;
+}
+
+input[type=submit] {
+background: #fafafa;
+border: 1px solid #96cc8f;
+border-bottom: 2px solid #63995c;
+-moz-border-radius: 4px;
+-webkit-border-radius: 4px;
+border-radius: 4px;
+cursor: pointer;
+}
+
+#trip-results {
+margin: 0;
+}
+
+#trip-results thead th {
+font-weight: bold;
+padding: 0.3em;
+border-bottom: 1px solid #222;
+}
+
+#trip-results tbody tr:nth-child(odd)  {
+background: #f1f2f3;
+}
+
+#trip-results tbody td {
+padding: 0.2em;
+}
+
+#trip-results td.allocated,
+#trip-results td.unallocated,
+#trip-results td.unshared {
+padding-left: 23px;
+}
+
+#trip-results td.allocated {
+background: url(../images/spirit20/user-group-check.png) 0 50% no-repeat;
+}
+
+#trip-results td.unallocated {
+background: url(../images/spirit20/user-group-edit.png) 0 50% no-repeat;
+}
+
+
+
+.pagination {
+text-align: center;
+margin: 0.5em;
+font-size: 0.85em;
+}
+
+.pagination a {
+border: 1px solid #3a834c;
+padding: 0.2em 0.4em;
+text-decoration: none;
+}
+
+.pagination em {
+color: #000;
+border: 1px solid #333;
+padding: 0.2em 0.4em;
+font-weight: bold;
+}
+
+.pagination .previous_page,
+.pagination .next_page {
+border: 0 none transparent;
+font-weight: bold;
+}
+
+.pagination .disabled {
+color: #999;
+}
