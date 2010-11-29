@@ -160,7 +160,7 @@ height: 9px;
 display: block;
 overflow: hidden;
 text-indent: -9999em;
-background: url(../images/spirit20/mini-close.png);
+background: url(../images/mini-close.png);
 }
 
 #flash div {
@@ -192,7 +192,7 @@ border-color: #001ab8;
 }
 
 #flash .warn {
-background-image: url(../images/spirit20/system-warning.png);
+background-image: url(../images/system-warning.png);
 background-color: rgba(218,127,53,0.15);
 color: #da7f35;
 border-color: #da7f35;
@@ -264,8 +264,22 @@ border-radius: 4px;
 cursor: pointer;
 }
 
+#results-as-aggregate {
+float: right;
+font-size: 0.9em;
+padding: 5px 20px 5px 0;
+background: url(../images/spirit20/form-submit.png) 100% 50% no-repeat;
+}
+
+h2#result-count {
+font-size: 1.4em;
+font-weight: bold;
+margin: 0.5em 0;
+}
+
 #trip-results {
 margin: 0;
+width: 100%;
 }
 
 #trip-results thead th {
@@ -279,8 +293,51 @@ background: #f1f2f3;
 }
 
 #trip-results tbody td {
-padding: 0.2em;
+padding: 0.2em 0.3em;
 }
+
+#trip-results .status-completed,
+#trip-results .status-cancelled,
+#trip-results .status-noshow {
+display: block;
+height: 20px;
+width: 20px;
+overflow: hidden;
+text-indent: -9999em;
+margin: 0 auto;
+}
+
+#trip-results .status-completed {
+background: url(../images/user-check.png) no-repeat;
+}
+
+#trip-results .status-cancelled {
+background: url(../images/spirit20/user-stop.png) no-repeat;
+}
+
+#trip-results .status-noshow {
+background: url(../images/user-noshow.png) no-repeat;
+}
+
+#trip-results .trip-pickup,
+#trip-results .trip-dropoff {
+padding: 3px 20px 3px 0;
+background: url(../images/spirit20/map.png) 100% 50% no-repeat;
+}
+
+#trip-results .status-completed {
+background: url(../images/user-check.png) no-repeat;
+}
+
+#trip-results .status-cancelled {
+background: url(../images/spirit20/user-stop.png) no-repeat;
+}
+
+#trip-results .status-noshow {
+background: url(../images/user-noshow.png) no-repeat;
+}
+
+/* probably dropping allocated from shared column
 
 #trip-results td.allocated,
 #trip-results td.unallocated,
@@ -289,18 +346,19 @@ padding-left: 23px;
 }
 
 #trip-results td.allocated {
-background: url(../images/spirit20/user-group-check.png) 0 50% no-repeat;
+background: url(../images/user-group-check.png) 0 50% no-repeat;
 }
 
 #trip-results td.unallocated {
-background: url(../images/spirit20/user-group-edit.png) 0 50% no-repeat;
-}
+background: url(../images/user-group-edit.png) 0 50% no-repeat;
+} 
+*/
 
 
 
 .pagination {
 text-align: center;
-margin: 0.5em;
+margin: 1.5em auto 0.5em;
 font-size: 0.85em;
 }
 
