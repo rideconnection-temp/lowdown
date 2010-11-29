@@ -228,7 +228,9 @@ filter: alpha(opacity=00);
 width: 24.5em;
 padding: 0;
 cursor: pointer;
+cursor: hand;
 z-index:5;
+text-align: right;
 }
 
 .fakebrowse {
