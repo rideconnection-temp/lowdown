@@ -1,3 +1,17 @@
+GIT
+  remote: git://github.com/rails/dynamic_form.git
+  revision: ebb03213ef8268e24c60e5e162b811d199777227
+  specs:
+    dynamic_form (1.0.0)
+      rails (>= 3.0.0)
+
+GIT
+  remote: https://github.com/binarylogic/authlogic.git
+  revision: 66ed79515919fe13016911b10ebe734cf8718dc7
+  specs:
+    authlogic (2.1.6)
+      activesupport
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -29,6 +43,7 @@ GEM
       activesupport (= 3.0.3)
     activesupport (3.0.3)
     arel (2.0.3)
+    bcrypt-ruby (2.1.2)
     builder (2.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -39,6 +54,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.16)
+    pg (0.9.0)
     polyglot (0.3.1)
     rack (1.2.1)
     rack-mount (0.6.13)
@@ -69,6 +85,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  pg (= 0.9.0)
+  authlogic!
+  bcrypt-ruby
+  dynamic_form!
+  pg
   rails (= 3.0.3)
   sqlite3-ruby

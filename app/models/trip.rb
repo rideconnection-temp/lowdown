@@ -5,6 +5,15 @@ class Trip < ActiveRecord::Base
   #has_one :dropoff_address, :class_name => "Address", :foreign_key => "dropoff_address_id"
   has_one :customer
 
-  # validations
-  validates_presence_of :pickup_address, :dropoff_address
+  attendent_count
+  guest_count
+
+  odo_start, odo_end 
+  total_miles = max(odo_end) - min(odo_start) group by share_id
+  estimated_miles
+  apportioned_miles
+
+  apportioned_fare
+  fare
+  share_id
 end

@@ -2,12 +2,18 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.3'
 
-#gem 'pg'
+gem 'pg'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
+
+gem 'authlogic', :git => 'https://github.com/binarylogic/authlogic.git'
+
+gem 'bcrypt-ruby'
+
+gem 'dynamic_form', :git => 'git://github.com/rails/dynamic_form.git'
 
 # Use unicorn as the web server
 # gem 'unicorn'
