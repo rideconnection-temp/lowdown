@@ -10,8 +10,11 @@ class TripImport < ActiveRecord::Base
         :home_address_1, :home_address_2, :home_city, :home_state, :home_postal_code, 
         :home_x_coordinate, :home_y_coordinate, :home_in_trimet_district, 
         :language_preference, :birthdate, :email, :customer_type, :monthly_household_income, :household_size,
-        :routematch_trip_id, :date, :cancelled, :noshow, :completed, :start_at, :end_at, :odometer_start, :odometer_end,
-        :fare, :customer_pay, :trip_purpose_type, :guest_count, :attendant_count, :trip_mobility, :trip_mobility_kind,
+        :routematch_run_id, :run_name,
+        :routematch_trip_id, :date, 
+        :provider_code, :provider_name, :provider_type, 
+        :result_code, :start_at, :end_at, :odometer_start, :odometer_end,
+        :fare, :customer_pay, :trip_purpose_type, :guest_count, :attendant_count, :trip_mobility, 
         :calculated_bpa_fare, :bpa_driver_name, :volunteer_trip, :in_trimet_district, 
         :bpa_billing_distance, :routematch_share_id, :override, 
         :pickup_routematch_address_id, :pickup_common_name, :pickup_building_name, 
@@ -131,20 +134,17 @@ class TripImport < ActiveRecord::Base
         current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
         current_trip.routematch_trip_id = record[:routematch_trip_id]
         current_trip.date = record[:date]
-        current_trip.cancelled = record[:cancelled]
-        current_trip.noshow = record[:noshow]
-        current_trip.completed = record[:completed]
+        current_trip.provider_code = record[:provider_code]
         current_trip.start_at = record[:start_at]
         current_trip.end_at = record[:end_at]
         current_trip.odometer_start = record[:odometer_start]
         current_trip.odometer_end = record[:odometer_end]
         current_trip.fare = record[:fare]
         current_trip.customer_pay = record[:customer_pay]
-        current_trip.trip_purpose_type = record[:trip_purpose_type]
+        current_trip.purpose_type = record[:trip_purpose_type]
         current_trip.guest_count = record[:guest_count]
         current_trip.attendant_count = record[:attendant_count]
-        current_trip.trip_mobility = record[:trip_mobility]
-        current_trip.trip_mobility_kind = record[:trip_mobility_kind]
+        current_trip.mobility = record[:trip_mobility]
         current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
         current_trip.bpa_driver_name = record[:bpa_driver_name]
         current_trip.volunteer_trip = record[:volunteer_trip]
