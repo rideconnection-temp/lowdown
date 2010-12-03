@@ -1,0 +1,17 @@
+welcome_1:
+  id: a
+  base_id: a
+  valid_start: '2010-10-10T12:00:00Z'
+  valid_end: '2010-10-12T12:00:00Z'
+  title: Welcome
+  body: Initial body
+  author_id: 1
+  
+welcome:
+  id: b
+  base_id: a
+  valid_start: '2010-10-12T12:00:00Z'
+  valid_end: '9999-01-01 01:01:00.000000'
+  title: Version 2
+  body: two
+  author_id: 2

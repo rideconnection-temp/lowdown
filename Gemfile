@@ -11,9 +11,10 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 
 gem 'authlogic', :git => 'https://github.com/binarylogic/authlogic.git'
 
-gem 'bcrypt-ruby'
+gem 'uuidtools'
 
 gem 'dynamic_form', :git => 'git://github.com/rails/dynamic_form.git'
+
 
 # Use unicorn as the web server
 # gem 'unicorn'

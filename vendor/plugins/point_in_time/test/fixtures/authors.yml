@@ -1,0 +1,31 @@
+larry:
+  id: 1
+  base_id: 1
+  valid_start: '2010-10-10T12:00:00Z'
+  valid_end: '9999-01-01 01:01:00.000000'
+  first_name: Larry
+  last_name: Appleton
+  
+sara:
+  id: 2
+  base_id: 2
+  valid_start: '2010-10-10T12:00:00Z'
+  valid_end: '2010-10-11T12:00:00Z'
+  first_name: Sara
+  last_name: Maiden
+  
+sara_1:
+  id: 3
+  base_id: 2
+  valid_start: '2010-10-11T12:00:00Z'
+  valid_end: '9999-01-01 01:01:00.000000'
+  first_name: Sara
+  last_name: Smiles  
+  
+peter:
+  id: 4
+  base_id: 4
+  valid_start: '2010-10-12T12:00:00Z'
+  valid_end: '9999-01-01 01:01:00.000000'
+  first_name: Peter
+  last_name: Parker
