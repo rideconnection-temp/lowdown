@@ -1,0 +1,75 @@
+= point_in_time
+
+point_in_time is a ActveRecord versioning plugin based on version_fu
+that stores old versions of model objects, and allows querying by a
+point in time.  It has only been tested with Rails 3.
+
+== Installation
+
+Add it to your Gemfile
+
+  gem 'point_in_time'
+  gem 'uuidtools'
+
+== Usage
+
+Let's say I have a pages table:
+
+  class Page < ActiveRecord::Base
+    # attributes: id, type, title, body, creator_id, author_id
+  end
+
+I want to track any changes made.  First step will be to add the
+necessary columns to the pages table:
+
+  class VersionPages < ActiveRecord::Migration
+    def self.up
+      change_table :pages do |t|
+        t.change  :id, :string, :limit=>36, :primary => true
+        t.string  :base_id, :limit=>36
+        t.datetime :valid_start
+        t.datetime :valid_end
+      end
+    end
+  
+    def self.down
+      change_table :pages do |t|
+        t.change  :id, :integer
+        t.remove  :base_id
+        t.remove :valid_start
+        t.remove :valid_end
+      end
+    end
+  end
+
+Note that id has been changed to a string to hold a uuid; this is necessary because we need to know the object's id before we write it to the database.
+
+Of course if you're adding this plugin to a table with existing data, you'll probably want to set base_id = id.
+
+Now that the database tables are in place, we can fire up point_in_time.  It's quite simple:
+
+  class Page < ActiveRecord::Base
+    point_in_time
+  end
+
+Thats it.
+
+== When to Version
+
+By default a new version will be saved whenever any column is changed.  However, you can control this at a more fine grained level.  Just override the create_new_version? method.  For example, let's say you only want to save a new version if both the page title and body changed.  Taking advantage of the dirty attribute methods, you could do something like this:
+
+  class Page < ActiveRecord::Base
+    point_in_time
+    def create_new_version?
+      title_changed? && body_changed?
+    end
+  end
+
+
+== Author
+
+* point_in_time was hacked together by David Turner <novalis@openplans.org>. It was created for RideConnection as part of the Lowdown project.
+
+* version_fu by Jordan McKible http://jordan.mckible.com, on GitHub at http://github.com/jmckible/version_fu
+
+* acts_as_versioned by Rick Olson http://github.com/technoweenie/acts_as_versioned/tree/master

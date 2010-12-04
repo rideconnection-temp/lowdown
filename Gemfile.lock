@@ -43,7 +43,6 @@ GEM
       activesupport (= 3.0.3)
     activesupport (3.0.3)
     arel (2.0.3)
-    bcrypt-ruby (2.1.2)
     builder (2.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -80,14 +79,15 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
+    uuidtools (2.1.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   authlogic!
-  bcrypt-ruby
   dynamic_form!
   pg
   rails (= 3.0.3)
   sqlite3-ruby
+  uuidtools

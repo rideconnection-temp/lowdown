@@ -1,6 +1,10 @@
 class CreateTrips < ActiveRecord::Migration
   def self.up
-    create_table :trips do |t|
+    create_table :trips, :id =>false do |t|
+      t.string :id, :limit => 36, :null => false, :primary_key
+      t.string :base_id, :limit => 36
+      t.datetime :valid_start
+      t.datetime :valid_end
       t.date :date
       t.boolean :cancelled
       t.boolean :noshow
