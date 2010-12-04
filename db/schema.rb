@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101202220403) do
+ActiveRecord::Schema.define(:version => 20101204014918) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -64,9 +64,10 @@ ActiveRecord::Schema.define(:version => 20101202220403) do
 
   create_table "runs", :force => true do |t|
     t.date     "date"
-    t.integer  "routematch_share_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
+    t.integer  "routematch_id"
   end
 
   create_table "trip_imports", :force => true do |t|
