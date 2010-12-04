@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101201213416) do
+ActiveRecord::Schema.define(:version => 20101202220403) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -47,6 +47,17 @@ ActiveRecord::Schema.define(:version => 20101201213416) do
     t.integer  "monthly_household_income"
     t.integer  "household_size"
     t.integer  "address_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "providers", :force => true do |t|
+    t.string   "name",          :limit => 50
+    t.string   "provider_type", :limit => 15
+    t.string   "agency",        :limit => 50
+    t.string   "branch",        :limit => 50
+    t.string   "subcontractor", :limit => 50
+    t.string   "routematch_id", :limit => 10
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -100,6 +111,7 @@ ActiveRecord::Schema.define(:version => 20101201213416) do
     t.integer  "routematch_trip_id"
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
+    t.integer  "provider_id"
   end
 
   create_table "users", :force => true do |t|

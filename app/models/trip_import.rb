@@ -26,6 +26,7 @@ class TripImport < ActiveRecord::Base
         :estimated_trip_distance_in_miles]
     address_map = {}
     customer_map = {}
+    provider_map = {}
     record_count = 0
 
     ActiveRecord::Base.transaction do
@@ -131,10 +132,18 @@ class TripImport < ActiveRecord::Base
           address_map[record[:dropoff_routematch_address_id]] = current_dropoff_id
         end
 
+        if provider_map.has_key?(record[:provider_code]) 
+          this_provider_id = provider_map[record[:provider_code]]
+        else
+          this_provider_id = Provider.find_by_routematch_id(record[:provider_code])[:id]
+          raise "Unknown provider code '#{record[:provider_code]}'" if this_provider_id.nil? 
+          provider_map[record[:provider_code]] = this_provider_id
+        end
+
         current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
         current_trip.routematch_trip_id = record[:routematch_trip_id]
         current_trip.date = record[:date]
-        current_trip.provider_code = record[:provider_code]
+        current_trip.provider_id = this_provider_id
         current_trip.start_at = record[:start_at]
         current_trip.end_at = record[:end_at]
         current_trip.odometer_start = record[:odometer_start]
@@ -160,8 +169,6 @@ class TripImport < ActiveRecord::Base
         current_trip.customer_id = current_customer_id
         current_trip.save!
 
-        #current_customer.trips << current_trip
-        #current_customer.save!
         #puts "Record #{record_count}: Address map size: #{address_map.size.to_s}, Customer map size: #{customer_map.size.to_s}"
       end # CSV.foreach
     end # Transaction

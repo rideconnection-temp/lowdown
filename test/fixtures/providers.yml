@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  provider_type: MyString
+  agency: MyString
+  branch: MyString
+  subcontractor: MyString
+  routematch_id: MyString
+
+two:
+  name: MyString
+  provider_type: MyString
+  agency: MyString
+  branch: MyString
+  subcontractor: MyString
+  routematch_id: MyString
