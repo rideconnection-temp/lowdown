@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101204014918) do
+ActiveRecord::Schema.define(:version => 20101206180419) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -26,6 +26,10 @@ ActiveRecord::Schema.define(:version => 20101204014918) do
     t.boolean  "in_trimet_district"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "allocation", :force => true do |t|
+    t.string "name"
   end
 
   create_table "customers", :force => true do |t|
@@ -68,6 +72,38 @@ ActiveRecord::Schema.define(:version => 20101204014918) do
     t.datetime "updated_at"
     t.string   "name"
     t.integer  "routematch_id"
+  end
+
+  create_table "summary", :id => false, :force => true do |t|
+    t.string   "id",                             :limit => 36, :null => false
+    t.string   "base_id",                        :limit => 36
+    t.datetime "valid_start"
+    t.datetime "valid_end"
+    t.date     "period_start"
+    t.date     "period_end"
+    t.integer  "total_miles"
+    t.integer  "driver_hours_paid"
+    t.integer  "driver_hours_volunteer"
+    t.integer  "escort_hours_volunteer"
+    t.integer  "administrative_hours_volunteer"
+    t.integer  "unduplicated_riders"
+    t.integer  "compliments"
+    t.integer  "complaints"
+    t.integer  "provider_id"
+    t.string   "prepared_by"
+    t.date     "report_prepared"
+  end
+
+  create_table "summary_row", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36, :null => false
+    t.string   "base_id",       :limit => 36
+    t.datetime "valid_start"
+    t.datetime "valid_end"
+    t.integer  "summary_id"
+    t.string   "purpose"
+    t.integer  "trips"
+    t.boolean  "in_district"
+    t.integer  "allocation_id"
   end
 
   create_table "trip_imports", :force => true do |t|
