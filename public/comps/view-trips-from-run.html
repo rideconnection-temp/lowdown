@@ -1,0 +1,307 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Lowdown Comp :: View Trips from Run</title>
+<link type="text/css" href="../stylesheets/screen-reset.css" rel="stylesheet" media="screen, projection" />
+<link type="text/css" href="../stylesheets/print-reset.css" rel="stylesheet" media="print" />
+<!--[if lt IE 8]><link rel="stylesheet" href="../stylesheets/ie.css" type="text/css" media="screen, projection"><![endif]-->
+
+
+<link type="text/css" href="../stylesheets/ui.combobox.css" rel="stylesheet" media="screen, projection" />
+<link type="text/css" href="../stylesheets/ui-custom/jquery-ui-1.8.6.custom.css" rel="stylesheet" media="screen, projection" />
+<link type="text/css" href="../stylesheets/ui.spinner.css" rel="stylesheet" media="screen, projection" />
+<link type="text/css" href="../stylesheets/ui.combobox.css" rel="stylesheet" media="screen, projection" />
+
+
+<link type="text/css" href="../stylesheets/application.css" rel="stylesheet" media="screen, projection" />
+
+<script src="../javascripts/jquery-1.4.2.min.js"></script>
+<script src="../javascripts/jquery-ui-1.8.6.custom.min.js"></script>
+<script src="../javascripts/ui.spinner.min.js"></script>
+<script src="../javascripts/application.js"></script>
+</head>
+<body>
+    <div id="header">
+      <div class="wrap selfclear">
+        <a id="logo" href="#"><strong>Low</strong>down</a>
+        <div id="login-area">
+            <a href="#">Kevin Chambers</a> | <a href="#">Log out</a>
+        </div>
+      </div><!-- /.wrap -->
+    </div><!-- /#header -->
+    <div id="crossbar">
+      <div class="wrap selfclear">             
+        <ul id="sitenav" class="selfclear">
+          <li><a href="#">Import Trips</a></li>
+          <li><a href="#">View Trips</a></li>
+        </ul>
+      </div><!-- /.wrap -->
+    </div><!-- /#crossbar -->
+    <div id="main">
+      <div class="wrap selfclear">
+         <h1>View Trips from Run ID 12853 (George Friday)</h1>
+         <!-- this will be the same partial as the "normal" trip results screen -->
+         <h2 id="result-count">18 trips found.</h2>
+         <table id="trip-results">
+           <thead>
+             <tr>
+               <th>Customer</th>
+               <th>Status</th>
+               <th>Provider</th>
+               <th>Funding Source</th>
+               <th>Pickup</th>
+               <th>Dropoff</th>
+               <th>Customers Served</th>
+               <th>Shared</th>
+               <th>Run Name</th>
+               <th>Fare</th>
+               <th></th>
+             </tr>
+           </thead>
+           <tbody>
+             <tr>
+               <td><a href="#">Teresa B. Acosta</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>American Red Cross</td>
+               <td>Emmanuel Temple</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">MAX CENTRAL</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Home</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$47.28</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Max D. Johnson</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>American Red Cross</td>
+               <td>RC U-Ride</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">MAX CENTRAL</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Mobile Home Ct</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$13.12</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Joseph Miller</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>Port City</td>
+               <td>Clackamas Co. Consort</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">CODA</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Home</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$23.19</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Jane D. Holder</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>City Ride</td>
+               <td>West Linn</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">MAX CENTRAL</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Home</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$27.97</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Paul C. Gordon</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>Port City</td>
+               <td>Clackamas Co. Consort</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">Kendall House AFC</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Tigard Four square Church</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$19.06</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Sirianni Transit Group</a></td>
+               <td><span class="status-cancelled" title="Cancelled">Cancelled</span></td>
+               <td>Ride Together</td>
+               <td>Ride Together</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">WaCo Transit Banks</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">WaCo Transit Banks</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$0.00</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">James J. Morgan</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>PacifiCab</td>
+               <td>Providence Elderplace</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">BALLAD TOWNE CHIROPRACTIC</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Home</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$32.76</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Robert B. Thomas</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>PacifiCab</td>
+               <td>Clackamas Co. Consort</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">Portland State Univ-Online learning svcs</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Home</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$36.86</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Glenda O. Peterson</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>Clackamas Co. Consort</td>
+               <td>Providence Elderplace</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">Park Place</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Cornerstone Church</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$10.65</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Courtney Group</a></td>
+               <td><span class="status-cancelled" title="Cancelled">Cancelled</span></td>
+               <td>West Linn</td>
+               <td>Edwards Center</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">NORTH PLAINS SENIOR CENTER</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">NORTH PLAINS SENIOR CENTER</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$0.00</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Tammy J. Cooper</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>Emmanuel Temple</td>
+               <td>Port City</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">MAX-CENTRAL TC /3RD&WA</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Tiffany Winningstad P/U Point</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$40.00</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Dorance Campbell</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>Providence Elderplace</td>
+               <td>Ride Together</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">GOODWILL</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Home</a></td>
+               <td>2</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$22.46</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Lori C. Hicks</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>Port City</td>
+               <td>Providence Elderplace</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">Home</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Home</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$19.39</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Sirianni Transit Group</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>West Linn</td>
+               <td>Providence Elderplace</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">MAX CENTRAL</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">NORTH PLAINS SENIOR CENTER</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$0.00</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Courtney Group</a></td>
+               <td><span class="status-cancelled" title="Cancelled">Cancelled</span></td>
+               <td>PacifiCab</td>
+               <td>City Ride</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">NORTH PLAINS SENIOR CENTER</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">NORTH PLAINS SENIOR CENTER</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$0.00</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Patricia D. Mccleary</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>Clackamas Co. Consort</td>
+               <td>Clackamas Co. Consort</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">Gentog</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Windhaven Apartments</a></td>
+               <td>3</td>
+               <td>No</td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$34.46</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Bethany N. Powers</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>Providence Elderplace</td>
+               <td>Clackamas Co. Consort</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">FOREST GROVE TRANSIT 19&B ST</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">POST OFFICE</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$13.45</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+             <tr>
+               <td><a href="#">Johnnie G. Suggs</a></td>
+               <td><span class="status-completed" title="Completed">Completed</span></td>
+               <td>African American</td>
+               <td>Clackamas Co. Consort</td>
+               <td><a class="trip-pickup" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=2510+SW+200TH+CT,+Beaverton,OR,97006&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=2510+SW+200th+Ct,+Beaverton,+Washington,+Oregon+97006&t=h&z=16" title="2510 SW 200TH CT, Beaverton,OR,97006">Trinity Place</a></td>
+               <td><a class="trip-dropoff" href="http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=6695+W+Burnside+Rd,+Portland,OR,97225&sll=45.50167,-122.882359&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=6695+W+Burnside+Rd,+Portland,+Washington,+Oregon+97225&t=h&z=16" title="6695 W Burnside Rd,,Portland,OR,97225">Home</a></td>
+               <td>1</td>
+               <td><a href="#" title="View all trips in this shared ride">Yes</a></td>
+               <td><a href="#" title="View all trips in this Run">George Friday</a></td>
+               <td>$0.00</td>
+               <td><a class="trip-details" href="#" title="View details for this trip">Details</a></td>
+             </tr>
+           </tbody>
+         </table>
+      </div><!-- /.wrap -->
+    </div><!-- /#main -->
+<script>
+//<![CDATA[
+
+//]]>
+</script>
+</body>
+</html>

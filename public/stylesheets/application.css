@@ -277,22 +277,26 @@ font-weight: bold;
 margin: 0.5em 0;
 }
 
-#trip-results {
+#trip-results,
+#grouped-results {
 margin: 0;
 width: 100%;
 }
 
-#trip-results thead th {
+#trip-results thead th,
+#grouped-results thead th {
 font-weight: bold;
 padding: 0.3em;
 border-bottom: 1px solid #222;
 }
 
-#trip-results tbody tr:nth-child(odd)  {
+#trip-results tbody tr:nth-child(odd),
+#grouped-results tbody tr:nth-child(odd)  {
 background: #f1f2f3;
 }
 
-#trip-results tbody td {
+#trip-results tbody td,
+#grouped-results tbody td {
 padding: 0.2em 0.3em;
 }
 
@@ -354,7 +358,26 @@ background: url(../images/user-group-edit.png) 0 50% no-repeat;
 } 
 */
 
+#grouped-results tbody tr th:first-child {
+vertical-align: middle;
+background: #fff;
+}
 
+#grouped-results tbody tr th:first-child span {
+writing-mode: tb-rl;
+filter: flipv fliph;
+-webkit-transform:rotate(270deg);
+-moz-transform:rotate(270deg);
+-o-transform: rotate(270deg);
+white-space:nowrap;
+display:block;
+font-weight: bold;
+}
+
+tr.totals td {
+font-weight: bold;
+border-bottom: 1px solid #ccc;
+}
 
 .pagination {
 text-align: center;
