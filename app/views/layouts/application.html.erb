@@ -8,6 +8,18 @@
 </head>
 <body>
 
+  <div id="header">
+    <div class="wrap selfclear">
+      <a id="logo" href="#"><strong>Low</strong>down</a>
+      <div id="login-area">
+        <% if current_user %>
+        <a href="#"><%= current_user.name %></a> | <a href="#">Log out</a>
+        <% end %>
+      </div>
+    </div><!-- /.wrap -->
+  </div><!-- /#header -->
+
+<%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
 <%= yield %>
 
 </body>
