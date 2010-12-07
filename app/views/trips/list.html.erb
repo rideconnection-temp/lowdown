@@ -1,0 +1,80 @@
+    <div id="crossbar">
+      <div class="wrap selfclear">             
+        <ul id="sitenav" class="selfclear">
+          <li><%= link_to "Import Trips", :action=>:import %></li>
+          <li><%= link_to "View Trips", :action=>:view %></li>
+        </ul>
+      </div><!-- /.wrap -->
+    </div><!-- /#crossbar -->
+    <div id="main">
+      <div class="wrap selfclear">
+        <%= raw flash_messages %>
+
+         <h1>View Trips</h1>
+         <%= form_for @query, :html=>{:id=>"trip-filter"}, :url=>{:action=>:list} do |f| %>
+           <div class="ui-widget">
+             Trips between
+           	<span id="startday-wrap"><%= f.date_select :start_date %></span>
+           	and 
+           	<span id="endday-wrap"><%= f.date_select :end_date %></span>
+           	<span id="provider-wrap">
+		  <%= f.collection_select :provider, @providers, :id, :name, :include_blank => true %>
+          	</span>
+           	<span id="funding-source-wrap">
+		  <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
+          	</span>
+          	<input id="trip-search" type="submit" value="Search" />
+           </div>
+         <% end %>
+         <h2 id="result-count"><%= @trips.size %> trips found.</h2>
+         <table id="trip-results">
+           <thead>
+             <tr>
+               <th>Customer</th>
+               <th>Status</th>
+               <th>Provider</th>
+               <th>Funding Source</th>
+               <th>Pickup</th>
+               <th>Dropoff</th>
+               <th>Customers Served</th>
+               <th>Shared</th>
+               <th>Run Name</th>
+               <th>Fare</th>
+               <th></th>
+             </tr>
+           </thead>
+           <tbody>
+             <% @trips.each do |trip| %>
+             <tr>
+               <td><a href="#"> <%= trip.customer.name %> </a></td>
+               <td><% if trip.completed %>
+                 <span class="status-completed" title="Completed">Completed</span></td>
+               <% else %>
+                 <span class="status-uncompleted" title="Uncompleted">Uncompleted</span></td>
+               <% end %>
+               <td> <%= trip.provider %></td>
+               <td> (FIXME: funding source / allocation not yet in trip that I can see) %></td>
+               <td>
+                 <%= gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
+               <td>
+                 <%= gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
+               <td><%= trip.customers_served %></td>
+               <td>
+<% if trip.customers_served == 0 %>
+<%= link_to "Yes", :action=>:show_share, :id=>trip.routematch_share_id, :html_options=>{:title=>"View all trips in this shared ride"} %></td>
+<% else %>
+No
+<% end %>
+               <td>
+<%= link_to trip.run.name, :action=>:show, :controller=>:run, :id=>trip.run.id, :html_options=>{:title=>"View all trips in this Run"} %></td>
+</td>
+               <td>$<%= trip.fare %></td>
+               <td>
+<%= link_to "Details", :action=>:show_trip, :id=>trip.id, :html_options=>{:title=>"View details for this trpi"} %></td>
+             </tr>
+             <% end %>
+           </tbody>
+         </table>
+<%= will_paginate @trips %>
+      </div><!-- /.wrap -->
+    </div><!-- /#main -->
