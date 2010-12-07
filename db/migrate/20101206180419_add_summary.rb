@@ -1,11 +1,11 @@
 class AddSummary < ActiveRecord::Migration
   def self.up
 
-    create_table :allocation do |t|
+    create_table :allocations do |t|
       t.string :name
     end
 
-    create_table :summary, :id=>false do |t|
+    create_table :summaries, :id=>false do |t|
       t.string :id, :limit => 36, :null => false, :primary_key => true
       t.string :base_id, :limit => 36
       t.datetime :valid_start
@@ -26,24 +26,24 @@ class AddSummary < ActiveRecord::Migration
       t.date :report_prepared
     end
 
-    create_table :summary_row, :id=>false do |t|
+    create_table :summary_rows, :id=>false do |t|
       t.string :id, :limit => 36, :null => false, :primary_key => true
       t.string :base_id, :limit => 36
       t.datetime :valid_start
       t.datetime :valid_end
 
-      t.references :summary
+      t.references :summaries
       t.string :purpose
       t.integer :trips
       t.boolean :in_district
-      t.references :allocation
+      t.references :allocations
     end
 
   end
 
   def self.down
-    drop_table :allocation
-    drop_table :summary
-    drop_table :summary_row
+    drop_table :allocations
+    drop_table :summaries
+    drop_table :summary_rows
   end
 end
