@@ -15,6 +15,7 @@ gem 'uuidtools'
 
 gem 'dynamic_form', :git => 'git://github.com/rails/dynamic_form.git'
 
+gem 'will_paginate', '3.0.pre2'
 
 # Use unicorn as the web server
 # gem 'unicorn'
