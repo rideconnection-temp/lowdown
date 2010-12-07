@@ -8,6 +8,27 @@ class Query
   attr_accessor :provider
   attr_accessor :allocation
 
+  def convert_date(obj, base)
+    return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
+  end
+
+  def initialize(params)
+    if params
+      if params["start_date(1i)"]
+        @start_date = convert_date(params, :start_date)
+      end
+      if params["end_date(1i)"]
+        @end_date = convert_date(params, :end_date)
+      end
+      if params[:provider]
+        @provider = params[:provider].to_i
+      end
+      if params[:allocation]
+        @provider = params[:allocation].to_i
+      end
+    end
+  end
+
   def persisted?
     false
   end
@@ -15,12 +36,14 @@ class Query
   def conditions
     d = {}
     if start_date
+      print start_date,"\n"
+      print end_date,"\n"
       d[:date] = start_date..end_date
     end
-    if provider
+    if provider && provider != 0
       d[:provider] = provider
     end
-    if allocation
+    if allocation && allocation != 0
       d[:allocation] = allocation
     end
     d
@@ -34,7 +57,7 @@ class TripsController < ApplicationController
 
   def list
     @query = Query.new(params[:query])
-    if !@query.conditions
+    if @query.conditions.empty?
       @query.end_date = Time.now
       @query.start_date = @query.end_date - 5 * 24 * 60 * 60
       flash[:notice] = 'No search criteria set - showing default (past 5 days)'
