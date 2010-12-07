@@ -33,9 +33,8 @@ class TripsController < ApplicationController
   end
 
   def list
-    @query = params[:query]
-    if !@query
-      @query = Query.new
+    @query = Query.new(params[:query])
+    if !@query.conditions
       @query.end_date = Time.now
       @query.start_date = @query.end_date - 5 * 24 * 60 * 60
       flash[:notice] = 'No search criteria set - showing default (past 5 days)'
@@ -49,6 +48,14 @@ class TripsController < ApplicationController
   end
 
   def show_import
+  end
+
+  def import
+    file = params['file-import'].tempfile
+    processed = TripImport.import_file(file)
+
+    flash[:notice] = "Import complete - #{processed} records processed.</div>"
+    render 'show_import'
   end
 
   def view

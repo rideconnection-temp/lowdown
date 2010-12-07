@@ -1,0 +1,10 @@
+         <h1>Import Trips</h1>
+         <%=form_tag url_for(:action=>:import), :method=>:post, :multipart => true %>
+
+           <div class="ui-widget">
+             <input id="file-import" name="file-import" type="file" value="" size="20" />
+             <div class="fakebrowse" class="selfclear"><input class="fakebrowseinput" type="text" /><span class="fakebutton">browse</span></div>
+             
+             <input id="trip-import" type="submit" value="Import" />
+           </div>
+         </form>

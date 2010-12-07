@@ -187,5 +187,6 @@ class TripImport < ActiveRecord::Base
     end # Transaction
     address_map = nil
     customer_map = nil
+    record_count
   end 
 end

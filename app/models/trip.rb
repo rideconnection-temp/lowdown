@@ -6,10 +6,14 @@ class Trip < ActiveRecord::Base
   belongs_to :dropoff_address, :class_name => "Address", :foreign_key => "dropoff_address_id"
   belongs_to :provider
   belongs_to :run
-  has_one :customer
+  belongs_to :customer
 
   def customers_served
-      return Trip.find_by_routematch_share_id(routematch_share_id).count
+    if routematch_share_id
+      return Trip.count(:conditions=>{:routematch_share_id=>routematch_share_id})
+    else
+      return 1
+    end
   end
 
   memoize :customers_served
