@@ -15,7 +15,7 @@
           	<input id="trip-search" type="submit" value="Search" />
            </div>
          <% end %>
-         <h2 id="result-count"><%= @trips.size %> trips found.</h2>
+         <h2 id="result-count"><%= @trips.total_entries %> trips found.</h2>
          <table id="trip-results">
            <thead>
              <tr>
