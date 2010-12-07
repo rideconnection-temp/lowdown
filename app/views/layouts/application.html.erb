@@ -20,7 +20,12 @@
   </div><!-- /#header -->
 
 <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
-<%= yield %>
 
+   <div id="main">
+     <div class="wrap selfclear">
+       <%= raw flash_messages %>
+       <%= yield %>
+     </div><!-- /.wrap -->
+   </div><!-- /#main -->
 </body>
 </html>

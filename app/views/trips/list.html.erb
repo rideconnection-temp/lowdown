@@ -1,6 +1,3 @@
-    <div id="main">
-      <div class="wrap selfclear">
-        <%= raw flash_messages %>
 
          <h1>View Trips</h1>
          <%= form_for @query, :html=>{:id=>"trip-filter"}, :url=>{:action=>:list} do |f| %>
@@ -68,5 +65,3 @@ No
            </tbody>
          </table>
 <%= will_paginate @trips %>
-      </div><!-- /.wrap -->
-    </div><!-- /#main -->
