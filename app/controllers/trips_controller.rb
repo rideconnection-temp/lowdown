@@ -51,6 +51,9 @@ class TripsController < ApplicationController
   end
 
   def import
+    if ! params['file-import']
+      redirect_to :action=>:show_import and return
+    end
     file = params['file-import'].tempfile
     processed = TripImport.import_file(file)
 
