@@ -1,7 +1,7 @@
 class CreateTrips < ActiveRecord::Migration
   def self.up
     create_table :trips, :id =>false do |t|
-      t.string :id, :limit => 36, :null => false, :primary_key
+      t.string :id, :limit => 36, :null => false, :unique => true
       t.string :base_id, :limit => 36
       t.datetime :valid_start
       t.datetime :valid_end
@@ -32,7 +32,6 @@ class CreateTrips < ActiveRecord::Migration
       t.integer :routematch_pickup_address_id
       t.integer :dropoff_address_id
       t.integer :routematch_dropoff_address_id
-
       t.timestamps
     end
   end

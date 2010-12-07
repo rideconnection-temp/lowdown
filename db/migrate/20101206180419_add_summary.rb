@@ -6,7 +6,7 @@ class AddSummary < ActiveRecord::Migration
     end
 
     create_table :summaries, :id=>false do |t|
-      t.string :id, :limit => 36, :null => false, :primary_key => true
+      t.string :id, :limit => 36, :null => false, :unique => true
       t.string :base_id, :limit => 36
       t.datetime :valid_start
       t.datetime :valid_end
@@ -27,7 +27,7 @@ class AddSummary < ActiveRecord::Migration
     end
 
     create_table :summary_rows, :id=>false do |t|
-      t.string :id, :limit => 36, :null => false, :primary_key => true
+      t.string :id, :limit => 36, :null => false, :unique => true
       t.string :base_id, :limit => 36
       t.datetime :valid_start
       t.datetime :valid_end

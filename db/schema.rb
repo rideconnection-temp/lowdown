@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(:version => 20101206180419) do
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "summaries", :id => false, :force => true do |t|
-    t.string   "id",                             :limit => 36, :null => false
+    t.string   "id",                             :limit => 36, :null => false, :unique => true
     t.string   "base_id",                        :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
@@ -105,7 +105,7 @@ ActiveRecord::Schema.define(:version => 20101206180419) do
   end
 
   create_table "summary_rows", :id => false, :force => true do |t|
-    t.string   "id",            :limit => 36, :null => false
+    t.string   "id",            :limit => 36, :null => false, :unique => true
     t.string   "base_id",       :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
@@ -123,7 +123,11 @@ ActiveRecord::Schema.define(:version => 20101206180419) do
     t.datetime "updated_at"
   end
 
-  create_table "trips", :force => true do |t|
+  create_table "trips", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36, :null => false, :unique => true
+    t.string   "base_id",       :limit => 36
+    t.datetime "valid_start"
+    t.datetime "valid_end"
     t.date     "date"
     t.boolean  "cancelled"
     t.boolean  "noshow"
