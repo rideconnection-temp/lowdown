@@ -37,9 +37,9 @@ module VersionFu
           end                    
         end
 
-        named_scope :old_versions, :conditions => ["valid_end != ?", @@end_of_time]
+        scope :old_versions, :conditions => ["valid_end != ?", @@end_of_time]
 
-        named_scope :current_versions, :conditions => ["valid_end = ?", @@end_of_time]
+        scope :current_versions, :conditions => ["valid_end = ?", @@end_of_time]
 
         before_save :check_for_new_version
 
