@@ -25,7 +25,7 @@ necessary columns to the pages table:
   class VersionPages < ActiveRecord::Migration
     def self.up
       change_table :pages do |t|
-        t.change  :id, :string, :limit=>36, :primary => true
+        t.change  :id, :string, :limit=>36, :unique => true
         t.string  :base_id, :limit=>36
         t.datetime :valid_start
         t.datetime :valid_end
