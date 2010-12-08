@@ -24,7 +24,7 @@
                <% else %>
                  <span class="status-uncompleted" title="Uncompleted">Uncompleted</span></td>
                <% end %>
-               <td> <%= trip.provider.name %></td>
+               <td> <%= trip.allocation.provider.name %></td>
                <td> (FIXME: funding source / allocation not yet in trip that I can see)</td>
                <td>
                  <%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
