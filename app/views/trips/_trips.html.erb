@@ -39,7 +39,7 @@ No
 <% end %>
                <td>
 <% if trip.run %>
-<%= link_to trip.run.name || "(unnamed run)", url_for(:action=>:run, :id=>trip.run.id), :html_options=>{:title=>"View all trips in this Run"} %></td>
+<%= link_to trip.run.display_name, url_for(:action=>:run, :id=>trip.run.id), :html_options=>{:title=>"View all trips in this Run"} %></td>
 <% else %>
 (no run)
 <% end %>
