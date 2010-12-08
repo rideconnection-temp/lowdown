@@ -49,7 +49,7 @@
                  <%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
                <td><%= trip.customers_served %></td>
                <td>
-<% if trip.customers_served == 0 %>
+<% if trip.customers_served > 1 %>
 <%= link_to "Yes", :action=>:show_share, :id=>trip.routematch_share_id, :html_options=>{:title=>"View all trips in this shared ride"} %></td>
 <% else %>
 No
