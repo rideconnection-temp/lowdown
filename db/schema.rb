@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101208003906) do
+ActiveRecord::Schema.define(:version => 20101208090614) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -31,8 +31,8 @@ ActiveRecord::Schema.define(:version => 20101208003906) do
   create_table "allocations", :force => true do |t|
     t.string  "name"
     t.boolean "group_trip"
-    t.integer "projects_id"
-    t.integer "providers_id"
+    t.integer "project_id"
+    t.integer "provider_id"
     t.string  "county"
     t.string  "trip_collection_method"
     t.string  "run_collection_method"
@@ -90,6 +90,10 @@ ActiveRecord::Schema.define(:version => 20101208003906) do
     t.datetime "updated_at"
     t.string   "name"
     t.integer  "routematch_id"
+    t.datetime "start_at"
+    t.datetime "end_at"
+    t.integer  "odometer_start"
+    t.integer  "odometer_end"
   end
 
   create_table "sessions", :force => true do |t|
@@ -180,7 +184,7 @@ ActiveRecord::Schema.define(:version => 20101208003906) do
     t.integer  "routematch_trip_id"
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
-    t.integer  "provider_id"
+    t.integer  "allocation_id"
   end
 
   create_table "users", :force => true do |t|
