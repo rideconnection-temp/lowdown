@@ -1,6 +1,42 @@
-class TripImport < ActiveRecord::Base
-  require 'csv'
+require 'csv'
+require 'bigdecimal'
 
+class CSV
+  Converters={ integer:   lambda { |f|
+      Integer(f.encode(ConverterEncoding)) rescue f
+    },
+    float:     lambda { |f|
+      Float(f.encode(ConverterEncoding)) rescue f
+    },
+    numeric:   [:integer, :float],
+    date:      lambda { |f|
+      begin
+        e = f.encode(ConverterEncoding)
+        e =~ DateMatcher ? Date.parse(e) : f
+      rescue  # encoding conversion or date parse errors
+        f
+      end
+    },
+    date_time: lambda { |f|
+      begin
+        e = f.encode(ConverterEncoding)
+        e =~ DateTimeMatcher ? DateTime.parse(e) : f
+      rescue  # encoding conversion or date parse errors
+        f
+      end
+    },
+    money:  lambda { |f| 
+      begin
+        f =~ /\d\.\d\d$/ ? BigDecimal.new(f) : f
+      rescue
+        f
+      end
+    },
+    all:       [:date_time, :money, :numeric]
+  }
+end
+
+class TripImport < ActiveRecord::Base
 
   def self.import_file(input_file)
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101208090614) do
+ActiveRecord::Schema.define(:version => 20101208141600) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -158,13 +158,13 @@ ActiveRecord::Schema.define(:version => 20101208090614) do
     t.datetime "end_at"
     t.integer  "odometer_start"
     t.integer  "odometer_end"
-    t.float    "fare"
+    t.decimal  "fare",                                           :precision => 10, :scale => 2
     t.boolean  "customer_pay"
     t.string   "purpose_type"
     t.integer  "guest_count"
     t.integer  "attendant_count"
     t.string   "mobility"
-    t.float    "calculated_bpa_fare"
+    t.decimal  "calculated_bpa_fare",                            :precision => 10, :scale => 2
     t.string   "bpa_driver_name"
     t.boolean  "volunteer_trip"
     t.boolean  "in_trimet_district"
