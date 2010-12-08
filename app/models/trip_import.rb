@@ -10,7 +10,7 @@ class TripImport < ActiveRecord::Base
         :home_address_1, :home_address_2, :home_city, :home_state, :home_postal_code, 
         :home_x_coordinate, :home_y_coordinate, :home_in_trimet_district, 
         :language_preference, :birthdate, :email, :customer_type, :monthly_household_income, :household_size,
-        :routematch_run_id, :run_name,
+        :routematch_run_id, :run_name, :run_start_at, :run_end_at, :run_odometer_start, :run_odometer_end,
         :routematch_trip_id, :date, 
         :provider_code, :provider_name, :provider_type, 
         :result_code, :start_at, :end_at, :odometer_start, :odometer_end,
@@ -27,6 +27,7 @@ class TripImport < ActiveRecord::Base
     address_map = {}
     customer_map = {}
     provider_map = {}
+    allocation_map = {}
     run_map = {}
     record_count = 0
 
@@ -133,13 +134,23 @@ class TripImport < ActiveRecord::Base
           address_map[record[:dropoff_routematch_address_id]] = current_dropoff_id
         end
 
-        if provider_map.has_key?(record[:provider_code]) 
-          current_provider_id = provider_map[record[:provider_code]]
+        if allocation_map.has_key?("#{record[:override]},#{record[:provider_code]}")
+          current_allocation_id = allocation_map["#{record[:override]},#{record[:provider_code]}"]
         else
-          current_provider_id = Provider.find_by_routematch_id(record[:provider_code]).id
-          raise "Unknown provider code '#{record[:provider_code]}'" if current_provider_id.nil? 
-          provider_map[record[:provider_code]] = current_provider_id
+          current_allocation = Allocation.where(:routematch_override => record[:override], 
+              :routematch_provider_code => record[:provider_code]).first
+          raise "No allocation for override '#{record[:override]}' and provider '#{record[:provider_code]}'" if current_allocation.nil?
+          current_allocation_id = current_allocation.id
+          allocation_map["#{record[:override]},#{record[:provider_code]}"] = current_allocation.id
         end
+
+        #if provider_map.has_key?(record[:provider_code]) 
+        #  current_provider_id = provider_map[record[:provider_code]]
+        #else
+        #  current_provider_id = Provider.find_by_routematch_id(record[:provider_code]).id
+        #  raise "Unknown provider code '#{record[:provider_code]}'" if current_provider_id.nil? 
+        #  provider_map[record[:provider_code]] = current_provider_id
+        #end
 
         if run_map.has_key?(record[:routematch_run_id])
           current_run_id = run_map[record[:routematch_run_id]]
@@ -147,6 +158,10 @@ class TripImport < ActiveRecord::Base
           current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
           current_run.name = record[:run_name]
           current_run.date = record[:date]
+          current_run.start_at = record[:run_start_at]
+          current_run.end_at = record[:run_end_at]
+          current_run.odometer_start = record[:run_odometer_start]
+          current_run.odometer_end = record[:run_odometer_end]
           current_run.save!
 
           current_run_id = current_run.id
@@ -156,7 +171,7 @@ class TripImport < ActiveRecord::Base
         current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
         current_trip.routematch_trip_id = record[:routematch_trip_id]
         current_trip.date = record[:date]
-        current_trip.provider_id = current_provider_id
+        current_trip.allocation_id = current_allocation_id
         current_trip.start_at = record[:start_at]
         current_trip.end_at = record[:end_at]
         current_trip.odometer_start = record[:odometer_start]

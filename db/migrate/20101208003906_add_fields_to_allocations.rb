@@ -2,8 +2,8 @@ class AddFieldsToAllocations < ActiveRecord::Migration
   def self.up
     change_table :allocations do |t|
       t.boolean :group_trip
-      t.references :projects
-      t.references :providers
+      t.integer :project_id
+      t.integer :provider_id
       t.string :county
       t.string :trip_collection_method
       t.string :run_collection_method
@@ -16,8 +16,8 @@ class AddFieldsToAllocations < ActiveRecord::Migration
   def self.down
     change_table :allocations do |t|
       t.remove :group_trip
-      t.remove :projects
-      t.remove :providers
+      t.remove :project
+      t.remove :provider
       t.remove :county
       t.remove :trip_collection_method
       t.remove :run_collection_method
