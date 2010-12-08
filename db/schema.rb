@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101206180419) do
+ActiveRecord::Schema.define(:version => 20101208003906) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -29,7 +29,16 @@ ActiveRecord::Schema.define(:version => 20101206180419) do
   end
 
   create_table "allocations", :force => true do |t|
-    t.string "name"
+    t.string  "name"
+    t.boolean "group_trip"
+    t.integer "projects_id"
+    t.integer "providers_id"
+    t.string  "county"
+    t.string  "trip_collection_method"
+    t.string  "run_collection_method"
+    t.string  "cost_collection_method"
+    t.string  "routematch_override"
+    t.string  "routematch_provider_code"
   end
 
   create_table "customers", :force => true do |t|
@@ -51,6 +60,15 @@ ActiveRecord::Schema.define(:version => 20101206180419) do
     t.integer  "monthly_household_income"
     t.integer  "household_size"
     t.integer  "address_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "projects", :force => true do |t|
+    t.string   "name"
+    t.string   "funding_source"
+    t.string   "funding_subsource"
+    t.string   "project_number"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
