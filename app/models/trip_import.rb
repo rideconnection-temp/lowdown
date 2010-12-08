@@ -195,6 +195,7 @@ class TripImport < ActiveRecord::Base
         current_trip.pickup_address_id = current_pickup_id
         current_trip.dropoff_address_id = current_dropoff_id
         current_trip.customer_id = current_customer_id
+        current_trip.run_id = current_run_id
         current_trip.save!
 
         #puts "Record #{record_count}: Address map size: #{address_map.size.to_s}, Customer map size: #{customer_map.size.to_s}"
