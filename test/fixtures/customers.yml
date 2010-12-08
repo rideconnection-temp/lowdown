@@ -15,12 +15,13 @@ one:
   language_preference: MyString
   birthdate: 2010-11-09
   email: MyString
-  type: MyString
-  monthy_household_income: 1
+  customer_type: MyString
+  monthly_household_income: 1
   household_size: 1
+  address_id : 1
 
 two:
-  routematch_customer_id: 1
+  routematch_customer_id: 2
   last_name: MyString
   first_name: MyString
   middle_initial: MyString
@@ -34,6 +35,7 @@ two:
   language_preference: MyString
   birthdate: 2010-11-09
   email: MyString
-  type: MyString
-  monthy_household_income: 1
+  customer_type: MyString
+  monthly_household_income: 1
   household_size: 1
+  address_id : 2

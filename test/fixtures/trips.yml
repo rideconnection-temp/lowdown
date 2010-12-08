@@ -5,17 +5,16 @@ one:
   cancelled: false
   noshow: false
   completed: false
-  start: 2010-11-09 09:38:59
-  end: 2010-11-09 09:38:59
+  start_at: 2010-11-09 09:38:59
+  end_at: 2010-11-09 09:38:59
   odometer_start: 1
   odometer_end: 1
-  fare: 1.5
+  fare: 12.54
   customer_pay: false
-  trip_purpose_type: MyString
+  purpose_type: MyString
   guest_count: 1
   attendant_count: 1
-  trip_mobility: MyString
-  trip_mobility_kind: MyString
+  mobility: MyString
   calculated_bpa_fare: 1.5
   bpa_driver_name: MyString
   volunteer_trip: false
@@ -29,17 +28,16 @@ two:
   cancelled: false
   noshow: false
   completed: false
-  start: 2010-11-09 09:38:59
-  end: 2010-11-09 09:38:59
+  start_at: 2010-11-09 09:38:59
+  end_at: 2010-11-09 09:38:59
   odometer_start: 1
   odometer_end: 1
-  fare: 1.5
+  fare: 1.50
   customer_pay: false
-  trip_purpose_type: MyString
+  purpose_type: MyString
   guest_count: 1
   attendant_count: 1
-  trip_mobility: MyString
-  trip_mobility_kind: MyString
+  mobility: MyString
   calculated_bpa_fare: 1.5
   bpa_driver_name: MyString
   volunteer_trip: false
