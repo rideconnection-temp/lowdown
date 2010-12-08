@@ -1,6 +1,6 @@
 
          <h1>View Trips</h1>
-         <%= form_for @query, :html=>{:id=>"trip-filter"}, :url=>{:action=>:list} do |f| %>
+         <%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
            <div class="ui-widget">
              Trips between
            	<span id="startday-wrap"><%= f.date_select :start_date %></span>
@@ -15,7 +15,7 @@
           	<input id="trip-search" type="submit" value="Search" />
            </div>
          <% end %>
-         <h2 id="result-count"><%= @trips.size %> trips found.</h2>
+         <h2 id="result-count"><%= @trips.total_entries %> trips found.</h2>
          <table id="trip-results">
            <thead>
              <tr>
@@ -49,7 +49,7 @@
                  <%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
                <td><%= trip.customers_served %></td>
                <td>
-<% if trip.customers_served == 0 %>
+<% if trip.customers_served > 1 %>
 <%= link_to "Yes", :action=>:show_share, :id=>trip.routematch_share_id, :html_options=>{:title=>"View all trips in this shared ride"} %></td>
 <% else %>
 No
