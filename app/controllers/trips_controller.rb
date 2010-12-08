@@ -24,7 +24,7 @@ class Query
         @provider = params[:provider].to_i
       end
       if params[:allocation]
-        @provider = params[:allocation].to_i
+        @allocation = params[:allocation].to_i
       end
     end
   end
@@ -36,15 +36,13 @@ class Query
   def conditions
     d = {}
     if start_date
-      print start_date,"\n"
-      print end_date,"\n"
       d[:date] = start_date..end_date
     end
     if provider && provider != 0
-      d[:provider] = provider
+      d[:provider_id] = provider
     end
     if allocation && allocation != 0
-      d[:allocation] = allocation
+      d[:allocation_id] = allocation
     end
     d
   end
