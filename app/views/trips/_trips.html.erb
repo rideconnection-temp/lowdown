@@ -33,13 +33,13 @@
                <td><%= trip.customers_served %></td>
                <td>
 <% if trip.customers_served > 1 %>
-<%= link_to "Yes", :action=>:share, :id=>trip.routematch_share_id, :html_options=>{:title=>"View all trips in this shared ride"} %></td>
+<%= link_to "Yes", url_for(:action=>:share, :id=>trip.routematch_share_id), :html_options=>{:title=>"View all trips in this shared ride"} %></td>
 <% else %>
 No
 <% end %>
                <td>
 <% if trip.run %>
-<%= link_to trip.run.name, :action=>:show, :controller=>:run, :id=>trip.run.id, :html_options=>{:title=>"View all trips in this Run"} %></td>
+<%= link_to trip.run.name || "(unnamed run)", url_for(:action=>:run, :id=>trip.run.id), :html_options=>{:title=>"View all trips in this Run"} %></td>
 <% else %>
 (no run)
 <% end %>
