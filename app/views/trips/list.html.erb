@@ -1,6 +1,6 @@
 
          <h1>View Trips</h1>
-         <%= form_for @query, :method=>:get, :html=>{:id=>"trip-filter"}, :url=>{:action=>:list} do |f| %>
+         <%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
            <div class="ui-widget">
              Trips between
            	<span id="startday-wrap"><%= f.date_select :start_date %></span>
