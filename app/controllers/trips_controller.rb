@@ -68,6 +68,10 @@ class TripsController < ApplicationController
     @trips = Trip.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions
   end
 
+  def share
+    @trips = Trip.paginate :page => params[:page], :per_page => 30, :conditions => {:routematch_share_id=>params[:id]}
+  end
+
   def show_import
   end
 
