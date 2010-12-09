@@ -19,11 +19,7 @@
              <% @trips.each do |trip| %>
              <tr>
                <td><a href="#"> <%= trip.customer.name %> </a></td>
-               <td><% if trip.completed %>
-                 <span class="status-completed" title="Completed">Completed</span></td>
-               <% else %>
-                 <span class="status-uncompleted" title="Uncompleted">Uncompleted</span></td>
-               <% end %>
+               <td><% trip.result_code %></td>
                <td> <%= trip.allocation.provider.name %></td>
                <td> (FIXME: funding source / allocation not yet in trip that I can see)</td>
                <td>
