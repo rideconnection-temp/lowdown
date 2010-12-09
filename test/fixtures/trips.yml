@@ -18,6 +18,7 @@ one:
   in_trimet_district: false
   bpa_billing_distance: 1.5
   routematch_share_id: 1
+  allocation_id: 1
   override: false
 
 two:
@@ -38,4 +39,5 @@ two:
   in_trimet_district: false
   bpa_billing_distance: 1.5
   routematch_share_id: 1
+  allocation_id: 1
   override: false

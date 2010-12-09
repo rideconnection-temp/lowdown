@@ -17,6 +17,8 @@ gem 'dynamic_form', :git => 'git://github.com/rails/dynamic_form.git'
 
 gem 'will_paginate', '3.0.pre2'
 
+gem 'capybara'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 
