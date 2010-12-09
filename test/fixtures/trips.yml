@@ -2,9 +2,6 @@
 
 one:
   date: 2010-11-09
-  cancelled: false
-  noshow: false
-  completed: false
   start_at: 2010-11-09 09:38:59
   end_at: 2010-11-09 09:38:59
   odometer_start: 1
@@ -25,9 +22,6 @@ one:
 
 two:
   date: 2010-11-09
-  cancelled: false
-  noshow: false
-  completed: false
   start_at: 2010-11-09 09:38:59
   end_at: 2010-11-09 09:38:59
   odometer_start: 1
