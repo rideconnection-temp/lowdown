@@ -39,7 +39,7 @@ class Query
       d[:date] = start_date..end_date
     end
     if provider && provider != 0
-      d[:provider_id] = provider
+      d["allocations.provider_id"] = provider
     end
     if allocation && allocation != 0
       d[:allocation_id] = allocation
@@ -65,7 +65,7 @@ class TripsController < ApplicationController
     @allocations = Allocation.find :all
 
 
-    @trips = Trip.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions
+    @trips = Trip.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
   end
 
   def share
