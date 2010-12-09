@@ -170,23 +170,16 @@ class TripImport < ActiveRecord::Base
           address_map[record[:dropoff_routematch_address_id]] = current_dropoff_id
         end
 
-        if allocation_map.has_key?("#{record[:override]},#{record[:provider_code]}")
-          current_allocation_id = allocation_map["#{record[:override]},#{record[:provider_code]}"]
+        allocation_map_key = "#{record[:override]},#{record[:provider_code]}"
+        if allocation_map.has_key?(allocation_map_key)
+          current_allocation_id = allocation_map[allocation_map_key]
         else
           current_allocation = Allocation.where(:routematch_override => record[:override], 
               :routematch_provider_code => record[:provider_code]).first
           raise "No allocation for override '#{record[:override]}' and provider '#{record[:provider_code]}'" if current_allocation.nil?
           current_allocation_id = current_allocation.id
-          allocation_map["#{record[:override]},#{record[:provider_code]}"] = current_allocation.id
+          allocation_map[allocation_map_key] = current_allocation.id
         end
-
-        #if provider_map.has_key?(record[:provider_code]) 
-        #  current_provider_id = provider_map[record[:provider_code]]
-        #else
-        #  current_provider_id = Provider.find_by_routematch_id(record[:provider_code]).id
-        #  raise "Unknown provider code '#{record[:provider_code]}'" if current_provider_id.nil? 
-        #  provider_map[record[:provider_code]] = current_provider_id
-        #end
 
         if run_map.has_key?(record[:routematch_run_id])
           current_run_id = run_map[record[:routematch_run_id]]
@@ -194,10 +187,15 @@ class TripImport < ActiveRecord::Base
           current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
           current_run.name = record[:run_name]
           current_run.date = record[:date]
-          current_run.start_at = record[:run_start_at]
-          current_run.end_at = record[:run_end_at]
-          current_run.odometer_start = record[:run_odometer_start]
-          current_run.odometer_end = record[:run_odometer_end]
+#         Though it may be in the import file, don't store run start and end information 
+#         for BPA providers that track that data by-trip.
+#         By-run information is inaccurate for those providers.
+          if current_allocation.run_collection_method = 'runs' 
+            current_run.start_at = record[:run_start_at]
+            current_run.end_at = record[:run_end_at]
+            current_run.odometer_start = record[:run_odometer_start]
+            current_run.odometer_end = record[:run_odometer_end]
+          end
           current_run.save!
 
           current_run_id = current_run.id
