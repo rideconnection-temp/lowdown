@@ -80,7 +80,9 @@
                  <td><%= '%.2f' % row.paid_hours %></td>
                  <td><%= '%.2f' % row.total_hours %></td>
                  <td><%= '%.2f' % row.cost_per_trip %></td>
-                 <td><%= '%.2f' % row.cost_per_mile %></td>
+                 <td><%= row.cost_per_mile == -1 ? 
+                         row.cost_per_mile :
+                         ('%.2f' % row.cost_per_mile) %></td>
                  <td><%= '%.2f' % row.cost_per_hour %></td>
                  <td><%= row.turn_downs %></td>
                  <td><%= row.undup_riders.size %></td>

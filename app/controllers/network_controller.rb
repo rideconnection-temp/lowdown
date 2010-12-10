@@ -54,7 +54,11 @@ class NetworkController < ApplicationController
     end
 
     def cost_per_mile
-      return @funds / @mileage
+      cpm = @funds / @mileage
+      if @mileage == 0
+        return -1
+      end
+      return cpm
     end
 
     def total_trips
