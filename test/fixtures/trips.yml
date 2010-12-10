@@ -7,7 +7,7 @@ one:
   odometer_start: 1
   odometer_end: 1
   fare: 12.54
-  customer_pay: false
+  customer_pay: 0.00
   purpose_type: MyString
   guest_count: 1
   attendant_count: 1
@@ -28,7 +28,7 @@ two:
   odometer_start: 1
   odometer_end: 1
   fare: 1.50
-  customer_pay: false
+  customer_pay: 12.50
   purpose_type: MyString
   guest_count: 1
   attendant_count: 1
