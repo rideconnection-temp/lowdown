@@ -29,6 +29,7 @@ class NetworkController < ApplicationController
 
       @turn_downs = 0
       @undup_riders = Set.new
+      @runs = Set.new
       @escort_volunteer_hours = 0
       @admin_volunteer_hours = 0
     end
@@ -85,6 +86,12 @@ class NetworkController < ApplicationController
 
       run = trip.run
       if run != nil
+        if ! @runs.include?(run)
+          @runs << run
+          if run.odometer_end != nil && (trip.odometer_end = 0 || trip.odometer_end == nil)
+            @mileage += run.odometer_end - run.odometer_start
+          end
+        end
         @escort_volunteer_hours += run.escort_count * (trip.end_at - trip.start_at) / 3600.0
       end
       # @admin_volunteer_hours += ???
