@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101209162700) do
+ActiveRecord::Schema.define(:version => 20101210003517) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -96,18 +96,8 @@ ActiveRecord::Schema.define(:version => 20101209162700) do
     t.integer  "odometer_end"
   end
 
-  create_table "sessions", :force => true do |t|
-    t.string   "session_id", :null => false
-    t.text     "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
-  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
-
   create_table "summaries", :id => false, :force => true do |t|
-    t.string   "id",                             :limit => 36, :null => false, :unique => true
+    t.string   "id",                             :limit => 36, :null => false
     t.string   "base_id",                        :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
@@ -127,15 +117,15 @@ ActiveRecord::Schema.define(:version => 20101209162700) do
   end
 
   create_table "summary_rows", :id => false, :force => true do |t|
-    t.string   "id",            :limit => 36, :null => false, :unique => true
-    t.string   "base_id",       :limit => 36
+    t.string   "id",             :limit => 36, :null => false
+    t.string   "base_id",        :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
-    t.integer  "summary_id"
+    t.integer  "summaries_id"
     t.string   "purpose"
     t.integer  "trips"
     t.boolean  "in_district"
-    t.integer  "allocation_id"
+    t.integer  "allocations_id"
   end
 
   create_table "trip_imports", :force => true do |t|
@@ -146,8 +136,8 @@ ActiveRecord::Schema.define(:version => 20101209162700) do
   end
 
   create_table "trips", :id => false, :force => true do |t|
-    t.string   "id",            :limit => 36, :null => false, :unique => true
-    t.string   "base_id",       :limit => 36
+    t.string   "id",                               :limit => 36,                                :null => false
+    t.string   "base_id",                          :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
     t.date     "date"
@@ -167,7 +157,7 @@ ActiveRecord::Schema.define(:version => 20101209162700) do
     t.boolean  "in_trimet_district"
     t.float    "bpa_billing_distance"
     t.integer  "routematch_share_id"
-    t.boolean  "override"
+    t.string   "override"
     t.float    "estimated_trip_distance_in_miles"
     t.integer  "pickup_address_id"
     t.integer  "routematch_pickup_address_id"
@@ -182,6 +172,7 @@ ActiveRecord::Schema.define(:version => 20101209162700) do
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
     t.integer  "allocation_id"
+    t.integer  "home_address_id"
   end
 
   create_table "users", :force => true do |t|

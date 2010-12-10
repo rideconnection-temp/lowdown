@@ -172,13 +172,14 @@ class TripImport < ActiveRecord::Base
 
         allocation_map_key = "#{record[:override]},#{record[:provider_code]}"
         if allocation_map.has_key?(allocation_map_key)
-          current_allocation_id = allocation_map[allocation_map_key]
+          current_allocation_id = allocation_map[allocation_map_key][:id]
         else
           current_allocation = Allocation.where(:routematch_override => record[:override], 
               :routematch_provider_code => record[:provider_code]).first
-          raise "No allocation for override '#{record[:override]}' and provider '#{record[:provider_code]}'" if current_allocation.nil?
+          raise "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'" if current_allocation.nil?
           current_allocation_id = current_allocation.id
-          allocation_map[allocation_map_key] = current_allocation.id
+#         Store the entire allocation object for later use
+          allocation_map[allocation_map_key] = current_allocation
         end
 
         if run_map.has_key?(record[:routematch_run_id])
@@ -188,13 +189,18 @@ class TripImport < ActiveRecord::Base
           current_run.name = record[:run_name]
           current_run.date = record[:date]
 #         Though it may be in the import file, don't store run start and end information 
-#         for BPA providers that track that data by-trip.
+#         for BPA providers, for whom that data is tracked by-trip.
 #         By-run information is inaccurate for those providers.
-          if current_allocation.run_collection_method = 'runs' 
+          if allocation_map[allocation_map_key][:run_collection_method] == 'runs' 
             current_run.start_at = record[:run_start_at]
             current_run.end_at = record[:run_end_at]
             current_run.odometer_start = record[:run_odometer_start]
             current_run.odometer_end = record[:run_odometer_end]
+          else
+            current_run.start_at = nil
+            current_run.end_at = nil
+            current_run.odometer_start = nil
+            current_run.odometer_end = nil
           end
           current_run.save!
 
@@ -205,7 +211,9 @@ class TripImport < ActiveRecord::Base
         current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
         current_trip.routematch_trip_id = record[:routematch_trip_id]
         current_trip.date = record[:date]
+        current_trip.result_code = record[:result_code]
         current_trip.allocation_id = current_allocation_id
+        current_trip.provider_code = record[:provider_code]
         current_trip.start_at = record[:start_at]
         current_trip.end_at = record[:end_at]
         current_trip.odometer_start = record[:odometer_start]
@@ -229,9 +237,11 @@ class TripImport < ActiveRecord::Base
         current_trip.pickup_address_id = current_pickup_id
         current_trip.dropoff_address_id = current_dropoff_id
         current_trip.customer_id = current_customer_id
+        current_trip.home_address_id = current_home_id
         current_trip.run_id = current_run_id
         current_trip.save!
 
+        #puts record_count if record_count % 100 == 0
         #puts "Record #{record_count}: Address map size: #{address_map.size.to_s}, Customer map size: #{customer_map.size.to_s}"
       end # CSV.foreach
     end # Transaction
