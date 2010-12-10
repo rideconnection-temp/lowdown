@@ -118,7 +118,7 @@ class NetworkController < ApplicationController
 
     #let's say we're ordered by county, then provider
 
-    trips = Trip.current_versions.includes(:allocation).joins(:allocation).order("allocations.county, trips.allocation_id")
+    trips = Trip.current_versions.includes(:allocation, :run).joins(:allocation).order("allocations.county, trips.allocation_id")
 
     #now, split up trips into groups
     counties = []
