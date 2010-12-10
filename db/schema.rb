@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101210115100) do
+ActiveRecord::Schema.define(:version => 20101210140500) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(:version => 20101210115100) do
     t.datetime "end_at"
     t.integer  "odometer_start"
     t.integer  "odometer_end"
+    t.integer  "escort_count"
   end
 
   create_table "summaries", :id => false, :force => true do |t|

@@ -65,11 +65,11 @@ class TripsController < ApplicationController
     @allocations = Allocation.find :all
 
 
-    @trips = Trip.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
+    @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
   end
 
   def share
-    @trips = Trip.paginate :page => params[:page], :per_page => 30, :conditions => {:routematch_share_id=>params[:id]}
+    @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => {:routematch_share_id=>params[:id]}
   end
 
   def run
