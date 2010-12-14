@@ -4,6 +4,6 @@ class FixTripsMonthlyHouseholdIncomeField < ActiveRecord::Migration
   end
 
   def self.down
-		t.rename_column :customers, :monthly_household_income, :monthy_household_income
+		rename_column :customers, :monthly_household_income, :monthy_household_income
   end
 end
