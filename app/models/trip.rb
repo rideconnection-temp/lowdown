@@ -45,28 +45,33 @@ def apportion_run_based_trips
       r = Trip.where(:run_id => run_id)
       trip_count = r.count + 1 # +1 to include this new trip
       ratio = 1 / trip_count.to_f
+
       run_duration = ((run.end_at - run.start_at) / 60).to_i
       run_mileage = run.odometer_end - run.odometer_start
+      
       trip_duration = (run_duration * ratio).to_i
-      trip_mileage = (run_mileage * ratio).round(1)
-
+      trip_mileage = ((run_mileage * ratio) * 10).floor.to_f / 10
+      
+      # puts "Trip Count: #{trip_count}"
+      # puts "Run Duration: #{run_duration}"
+      # puts "Run Mileage: #{run_mileage}"
+      
       run_duration_remaining = run_duration
       run_mileage_remaining = run_mileage
 
-      trip_position = 0
-
       for t in r
-        trip_position += 0
-        t.seconday_update = true
+        t.secondary_update = true
 
         run_duration_remaining -= trip_duration 
-        t.duration = trip_duration
+        t.apportioned_duration = trip_duration
 
         run_mileage_remaining -= trip_mileage
-        t.mileage = trip_mileage
+        t.apportioned_mileage = trip_mileage
+
+        t.save!
       end
-      self.duration = trip_duration + run_duration_remaining
-      self.mileage = trip_mileage + run_mileage_remaining.round(1)
+      self.apportioned_duration = run_duration_remaining
+      self.apportioned_mileage = run_mileage_remaining.round(1)
     end
   end
 end
@@ -100,14 +105,14 @@ def apportion_shared_rides
         ride_duration_remaining -= this_trip_duration
         t.apportioned_duration = this_trip_duration + ( trip_position == trip_count ? ride_duration_remaining : 0 )
 
-        this_trip_mileage = (ride_mileage.to_f * this_ratio).round(1)
+        this_trip_mileage = (ride_mileage * this_ratio).round(1)
         ride_mileage_remaining -= this_trip_mileage
         t.apportioned_mileage = this_trip_mileage + ( trip_position == trip_count ? ride_mileage_remaining.round(1) : 0 )
 
         this_trip_cost = (ride_cost * this_ratio).round(2)
         ride_cost_remaining -= this_trip_cost
         t.apportioned_fare = this_trip_cost + ( trip_position == trip_count ? ride_cost_remaining.round(2) : 0 )
-        t.save
+        t.save!
       end
     end
   end
