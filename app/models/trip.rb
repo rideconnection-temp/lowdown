@@ -8,26 +8,36 @@ class Trip < ActiveRecord::Base
   belongs_to :allocation
   belongs_to :run
   belongs_to :customer
+  belongs_to :trip_import
 
   after_validation :set_duration_and_mileage
   after_save :apportion_shared_rides
+  after_create :apportion_new_run_based_trips
+
+  attr_protected :apportioned_fare, :apportioned_mileage, :apportioned_duration
+  attr_protected :mileage, :duration
 
   attr_accessor :bulk_import
   attr_accessor :secondary_update
 
   scope :completed, where(:result_code => 'COMP')
-  scope :shared, where('routematch_share_id IS NOT NULL')
+  scope :shared, where('trips.routematch_share_id IS NOT NULL')
 
   def completed?
     result_code == 'COMP'
   end
 
+  def shared?
+    routematch_share_id.present?
+  end
+
   def customers_served
-    if routematch_share_id
-      return Trip.count(:conditions=>{:routematch_share_id=>routematch_share_id})
-    else
-      return 1
-    end
+    guest_count + attendant_count + 1
+    #if routematch_share_id
+    #  return Trip.count(:conditions=>{:routematch_share_id=>routematch_share_id})
+    #else
+    #  return 1
+    #end
   end
 
   memoize :customers_served
@@ -36,7 +46,7 @@ private
 
   def set_duration_and_mileage
     unless secondary_update || bulk_import
-      if self.completed?
+      if completed?
         self.duration = ((end_at - start_at) / 60 ).to_i unless end_at.nil? || start_at.nil?
         self.mileage = odometer_end - odometer_start unless odometer_end.nil? || odometer_start.nil?
         if routematch_share_id.blank?
@@ -50,7 +60,7 @@ private
 
   def apportion_shared_rides
     unless secondary_update || bulk_import
-      if routematch_share_id.present?
+      if shared?
         r = Trip.completed.where(:routematch_share_id => routematch_share_id, :date => date).order(:end_at,:created_at)
 #       All these aggregates are run separately.  
 #       could be optimized into one query with a custom SELECT statement.
@@ -75,18 +85,24 @@ private
 
           this_trip_duration = ((ride_duration.to_f * this_ratio) * 100).floor.to_f / 100
           ride_duration_remaining = (ride_duration_remaining - this_trip_duration).round(2)
-          t.apportioned_duration = (this_trip_duration + ( trip_position == trip_count ? ride_duration_remaining : 0 )).round(2)
+          t.apportioned_duration = this_trip_duration + ( trip_position == trip_count ? ride_duration_remaining : 0 )
 
           this_trip_mileage = ((ride_mileage * this_ratio) * 100).floor.to_f / 100 
           ride_mileage_remaining = (ride_mileage_remaining - this_trip_mileage).round(2)
-          t.apportioned_mileage = (this_trip_mileage + ( trip_position == trip_count ? ride_mileage_remaining : 0 )).round(2)
+          t.apportioned_mileage = this_trip_mileage + ( trip_position == trip_count ? ride_mileage_remaining : 0 )
 
           this_trip_cost = ((ride_cost * this_ratio) * 100).floor.to_f / 100
           ride_cost_remaining = (ride_cost_remaining - this_trip_cost).round(2)
-          t.apportioned_fare = (this_trip_cost + ( trip_position == trip_count ? ride_cost_remaining : 0 )).round(2)
+          t.apportioned_fare = this_trip_cost + ( trip_position == trip_count ? ride_cost_remaining : 0 )
           t.save!
         end
       end
+    end
+  end
+
+  def apportion_new_run_based_trips
+    unless secondary_update || bulk_import
+      self.run.save!
     end
   end
 end

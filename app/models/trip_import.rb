@@ -37,8 +37,14 @@ class CSV
 end
 
 class TripImport < ActiveRecord::Base
+  has_many :trips
+  has_many :runs
 
-  def self.import_file(input_file)
+  after_create :import_file, :apportion_imported_shared_rides, :apportion_imported_runs 
+
+private
+
+  def import_file
 
     headers = [:routematch_customer_id, :last_name, :first_name, :middle_initial, :sex, :race, :mobility, 
         :telephone_1, :telephone_1_ext, :telephone_2, :telephone_2_ext, 
@@ -68,7 +74,7 @@ class TripImport < ActiveRecord::Base
     record_count = 0
 
     ActiveRecord::Base.transaction do
-      CSV.foreach(input_file, headers: headers, converters: :all) do |record|
+      CSV.foreach(file_path, headers: headers, converters: :all) do |record|
         
         record_count += 1
 
@@ -176,7 +182,9 @@ class TripImport < ActiveRecord::Base
         else
           current_allocation = Allocation.where(:routematch_override => record[:override], 
               :routematch_provider_code => record[:provider_code]).first
-          raise "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'" if current_allocation.nil?
+          if current_allocation.nil?
+            raise "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'" 
+          end
           current_allocation_id = current_allocation.id
 #         Store the entire allocation object for later use
           allocation_map[allocation_map_key] = current_allocation
@@ -202,6 +210,7 @@ class TripImport < ActiveRecord::Base
             current_run.odometer_start = nil
             current_run.odometer_end = nil
           end
+          current_run.trip_import_id = self.id
           current_run.bulk_import = true
           current_run.save!
 
@@ -240,6 +249,7 @@ class TripImport < ActiveRecord::Base
         current_trip.customer_id = current_customer_id
         current_trip.home_address_id = current_home_id
         current_trip.run_id = current_run_id
+        current_trip.trip_import_id = self.id
         current_trip.bulk_import = true
         current_trip.save!
 
@@ -250,22 +260,31 @@ class TripImport < ActiveRecord::Base
     address_map = nil
     customer_map = nil
     run_map = nil
-    record_count
-  end 
+    puts "Imported #{record_count} records"
+  end
 
-  def self.Apportion
-    trips = Trip.completed.shared.order(:date,:routematch_share_id)
+  def apportion_imported_shared_rides
+    trips = self.trips.completed.shared.order(:date,:routematch_share_id)
     trip_count = 0
     this_share_id = 0
     for trip in trips
       if trip.routematch_share_id != this_share_id 
         this_share_id = trip.routematch_share_id 
         trip.save!
-        puts this_share_id
         trip_count += 1
       end
     end
     trips = nil
-    trip_count
+    puts "Apportioned #{trip_count} shared rides"
+  end
+
+  def apportion_imported_runs
+    runs = self.runs
+    run_count = 0
+    for run in runs
+      run.save!
+      run_count += 1
+    end
+    puts "Apportioned #{run_count} runs"
   end
 end
