@@ -202,6 +202,7 @@ class TripImport < ActiveRecord::Base
             current_run.odometer_start = nil
             current_run.odometer_end = nil
           end
+          current_run.bulk_import = true
           current_run.save!
 
           current_run_id = current_run.id
@@ -239,6 +240,7 @@ class TripImport < ActiveRecord::Base
         current_trip.customer_id = current_customer_id
         current_trip.home_address_id = current_home_id
         current_trip.run_id = current_run_id
+        current_trip.bulk_import = true
         current_trip.save!
 
         #puts record_count if record_count % 100 == 0
@@ -250,4 +252,20 @@ class TripImport < ActiveRecord::Base
     run_map = nil
     record_count
   end 
+
+  def self.Apportion
+    trips = Trip.completed.shared.order(:date,:routematch_share_id)
+    trip_count = 0
+    this_share_id = 0
+    for trip in trips
+      if trip.routematch_share_id != this_share_id 
+        this_share_id = trip.routematch_share_id 
+        trip.save!
+        puts this_share_id
+        trip_count += 1
+      end
+    end
+    trips = nil
+    trip_count
+  end
 end
