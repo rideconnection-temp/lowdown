@@ -279,7 +279,7 @@ private
   end
 
   def apportion_imported_runs
-    runs = self.runs
+    runs = self.runs.has_odometer_log.has_time_log
     run_count = 0
     for run in runs
       run.save!
