@@ -18,6 +18,10 @@ a:hover {
 color: #e09020;
 }
 
+h1, h2, h3, h4, h5, h6 {
+font-weight: bold;
+}
+
 /*-----------------------
 Utility Classes
 -----------------------*/
@@ -92,7 +96,8 @@ General Page Structure
 -----------------------*/
 .wrap {
 width: 940px; 
-margin: 0 auto; 
+margin: 0 auto;
+padding: 0 15px;
 }
 
 #header {
@@ -141,7 +146,7 @@ color: #e09020;
 }
 
 #main .wrap {
-padding: 1em 0 0;
+padding: 1em 15px 0;
 }
 
 #flash {
@@ -406,4 +411,48 @@ font-weight: bold;
 
 .pagination .disabled {
 color: #999;
+}
+
+/* - */
+
+.fourcol {
+width: 25%;
+float: left;
+}
+
+#report-checkbox-toggle {
+margin-left: -15px;
+padding-left: 15px;
+cursor: pointer;
+}
+
+#report-checkbox-toggle.expand {
+background: url(../images/expanded.png) 0 50% no-repeat;
+}
+
+#report-checkbox-toggle.collapse {
+background: url(../images/collapsed.png) 3px 50% no-repeat;
+margin-bottom: 0.5em;
+}
+
+#report-checkbox-area {
+display: none;
+}
+
+.group-by-wrap {
+margin: 0.5em 0;
+}
+
+.group-by-wrap .ui-autocomplete-input {
+width: 24em;
+}
+
+.remove-group-by img,
+.add-group-by img {
+vertical-align: middle;
+}
+
+
+#report-create {
+margin: 1em 0;
 }
