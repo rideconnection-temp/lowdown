@@ -107,11 +107,20 @@ $(function(){
     
     $('input#file-import').change(function( objEvent ){$('.fakebrowseinput').val($(this).val());});
     
-    $('#report-checkbox-toggle').click(function() {
-        $('#report-checkbox-area').slideToggle();
-        ($(this).attr('class') == 'expand') ? $(this).attr('class', 'collapse') : $(this).attr('class', 'expand');
+    $('.toggler').click(function() {
+        $(this).next('.togglee').slideToggle();
+        ($(this).hasClass('expand')) ? $(this).removeClass('expand').addClass('collapse') : $(this).removeClass('collapse').addClass('expand');
         return false;
     });    
     
+    $('.toggler .select-all').click(function() {
+        $(this).parent().next('.togglee').find('input[type=checkbox]').attr('checked', true);
+        return false;
+    });
+    
+    $('.togglee .unselect-all').click(function() {
+        $(this).parent().find('input[type=checkbox]').attr('checked', false);
+        return false;
+    });
   
 });

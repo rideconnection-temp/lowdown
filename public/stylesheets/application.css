@@ -420,22 +420,34 @@ width: 25%;
 float: left;
 }
 
-#report-checkbox-toggle {
+.toggler {
 margin-left: -15px;
 padding-left: 15px;
 cursor: pointer;
 }
 
-#report-checkbox-toggle.expand {
+.toggler.expand {
 background: url(../images/expanded.png) 0 50% no-repeat;
 }
 
-#report-checkbox-toggle.collapse {
+.toggler.collapse {
 background: url(../images/collapsed.png) 3px 50% no-repeat;
 margin-bottom: 0.5em;
 }
 
-#report-checkbox-area {
+.select-all, 
+.unselect-all {
+font-size: 0.9em;
+padding: 0 1em;
+font-weight: normal;
+}
+
+.unselect-all {
+clear: both;
+float: right;
+}
+
+.togglee {
 display: none;
 }
 
@@ -452,7 +464,12 @@ width: 24em;
 vertical-align: middle;
 }
 
+#select-allocations {
+font-size: 1.2em;
+margin: 1em 0;
+}
 
-#report-create {
+#report-create,
+#tag-create {
 margin: 1em 0;
 }
