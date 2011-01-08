@@ -39,24 +39,24 @@
                    <th rowspan="<%= county.size + 1 %>"><span><%= row.county %></span></th>
                  <% end %>
                  <td><%= row.allocation.name %></td>
-                 <td><%= row.funds %></td>
-                 <td><%= row.agency_other %></td>
-                 <td><%= row.vehicle_maint %></td>
-                 <td><%= row.donations_fares %></td>
-                 <td><%= row.total %></td>
+                 <td><%= '%.2f' % row.funds %></td>
+                 <td><%= '%.2f' % row.agency_other %></td>
+                 <td><%= '%.2f' % row.vehicle_maint %></td>
+                 <td><%= '%.2f' % row.donations_fares %></td>
+                 <td><%= '%.2f' % row.total %></td>
                  <td><%= row.in_district_trips %></td>
                  <td><%= row.out_of_district_trips %></td>
                  <td><%= row.total_trips %></td>
                  <td>Total this Period Last Year</td>
                  <td><%= row.mileage %></td>
-                 <td><%= '%.2f' % row.volunteer_hours %></td>
+                 <td><%= '%.2f' % row.driver_volunteer_hours %></td>
                  <td><%= '%.2f' % row.paid_hours %></td>
                  <td><%= '%.2f' % row.total_hours %></td>
                  <td><%= '%.2f' % row.cost_per_trip %></td>
                  <td><%= '%.2f' % row.cost_per_mile %></td>
                  <td><%= '%.2f' % row.cost_per_hour %></td>
                  <td><%= row.turn_downs %></td>
-                 <td><%= row.undup_riders.size %></td>
+                 <td><%= row.undup_riders %></td>
                  <td><%= row.escort_volunteer_hours %></td>
                  <td><%= row.admin_volunteer_hours %></td>
                  <td><%= row.total_volunteer_hours %></td>
@@ -66,11 +66,11 @@
                <% row = controller.sum(county) %>
                <tr class="totals">
                  <td>Totals</td>
-                 <td><%= row.funds %></td>
-                 <td><%= row.agency_other %></td>
-                 <td><%= row.vehicle_maint %></td>
-                 <td><%= row.donations_fares %></td>
-                 <td><%= row.total %></td>
+                 <td><%= '%.2f' % row.funds %></td>
+                 <td><%= '%.2f' % row.agency_other %></td>
+                 <td><%= '%.2f' % row.vehicle_maint %></td>
+                 <td><%= '%.2f' % row.donations_fares %></td>
+                 <td><%= '%.2f' % row.total %></td>
                  <td><%= row.in_district_trips %></td>
                  <td><%= row.out_of_district_trips %></td>
                  <td><%= row.total_trips %></td>
@@ -85,7 +85,7 @@
                          ('%.2f' % row.cost_per_mile) %></td>
                  <td><%= '%.2f' % row.cost_per_hour %></td>
                  <td><%= row.turn_downs %></td>
-                 <td><%= row.undup_riders.size %></td>
+                 <td><%= row.undup_riders %></td>
                  <td><%= row.escort_volunteer_hours %></td>
                  <td><%= row.admin_volunteer_hours %></td>
                  <td><%= row.total_volunteer_hours %></td>

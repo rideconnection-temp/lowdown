@@ -1,37 +1,32 @@
 class NetworkController < ApplicationController
+
   class NetworkReportRow
-    attr_accessor :allocation, :funds, :fares, :agency_other, :vehicle_maint
-    attr_accessor :donations_fares, :in_district_trips, :out_of_district_trips
-    attr_accessor :total_this_period, :total_last_year_period, :mileage
-    attr_accessor :volunteer_hours, :paid_hours, :total_miles, :turn_downs
-    attr_accessor :undup_riders, :escort_volunteer_hours, :admin_volunteer_hours
+    attr_accessor :allocation, :county, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours
 
-    def initialize(trip)
-      @allocation = trip.allocation
+    def numeric_fields
+      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours]
+    end
 
-      @funds = 0
-      @fares = 0
+    def initialize(hash)
 
-      #these will be zero for now, because they do not apply to taxis
-      @agency_other = 0
-      @vehicle_maint = 0
-      @donations_fares = 0
+      if hash.nil?
+        for k in numeric_fields
+          self.instance_variable_set("@#{k}", 0.0)  # create and initialize an instance variable for this field
+        end
+            
+        return #this is a summary row because do not set up anything further
+      end
+        
 
-      @in_district_trips = 0
-      @out_of_district_trips = 0
-      @total_this_period = 0
-      @total_last_year_period = 0
-      @mileage = 0
-      @volunteer_hours = 0
-      @paid_hours = 0
+      for field in numeric_fields
+        hash[field.to_s] = hash[field.to_s].to_f
+      end
 
-      @total_miles = 0
+      hash.each do |k,v|
+        self.instance_variable_set("@#{k}", v)  # create and initialize an instance variable for this key/value pair
+      end
 
-      @turn_downs = 0
-      @undup_riders = Set.new
-      @runs = Set.new
-      @escort_volunteer_hours = 0
-      @admin_volunteer_hours = 0
+      self.allocation = Allocation.find(@allocation_id)
     end
 
     def county
@@ -43,7 +38,15 @@ class NetworkController < ApplicationController
     end
 
     def total_hours
-      return @paid_hours + @volunteer_hours
+      return paid_hours + total_volunteer_hours
+    end
+
+    def total_volunteer_hours
+      return escort_volunteer_hours + admin_volunteer_hours
+    end
+
+    def total_trips
+      return @in_district_trips + @out_of_district_trips
     end
 
     def cost_per_hour
@@ -62,42 +65,7 @@ class NetworkController < ApplicationController
       return cpm
     end
 
-    def total_trips
-      return @in_district_trips + @out_of_district_trips
-    end
-
-    def total_volunteer_hours
-      return @escort_volunteer_hours + @admin_volunteer_hours
-    end
-
-    def include(trip)
-      @funds += trip.fare
-      @fares += trip.customer_pay
-
-      @in_district_trips += trip.in_trimet_district ? 1 : 0
-      @out_of_district_trips += trip.in_trimet_district ? 0 : 1
-
-      @mileage += trip.odometer_end - trip.odometer_start
-
-      @paid_hours += (trip.end_at - trip.start_at) / 3600.0
-
-      @turn_downs += trip.result_code == "TD" ? 1 : 0
-      @undup_riders << trip.customer_id
-
-      run = trip.run
-      if run != nil
-        if ! @runs.include?(run)
-          @runs << run
-          if run.odometer_end != nil && (trip.odometer_end = 0 || trip.odometer_end == nil)
-            @mileage += run.odometer_end - run.odometer_start
-          end
-        end
-        @escort_volunteer_hours += run.escort_count * (trip.end_at - trip.start_at) / 3600.0
-      end
-      # @admin_volunteer_hours += ???
-    end
-
-    def includeRow(row)
+    def include_row(row)
       @funds += row.funds
       @fares += row.fares
 
@@ -116,42 +84,61 @@ class NetworkController < ApplicationController
     end
 
   end
+
   def index
-    #we want to do our work of ordering things here.
-    #what we have is a list of counties, each of which
-    #has a list of providers, each with a looooong summary row
 
+    #this SQL is for trips which are accounted by trip rather than by run
 
-    #so, these could actually be, for trips, complex
-    #aggregate queries, but we may choose not to do this
-    #because it's faster to do it in Ruby.  We'll try it in
-    #ruby then we'll try more advanced nonsense
+    #totals grouped by county, provider
+    #totals grouped by county
+    fields = "
+allocations.county, 
+allocations.provider_id, 
+sum(trips.fare) as funds, 
+sum(trips.customer_pay) as fares, 
+sum(trips.odometer_end - trips.odometer_start) as mileage, 
+sum(trips.duration) as paid_hours,
+sum(case when trips.in_trimet_district=true then 1 else 0 end) as in_district_trips,
+sum(case when trips.in_trimet_district=false then 1 else 0 end) as out_of_district_trips,
+count(*) as total_trips,
+sum(case when trips.result_code='TD' then 1 else 0 end) as turn_downs,
+count(distinct customer_id) as undup_riders,
+0 as agency_other,
+0 as vehicle_maint,
+0 as donations_fares,
+0 as driver_volunteer_hours,
+sum(runs.escort_count * trips.duration) as escort_volunteer_hours,
+0 as admin_volunteer_hours,
+max(allocation_id) as allocation_id
+"
+    sql = "select 
+#{fields}
+from trips
+inner join allocations on allocations.id = trips.allocation_id inner join runs on runs.id = trips.run_id 
+group by allocations.county, allocations.provider_id
+"
 
-    #let's say we're ordered by county, then provider
+    results = ActiveRecord::Base.connection.select_all(sql)
 
-    trips = Trip.current_versions.includes(:allocation, :run).joins(:allocation).order("allocations.county, trips.allocation_id")
-
-    #now, split up trips into groups
+    #now, split up rows into groups
     counties = []
-    for trip in trips
-      allocation = trip.allocation
-      if counties.empty? or allocation.county != counties[-1][-1].allocation.county
+    for result in results
+      result = NetworkReportRow.new(result)
+
+      if counties.empty? or result.allocation.county != counties[-1][-1].allocation.county
         counties << []
       end
       cur_county = counties[-1]
-      if cur_county.empty? or trip.allocation != cur_county[-1].allocation
-        cur_county << NetworkReportRow.new(trip)
-      end
-      cur_county[-1].include(trip)
+      cur_county << result
     end
 
     @counties = counties
   end
 
   def sum(rows)
-    out = NetworkReportRow.new(rows[0])
+    out = NetworkReportRow.new(nil)
     rows.each do |row|
-      out.includeRow(row)
+      out.include_row(row)
     end
     return out
   end
