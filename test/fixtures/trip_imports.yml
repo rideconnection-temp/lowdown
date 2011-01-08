@@ -1,7 +1,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  date: 2010-11-22
+  file_path: /home/example/i1.csv
 
 two:
-  date: 2010-11-22
+  file_path: /home/example/i2.csv

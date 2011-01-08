@@ -86,7 +86,8 @@ class TripsController < ApplicationController
       redirect_to :action=>:show_import and return
     end
     file = params['file-import'].tempfile
-    processed = TripImport.import_file(file)
+    processed = TripImport.new(:file_path=>file)
+    processed.save
 
     flash[:notice] = "Import complete - #{processed} records processed.</div>"
     render 'show_import'
