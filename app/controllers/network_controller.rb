@@ -1,36 +1,32 @@
 class NetworkController < ApplicationController
 
   class NetworkReportRow
-    attr_accessor :allocation, :county, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours
+    attr_accessor :allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours
 
     def numeric_fields
-      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours]
+      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours]
     end
 
     def initialize(hash)
 
       if hash.nil?
         for k in numeric_fields
-          self.instance_variable_set("@#{k}", 0.0)  # create and initialize an instance variable for this field
+          self.instance_variable_set("@#{k}", 0.0)
         end
-            
-        return #this is a summary row because do not set up anything further
+
+        @undup_riders = Set.new
+        return #because this is a summary row, do not set up anything further
       end
-        
 
       for field in numeric_fields
         hash[field.to_s] = hash[field.to_s].to_f
       end
 
       hash.each do |k,v|
-        self.instance_variable_set("@#{k}", v)  # create and initialize an instance variable for this key/value pair
+        self.instance_variable_set("@#{k}", v)
       end
 
       self.allocation = Allocation.find(@allocation_id)
-    end
-
-    def county
-      return @allocation.county
     end
 
     def total
@@ -80,9 +76,31 @@ class NetworkController < ApplicationController
       @undup_riders += row.undup_riders
 
       @escort_volunteer_hours += row.escort_volunteer_hours
-      # @admin_volunteer_hours += ???
     end
 
+  end
+
+  def group(groups, records)
+    out = {}
+    last_group = groups[-1]
+
+    for record in records
+      cur_group = out
+      for group in groups
+        if group == last_group
+          if !cur_group.member? record[group]
+            cur_group[record[group]] = []
+          end
+        else
+          if ! cur_group.member? record[group]
+            cur_group[record[group]] = {}
+          end
+        end
+        cur_group = cur_group[record[group]]
+      end
+      cur_group << record
+    end
+    return out
   end
 
   def index
@@ -91,9 +109,13 @@ class NetworkController < ApplicationController
 
     #totals grouped by county, provider
     #totals grouped by county
+
+    groups = "allocations.county, allocations.provider_id"
+    group_fields = ['county', 'provider_id']
+
     fields = "
-allocations.county, 
-allocations.provider_id, 
+allocations.county as county, 
+allocations.provider_id as provider_id, 
 sum(trips.fare) as funds, 
 sum(trips.customer_pay) as fares, 
 sum(trips.odometer_end - trips.odometer_start) as mileage, 
@@ -102,7 +124,6 @@ sum(case when trips.in_trimet_district=true then 1 else 0 end) as in_district_tr
 sum(case when trips.in_trimet_district=false then 1 else 0 end) as out_of_district_trips,
 count(*) as total_trips,
 sum(case when trips.result_code='TD' then 1 else 0 end) as turn_downs,
-count(distinct customer_id) as undup_riders,
 0 as agency_other,
 0 as vehicle_maint,
 0 as donations_fares,
@@ -115,24 +136,49 @@ max(allocation_id) as allocation_id
 #{fields}
 from trips
 inner join allocations on allocations.id = trips.allocation_id inner join runs on runs.id = trips.run_id 
-group by allocations.county, allocations.provider_id
+group by #{groups}
 "
+
+    distinct_riders_sql = "select distinct customer_id, #{groups} from trips
+inner join allocations on allocations.id = trips.allocation_id
+group by #{groups}, customer_id"
+
+    distinct_riders_results = group(group_fields, ActiveRecord::Base.connection.select_all(distinct_riders_sql))
 
     results = ActiveRecord::Base.connection.select_all(sql)
 
-    #now, split up rows into groups
-    counties = []
-    for result in results
-      result = NetworkReportRow.new(result)
+    results = group(group_fields, results)
 
-      if counties.empty? or result.allocation.county != counties[-1][-1].allocation.county
-        counties << []
-      end
-      cur_county = counties[-1]
-      cur_county << result
+    apply_to_leaves! group_fields, results do | result |
+      result = NetworkReportRow.new(result[0])
+      undup_riders = get_by_key group_fields, distinct_riders_results, result
+      result.undup_riders = Set.new undup_riders
+      result
     end
 
-    @counties = counties
+    @counties = results
+  end
+
+  # Apply the specified block to the leaves of a nested hash (leaves
+  # are defined as elements group_fields.size deep, so that hashes
+  # can be leaves)
+  def apply_to_leaves!(group_fields, group, &block) 
+    if group_fields.empty?
+      return block.call group
+    else
+      group.each do |k, v|
+        group[k] = apply_to_leaves! group_fields[1..-1], v, &block
+      end
+      return group
+    end
+  end
+
+  def get_by_key(groups, hash, keysrc)
+    for group in groups
+      val = keysrc.instance_variable_get "@#{group}"
+      hash = hash[val]
+    end
+    return hash
   end
 
   def sum(rows)

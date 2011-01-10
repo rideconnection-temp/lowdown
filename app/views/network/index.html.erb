@@ -32,11 +32,13 @@
              </tr>
            </thead>
            <tbody>
-             <% @counties.each do |county| %>
-               <% county.each_with_index do |row, index| %>
+             <% @counties.each do |county_name, providers| %>
+               <% first = true %>
+               <% providers.each do |provider_name, row| %>
                <tr>
-                 <% if index == 0 %>
-                   <th rowspan="<%= county.size + 1 %>"><span><%= row.county %></span></th>
+                 <% if first %>
+                   <% first = false %>
+                   <th rowspan="<%= providers.size + 1 %>"><span><%= row.county %></span></th>
                  <% end %>
                  <td><%= row.allocation.name %></td>
                  <td><%= '%.2f' % row.funds %></td>
@@ -56,14 +58,14 @@
                  <td><%= '%.2f' % row.cost_per_mile %></td>
                  <td><%= '%.2f' % row.cost_per_hour %></td>
                  <td><%= row.turn_downs %></td>
-                 <td><%= row.undup_riders %></td>
+                 <td><%= row.undup_riders.size %></td>
                  <td><%= row.escort_volunteer_hours %></td>
                  <td><%= row.admin_volunteer_hours %></td>
                  <td><%= row.total_volunteer_hours %></td>
                </tr>
                <% end %>
                <!-- totals -->
-               <% row = controller.sum(county) %>
+               <% row = controller.sum(providers.values) %>
                <tr class="totals">
                  <td>Totals</td>
                  <td><%= '%.2f' % row.funds %></td>
@@ -85,7 +87,7 @@
                          ('%.2f' % row.cost_per_mile) %></td>
                  <td><%= '%.2f' % row.cost_per_hour %></td>
                  <td><%= row.turn_downs %></td>
-                 <td><%= row.undup_riders %></td>
+                 <td><%= row.undup_riders.size %></td>
                  <td><%= row.escort_volunteer_hours %></td>
                  <td><%= row.admin_volunteer_hours %></td>
                  <td><%= row.total_volunteer_hours %></td>
