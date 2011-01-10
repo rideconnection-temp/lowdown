@@ -21,6 +21,8 @@ class TripsControllerTest < ActionController::TestCase
 
     assert page.find('//h2[@id="result-count"]').text =~ /0 trips/
 
+    select('2010', :from => 'query[start_date(1i)]')
+    select('2010', :from => 'query[end_date(1i)]')
     select('September', :from => 'query[start_date(2i)]')
     select('September', :from => 'query[end_date(2i)]')
     select('1', :from => 'query[start_date(3i)]')

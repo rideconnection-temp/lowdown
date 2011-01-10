@@ -2,6 +2,7 @@ allocation_for_pacificab:
   id: 1
   name: "SPD - Pacificab" 
   provider_id: 1
+  project_id: 1
   county: "Washington"
   routematch_override: "SPD::1 Default"
   routematch_provider_code: "PC"
