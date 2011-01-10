@@ -37,6 +37,7 @@ class CSV
 end
 
 class TripImport < ActiveRecord::Base
+  attr_accessor :record_count
   has_many :trips
   has_many :runs
 
@@ -71,12 +72,12 @@ private
     provider_map = {}
     allocation_map = {}
     run_map = {}
-    record_count = 0
+    @record_count = 0
 
     ActiveRecord::Base.transaction do
       CSV.foreach(file_path, headers: headers, converters: :all) do |record|
         
-        record_count += 1
+        @record_count += 1
 
         next if record[:routematch_customer_id].nil?
 
@@ -260,7 +261,7 @@ private
     address_map = nil
     customer_map = nil
     run_map = nil
-    puts "Imported #{record_count} records"
+    puts "Imported #{@record_count} records"
   end
 
   def apportion_imported_shared_rides

@@ -89,7 +89,7 @@ class TripsController < ApplicationController
     processed = TripImport.new(:file_path=>file)
     processed.save
 
-    flash[:notice] = "Import complete - #{processed} records processed.</div>"
+    flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
     render 'show_import'
   end
 
