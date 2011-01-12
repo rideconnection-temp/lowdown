@@ -1,4 +1,8 @@
          <h1>Network Service Summary</h1>
+
+	 Start: <%= @start_date %><br/>
+	 End: <%= @end_date %>
+
          <table id="grouped-results">
            <thead>
              <tr>
@@ -49,7 +53,7 @@
                  <td><%= row.in_district_trips %></td>
                  <td><%= row.out_of_district_trips %></td>
                  <td><%= row.total_trips %></td>
-                 <td>Total this Period Last Year</td>
+                 <td><%= row.total_last_year %></td>
                  <td><%= row.mileage %></td>
                  <td><%= '%.2f' % row.driver_volunteer_hours %></td>
                  <td><%= '%.2f' % row.paid_hours %></td>
@@ -76,7 +80,7 @@
                  <td><%= row.in_district_trips %></td>
                  <td><%= row.out_of_district_trips %></td>
                  <td><%= row.total_trips %></td>
-                 <td>Total this Period Last Year</td>
+                 <td><%= '%.2f' % row.total_last_year %></td>
                  <td><%= row.mileage %></td>
                  <td><%= '%.2f' % row.volunteer_hours %></td>
                  <td><%= '%.2f' % row.paid_hours %></td>

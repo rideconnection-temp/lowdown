@@ -14,6 +14,9 @@ class Query
     if params
       if params["start_date(1i)"]
         @start_date = convert_date(params, :start_date)
+      else
+        @end_date = Date.today
+        @start_date = @end_date - 14
       end
       if params["end_date(1i)"]
         @end_date = convert_date(params, :end_date)
@@ -30,14 +33,17 @@ class Query
 
 end
 
+def bind(args)
+  return ActiveRecord::Base.__send__(:sanitize_sql_for_conditions, args, '')
+end
 
 class NetworkController < ApplicationController
 
   class NetworkReportRow
-    attr_accessor :allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours
+    attr_accessor :allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year
 
     def numeric_fields
-      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours]
+      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year]
     end
 
     def initialize(hash)
@@ -98,6 +104,8 @@ class NetworkController < ApplicationController
       @funds += row.funds
       @fares += row.fares
 
+      @total_last_year += row.total_last_year
+
       @in_district_trips += row.in_district_trips
       @out_of_district_trips += row.out_of_district_trips
 
@@ -151,17 +159,26 @@ class NetworkController < ApplicationController
     groups = "allocations.county,allocations.provider_id"
     group_fields = ['county', 'provider_id']
 
-    do_report(groups, group_fields)
+    #past two weeks
+    end_date = Date.today
+    start_date = end_date - 14 
+    do_report(groups, group_fields, start_date, end_date)
     render 'report'
   end
 
   def report
-    group_fields = params['group_by']
+    query = Query.new(params[:query])
+    group_fields = query.group_by
+
+    if group_fields.nil?
+      return redirect_to :action=>:show_create_report
+    end
+
     groups = @@group_mappings[group_fields]
 
     group_fields = group_fields.split(",")
 
-    do_report(groups, group_fields)
+    do_report(groups, group_fields, query.start_date, query.end_date)
   end
 
 
@@ -169,11 +186,16 @@ class NetworkController < ApplicationController
     @query = Query.new(nil)
   end
 
-  def do_report(groups, group_fields)
+  def do_report(groups, group_fields, start_date, end_date)
+    group_select = []
+    for group,field in groups.split(",").zip group_fields
+      group_select << "#{group} as #{field}"
+    end
+
+    group_select = group_select.join(",")
 
     fields = "
-allocations.county as county, 
-allocations.provider_id as provider_id, 
+#{group_select},
 sum(trips.fare) as funds, 
 sum(trips.customer_pay) as fares, 
 sum(trips.odometer_end - trips.odometer_start) as mileage, 
@@ -196,28 +218,64 @@ from trips
 inner join allocations on allocations.id = trips.allocation_id 
 inner join runs on runs.id = trips.run_id 
 inner join projects on allocations.project_id = projects.id 
+where 
+trips.date between ? and ?
 group by #{groups}
 "
 
-    distinct_riders_sql = "select distinct customer_id, #{groups} from trips
+    distinct_riders_sql = "select distinct customer_id, 
+#{group_select}
+from trips
 inner join allocations on allocations.id = trips.allocation_id
 inner join projects on allocations.project_id = projects.id 
+where 
+trips.date between ? and ?
 group by #{groups}, customer_id"
 
-    distinct_riders_results = group(group_fields, ActiveRecord::Base.connection.select_all(distinct_riders_sql))
+    last_year_sql = "
+select 
+#{group_select},
+sum(trips.fare) + sum(trips.customer_pay) as total 
+from trips
+inner join allocations on allocations.id = trips.allocation_id 
+inner join runs on runs.id = trips.run_id 
+inner join projects on allocations.project_id = projects.id 
+where 
+trips.date between ? and ?
+group by #{groups}
+"
 
-    results = ActiveRecord::Base.connection.select_all(sql)
-
+    results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date]))
     results = group(group_fields, results)
 
+    distinct_riders_results = ActiveRecord::Base.connection.select_all(bind([distinct_riders_sql, start_date, end_date]))
+    distinct_riders_results = group(group_fields, distinct_riders_results)
+
+    last_year_results = ActiveRecord::Base.connection.select_all(bind([last_year_sql, start_date.prev_year, end_date.prev_year]))
+    last_year_results = group(group_fields, last_year_results)
+
+
+    #apply the distinct riders and total last year to each group of trips
     apply_to_leaves! group_fields, results do | result |
       result = NetworkReportRow.new(result[0])
       undup_riders = get_by_key group_fields, distinct_riders_results, result
-      result.undup_riders = Set.new undup_riders
+
+      result.undup_riders = Set.new undup_riders.map do |rider| 
+        rider['customer_id']
+      end
+
+      row = get_by_key group_fields, last_year_results, result
+      if row
+        result.total_last_year = row[0]['total'].to_f
+      else
+        result.total_last_year = 0
+      end
       result
     end
 
     @counties = results
+    @start_date = start_date
+    @end_date = end_date
   end
 
   # Apply the specified block to the leaves of a nested hash (leaves
@@ -235,8 +293,12 @@ group by #{groups}, customer_id"
   end
 
   def get_by_key(groups, hash, keysrc)
+    print "get by key", groups," in ", keysrc.county, "\n", keysrc.provider_id, "\n"
     for group in groups
       val = keysrc.instance_variable_get "@#{group}"
+      if hash.nil? 
+        return nil
+      end
       hash = hash[val]
     end
     return hash
