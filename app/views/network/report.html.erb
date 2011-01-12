@@ -1,0 +1,106 @@
+         <h1>Network Service Summary</h1>
+         <table id="grouped-results">
+           <thead>
+             <tr>
+               <th rowspan="2"></th>
+               <th rowspan="2">Name</th>
+               <th rowspan="2">Funds</th>
+               <th rowspan="2">Agency Other</th>
+               <th rowspan="2">Vechicle Maint.</th>
+               <th rowspan="2">Donations	Fares</th>
+               <th rowspan="2">Total</th>
+               <th rowspan="2">In District Rides</th>
+               <th rowspan="2">Out of District Rides</th>
+               <th rowspan="2">Total this Period</th>
+               <th rowspan="2">Total this Period Last Year</th>
+               <th rowspan="2">Mileage</th>
+               <th colspan="3">Driver Hours</th>
+               <th rowspan="2">Cost/Trip</th>
+               <th rowspan="2">Cost/Mile</th>
+               <th rowspan="2">Cost/Hour</th>
+               <th rowspan="2">Turn Downs</th>
+               <th rowspan="2">Undup Riders</th>
+               <th colspan="3">Volunteer Hours</th>
+             </tr>
+             <tr>
+               <th>Volunteer</th>
+               <th>Paid</th>
+               <th>Total</th>
+               <th>Escort</th>
+               <th>Admin</th>
+               <th>Total</th>
+             </tr>
+           </thead>
+           <tbody>
+             <% @counties.each do |county_name, providers| %>
+               <% first = true %>
+               <% providers.each do |provider_name, row| %>
+               <tr>
+                 <% if first %>
+                   <% first = false %>
+                   <th rowspan="<%= providers.size + 1 %>"><span><%= row.county %></span></th>
+                 <% end %>
+                 <td><%= row.allocation.name %></td>
+                 <td><%= '%.2f' % row.funds %></td>
+                 <td><%= '%.2f' % row.agency_other %></td>
+                 <td><%= '%.2f' % row.vehicle_maint %></td>
+                 <td><%= '%.2f' % row.donations_fares %></td>
+                 <td><%= '%.2f' % row.total %></td>
+                 <td><%= row.in_district_trips %></td>
+                 <td><%= row.out_of_district_trips %></td>
+                 <td><%= row.total_trips %></td>
+                 <td>Total this Period Last Year</td>
+                 <td><%= row.mileage %></td>
+                 <td><%= '%.2f' % row.driver_volunteer_hours %></td>
+                 <td><%= '%.2f' % row.paid_hours %></td>
+                 <td><%= '%.2f' % row.total_hours %></td>
+                 <td><%= '%.2f' % row.cost_per_trip %></td>
+                 <td><%= '%.2f' % row.cost_per_mile %></td>
+                 <td><%= '%.2f' % row.cost_per_hour %></td>
+                 <td><%= row.turn_downs %></td>
+                 <td><%= row.undup_riders.size %></td>
+                 <td><%= row.escort_volunteer_hours %></td>
+                 <td><%= row.admin_volunteer_hours %></td>
+                 <td><%= row.total_volunteer_hours %></td>
+               </tr>
+               <% end %>
+               <!-- totals -->
+               <% row = controller.sum(providers.values) %>
+               <tr class="totals">
+                 <td>Totals</td>
+                 <td><%= '%.2f' % row.funds %></td>
+                 <td><%= '%.2f' % row.agency_other %></td>
+                 <td><%= '%.2f' % row.vehicle_maint %></td>
+                 <td><%= '%.2f' % row.donations_fares %></td>
+                 <td><%= '%.2f' % row.total %></td>
+                 <td><%= row.in_district_trips %></td>
+                 <td><%= row.out_of_district_trips %></td>
+                 <td><%= row.total_trips %></td>
+                 <td>Total this Period Last Year</td>
+                 <td><%= row.mileage %></td>
+                 <td><%= '%.2f' % row.volunteer_hours %></td>
+                 <td><%= '%.2f' % row.paid_hours %></td>
+                 <td><%= '%.2f' % row.total_hours %></td>
+                 <td><%= '%.2f' % row.cost_per_trip %></td>
+                 <td><%= row.cost_per_mile == -1 ? 
+                         row.cost_per_mile :
+                         ('%.2f' % row.cost_per_mile) %></td>
+                 <td><%= '%.2f' % row.cost_per_hour %></td>
+                 <td><%= row.turn_downs %></td>
+                 <td><%= row.undup_riders.size %></td>
+                 <td><%= row.escort_volunteer_hours %></td>
+                 <td><%= row.admin_volunteer_hours %></td>
+                 <td><%= row.total_volunteer_hours %></td>
+               </tr>
+             <% end %>
+           </tbody>
+         </table>
+
+<!--[if !IE]><!-->
+  <script>
+  //<![CDATA[
+  $('#grouped-results tbody tr th:first-child').height($('#grouped-results tbody tr th:first-child span').width() * 2).width(15);
+  $('#grouped-results tbody tr th:first-child span').width(25);
+  //]]>
+  </script>
+<!--<![endif]-->
