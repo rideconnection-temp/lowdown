@@ -1,3 +1,36 @@
+class Query
+  extend ActiveModel::Naming
+  include ActiveModel::Conversion
+
+  attr_accessor :start_date
+  attr_accessor :end_date
+  attr_accessor :group_by
+
+  def convert_date(obj, base)
+    return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
+  end
+
+  def initialize(params)
+    if params
+      if params["start_date(1i)"]
+        @start_date = convert_date(params, :start_date)
+      end
+      if params["end_date(1i)"]
+        @end_date = convert_date(params, :end_date)
+      end
+      if params[:group_by]
+        @group_by = params[:group_by]
+      end
+    end
+  end
+
+  def persisted?
+    false
+  end
+
+end
+
+
 class NetworkController < ApplicationController
 
   class NetworkReportRow
@@ -80,6 +113,13 @@ class NetworkController < ApplicationController
 
   end
 
+  @@group_mappings = {
+
+"county,provider_id" => "allocations.county, allocations.provider_id", 
+"funding_source,county,provider,project_name" => "projects.funding_source, allocations.county, allocations.provider_id, projects.name"
+  }
+
+  # group a set of records by a list of fields
   def group(groups, records)
     out = {}
     last_group = groups[-1]
@@ -105,13 +145,31 @@ class NetworkController < ApplicationController
 
   def index
 
+    #network service summary
+
     #this SQL is for trips which are accounted by trip rather than by run
-
-    #totals grouped by county, provider
-    #totals grouped by county
-
-    groups = "allocations.county, allocations.provider_id"
+    groups = "allocations.county,allocations.provider_id"
     group_fields = ['county', 'provider_id']
+
+    do_report(groups, group_fields)
+    render 'report'
+  end
+
+  def report
+    group_fields = params['group_by']
+    groups = @@group_mappings[group_fields]
+
+    group_fields = group_fields.split(",")
+
+    do_report(groups, group_fields)
+  end
+
+
+  def show_create_report
+    @query = Query.new(nil)
+  end
+
+  def do_report(groups, group_fields)
 
     fields = "
 allocations.county as county, 
@@ -135,12 +193,15 @@ max(allocation_id) as allocation_id
     sql = "select 
 #{fields}
 from trips
-inner join allocations on allocations.id = trips.allocation_id inner join runs on runs.id = trips.run_id 
+inner join allocations on allocations.id = trips.allocation_id 
+inner join runs on runs.id = trips.run_id 
+inner join projects on allocations.project_id = projects.id 
 group by #{groups}
 "
 
     distinct_riders_sql = "select distinct customer_id, #{groups} from trips
 inner join allocations on allocations.id = trips.allocation_id
+inner join projects on allocations.project_id = projects.id 
 group by #{groups}, customer_id"
 
     distinct_riders_results = group(group_fields, ActiveRecord::Base.connection.select_all(distinct_riders_sql))

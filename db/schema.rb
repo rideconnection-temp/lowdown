@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(:version => 20110104212903) do
     t.datetime "end_at"
     t.integer  "odometer_start"
     t.integer  "odometer_end"
-    t.integer  "escort_count",   :default => 0
+    t.integer  "escort_count"
     t.integer  "trip_import_id"
   end
 
@@ -172,8 +172,8 @@ ActiveRecord::Schema.define(:version => 20110104212903) do
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
     t.integer  "allocation_id"
-    t.integer  "home_address_id"
     t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
+    t.integer  "home_address_id"
     t.integer  "duration"
     t.decimal  "mileage",                                        :precision => 6,  :scale => 1
     t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
