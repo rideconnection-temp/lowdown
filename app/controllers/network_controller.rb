@@ -124,7 +124,12 @@ class NetworkController < ApplicationController
   @@group_mappings = {
 
 "county,provider_id" => "allocations.county, allocations.provider_id", 
-"funding_source,county,provider,project_name" => "projects.funding_source, allocations.county, allocations.provider_id, projects.name"
+"funding_source,county,provider_id,project_name" => "projects.funding_source, allocations.county, allocations.provider_id, projects.name",
+"funding_source,county,provider_id" => "projects.funding_source, allocations.county, allocations.provider_id",
+"funding_source,provider_id" => "projects.funding_source, allocations.provider_id",
+"name,provider_id" => "projects.name, allocations.provider_id",
+"provider_id,county,name" => "allocations.provider_id, allocations.county, projects.name"
+
   }
 
   # group a set of records by a list of fields
@@ -167,23 +172,25 @@ class NetworkController < ApplicationController
   end
 
   def report
-    query = Query.new(params[:query])
+    query = Query.new(params[:q])
     group_fields = query.group_by
 
     if group_fields.nil?
-      return redirect_to :action=>:show_create_report
+      return render 'show_create_report'
     end
 
     groups = @@group_mappings[group_fields]
 
     group_fields = group_fields.split(",")
 
+    print "\nHERE, ", groups, "\n", group_fields, "\n\n"
+
     do_report(groups, group_fields, query.start_date, query.end_date)
   end
 
 
   def show_create_report
-    @query = Query.new(nil)
+    @query = Query.new(params[:q])
   end
 
   def do_report(groups, group_fields, start_date, end_date)

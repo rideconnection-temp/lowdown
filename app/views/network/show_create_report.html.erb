@@ -41,7 +41,7 @@
     <div id="main">
       <div class="wrap selfclear">
         <h1>Create Report</h1>
-        <%= form_for @query, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"report"} do |f| %>
+        <%= form_for @query, :as => :q, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"report"} do |f| %>
           <div class="ui-widget">
              Report on
              <span id="report-category-wrap">
@@ -64,34 +64,34 @@
               <fieldset class="selfclear">
                 <!-- PLEASE NOTE: These fields are currently in the order they appear on the report. We may decide to present them in some other order (like alphabetical), but the current approach isn't random -->
                 <div class="fourcol">
-                  <input type="checkbox" checked name="field" value="name" /><label for="name">Name</label><br />
-                  <input type="checkbox" checked name="field" value="funds" /><label for="name">Funds</label><br />
-                  <input type="checkbox" checked name="field" value="agency_other" /><label for="name">Agency Other</label><br />
-                  <input type="checkbox" checked name="field" value="vehicle_maint" /><label for="name">Vechicle Maint.</label><br />
-                  <input type="checkbox" checked name="field" value="donations_fares" /><label for="name">Donations Fares</label><br />
-                  <input type="checkbox" checked name="field" value="total" /><label for="name">Total</label>
+                  <input type="checkbox" checked name="q[f[]]" value="name" /><label for="name">Name</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="funds" /><label for="name">Funds</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="agency_other" /><label for="name">Agency Other</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="vehicle_maint" /><label for="name">Vechicle Maint.</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="donations_fares" /><label for="name">Donations Fares</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="total" /><label for="name">Total</label>
                 </div>
                 <div class="fourcol">
-                  <input type="checkbox" checked name="field" value="in_district_trips" /><label for="name">In District Rides</label><br />
-                  <input type="checkbox" checked name="field" value="out_of_district_trips" /><label for="name">Out of District Rides</label><br />
-                  <input type="checkbox" checked name="field" value="total_this_period" /><label for="name">Total this Period</label><br />
-                  <input type="checkbox" checked name="field" value="total_this_period_last_year" /><label for="name">Total this Period Last Year</label><br />
-                  <input type="checkbox" checked name="field" value="mileage" /><label for="name">Mileage</label><br />
-                  <input type="checkbox" checked name="field" value="volunteer_hours" /><label for="name">Volunteer Hours</label>
+                  <input type="checkbox" checked name="q[f[]]" value="in_district_trips" /><label for="name">In District Rides</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="out_of_district_trips" /><label for="name">Out of District Rides</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="total_this_period" /><label for="name">Total this Period</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="total_this_period_last_year" /><label for="name">Total this Period Last Year</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="mileage" /><label for="name">Mileage</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="volunteer_hours" /><label for="name">Volunteer Hours</label>
                 </div>
                 <div class="fourcol">
-                  <input type="checkbox" checked name="field" value="paid_hours" /><label for="name">Paid Hours</label><br />
-                  <input type="checkbox" checked name="field" value="total_hours" /><label for="name">Total Hours</label><br />
-                  <input type="checkbox" checked name="field" value="cost_per_trip" /><label for="name">Cost/Trip</label><br />
-                  <input type="checkbox" checked name="field" value="cost_per_mile" /><label for="name">Cost/Mile</label><br />
-                  <input type="checkbox" checked name="field" value="cost_per_hour" /><label for="name">Cost/Hour</label>
+                  <input type="checkbox" checked name="q[f[]]" value="paid_hours" /><label for="name">Paid Hours</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="total_hours" /><label for="name">Total Hours</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="cost_per_trip" /><label for="name">Cost/Trip</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="cost_per_mile" /><label for="name">Cost/Mile</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="cost_per_hour" /><label for="name">Cost/Hour</label>
                 </div>
                 <div class="fourcol">
-                  <input type="checkbox" checked name="field" value="turn_downs" /><label for="name">Turn Downs</label><br />
-                  <input type="checkbox" checked name="field" value="undup_riders" /><label for="name">Undup Riders</label><br />
-                  <input type="checkbox" checked name="field" value="escort_hours" /><label for="name">Escort Hours</label><br />
-                  <input type="checkbox" checked name="field" value="admin_hours" /><label for="name">Admin Hours</label><br />
-                  <input type="checkbox" checked name="field" value="total_hours" /><label for="name">Total Hours</label>
+                  <input type="checkbox" checked name="q[f[]]" value="turn_downs" /><label for="name">Turn Downs</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="undup_riders" /><label for="name">Undup Riders</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="escort_hours" /><label for="name">Escort Hours</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="admin_hours" /><label for="name">Admin Hours</label><br />
+                  <input type="checkbox" checked name="q[f[]]" value="total_hours" /><label for="name">Total Hours</label>
                 </div>
               </fieldset>
             </div>
@@ -99,13 +99,13 @@
           <div class="ui-widget">
             <h3>Group By</h3>
             <div class="group-by-wrap">
-              <select id="group-by" name="group_by">
+              <select id="group-by" name="q[group_by]">
                 <option value="county,provider_id">County, Provider</option>
-                <option value="funding_source,county,provider,project_name">Funding Source, County, Provider, Project Name</option>
-                <option value="Funding Source, County, Provider">Funding Source, County, Provider</option>
-                <option value="Funding Source, Provider">Funding Source, Provider</option>
-                <option value="Project Name, Provider">Project Name, Provider</option>
-                <option value="Provider, County, Project Name">Provider, County, Project Name</option>
+                <option value="funding_source,county,provider_id,project_name">Funding Source, County, Provider, Project Name</option>
+                <option value="funding_source,county,provider_id">Funding Source, County, Provider</option>
+                <option value="funding_source,provider_id">Funding Source, Provider</option>
+                <option value="name,provider_id">Project Name, Provider</option>
+                <option value="provider_id,county,name">Provider, County, Project Name</option>
               </select>
             </div>
           </div>
