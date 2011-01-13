@@ -1,0 +1,42 @@
+<%= f.label :provider %> <%= f.collection_select :provider_id, @providers, :id, :name %> <br/>
+<%= f.label :period_start %> <%= f.date_select :period_start %> <br/>
+<%= f.label :period_end %> <%= f.date_select :period_end %> <br/>
+
+<%= f.label :total_miles %> <%= f.text_field :total_miles %> <br/>
+<%= f.label :driver_hours_paid %> <%= f.text_field :driver_hours_paid %> <br/>
+<%= f.label :driver_hours_volunteer %> <%= f.text_field :driver_hours_volunteer %> <br/>
+<%= f.label :escort_hours_volunteer %> <%= f.text_field :escort_hours_volunteer %> <br/>
+<%= f.label :administrative_hours_volunteer %> <%= f.text_field :administrative_hours_volunteer %> <br/>
+<%= f.label :unduplicated_riders %> <%= f.text_field :unduplicated_riders %> <br/>
+<%= f.label :compliments %> <%= f.text_field :compliments %> <br/>
+<%= f.label :complaints %> <%= f.text_field :complaints %> <br/>
+<%= f.label :prepared_by %> <%= f.text_field :prepared_by %> <br/>
+<%= f.label :report_prepared %> <%= f.date_select :report_prepared %> <br/>
+
+ <% f.fields_for :summary_row do |row_form| %>
+
+    <%= row_form.label :purpose %>
+    <%= row_form.text_field :purpose %>
+
+    <%= row_form.label :trips %>
+    <%= row_form.text_field :trips %>
+
+    <%= row_form.label :in_district %>
+    <%= row_form.collection_select :allocation_id, @allocations, :id, :name %>
+
+    <% unless row_form.object.new_record? %>
+      <%= row_form.check_box '_delete' %>
+      <%= row_form.label '_delete', 'Remove' %>
+    <% end %>
+
+  <% end %>
+
+<% for row in @summary.rows %>
+
+
+    t.integer  "summaries_id"
+    t.string   "purpose"
+    t.integer  "trips"
+    t.boolean  "in_district"
+    t.integer  "allocations_id"
+<% end %>

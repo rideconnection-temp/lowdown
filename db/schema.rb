@@ -123,11 +123,11 @@ ActiveRecord::Schema.define(:version => 20110104212903) do
     t.string   "base_id",        :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
-    t.integer  "summaries_id"
+    t.integer  "summary_id"
     t.string   "purpose"
     t.integer  "trips"
     t.boolean  "in_district"
-    t.integer  "allocations_id"
+    t.integer  "allocation_id"
   end
 
   create_table "trip_imports", :force => true do |t|

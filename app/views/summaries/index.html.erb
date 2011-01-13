@@ -1,0 +1,23 @@
+<% for summary in @summaries %>
+
+Summary for <%= summary.provider.name %><br/>
+Start: <%= summary.period_start %><br/>
+End: <%= summary.period_end %>
+<table>
+
+<% for row in summary.summary_rows %>
+<tr>
+<td>
+    t.integer  "summaries_id"
+    t.string   "purpose"
+    t.integer  "trips"
+    t.boolean  "in_district"
+    t.integer  "allocations_id"
+</td>
+</tr>
+
+<% end %>
+
+</table>
+
+<% end %>
