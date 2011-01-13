@@ -183,8 +183,6 @@ class NetworkController < ApplicationController
 
     group_fields = group_fields.split(",")
 
-    print "\nHERE, ", groups, "\n", group_fields, "\n\n"
-
     do_report(groups, group_fields, query.start_date, query.end_date)
   end
 
@@ -280,9 +278,15 @@ group by #{groups}
       result
     end
 
-    @counties = results
+    require 'pp'
+
+    PP::pp results
+
+    @group_fields = group_fields
+    @results = results
     @start_date = start_date
     @end_date = end_date
+    @tr_open = false
   end
 
   # Apply the specified block to the leaves of a nested hash (leaves
@@ -300,7 +304,6 @@ group by #{groups}
   end
 
   def get_by_key(groups, hash, keysrc)
-    print "get by key", groups," in ", keysrc.county, "\n", keysrc.provider_id, "\n"
     for group in groups
       val = keysrc.instance_variable_get "@#{group}"
       if hash.nil? 
@@ -311,12 +314,17 @@ group by #{groups}
     return hash
   end
 
-  def sum(rows)
-    out = NetworkReportRow.new(nil)
-    rows.each do |row|
-      out.include_row(row)
+  def sum(rows, out=nil)
+    if out.nil?
+      out = NetworkReportRow.new(nil)
+    end
+    if rows.instance_of? Hash
+      rows.each do |key, row|
+        sum(row, out)
+      end
+    else
+      out.include_row(rows)
     end
     return out
   end
-
 end

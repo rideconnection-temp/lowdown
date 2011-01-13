@@ -16,4 +16,24 @@ module ApplicationHelper
       ''
     end
   end
+
+  def nested_size(hash)
+    total = 0
+    for k, v in hash
+      if v.instance_of? Hash
+        total += nested_size v
+      else
+        total += 1
+      end
+    end
+    total
+  end
+
+  def get_row(e)
+      if e.instance_of? Hash
+        get_row e.first[1]
+      else
+        e
+      end
+  end
 end
