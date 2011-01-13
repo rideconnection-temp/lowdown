@@ -17,13 +17,13 @@ class SummariesController < ApplicationController
   end
 
   def show_update
-    @sumary = Sumary.find params[:id]
-    @providers = Providers.all
+    @summary = Summary.current_versions.find params[:id]
+    @providers = Provider.all
     @allocations = Allocation.all
   end
 
   def update
-    @summary = Summary.find(params[:id])
+    @summary = Summary.current_versions.find(params[:id])
     @summary.update_attributes(params[:summary]) ?
       redirect_to(:action=>:show_update, :id=>@summary) : render(:action => :show_update)
   end

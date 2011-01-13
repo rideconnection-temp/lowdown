@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110104212903) do
+ActiveRecord::Schema.define(:version => 20110112210700) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(:version => 20110104212903) do
     t.datetime "end_at"
     t.integer  "odometer_start"
     t.integer  "odometer_end"
-    t.integer  "escort_count"
+    t.integer  "escort_count",   :default => 0
     t.integer  "trip_import_id"
   end
 
@@ -119,15 +119,15 @@ ActiveRecord::Schema.define(:version => 20110104212903) do
   end
 
   create_table "summary_rows", :id => false, :force => true do |t|
-    t.string   "id",             :limit => 36, :null => false
-    t.string   "base_id",        :limit => 36
+    t.string   "id",            :limit => 36, :null => false
+    t.string   "base_id",       :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
-    t.integer  "summary_id"
     t.string   "purpose"
     t.integer  "trips"
     t.boolean  "in_district"
     t.integer  "allocation_id"
+    t.integer  "summary_id"
   end
 
   create_table "trip_imports", :force => true do |t|
@@ -172,8 +172,8 @@ ActiveRecord::Schema.define(:version => 20110104212903) do
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
     t.integer  "allocation_id"
-    t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
     t.integer  "home_address_id"
+    t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
     t.integer  "duration"
     t.decimal  "mileage",                                        :precision => 6,  :scale => 1
     t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
