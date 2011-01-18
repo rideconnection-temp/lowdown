@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110112210700) do
+ActiveRecord::Schema.define(:version => 20110118132600) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -99,7 +99,7 @@ ActiveRecord::Schema.define(:version => 20110112210700) do
   end
 
   create_table "summaries", :id => false, :force => true do |t|
-    t.string   "id",                             :limit => 36, :null => false
+    t.string   "id",                             :limit => 36,                                :null => false
     t.string   "base_id",                        :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
@@ -116,6 +116,9 @@ ActiveRecord::Schema.define(:version => 20110112210700) do
     t.integer  "provider_id"
     t.string   "prepared_by"
     t.date     "report_prepared"
+    t.integer  "turn_downs"
+    t.decimal  "agency_other",                                 :precision => 10, :scale => 2
+    t.decimal  "donations",                                    :precision => 10, :scale => 2
   end
 
   create_table "summary_rows", :id => false, :force => true do |t|
@@ -126,8 +129,8 @@ ActiveRecord::Schema.define(:version => 20110112210700) do
     t.string   "purpose"
     t.integer  "trips"
     t.boolean  "in_district"
+    t.string   "summary_id",    :limit => 36
     t.integer  "allocation_id"
-    t.string   "summary_id"
   end
 
   create_table "trip_imports", :force => true do |t|
