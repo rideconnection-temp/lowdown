@@ -53,6 +53,7 @@ private
         :home_address_1, :home_address_2, :home_city, :home_state, :home_postal_code, 
         :home_x_coordinate, :home_y_coordinate, :home_in_trimet_district, 
         :language_preference, :birthdate, :email, :customer_type, :monthly_household_income, :household_size,
+        :spd_case_manager, :spd_office, :spd_date_enrolled, :spd_service_end, :spd_approved_rides,
         :routematch_run_id, :run_name, :run_start_at, :run_end_at, :run_odometer_start, :run_odometer_end,
         :routematch_trip_id, :date, 
         :provider_code, :provider_name, :provider_type, 
