@@ -127,7 +127,7 @@ ActiveRecord::Schema.define(:version => 20110112210700) do
     t.integer  "trips"
     t.boolean  "in_district"
     t.integer  "allocation_id"
-    t.integer  "summary_id"
+    t.string   "summary_id"
   end
 
   create_table "trip_imports", :force => true do |t|
