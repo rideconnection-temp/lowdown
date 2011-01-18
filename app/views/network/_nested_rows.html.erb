@@ -1,0 +1,82 @@
+
+<% first = true %>
+
+<% if group_fields.size > 1 %>
+ <% rows.each do |group_name, row| %>
+    <% if first %>
+      <% first = false %>
+      <% if !@tr_open %>
+        <% @tr_open = true %>
+        <tr>
+      <% end %>
+      <th rowspan="<%= nested_size(rows) + 1 %>">
+	<span><%= get_row(row).instance_variable_get("@#{group_fields[0]}") %></span>
+      </th>
+    <% end %>
+
+    <%= render :partial=>'nested_rows', :locals=>{:rows=>row, :group_fields=>@group_fields[1..-1]} %>
+
+  <% end %>
+
+      <!-- totals -->
+      <% row = controller.sum(rows) %>
+      <!-- you will never be tr_open here -->
+      <tr class="totals">
+        <td>Totals</td>
+        <td><%= '%.2f' % row.funds %></td>
+        <td><%= '%.2f' % row.agency_other %></td>
+        <td><%= '%.2f' % row.vehicle_maint %></td>
+        <td><%= '%.2f' % row.donations_fares %></td>
+        <td><%= '%.2f' % row.total %></td>
+        <td><%= row.in_district_trips %></td>
+        <td><%= row.out_of_district_trips %></td>
+        <td><%= row.total_trips %></td>
+        <td><%= '%.2f' % row.total_last_year %></td>
+        <td><%= row.mileage %></td>
+        <td><%= '%.2f' % row.volunteer_hours %></td>
+        <td><%= '%.2f' % row.paid_hours %></td>
+        <td><%= '%.2f' % row.total_hours %></td>
+        <td><%= '%.2f' % row.cost_per_trip %></td>
+        <td><%= row.cost_per_mile == -1 ? 
+                row.cost_per_mile :
+                ('%.2f' % row.cost_per_mile) %></td>
+        <td><%= '%.2f' % row.cost_per_hour %></td>
+        <td><%= row.turn_downs %></td>
+        <td><%= row.undup_riders.size %></td>
+        <td><%= row.escort_volunteer_hours %></td>
+        <td><%= row.admin_volunteer_hours %></td>
+        <td><%= row.total_volunteer_hours %></td>
+      </tr>
+
+<% else %>
+
+    <% rows.each do |group_name, row| %>
+    <% if !@tr_open %>
+      <tr>
+    <% end %>
+    <td><%= row.allocation.name %></td>
+    <td><%= '%.2f' % row.funds %></td>
+    <td><%= '%.2f' % row.agency_other %></td>
+    <td><%= '%.2f' % row.vehicle_maint %></td>
+    <td><%= '%.2f' % row.donations_fares %></td>
+    <td><%= '%.2f' % row.total %></td>
+    <td><%= row.in_district_trips %></td>
+    <td><%= row.out_of_district_trips %></td>
+    <td><%= row.total_trips %></td>
+    <td><%= row.total_last_year %></td>
+    <td><%= row.mileage %></td>
+    <td><%= '%.2f' % row.driver_volunteer_hours %></td>
+    <td><%= '%.2f' % row.paid_hours %></td>
+    <td><%= '%.2f' % row.total_hours %></td>
+    <td><%= '%.2f' % row.cost_per_trip %></td>
+    <td><%= '%.2f' % row.cost_per_mile %></td>
+    <td><%= '%.2f' % row.cost_per_hour %></td>
+    <td><%= row.turn_downs %></td>
+    <td><%= row.undup_riders.size %></td>
+    <td><%= row.escort_volunteer_hours %></td>
+    <td><%= row.admin_volunteer_hours %></td>
+    <td><%= row.total_volunteer_hours %></td>
+    </tr>
+    <% @tr_open = false %>
+    <% end %>
+<% end %>
