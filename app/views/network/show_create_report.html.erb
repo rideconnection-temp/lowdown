@@ -52,10 +52,12 @@
                	<option value="Tagging Category 3">Tagging Category 3</option>
              	</select>
            	</span>
-           	service between
-	           <span id="startday-wrap"><%= f.date_select :start_date %></span>
-           	and 
-           	<span id="endday-wrap"><%= f.date_select :end_date %></span>
+           	service between the beginning of
+	           <span id="startday-wrap"><%= f.date_select :start_date, :discard_day=>true %></span>
+           	and just before the beginning of
+           	<span id="endday-wrap"><%= f.date_select :end_date, :discard_day=>true %></span>
+
+		
 
           </div>
           <div class="ui-widget">

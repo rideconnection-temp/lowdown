@@ -43,17 +43,16 @@ class NetworkController < ApplicationController
     attr_accessor :allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year
 
     def numeric_fields
-      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year]
+      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders]
     end
 
-    def initialize(hash)
+    def initialize(hash = nil)
 
       if hash.nil?
         for k in numeric_fields
           self.instance_variable_set("@#{k}", 0.0)
         end
 
-        @undup_riders = Set.new
         return #because this is a summary row, do not set up anything further
       end
 
@@ -119,6 +118,163 @@ class NetworkController < ApplicationController
       @escort_volunteer_hours += row.escort_volunteer_hours
     end
 
+    def collect_trips_by_trip(allocation, start_date, end_date)
+
+
+      sql = "select 
+sum(case when in_trimet_district=true then 1 else 0 end) as in_district_trips,
+sum(case when in_trimet_district=false then 1 else 0 end) as out_of_district_trips,
+sum(case when result_code='TD' then 1 else 0 end) as turn_downs,
+count(distinct customer_id) as unduplicated_riders
+from trips
+where 
+date between ? and ?
+and allocation_id = ? "
+
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+
+      result = results[0]
+      @in_district_trips += result['in_district_trips'].to_i
+      @out_of_district_trips += result['out_of_district_trips'].to_i
+      @turn_downs += result['turn_downs'].to_i
+      @undup_riders += result['unduplicated_riders'].to_i
+    end
+
+    def collect_trips_by_summary(allocation, start_date, end_date)
+
+      sql = "select 
+sum(case when in_district=true then trips else 0 end) as in_district_trips,
+sum(case when in_district=false then trips else 0 end) as out_of_district_trips,
+sum(turn_downs),
+sum(unduplicated_riders) as unduplicated_riders
+from summaries 
+inner join summary_rows on summary_rows.summary_id = summaries.id
+where period_start >= ? and period_end < ? and allocation_id=? "
+
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+      result = results[0]
+      @in_district_trips += result['in_district_trips'].to_i
+      @out_of_district_trips += result['out_of_district_trips'].to_i
+      @turn_downs += result['turn_downs'].to_i
+      @undup_riders += result['unduplicated_riders'].to_i 
+    end
+
+    def collect_runs_by_trip(allocation, start_date, end_date)
+
+      sql = "
+select 
+sum(trips.odometer_end - trips.odometer_start) as mileage, 
+sum(duration) as paid_hours,
+sum(case when volunteer_trip=true then duration else 0 end) as driver_volunteer_hours,
+sum(runs.escort_count * duration) as escort_volunteer_hours,
+0 as admin_volunteer_hours,
+max(allocation_id) as allocation_id
+from trips
+inner join runs on trips.run_id = runs.id
+where
+trips.date between ? and ?
+and allocation_id = ? "
+
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+
+      result = results[0]
+      @mileage += result['mileage'].to_f
+      @paid_hours += result['paid_hours'].to_f
+      @driver_volunteer_hours += result['driver_volunteer_hours'].to_f
+      @escort_volunteer_hours += result['escort_volunteer_hours'].to_f
+
+    end
+
+    def collect_runs_by_summary(allocation, start_date, end_date)
+
+      sql = "select
+sum(total_miles) as mileage,
+sum(driver_hours_paid) as paid_hours,
+sum(driver_hours_volunteer) as driver_volunteer_hours,
+sum(escort_hours_volunteer) as escort_volunteer_hours
+from summaries 
+inner join summary_rows on summary_rows.summary_id = summaries.id
+where period_start >= ? and period_end < ? and allocation_id=? "
+
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+
+      result = results[0]
+      @mileage += result['mileage'].to_f
+      @paid_hours += result['paid_hours'].to_f
+      @driver_volunteer_hours += result['driver_volunteer_hours'].to_f
+      @escort_volunteer_hours += result['escort_volunteer_hours'].to_f
+    end
+
+    def collect_costs_by_trip(allocation, start_date, end_date)
+
+      sql = "
+select 
+sum(fare) as funds, 
+sum(customer_pay) as fares, 
+0 as agency_other,
+0 as vehicle_maint,
+0 as donations_fares,
+max(allocation_id) as allocation_id
+from trips
+where
+date between ? and ?
+and allocation_id = ? "
+
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+
+      result = results[0]
+      @funds += result['funds'].to_f
+      @fares += result['fares'].to_f
+      @agency_other += result['agency_other'].to_f
+      @vehicle_maint += result['vehicle_maint'].to_f
+      @donations_fares += result['donations_fares'].to_f
+
+      last_year_sql =  "select
+sum(fare) + sum(customer_pay) as total
+from summaries
+inner join summary_rows on summary_rows.summary_id = summaries.id
+where period_start >= ? and period_end < ? and allocation_id=? "
+
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date.prev_year, end_date.prev_year, allocation['id']]))
+      result = results[0]
+      @total_last_year += result['total'].to_f
+    end
+
+    def collect_costs_by_summary(allocation, start_date, end_date)
+
+#fixme: funds and fares are wrong
+      sql = "select
+123 as funds,
+123 as fares,
+sum(agency_other) as agency_other,
+0 as vehicle_maint,
+sum(donations) as donations_fares
+
+from summaries 
+inner join summary_rows on summary_rows.summary_id = summaries.id
+where period_start >= ? and period_end < ? and allocation_id=? "
+
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+
+      result = results[0]
+      @funds += result['funds'].to_f
+      @fares += result['fares'].to_f
+      @agency_other += result['agency_other'].to_f
+      @vehicle_maint += result['vehicle_maint'].to_f
+      @donations_fares += result['donations_fares'].to_f
+
+
+      last_year_sql =  "select
+456 as total
+from summaries 
+inner join summary_rows on summary_rows.summary_id = summaries.id
+where period_start >= ? and period_end < ? and allocation_id=? "
+
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date.prev_year, end_date.prev_year, allocation['id']]))
+      result = results[0]
+      @total_last_year += result['total'].to_f
+    end
+
   end
 
   @@group_mappings = {
@@ -160,7 +316,6 @@ class NetworkController < ApplicationController
 
     #network service summary
 
-    #this SQL is for trips which are accounted by trip rather than by run
     groups = "allocations.county,allocations.provider_id"
     group_fields = ['county', 'provider_id']
 
@@ -199,91 +354,46 @@ class NetworkController < ApplicationController
 
     group_select = group_select.join(",")
 
-    fields = "
-#{group_select},
-sum(trips.fare) as funds, 
-sum(trips.customer_pay) as fares, 
-sum(trips.odometer_end - trips.odometer_start) as mileage, 
-sum(trips.duration) as paid_hours,
-sum(case when trips.in_trimet_district=true then 1 else 0 end) as in_district_trips,
-sum(case when trips.in_trimet_district=false then 1 else 0 end) as out_of_district_trips,
-count(*) as total_trips,
-sum(case when trips.result_code='TD' then 1 else 0 end) as turn_downs,
-0 as agency_other,
-0 as vehicle_maint,
-0 as donations_fares,
-0 as driver_volunteer_hours,
-sum(runs.escort_count * trips.duration) as escort_volunteer_hours,
-0 as admin_volunteer_hours,
-max(allocation_id) as allocation_id
-"
-    sql = "select 
-#{fields}
-from trips
-inner join allocations on allocations.id = trips.allocation_id 
-inner join runs on runs.id = trips.run_id 
-inner join projects on allocations.project_id = projects.id 
-where 
-trips.date between ? and ?
-group by #{groups}
-"
+    results = Allocation.all
 
-    distinct_riders_sql = "select distinct customer_id, 
-#{group_select}
-from trips
-inner join allocations on allocations.id = trips.allocation_id
-inner join projects on allocations.project_id = projects.id 
-where 
-trips.date between ? and ?
-group by #{groups}, customer_id"
+    allocations = group(group_fields, results)
 
-    last_year_sql = "
-select 
-#{group_select},
-sum(trips.fare) + sum(trips.customer_pay) as total 
-from trips
-inner join allocations on allocations.id = trips.allocation_id 
-inner join runs on runs.id = trips.run_id 
-inner join projects on allocations.project_id = projects.id 
-where 
-trips.date between ? and ?
-group by #{groups}
-"
+    apply_to_leaves! group_fields, allocations do | allocationset |
 
-    results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date]))
-    results = group(group_fields, results)
+      row = NetworkReportRow.new
 
-    distinct_riders_results = ActiveRecord::Base.connection.select_all(bind([distinct_riders_sql, start_date, end_date]))
-    distinct_riders_results = group(group_fields, distinct_riders_results)
+      for allocation in allocationset
+        if allocation['trip_collection_method'] == 'trips'
+          row.collect_trips_by_trip(allocation, start_date, end_date)
+        else
+          row.collect_trips_by_summary(allocation, start_date, end_date)
+        end
 
-    last_year_results = ActiveRecord::Base.connection.select_all(bind([last_year_sql, start_date.prev_year, end_date.prev_year]))
-    last_year_results = group(group_fields, last_year_results)
+        if allocation['run_collection_method'] == 'trips' or allocation['run_collection_method'] == 'runs'
+          row.collect_runs_by_trip(allocation, start_date, end_date)
+        else
+          row.collect_runs_by_summary(allocation, start_date, end_date)
+        end
 
+        if allocation['cost_collection_method'] == 'trips' or allocation['cost_collection_method'] == 'runs'
+          row.collect_costs_by_trip(allocation, start_date, end_date)
+        else
+          row.collect_costs_by_summary(allocation, start_date, end_date)
+        end
 
-    #apply the distinct riders and total last year to each group of trips
-    apply_to_leaves! group_fields, results do | result |
-      result = NetworkReportRow.new(result[0])
-      undup_riders = get_by_key group_fields, distinct_riders_results, result
-
-      result.undup_riders = Set.new undup_riders.map do |rider| 
-        rider['customer_id']
       end
-
-      row = get_by_key group_fields, last_year_results, result
-      if row
-        result.total_last_year = row[0]['total'].to_f
-      else
-        result.total_last_year = 0
-      end
-      result
+      row.allocation = allocationset[0]
+      row.county = allocationset[0].county
+      row.provider_id = allocationset[0].provider_id
+      row
     end
 
     require 'pp'
 
-    PP::pp results
+    PP::pp allocations
 
     @group_fields = group_fields
-    @results = results
+    @results = allocations
     @start_date = start_date
     @end_date = end_date
     @tr_open = false
@@ -316,7 +426,7 @@ group by #{groups}
 
   def sum(rows, out=nil)
     if out.nil?
-      out = NetworkReportRow.new(nil)
+      out = NetworkReportRow.new
     end
     if rows.instance_of? Hash
       rows.each do |key, row|

@@ -1,25 +1,19 @@
 
-<% first = true %>
-
 <% if group_fields.size > 1 %>
  <% rows.each do |group_name, row| %>
-    <% if first %>
-      <% first = false %>
       <% if !@tr_open %>
         <% @tr_open = true %>
         <tr>
       <% end %>
-      <th rowspan="<%= nested_size(rows) + 1 %>">
+      <th rowspan="<%= nested_size(row) + 1 %>">
 	<span><%= get_row(row).instance_variable_get("@#{group_fields[0]}") %></span>
       </th>
-    <% end %>
+
 
     <%= render :partial=>'nested_rows', :locals=>{:rows=>row, :group_fields=>@group_fields[1..-1]} %>
 
-  <% end %>
-
       <!-- totals -->
-      <% row = controller.sum(rows) %>
+      <% row = controller.sum(row) %>
       <!-- you will never be tr_open here -->
       <tr class="totals">
         <td>Totals</td>
@@ -42,12 +36,12 @@
                 ('%.2f' % row.cost_per_mile) %></td>
         <td><%= '%.2f' % row.cost_per_hour %></td>
         <td><%= row.turn_downs %></td>
-        <td><%= row.undup_riders.size %></td>
+        <td><%= row.undup_riders %></td>
         <td><%= row.escort_volunteer_hours %></td>
         <td><%= row.admin_volunteer_hours %></td>
         <td><%= row.total_volunteer_hours %></td>
       </tr>
-
+  <% end %>
 <% else %>
 
     <% rows.each do |group_name, row| %>
@@ -72,7 +66,7 @@
     <td><%= '%.2f' % row.cost_per_mile %></td>
     <td><%= '%.2f' % row.cost_per_hour %></td>
     <td><%= row.turn_downs %></td>
-    <td><%= row.undup_riders.size %></td>
+    <td><%= row.undup_riders %></td>
     <td><%= row.escort_volunteer_hours %></td>
     <td><%= row.admin_volunteer_hours %></td>
     <td><%= row.total_volunteer_hours %></td>
