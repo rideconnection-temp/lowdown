@@ -5,6 +5,7 @@ class Query
   attr_accessor :start_date
   attr_accessor :end_date
   attr_accessor :group_by
+  attr_accessor :tag
 
   def convert_date(obj, base)
     return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
@@ -23,6 +24,9 @@ class Query
       end
       if params[:group_by]
         @group_by = params[:group_by]
+      end
+      if params[:tag]
+        @tag = params[:tag]
       end
     end
   end
@@ -338,15 +342,16 @@ where period_start >= ? and period_end < ? and allocation_id=? "
 
     group_fields = group_fields.split(",")
 
-    do_report(groups, group_fields, query.start_date, query.end_date)
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag)
   end
 
 
   def show_create_report
     @query = Query.new(params[:q])
+    @tags = Allocation.tag_counts
   end
 
-  def do_report(groups, group_fields, start_date, end_date)
+  def do_report(groups, group_fields, start_date, end_date, tag)
     group_select = []
     for group,field in groups.split(",").zip group_fields
       group_select << "#{group} as #{field}"
@@ -354,8 +359,11 @@ where period_start >= ? and period_end < ? and allocation_id=? "
 
     group_select = group_select.join(",")
 
-    results = Allocation.all
-
+    if tag.to_s.size > 0
+      results = Allocation.tagged_with(tag).all
+    else
+      results = Allocation.all
+    end
     allocations = group(group_fields, results)
 
     apply_to_leaves! group_fields, allocations do | allocationset |

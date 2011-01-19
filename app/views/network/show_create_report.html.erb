@@ -45,12 +45,7 @@
           <div class="ui-widget">
              Report on
              <span id="report-category-wrap">
-               <select id="report-category">
-             		<option value="All">All</option>
-               	<option value="Tagging Category 1">Tagging Category 1</option>
-               	<option value="Tagging Category 2">Tagging Category 2</option>
-               	<option value="Tagging Category 3">Tagging Category 3</option>
-             	</select>
+               <%= f.collection_select :tag, @tags, :name, :name, :include_blank=>"all" %>
            	</span>
            	service between the beginning of
 	           <span id="startday-wrap"><%= f.date_select :start_date, :discard_day=>true %></span>

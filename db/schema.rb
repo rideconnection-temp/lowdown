@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110118132600) do
+ActiveRecord::Schema.define(:version => 20110119191303) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(:version => 20110118132600) do
     t.datetime "end_at"
     t.integer  "odometer_start"
     t.integer  "odometer_end"
-    t.integer  "escort_count",   :default => 0
+    t.integer  "escort_count"
     t.integer  "trip_import_id"
   end
 
@@ -129,8 +129,25 @@ ActiveRecord::Schema.define(:version => 20110118132600) do
     t.string   "purpose"
     t.integer  "trips"
     t.boolean  "in_district"
-    t.string   "summary_id",    :limit => 36
     t.integer  "allocation_id"
+    t.string   "summary_id"
+  end
+
+  create_table "taggings", :force => true do |t|
+    t.integer  "tag_id"
+    t.integer  "taggable_id"
+    t.string   "taggable_type"
+    t.integer  "tagger_id"
+    t.string   "tagger_type"
+    t.string   "context"
+    t.datetime "created_at"
+  end
+
+  add_index "taggings", ["tag_id"], :name => "index_taggings_on_tag_id"
+  add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context"
+
+  create_table "tags", :force => true do |t|
+    t.string "name"
   end
 
   create_table "trip_imports", :force => true do |t|
@@ -175,8 +192,8 @@ ActiveRecord::Schema.define(:version => 20110118132600) do
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
     t.integer  "allocation_id"
-    t.integer  "home_address_id"
     t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
+    t.integer  "home_address_id"
     t.integer  "duration"
     t.decimal  "mileage",                                        :precision => 6,  :scale => 1
     t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
