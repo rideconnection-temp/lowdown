@@ -1,0 +1,30 @@
+
+          <h2 id="select-allocations">Select Allocations for this tag</h2>
+
+<% for provider in @providers %>
+  <% if provider.allocations.size > 0 %>
+          <h3 id="tag-checkbox1-toggle" class="toggler collapse"><%= provider.name %> <a class="select-all" href="#">select all</a></h3>
+          <div id="tag-checkbox-area" class="togglee">
+            <fieldset class="selfclear">
+              <!-- PLEASE NOTE: Allocations for each provider should be in alphabetical order -->
+    <% i = 0 %>
+    <% for allocation in provider.allocations %>
+      <% if i % 4 == 0 %>
+              <div class="fourcol">
+      <% end %>
+                <input type="checkbox" name="a[]" id="cb_<%= allocation.id %>" value="<%= allocation.id %>" 
+      <% if @allocations_with_tag.member?(allocation.id) %> 
+         checked
+      <% end %>
+/>
+<label for="cb_<%= allocation.id %>"><%= allocation.name %></label><br />
+<% if i % 4 == 0 %>
+              </div>
+      <% end %>
+      <% i += 1 %>
+    <% end %>
+              <a href="#" class="unselect-all">unselect all</a>
+            </fieldset>
+          </div>
+  <% end %>
+<% end %> 

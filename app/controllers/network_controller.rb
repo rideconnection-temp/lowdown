@@ -351,6 +351,76 @@ where period_start >= ? and period_end < ? and allocation_id=? "
     @tags = Allocation.tag_counts
   end
 
+  def show_create_tag
+    @providers = Provider.all
+    @allocations_with_tag = Set.new()
+  end
+
+
+  def create_tag
+    tag_name = params[:tag_name]
+    if tag_name.to_s.size == 0
+      flash[:notice] = "Need a name for this tag"
+      return render show_create_tag
+    end
+
+    tag = ActsAsTaggableOn::Tag.find_or_create_with_like_by_name tag_name
+
+    for id in params[:a]
+      alloc = Allocation.find(id)
+      alloc.tag_list = alloc.tag_list + [tag]
+      alloc.save!
+    end
+
+    flash[:notice] = "Created"
+    return redirect_to :action=>'tag_index'
+  end
+
+  def delete_tag
+    tag_name = params[:id]
+    allocations = Allocation.tagged_with(tag_name)
+    for allocation in allocations
+      allocation.tag_list.delete tag_name
+      allocation.save!
+    end
+    return redirect_to :action=>'tag_index'
+  end
+
+  def show_edit_tag
+    @tag_name = params[:id]    
+    @providers = Provider.all
+    tagged = Allocation.tagged_with(@tag_name).map do |p|
+      p.id
+    end
+
+    @allocations_with_tag = Set.new(tagged)
+  end
+
+  def edit_tag
+    tag_name = params[:id]
+
+    tag = ActsAsTaggableOn::Tag.find_or_create_with_like_by_name tag_name
+
+    should_be_tagged = Set.new(params[:a].map do |x| x.to_i end)
+    for allocation in Allocation.all
+      if should_be_tagged.member? allocation.id
+        if ! allocation.tag_list.member? tag_name
+          allocation.tag_list = allocation.tag_list + [tag]
+        end
+      else
+        allocation.tag_list.delete tag_name
+      end
+      allocation.save!
+    end
+
+    return redirect_to :action=>'tag_index'
+
+  end
+
+  def tag_index
+    @tags = Allocation.tag_counts
+  end
+
   def do_report(groups, group_fields, start_date, end_date, tag)
     group_select = []
     for group,field in groups.split(",").zip group_fields
@@ -395,10 +465,6 @@ where period_start >= ? and period_end < ? and allocation_id=? "
       row.provider_id = allocationset[0].provider_id
       row
     end
-
-    require 'pp'
-
-    PP::pp allocations
 
     @group_fields = group_fields
     @results = allocations

@@ -1,0 +1,8 @@
+        <h1>Edit Tag <%= @tag_name %></h1>
+        <%= form_tag :action=>"edit_tag", :method=>"POST" do |f| %>
+
+          <%= hidden_field_tag :tag_name, @tag_name %>
+          <%= render "form", :locals=>{:providers=>@providers, :allocations_with_tag=>@allocations_with_tag} %>
+
+          <input id="tag-create" type="submit" value="Edit Tag" />
+        <% end %>

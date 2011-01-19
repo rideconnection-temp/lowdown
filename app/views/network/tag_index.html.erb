@@ -1,0 +1,6 @@
+<h1>Tag index</h1>
+
+<% for tag in @tags %>
+
+  <%= link_to tag.name, :action=>'show_edit_tag', :id=>tag.name %>: <%= tag.count %>  <%= button_to "X", :action=>'delete_tag', :id=>tag.name, :confirm=>true %><br/>
+<% end %>
