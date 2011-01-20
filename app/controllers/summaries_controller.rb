@@ -7,7 +7,7 @@ class SummariesController < ApplicationController
 
   def show_create
     @summary = Summary.new
-    @summary.summary_row.build
+    @summary.summary_rows.build
     @providers = Provider.all
     @allocations = Allocation.all
   end
@@ -26,7 +26,7 @@ class SummariesController < ApplicationController
 
   def show_update
     @summary = Summary.current_versions.find params[:id]
-    @summary.summary_row.build
+    @summary.summary_rows.build
     @providers = Provider.all
     @allocations = Allocation.all
   end
