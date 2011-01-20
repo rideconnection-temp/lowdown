@@ -4,15 +4,30 @@ Summary for <%= summary.provider.name %><br/>
 Start: <%= summary.period_start %><br/>
 End: <%= summary.period_end %>
 <table>
-
+<tr>
+<th>
+Purpose
+</th>
+<th>
+Trips
+</th>
+<th>
+In-district
+</th>
+</tr>
 <% for row in summary.summary_rows %>
 <tr>
 <td>
-    t.integer  "summaries_id"
-    t.string   "purpose"
-    t.integer  "trips"
-    t.boolean  "in_district"
-    t.integer  "allocations_id"
+    <%= row.purpose %>
+<td>
+<%= row.trips %> 
+</td>
+<td>
+<% if row.in_district %>
+yes
+<% else %>
+no
+<% end %>
 </td>
 </tr>
 
