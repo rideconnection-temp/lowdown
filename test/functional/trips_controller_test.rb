@@ -8,6 +8,17 @@ class TripsControllerTest < ActionController::TestCase
   test "should accept imports" do
     Capybara.default_selector = :xpath
 
+    visit "/user_session/show_init"
+
+    print page.body
+
+    fill_in 'user_name', :with=>'admin'
+    fill_in 'user_email', :with=>'admin@example.com'
+    fill_in 'user_password', :with=>'password'
+    fill_in 'user_password_confirmation', :with=>'password'
+    click_button("Create user")
+
+
     visit "/trips/import"
 
     dir = File.dirname(__FILE__)

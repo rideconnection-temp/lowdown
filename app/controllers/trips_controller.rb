@@ -50,7 +50,10 @@ end
 
 class TripsController < ApplicationController
 
+  before_filter :require_user
+
   def index
+    redirect_to :action=>:list
   end
 
   def list

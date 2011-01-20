@@ -43,6 +43,8 @@ end
 
 class NetworkController < ApplicationController
 
+  before_filter :require_user
+
   class NetworkReportRow
     attr_accessor :allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year
 

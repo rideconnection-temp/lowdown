@@ -1,4 +1,5 @@
 class SummariesController < ApplicationController
+  before_filter :require_user
 
   def index
     @summaries = Summary.all
