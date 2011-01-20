@@ -21,6 +21,8 @@ gem 'capybara'
 
 gem 'acts-as-taggable-on'
 
+gem 'automatic_foreign_key'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

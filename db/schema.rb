@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110119201303) do
+ActiveRecord::Schema.define(:version => 20120120161000) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20110119201303) do
     t.integer  "odometer_end"
     t.integer  "escort_count"
     t.integer  "trip_import_id"
+    t.integer  "updated_by"
   end
 
   create_table "summaries", :id => false, :force => true do |t|
@@ -121,6 +122,7 @@ ActiveRecord::Schema.define(:version => 20110119201303) do
     t.decimal  "donations",                                    :precision => 10, :scale => 2
     t.decimal  "funds",                                        :precision => 10, :scale => 2
     t.integer  "allocation_id"
+    t.integer  "updated_by"
   end
 
   create_table "summary_rows", :id => false, :force => true do |t|
@@ -132,6 +134,7 @@ ActiveRecord::Schema.define(:version => 20110119201303) do
     t.integer  "trips"
     t.boolean  "in_district"
     t.string   "summary_id"
+    t.integer  "updated_by"
   end
 
   create_table "taggings", :force => true do |t|
@@ -200,6 +203,7 @@ ActiveRecord::Schema.define(:version => 20110119201303) do
     t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
     t.decimal  "apportioned_mileage",                            :precision => 7,  :scale => 2
     t.decimal  "apportioned_fare",                               :precision => 10, :scale => 2
+    t.integer  "updated_by"
   end
 
   create_table "users", :force => true do |t|
