@@ -246,32 +246,27 @@ where period_start >= ? and period_end < ? and allocation_id=? "
 
     def collect_costs_by_summary(allocation, start_date, end_date)
 
-#fixme: funds and fares are wrong
       sql = "select
-123 as funds,
-123 as fares,
+sum(funds),
 sum(agency_other) as agency_other,
 0 as vehicle_maint,
 sum(donations) as donations_fares
 
 from summaries 
-inner join summary_rows on summary_rows.summary_id = summaries.id
 where period_start >= ? and period_end < ? and allocation_id=? "
 
       results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
 
       result = results[0]
       @funds += result['funds'].to_f
-      @fares += result['fares'].to_f
       @agency_other += result['agency_other'].to_f
       @vehicle_maint += result['vehicle_maint'].to_f
       @donations_fares += result['donations_fares'].to_f
 
 
-      last_year_sql =  "select
-456 as total
+      last_year_sql = "select
+sum(donations + funds + agency_other) as total
 from summaries 
-inner join summary_rows on summary_rows.summary_id = summaries.id
 where period_start >= ? and period_end < ? and allocation_id=? "
 
       results = ActiveRecord::Base.connection.select_all(bind([sql, start_date.prev_year, end_date.prev_year, allocation['id']]))
@@ -326,7 +321,7 @@ where period_start >= ? and period_end < ? and allocation_id=? "
     #past two weeks
     end_date = Date.today
     start_date = end_date - 14 
-    do_report(groups, group_fields, start_date, end_date)
+    do_report(groups, group_fields, start_date, end_date, nil)
     render 'report'
   end
 
