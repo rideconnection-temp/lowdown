@@ -108,6 +108,7 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
+    userstamp (2.0.1)
     uuidtools (2.1.1)
     will_paginate (3.0.pre2)
     xpath (0.1.2)
@@ -125,5 +126,6 @@ DEPENDENCIES
   pg
   rails (= 3.0.3)
   sqlite3-ruby
+  userstamp
   uuidtools
   will_paginate (= 3.0.pre2)

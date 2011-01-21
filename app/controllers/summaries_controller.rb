@@ -34,6 +34,14 @@ class SummariesController < ApplicationController
   def update
     @summary = Summary.current_versions.find(params[:summary][:id])
 
+    #if the new row is not filled in, don't try to save it
+    row_data = params[:summary][:summary_rows_attributes]
+    last_row_index = (row_data.size - 1).to_s
+    last_row = row_data[last_row_index]
+    if last_row[:purpose].empty? && last_row[:trips].empty?
+      row_data.delete(last_row_index)
+    end
+
     @providers = Provider.all
     @allocations = Allocation.all
     @summary.update_attributes(params[:summary]) ?

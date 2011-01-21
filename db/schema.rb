@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120120161000) do
+ActiveRecord::Schema.define(:version => 20120121105500) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -211,7 +211,7 @@ ActiveRecord::Schema.define(:version => 20120120161000) do
     t.string   "email",                            :null => false
     t.text     "crypted_password",                 :null => false
     t.boolean  "no_login"
-    t.integer  "creator"
+    t.integer  "created_by"
     t.string   "persistence_token",                :null => false
     t.integer  "login_count",       :default => 0, :null => false
     t.datetime "last_request_at"

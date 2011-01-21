@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   validates_presence_of :password
   validates_confirmation_of :password
 
+  model_stamper
+
   
   acts_as_authentic do |c|
     c.login_field = :email

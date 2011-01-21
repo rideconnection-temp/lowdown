@@ -23,6 +23,8 @@ gem 'acts-as-taggable-on'
 
 gem 'automatic_foreign_key'
 
+gem 'userstamp'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

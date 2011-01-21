@@ -1,8 +1,17 @@
 class ApplicationController < ActionController::Base
+  include Userstamp
+
   protect_from_forgery
 
   helper :all
   helper_method :current_user_session, :current_user
+
+  def current_user
+    unless defined?(@current_user)
+      @current_user = current_user_session && current_user_session.record
+    end
+    return @current_user
+  end
 
   private
 
@@ -11,14 +20,6 @@ class ApplicationController < ActionController::Base
       @current_user_session = UserSession.find
     end
     return @current_user_session
-  end
-
-
-  def current_user
-    unless defined?(@current_user)
-      @current_user = current_user_session && current_user_session.record
-    end
-    return @current_user
   end
     
   def require_user

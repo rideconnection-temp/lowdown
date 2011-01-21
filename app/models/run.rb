@@ -1,6 +1,8 @@
 class Run < ActiveRecord::Base
   has_many :trips
   belongs_to :trip_import
+  stampable :updater_attribute  => :updated_by,
+            :creator_attribute  => :updated_by
 
   after_save :apportion_run_based_trips
 
