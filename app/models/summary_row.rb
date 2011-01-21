@@ -5,7 +5,7 @@ class SummaryRow < ActiveRecord::Base
             :creator_attribute  => :updated_by
 
   validates_length_of :purpose, :allow_blank=>false, :minimum=>1
-  validates_numericality_of :trips, :allow_blank=>false, 
+  validates_numericality_of :trips, :allow_blank=>false
 
   def created_by
     return first_version.updated_by
