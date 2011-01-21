@@ -1,3 +1,5 @@
+require 'csv'
+
 class Query
   extend ActiveModel::Naming
   include ActiveModel::Conversion
@@ -46,10 +48,21 @@ class NetworkController < ApplicationController
   before_filter :require_user
 
   class NetworkReportRow
-    attr_accessor :allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year
+    @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year]
+    attr_accessor *@@attrs
 
     def numeric_fields
       return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders]
+    end
+
+    def csv
+      @@attrs.map do |attr|
+        self.send(attr).to_s
+      end
+    end
+
+    def self.header
+      @@attrs
     end
 
     def initialize(hash = nil)
@@ -333,9 +346,11 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
 
   def report
     query = Query.new(params[:q])
+    @params = params
     group_fields = query.group_by
 
     if group_fields.nil?
+      show_create_report
       return render 'show_create_report'
     end
 
@@ -472,6 +487,32 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     @start_date = start_date
     @end_date = end_date
     @tr_open = false
+  end
+
+  def csv
+    query = Query.new(params[:q])
+    group_fields = query.group_by
+
+    if group_fields.nil?
+      show_create_report
+      return render 'show_create_report'
+    end
+
+    groups = @@group_mappings[group_fields]
+
+    group_fields = group_fields.split(",")
+
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag)
+    csv_string = CSV.generate do |csv|
+      csv << NetworkReportRow.header
+      apply_to_leaves! group_fields, @results,  do | row |
+        csv << row.csv
+        nil
+      end
+    end
+
+
+    return render :text=> csv_string, :content_type=>"text/plain"
   end
 
   # Apply the specified block to the leaves of a nested hash (leaves

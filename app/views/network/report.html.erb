@@ -1,7 +1,9 @@
          <h1>Network Service Summary</h1>
 
 	 Start: <%= @start_date %><br/>
-	 End: <%= @end_date %>
+	 End: <%= @end_date %> <br/>
+
+   <%= link_to "CSV", @params.merge({:action=>:csv}) %>
 
          <table id="grouped-results">
            <thead>
