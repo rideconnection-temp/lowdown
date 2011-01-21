@@ -10,8 +10,6 @@ class TripsControllerTest < ActionController::TestCase
 
     visit "/user_session/show_init"
 
-    print page.body
-
     fill_in 'user_name', :with=>'admin'
     fill_in 'user_email', :with=>'admin@example.com'
     fill_in 'user_password', :with=>'password'
