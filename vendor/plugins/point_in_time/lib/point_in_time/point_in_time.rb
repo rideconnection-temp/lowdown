@@ -104,33 +104,35 @@ module VersionFu
       elsif id && base_id
           #an edit to an existing object; may need to create a new
           #version
-          instantiate_revision if create_new_version? && base_id != id
+          instantiate_revision if create_new_version?
       elsif !id && base_id
           #a new version automatically created; no need to make a new version
           self.id = UUIDTools::UUID.timestamp_create().to_s
       end
-      
+
       true # Never halt save
     end
     
     # This the method to override if you want to have more control over when to version
     def create_new_version?
       # Any versioned column changed?
-      self.class.versioned_columns.detect {|a| __send__ "#{a}_changed?"}
+      self.versioned_columns.detect {|a| __send__ "#{a}_changed?"}
     end
     
     def instantiate_revision
       new_version = versions.build
       versioned_columns.each do |attribute|
-        new_version.__send__ "#{attribute}=", __send__(attribute)
+        new_version.__send__ "#{attribute}=", __send__("#{attribute}_was")
       end
 
       new_version.valid_start = valid_start
       new_version.valid_end = now_rounded
-      new_version.base_id = id
+      new_version.base_id = base_id
+      #new_version.id = UUIDTools::UUID.timestamp_create().to_s
 
       self.valid_start = new_version.valid_end
-      self.valid_end = @@end_of_time
+
+      new_version.save!
     end
 
     def end_of_time
