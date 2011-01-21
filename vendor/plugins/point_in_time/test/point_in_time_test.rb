@@ -84,6 +84,20 @@ class VersionFuTest < ActiveSupport::TestCase
      assert_equal authors(:peter).id, version.author_id
    end
   
+   #############################################################################
+   #                                   D E L E T E                             #
+   #############################################################################
+
+    test 'delete' do
+      old_count = Page.old_versions.count
+      page = pages(:welcome)
+      page.destroy
+
+      #nothing is destroyed
+      assert_equal old_count, Page.old_versions.count
+      assert Time.now - page.valid_end < 1
+    end
+
 #   #############################################################################
 #   #                         S K I P    V E R S I O N I N G                    #
 #   #############################################################################

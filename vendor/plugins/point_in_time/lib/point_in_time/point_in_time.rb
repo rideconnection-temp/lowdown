@@ -42,6 +42,7 @@ module VersionFu
         scope :current_versions, :conditions => ["valid_end = ?", @@end_of_time]
 
         before_save :check_for_new_version
+        before_destroy :mark_inactive
 
         # find first version before the given version
         def self.before(version)
@@ -138,6 +139,13 @@ module VersionFu
       self.valid_start = new_version.valid_end
 
       new_version.save!
+    end
+
+    #This is called before destroy; instead of destroying the record, it simply sets
+    #its valid_end to now
+    def mark_inactive
+      valid_end = now_rounded
+      false
     end
 
     def end_of_time
