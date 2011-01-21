@@ -56,6 +56,10 @@ module VersionFu
             :conditions => ["base_id = ? and valid_start > ?", version.base_id, version.valid_start]
         end
 
+        def self.end_of_time
+          @@end_of_time
+        end
+
         def previous
           self.class.before(self)
         end
