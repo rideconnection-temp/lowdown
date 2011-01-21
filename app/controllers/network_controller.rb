@@ -135,9 +135,11 @@ count(distinct customer_id) as unduplicated_riders
 from trips
 where 
 date between ? and ?
-and allocation_id = ? "
+and allocation_id = ?
+and valid_end = ?
+"
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id'], Trip.end_of_time]))
 
       result = results[0]
       @in_district_trips += result['in_district_trips'].to_i
@@ -155,9 +157,9 @@ sum(turn_downs),
 sum(unduplicated_riders) as unduplicated_riders
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.id
-where period_start >= ? and period_end < ? and allocation_id=? "
+where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']], Summary.end_of_time))
       result = results[0]
       @in_district_trips += result['in_district_trips'].to_i
       @out_of_district_trips += result['out_of_district_trips'].to_i
@@ -179,9 +181,9 @@ from trips
 inner join runs on trips.run_id = runs.id
 where
 trips.date between ? and ?
-and allocation_id = ? "
+and allocation_id = ? and valid_end = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']], Trip.end_of_time))
 
       result = results[0]
       @mileage += result['mileage'].to_f
@@ -200,9 +202,9 @@ sum(driver_hours_volunteer) as driver_volunteer_hours,
 sum(escort_hours_volunteer) as escort_volunteer_hours
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.id
-where period_start >= ? and period_end < ? and allocation_id=? "
+where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']], Summary.valid_end))
 
       result = results[0]
       @mileage += result['mileage'].to_f
@@ -224,9 +226,10 @@ max(allocation_id) as allocation_id
 from trips
 where
 date between ? and ?
-and allocation_id = ? "
+and allocation_id = ?
+and valid_end = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']], Trip.valid_end))
 
       result = results[0]
       @funds += result['funds'].to_f
@@ -237,11 +240,13 @@ and allocation_id = ? "
 
       last_year_sql =  "select
 sum(fare) + sum(customer_pay) as total
-from summaries
-inner join summary_rows on summary_rows.summary_id = summaries.id
-where period_start >= ? and period_end < ? and allocation_id=? "
+from trips
+where
+date between ? and ?
+and allocation_id=?
+and valid_end = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date.prev_year, end_date.prev_year, allocation['id']]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date.prev_year, end_date.prev_year, allocation['id']], Trip.valid_end))
       result = results[0]
       @total_last_year += result['total'].to_f
     end
@@ -255,9 +260,9 @@ sum(agency_other) as agency_other,
 sum(donations) as donations_fares
 
 from summaries 
-where period_start >= ? and period_end < ? and allocation_id=? "
+where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id']], Summary.valid_end))
 
       result = results[0]
       @funds += result['funds'].to_f
@@ -269,9 +274,9 @@ where period_start >= ? and period_end < ? and allocation_id=? "
       last_year_sql = "select
 sum(donations + funds + agency_other) as total
 from summaries 
-where period_start >= ? and period_end < ? and allocation_id=? "
+where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date.prev_year, end_date.prev_year, allocation['id']]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date.prev_year, end_date.prev_year, allocation['id']], Summary.valid_end))
       result = results[0]
       @total_last_year += result['total'].to_f
     end

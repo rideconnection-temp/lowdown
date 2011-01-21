@@ -2,7 +2,7 @@ class SummariesController < ApplicationController
   before_filter :require_user
 
   def index
-    @summaries = Summary.all
+    @summaries = Summary.current_versions.all
   end
 
   def show_create

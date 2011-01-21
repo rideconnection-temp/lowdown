@@ -77,7 +77,7 @@ class TripsController < ApplicationController
 
   def run
     id = params[:id]
-    @trips = Trip.paginate :page => params[:page], :per_page => 30, :conditions => {:run_id=>id}
+    @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => {:run_id=>id}
     @run = Run.find(id)
   end
 
