@@ -9,4 +9,7 @@ class Summary < ActiveRecord::Base
 
   accepts_nested_attributes_for :summary_rows, :allow_destroy => true, :reject_if => :all_blank
 
+  def created_by
+    return first_version.updated_by
+  end
 end

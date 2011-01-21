@@ -6,4 +6,8 @@ class SummaryRow < ActiveRecord::Base
 
   validates_length_of :purpose, :allow_blank=>false, :minimum=>1
   validates_numericality_of :trips, :allow_blank=>false, 
+
+  def created_by
+    return first_version.updated_by
+  end
 end

@@ -25,6 +25,10 @@ class Trip < ActiveRecord::Base
   scope :completed, where(:result_code => 'COMP')
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
 
+  def created_by
+    return first_version.updated_by
+  end
+
   def completed?
     result_code == 'COMP'
   end
