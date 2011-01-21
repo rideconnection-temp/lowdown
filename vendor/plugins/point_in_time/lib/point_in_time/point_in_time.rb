@@ -84,6 +84,11 @@ module VersionFu
   module InstanceMethods
     @@end_of_time = Time.utc(9999, 1, 1, 1, 1)
 
+    # find first version ever
+    def first_version
+      versions.find :first, :conditions => ["base_id = ? and id = ?", base_id, base_id]
+    end
+
     def find_version(date)
       versions.find :first, :conditions=>['valid_start <= ? and valid_end > ?', date, date]
     end

@@ -57,6 +57,7 @@ class VersionFuTest < ActiveSupport::TestCase
       page = pages(:welcome)
       page.update_attributes :title=>'New title', :body=>'new body', :author=>authors(:sara)
       assert_equal old_count + 1, Page.old_versions.count
+      assert_equal page.first_version, pages(:welcome_1)
     end
   
    test 'valid dates sane' do    
