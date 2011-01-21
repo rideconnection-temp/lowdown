@@ -8,7 +8,7 @@ class Trip < ActiveRecord::Base
   belongs_to :pickup_address, :class_name => "Address", :foreign_key => "pickup_address_id"
   belongs_to :dropoff_address, :class_name => "Address", :foreign_key => "dropoff_address_id"
   belongs_to :allocation
-  belongs_to :run
+  belongs_to :run, :primary_key=>"base_id"
   belongs_to :customer
   belongs_to :trip_import
 
