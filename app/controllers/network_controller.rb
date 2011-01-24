@@ -76,6 +76,9 @@ class NetworkController < ApplicationController
       else
         fields = @@selector_fields + requested_fields.keys
       end
+      fields.delete 'driver_hours'
+      fields.delete 'volunteer_hours'
+
       fields.sort!
 
     end
