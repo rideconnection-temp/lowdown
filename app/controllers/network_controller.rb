@@ -8,6 +8,7 @@ class Query
   attr_accessor :end_date
   attr_accessor :group_by
   attr_accessor :tag
+  attr_accessor :fields
 
   def convert_date(obj, base)
     return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
@@ -29,6 +30,9 @@ class Query
       end
       if params[:tag]
         @tag = params[:tag]
+      end
+      if params[:f]
+        @fields = params[:f]
       end
     end
   end
@@ -55,14 +59,25 @@ class NetworkController < ApplicationController
       return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders]
     end
 
-    def csv
-      @@attrs.map do |attr|
-        self.send(attr).to_s
+    @@selector_fields = ['allocation', 'county', 'provider_id', 'project_name']
+    def csv(requested_fields = nil)
+      result = []
+
+      the_fields = NetworkReportRow.fields(requested_fields)
+      the_fields.each do |attr|
+        result << self.send(attr).to_s
       end
+      return result
     end
 
-    def self.header
-      @@attrs
+    def self.fields(requested_fields)
+      if requested_fields.nil?
+        fields = @@attrs + ["cost_per_hour", "cost_per_mile", "cost_per_trip"]
+      else
+        fields = @@selector_fields + requested_fields.keys
+      end
+      fields.sort!
+
     end
 
     def initialize(hash = nil)
@@ -116,6 +131,10 @@ class NetworkController < ApplicationController
         return -1
       end
       return cpm
+    end
+
+    def project_name
+      allocation.project.name
     end
 
     def include_row(row)
@@ -358,7 +377,7 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
 
     group_fields = group_fields.split(",")
 
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag)
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
   end
 
 
@@ -437,7 +456,7 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     @tags = Allocation.tag_counts
   end
 
-  def do_report(groups, group_fields, start_date, end_date, tag)
+  def do_report(groups, group_fields, start_date, end_date, tag, fields)
     group_select = []
     for group,field in groups.split(",").zip group_fields
       group_select << "#{group} as #{field}"
@@ -487,6 +506,7 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     @start_date = start_date
     @end_date = end_date
     @tr_open = false
+    @fields = fields
   end
 
   def csv
@@ -502,11 +522,11 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
 
     group_fields = group_fields.split(",")
 
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag)
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
     csv_string = CSV.generate do |csv|
-      csv << NetworkReportRow.header
+      csv << NetworkReportRow.fields(query.fields)
       apply_to_leaves! group_fields, @results,  do | row |
-        csv << row.csv
+        csv << row.csv(query.fields)
         nil
       end
     end
