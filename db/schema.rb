@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110121105500) do
+ActiveRecord::Schema.define(:version => 20110124180900) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -84,10 +84,12 @@ ActiveRecord::Schema.define(:version => 20110121105500) do
     t.datetime "updated_at"
   end
 
-  create_table "runs", :force => true do |t|
+  create_table "runs", :id => false, :force => true do |t|
+    t.string   "id",             :limit => 36, :null => false
+    t.string   "base_id",        :limit => 36
+    t.datetime "valid_start"
+    t.datetime "valid_end"
     t.date     "date"
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.string   "name"
     t.integer  "routematch_id"
     t.datetime "start_at"
@@ -190,7 +192,7 @@ ActiveRecord::Schema.define(:version => 20110121105500) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "customer_id"
-    t.integer  "run_id"
+    t.string   "run_id",                           :limit => 36
     t.integer  "trip_import_id"
     t.integer  "routematch_trip_id"
     t.string   "result_code",                      :limit => 5
@@ -222,5 +224,7 @@ ActiveRecord::Schema.define(:version => 20110121105500) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_foreign_key "runs", ["trip_import_id"], "trip_imports", ["id"], :name => "runs_trip_import_id_fkey"
 
 end

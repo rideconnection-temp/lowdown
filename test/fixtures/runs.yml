@@ -1,10 +1,14 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
+  id: 1f
+  base_id: 1f
   date: 2010-11-17
   name: "George Friday"
   routematch_id: 1
 
 two:
+  id: 2f
+  base_id: 2f
   date: 2010-11-17
   routematch_id: 2

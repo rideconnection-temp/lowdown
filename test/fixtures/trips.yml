@@ -20,6 +20,7 @@ one:
   routematch_share_id: 1
   allocation_id: 1
   override: false
+  run_id: 1f
 
 two:
   date: 2010-11-09
@@ -41,3 +42,4 @@ two:
   routematch_share_id: 1
   allocation_id: 1
   override: false
+  run_id: 2f

@@ -11,6 +11,8 @@ class Run < ActiveRecord::Base
   scope :has_odometer_log, where('odometer_start IS NOT NULL and odometer_end IS NOT NULL')
   scope :has_time_log, where('start_at IS NOT NULL and end_at IS NOT NULL')
 
+  point_in_time
+
   def created_by
     return first_version.updated_by
   end
