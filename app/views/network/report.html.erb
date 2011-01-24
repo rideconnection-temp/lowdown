@@ -10,31 +10,31 @@
              <tr>
                <th rowspan="2" colspan="<%= @group_fields.size - 1 %>"></th>
                <th rowspan="2">Name</th>
-               <th rowspan="2">Funds</th>
-               <th rowspan="2">Agency Other</th>
-               <th rowspan="2">Vechicle Maint.</th>
-               <th rowspan="2">Donations	Fares</th>
-               <th rowspan="2">Total</th>
-               <th rowspan="2">In District Rides</th>
-               <th rowspan="2">Out of District Rides</th>
-               <th rowspan="2">Total this Period</th>
-               <th rowspan="2">Total this Period Last Year</th>
-               <th rowspan="2">Mileage</th>
-               <th colspan="3">Driver Hours</th>
-               <th rowspan="2">Cost/Trip</th>
-               <th rowspan="2">Cost/Mile</th>
-               <th rowspan="2">Cost/Hour</th>
-               <th rowspan="2">Turn Downs</th>
-               <th rowspan="2">Undup Riders</th>
-               <th colspan="3">Volunteer Hours</th>
+<% if @fields.member? 'funds' %><th rowspan="2">Funds</th><% end %>
+<% if @fields.member? 'agency_other' %><th rowspan="2">Agency Other</th><% end %>
+<% if @fields.member? 'vehicle_maint' %><th rowspan="2">Vechicle Maint.</th><% end %>
+<% if @fields.member? 'donations_fares' %><th rowspan="2">Donations Fares</th><% end %>
+<% if @fields.member? 'total' %><th rowspan="2">Total</th><% end %>
+<% if @fields.member? 'in_district_trips' %><th rowspan="2">In District Rides</th><% end %>
+<% if @fields.member? 'out_of_district_trips' %><th rowspan="2">Out of District Rides</th><% end %>
+<% if @fields.member? 'total_trips' %><th rowspan="2">Total this Period</th><% end %>
+<% if @fields.member? 'total_last_year' %><th rowspan="2">Total this Period Last Year</th><% end %>
+<% if @fields.member? 'mileage' %><th rowspan="2">Mileage</th><% end %>
+<% if @fields['driver_hours'] > 0 %><th colspan="<%= @fields['driver_hours'] %>">Driver Hours</th><% end %>
+<% if @fields.member? 'cost_per_trip' %><th rowspan="2">Cost/Trip</th><% end %>
+<% if @fields.member? 'cost_per_mile' %><th rowspan="2">Cost/Mile</th><% end %>
+<% if @fields.member? 'cost_per_hour' %><th rowspan="2">Cost/Hour</th><% end %>
+<% if @fields.member? 'turn_downs' %><th rowspan="2">Turn Downs</th><% end %>
+<% if @fields.member? 'undup_riders' %><th rowspan="2">Undup Riders</th><% end %>
+<% if @fields['volunteer_hours'] > 0 %><th colspan="<%= @fields['volunteer_hours'] %>">Volunteer Hours</th><% end %>
              </tr>
              <tr>
-               <th>Volunteer</th>
-               <th>Paid</th>
-               <th>Total</th>
-               <th>Escort</th>
-               <th>Admin</th>
-               <th>Total</th>
+<% if @fields.member? 'driver_volunteer_hours' %><th>Volunteer</th><% end %>
+<% if @fields.member? 'driver_paid_hours' %><th>Paid</th><% end %>
+<% if @fields.member? 'driver_total_hours' %><th>Total</th><% end %>
+<% if @fields.member? 'escort_volunteer_hours' %><th>Escort</th><% end %>
+<% if @fields.member? 'admin_volunteer_hours' %><th>Admin</th><% end %>
+<% if @fields.member? 'total_volunteer_hours' %><th>Total</th><% end %>
              </tr>
            </thead>
            <tbody>

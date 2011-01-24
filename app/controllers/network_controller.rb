@@ -52,11 +52,11 @@ class NetworkController < ApplicationController
   before_filter :require_user
 
   class NetworkReportRow
-    @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year]
+    @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year]
     attr_accessor *@@attrs
 
     def numeric_fields
-      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :volunteer_hours, :paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders]
+      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders]
     end
 
     @@selector_fields = ['allocation', 'county', 'provider_id', 'project_name']
@@ -105,8 +105,8 @@ class NetworkController < ApplicationController
       return @funds + @fares + @agency_other + @vehicle_maint + @donations_fares
     end
 
-    def total_hours
-      return paid_hours + total_volunteer_hours
+    def driver_total_hours
+      return driver_paid_hours + driver_volunteer_hours
     end
 
     def total_volunteer_hours
@@ -118,7 +118,7 @@ class NetworkController < ApplicationController
     end
 
     def cost_per_hour
-      return @funds / total_hours
+      return @funds / driver_total_hours
     end
 
     def cost_per_trip
@@ -148,7 +148,7 @@ class NetworkController < ApplicationController
 
       @mileage += row.mileage
 
-      @paid_hours += row.paid_hours
+      @driver_paid_hours += row.driver_paid_hours
 
       @turn_downs += row.turn_downs
       @undup_riders += row.undup_riders
@@ -204,7 +204,7 @@ where period_start >= ? and period_end < ? and allocation_id=? and summaries.val
       sql = "
 select 
 sum(trips.odometer_end - trips.odometer_start) as mileage, 
-sum(duration) as paid_hours,
+sum(duration) as driver_paid_hours,
 sum(case when volunteer_trip=true then duration else 0 end) as driver_volunteer_hours,
 sum(runs.escort_count * duration) as escort_volunteer_hours,
 0 as admin_volunteer_hours,
@@ -219,7 +219,7 @@ and allocation_id = ? and valid_end = ? "
 
       result = results[0]
       @mileage += result['mileage'].to_f
-      @paid_hours += result['paid_hours'].to_f
+      @driver_paid_hours += result['driver_paid_hours'].to_f
       @driver_volunteer_hours += result['driver_volunteer_hours'].to_f
       @escort_volunteer_hours += result['escort_volunteer_hours'].to_f
 
@@ -229,7 +229,7 @@ and allocation_id = ? and valid_end = ? "
 
       sql = "select
 sum(total_miles) as mileage,
-sum(driver_hours_paid) as paid_hours,
+sum(driver_hours_paid) as driver_paid_hours,
 sum(driver_hours_volunteer) as driver_volunteer_hours,
 sum(escort_hours_volunteer) as escort_volunteer_hours
 from summaries 
@@ -239,7 +239,7 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
 
       result = results[0]
       @mileage += result['mileage'].to_f
-      @paid_hours += result['paid_hours'].to_f
+      @driver_paid_hours += result['driver_paid_hours'].to_f
       @driver_volunteer_hours += result['driver_volunteer_hours'].to_f
       @escort_volunteer_hours += result['escort_volunteer_hours'].to_f
     end
@@ -507,6 +507,18 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     @end_date = end_date
     @tr_open = false
     @fields = fields
+    fields['driver_hours'] = 0
+    for field in ['driver_volunteer_hours', 'driver_paid_hours', 'driver_total_hours']
+      if fields.member? field
+        fields['driver_hours'] += 1
+      end
+    end
+    fields['volunteer_hours'] = 0
+    for field in ['escort_volunteer_hours', 'admin_volunteer_hours', 'total_volunteer_hours']
+      if fields.member? field
+        fields['volunteer_hours'] += 1
+      end
+    end
   end
 
   def csv

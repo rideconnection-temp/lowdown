@@ -17,29 +17,29 @@
       <!-- you will never be tr_open here -->
       <tr class="totals">
         <td>Totals</td>
-        <td><%= '%.2f' % row.funds %></td>
-        <td><%= '%.2f' % row.agency_other %></td>
-        <td><%= '%.2f' % row.vehicle_maint %></td>
-        <td><%= '%.2f' % row.donations_fares %></td>
-        <td><%= '%.2f' % row.total %></td>
-        <td><%= row.in_district_trips %></td>
-        <td><%= row.out_of_district_trips %></td>
-        <td><%= row.total_trips %></td>
-        <td><%= '%.2f' % row.total_last_year %></td>
-        <td><%= row.mileage %></td>
-        <td><%= '%.2f' % row.volunteer_hours %></td>
-        <td><%= '%.2f' % row.paid_hours %></td>
-        <td><%= '%.2f' % row.total_hours %></td>
-        <td><%= '%.2f' % row.cost_per_trip %></td>
-        <td><%= row.cost_per_mile == -1 ? 
-                row.cost_per_mile :
-                ('%.2f' % row.cost_per_mile) %></td>
-        <td><%= '%.2f' % row.cost_per_hour %></td>
-        <td><%= row.turn_downs %></td>
-        <td><%= row.undup_riders %></td>
-        <td><%= row.escort_volunteer_hours %></td>
-        <td><%= row.admin_volunteer_hours %></td>
-        <td><%= row.total_volunteer_hours %></td>
+<% if @fields.member? 'funds' %><td><%= '%.2f' % row.funds %></td><%end%>
+<% if @fields.member? 'agency_other' %><td><%= '%.2f' % row.agency_other %></td><%end%>
+<% if @fields.member? 'vehicle_maint' %><td><%= '%.2f' % row.vehicle_maint %></td><%end%>
+<% if @fields.member? 'donations_fares' %><td><%= '%.2f' % row.donations_fares %></td><%end%>
+<% if @fields.member? 'total' %><td><%= '%.2f' % row.total %></td><%end%>
+<% if @fields.member? 'in_district_trips' %><td><%= row.in_district_trips %></td><%end%>
+<% if @fields.member? 'out_of_district_trips' %><td><%= row.out_of_district_trips %></td><%end%>
+<% if @fields.member? 'total_trips' %><td><%= row.total_trips %></td><%end%>
+<% if @fields.member? 'total_last_year' %><td><%= '%.2f' % row.total_last_year %></td><%end%>
+<% if @fields.member? 'mileage' %><td><%= row.mileage %></td><%end%>
+<% if @fields.member? 'driver_volunteer_hours' %><td><%= '%.2f' % row.driver_volunteer_hours %></td><%end%>
+<% if @fields.member? 'driver_paid_hours' %><td><%= '%.2f' % row.driver_paid_hours %></td><%end%>
+<% if @fields.member? 'driver_total_hours' %><td><%= '%.2f' % row.driver_total_hours %></td><%end%>
+<% if @fields.member? 'cost_per_trip' %><td><%= '%.2f' % row.cost_per_trip %></td><%end%>
+<% if @fields.member? 'cost_per_mile' %><td><%= row.cost_per_mile == -1 ? 
+                'N/A' :
+                ('%.2f' % row.cost_per_mile) %></td><%end%>
+<% if @fields.member? 'cost_per_hour' %><td><%= '%.2f' % row.cost_per_hour %></td><%end%>
+<% if @fields.member? 'turn_downs' %><td><%= row.turn_downs %></td><%end%>
+<% if @fields.member? 'undup_riders' %><td><%= row.undup_riders %></td><%end%>
+<% if @fields.member? 'escort_volunteer_hours' %><td><%= row.escort_volunteer_hours %></td><%end%>
+<% if @fields.member? 'admin_volunteer_hours' %><td><%= row.admin_volunteer_hours %></td><%end%>
+<% if @fields.member? 'total_volunteer_hours' %><td><%= row.total_volunteer_hours %></td><%end%>
       </tr>
   <% end %>
 <% else %>
@@ -48,29 +48,29 @@
     <% if !@tr_open %>
       <tr>
     <% end %>
-    <td><%= row.allocation.name %></td>
-    <td><%= '%.2f' % row.funds %></td>
-    <td><%= '%.2f' % row.agency_other %></td>
-    <td><%= '%.2f' % row.vehicle_maint %></td>
-    <td><%= '%.2f' % row.donations_fares %></td>
-    <td><%= '%.2f' % row.total %></td>
-    <td><%= row.in_district_trips %></td>
-    <td><%= row.out_of_district_trips %></td>
-    <td><%= row.total_trips %></td>
-    <td><%= row.total_last_year %></td>
-    <td><%= row.mileage %></td>
-    <td><%= '%.2f' % row.driver_volunteer_hours %></td>
-    <td><%= '%.2f' % row.paid_hours %></td>
-    <td><%= '%.2f' % row.total_hours %></td>
-    <td><%= '%.2f' % row.cost_per_trip %></td>
-    <td><%= '%.2f' % row.cost_per_mile %></td>
-    <td><%= '%.2f' % row.cost_per_hour %></td>
-    <td><%= row.turn_downs %></td>
-    <td><%= row.undup_riders %></td>
-    <td><%= row.escort_volunteer_hours %></td>
-    <td><%= row.admin_volunteer_hours %></td>
-    <td><%= row.total_volunteer_hours %></td>
-    </tr>
-    <% @tr_open = false %>
-    <% end %>
+<td><%= row.allocation.name %></td>
+<% if @fields.member? 'funds' %><td><%= '%.2f' % row.funds %></td><%end%>
+<% if @fields.member? 'agency_other' %><td><%= '%.2f' % row.agency_other %></td><%end%>
+<% if @fields.member? 'vehicle_maint' %><td><%= '%.2f' % row.vehicle_maint %></td><%end%>
+<% if @fields.member? 'donations_fares' %><td><%= '%.2f' % row.donations_fares %></td><%end%>
+<% if @fields.member? 'total' %><td><%= '%.2f' % row.total %></td><%end%>
+<% if @fields.member? 'in_district_trips' %><td><%= row.in_district_trips %></td><%end%>
+<% if @fields.member? 'out_of_district_trips' %><td><%= row.out_of_district_trips %></td><%end%>
+<% if @fields.member? 'total_trips' %><td><%= row.total_trips %></td><%end%>
+<% if @fields.member? 'total_last_year' %><td><%= row.total_last_year %></td><%end%>
+<% if @fields.member? 'mileage' %><td><%= row.mileage %></td><%end%>
+<% if @fields.member? 'driver_volunteer_hours' %><td><%= '%.2f' % row.driver_volunteer_hours %></td><%end%>
+<% if @fields.member? 'driver_paid_hours' %><td><%= '%.2f' % row.driver_paid_hours %></td><%end%>
+<% if @fields.member? 'driver_total_hours' %><td><%= '%.2f' % row.driver_total_hours %></td><%end%>
+<% if @fields.member? 'cost_per_trip' %><td><%= '%.2f' % row.cost_per_trip %></td><%end%>
+<% if @fields.member? 'cost_per_mile' %><td><%= '%.2f' % row.cost_per_mile %></td><%end%>
+<% if @fields.member? 'cost_per_hour' %><td><%= '%.2f' % row.cost_per_hour %></td><%end%>
+<% if @fields.member? 'turn_downs' %><td><%= row.turn_downs %></td><%end%>
+<% if @fields.member? 'undup_riders' %><td><%= row.undup_riders %></td><%end%>
+<% if @fields.member? 'escort_volunteer_hours' %><td><%= row.escort_volunteer_hours %></td><%end%>
+<% if @fields.member? 'admin_volunteer_hours' %><td><%= row.admin_volunteer_hours %></td><%end%>
+<% if @fields.member? 'total_volunteer_hours' %><td><%= row.total_volunteer_hours %></td><%end%>
+</tr>
+<% @tr_open = false %>
+<% end %>
 <% end %>
