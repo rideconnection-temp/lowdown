@@ -460,6 +460,23 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     return out
   end
 
+  def report
+    query = Query.new(params[:q])
+    @params = params
+    group_fields = query.group_by
+
+    if group_fields.nil?
+      show_create_report
+      return render 'show_create_report'
+    end
+
+    groups = @@group_mappings[group_fields]
+
+    group_fields = group_fields.split(",")
+
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
+  end
+
   private 
 
   def do_report(groups, group_fields, start_date, end_date, tag, fields)
@@ -556,23 +573,6 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
       cur_group << record
     end
     return out
-  end
-
-  def report
-    query = Query.new(params[:q])
-    @params = params
-    group_fields = query.group_by
-
-    if group_fields.nil?
-      show_create_report
-      return render 'show_create_report'
-    end
-
-    groups = @@group_mappings[group_fields]
-
-    group_fields = group_fields.split(",")
-
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
   end
 
 
