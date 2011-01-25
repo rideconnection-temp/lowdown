@@ -23,12 +23,30 @@ class ApplicationController < ActionController::Base
   end
     
   def require_user
-    unless current_user
+    if current_user
+      if current_user.login_count == 1 && controller_name != 'users' 
+        flash[:notice] = "Since this is your first time here, please change your password"
+        redirect_to :controller=>'users', :action=>'show_change_password'
+        return false
+      end
+      return current_user
+    else
       session[:return_to] = request.request_uri
       flash[:notice] = "Please log in"
       redirect_to :controller=>'user_session', :action=>'new'
       return false
     end
   end
- 
+
+  def require_admin_user 
+    if require_user
+      if ! current_user.is_admin
+        print "\n\naccess denied\n\n"
+        flash[:notice] = "Access denied"
+        redirect_to "/"
+        return false
+      end
+    end
+    return false
+  end
 end

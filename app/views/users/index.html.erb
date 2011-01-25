@@ -1,0 +1,22 @@
+<table>
+<tr>
+<th>Name</th>
+<th>Email</th>
+</tr>
+<% for user in @users %>
+<tr>
+<td>
+<%= user.name %> 
+</td>
+<td>
+<%= user.email %> 
+</td>
+</tr>
+<% end %>
+</table>
+
+<br/>
+
+<% if user.is_admin %>
+<%= link_to "New user", :action=>"show_create" %>
+<% end %>

@@ -34,10 +34,14 @@ class UserSessionController < ActionController::Base
     if User.count > 0
       return render_text "already initialized"
     end
-    @user = User.create(:name => 'Admin', :email => 'admin@example.com', :password => 'password', :password_confirmation => 'password')
+    params[:user][:level] = 100
+    @user = User.create(params[:user])
+    @user.login_count = 2 #to prevent the automatic password changer from kicking in
     @user.save
     @user_session = UserSession.new(params[:user])
     @user_session.save
     redirect_to '/'
   end
+
+
 end

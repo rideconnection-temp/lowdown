@@ -1,0 +1,9 @@
+<%= form_for :user, :url=>{:action=>:create} do |f| %>
+
+<%= render :partial=>"form", :locals=>{:f => f}%>
+
+<%= f.submit 'Create' %>
+
+<br/>An email will be sent to the user with their password when you click "Create".<br/>
+
+<% end %>

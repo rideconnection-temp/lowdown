@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110124180900) do
+ActiveRecord::Schema.define(:version => 20110124221523) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -223,6 +223,7 @@ ActiveRecord::Schema.define(:version => 20110124180900) do
     t.string   "current_login_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "level",             :default => 0
   end
 
   add_foreign_key "runs", ["trip_import_id"], "trip_imports", ["id"], :name => "runs_trip_import_id_fkey"

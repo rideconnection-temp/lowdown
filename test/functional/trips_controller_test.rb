@@ -12,8 +12,8 @@ class TripsControllerTest < ActionController::TestCase
 
     fill_in 'user_name', :with=>'admin'
     fill_in 'user_email', :with=>'admin@example.com'
-    fill_in 'user_password', :with=>'password'
-    fill_in 'user_password_confirmation', :with=>'password'
+    fill_in 'user_password', :with=>'passwordx'
+    fill_in 'user_password_confirmation', :with=>'passwordx'
     click_button("Create user")
 
 

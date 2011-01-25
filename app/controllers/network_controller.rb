@@ -50,6 +50,7 @@ end
 class NetworkController < ApplicationController
 
   before_filter :require_user
+  before_filter :require_admin_user, :except=>[:csv, :tag_index, :show_create_report, :report, :index]
 
   class NetworkReportRow
     @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year]
@@ -183,6 +184,7 @@ and valid_end = ?
       @undup_riders += result['unduplicated_riders'].to_i
     end
 
+#For a summary, there are actually two sets of fields that are relevant: period_start/period_end and valid_start/valid_end.  In the attribute-to-for case, we look at the period dates; in the attribute-to-made case, we look at the valid dates (minus one month)
     def collect_trips_by_summary(allocation, start_date, end_date)
 
       sql = "select 
@@ -328,30 +330,6 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
 
   }
 
-  # group a set of records by a list of fields
-  def group(groups, records)
-    out = {}
-    last_group = groups[-1]
-
-    for record in records
-      cur_group = out
-      for group in groups
-        if group == last_group
-          if !cur_group.member? record[group]
-            cur_group[record[group]] = []
-          end
-        else
-          if ! cur_group.member? record[group]
-            cur_group[record[group]] = {}
-          end
-        end
-        cur_group = cur_group[record[group]]
-      end
-      cur_group << record
-    end
-    return out
-  end
-
   def index
 
     #network service summary
@@ -367,23 +345,6 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     render 'report'
   end
 
-  def report
-    query = Query.new(params[:q])
-    @params = params
-    group_fields = query.group_by
-
-    if group_fields.nil?
-      show_create_report
-      return render 'show_create_report'
-    end
-
-    groups = @@group_mappings[group_fields]
-
-    group_fields = group_fields.split(",")
-
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
-  end
-
 
   def show_create_report
     @query = Query.new(params[:q])
@@ -394,7 +355,6 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     @providers = Provider.all
     @allocations_with_tag = Set.new()
   end
-
 
   def create_tag
     tag_name = params[:tag_name]
@@ -460,6 +420,48 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     @tags = Allocation.tag_counts
   end
 
+  def csv
+    query = Query.new(params[:q])
+    group_fields = query.group_by
+
+    if group_fields.nil?
+      show_create_report
+      return render 'show_create_report'
+    end
+
+    groups = @@group_mappings[group_fields]
+
+    group_fields = group_fields.split(",")
+
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
+    csv_string = CSV.generate do |csv|
+      csv << NetworkReportRow.fields(query.fields)
+      apply_to_leaves! group_fields, @results,  do | row |
+        csv << row.csv(query.fields)
+        nil
+      end
+    end
+
+
+    return render :text=> csv_string, :content_type=>"text/plain"
+  end
+
+  def sum(rows, out=nil)
+    if out.nil?
+      out = NetworkReportRow.new
+    end
+    if rows.instance_of? Hash
+      rows.each do |key, row|
+        sum(row, out)
+      end
+    else
+      out.include_row(rows)
+    end
+    return out
+  end
+
+  private 
+
   def do_report(groups, group_fields, start_date, end_date, tag, fields)
     group_select = []
     for group,field in groups.split(",").zip group_fields
@@ -511,21 +513,52 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     @end_date = end_date
     @tr_open = false
     @fields = fields
-    fields['driver_hours'] = 0
-    for field in ['driver_volunteer_hours', 'driver_paid_hours', 'driver_total_hours']
-      if fields.member? field
-        fields['driver_hours'] += 1
+    if @fields.nil?
+      @fields = {}
+      NetworkReportRow.fields.each do |field| 
+        @fields[field] = 1
       end
     end
-    fields['volunteer_hours'] = 0
-    for field in ['escort_volunteer_hours', 'admin_volunteer_hours', 'total_volunteer_hours']
-      if fields.member? field
-        fields['volunteer_hours'] += 1
+
+    @fields['driver_hours'] = 0
+    for @field in ['driver_volunteer_hours', 'driver_paid_hours', 'driver_total_hours']
+      if @fields.member? field
+        @fields['driver_hours'] += 1
+      end
+    end
+    @fields['volunteer_hours'] = 0
+    for @field in ['escort_volunteer_hours', 'admin_volunteer_hours', 'total_volunteer_hours']
+      if @fields.member? field
+        @fields['volunteer_hours'] += 1
       end
     end
   end
 
-  def csv
+  # group a set of records by a list of fields
+  def group(groups, records)
+    out = {}
+    last_group = groups[-1]
+
+    for record in records
+      cur_group = out
+      for group in groups
+        if group == last_group
+          if !cur_group.member? record[group]
+            cur_group[record[group]] = []
+          end
+        else
+          if ! cur_group.member? record[group]
+            cur_group[record[group]] = {}
+          end
+        end
+        cur_group = cur_group[record[group]]
+      end
+      cur_group << record
+    end
+    return out
+  end
+
+  def report
     query = Query.new(params[:q])
     @params = params
     group_fields = query.group_by
@@ -540,17 +573,8 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     group_fields = group_fields.split(",")
 
     do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
-    csv_string = CSV.generate do |csv|
-      csv << NetworkReportRow.fields(query.fields)
-      apply_to_leaves! group_fields, @results,  do | row |
-        csv << row.csv(query.fields)
-        nil
-      end
-    end
-
-
-    return render :text=> csv_string, :content_type=>"text/plain"
   end
+
 
   # Apply the specified block to the leaves of a nested hash (leaves
   # are defined as elements group_fields.size deep, so that hashes
@@ -577,17 +601,4 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     return hash
   end
 
-  def sum(rows, out=nil)
-    if out.nil?
-      out = NetworkReportRow.new
-    end
-    if rows.instance_of? Hash
-      rows.each do |key, row|
-        sum(row, out)
-      end
-    else
-      out.include_row(rows)
-    end
-    return out
-  end
 end

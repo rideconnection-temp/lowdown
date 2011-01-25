@@ -52,16 +52,15 @@ Lowdown::Application.routes.draw do
 
   # See how all your routes lay out with "rake routes"
 
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-
-  resources :users
-  
   get    'login(.:format)'  => 'user_session#new',     :as => :login
   post   'login(.:format)'  => 'user_session#create',  :as => :login
   delete 'logout(.:format)' => 'user_session#destroy', :as => :logout
 
   root :to => 'user_session#new' # login page
 
+
+  # This is a legacy wild controller route that's not recommended for RESTful applications.
+  # Note: This route will make all actions in every controller accessible via GET requests.
+  
   match ':controller(/:action(/:id(.:format)))'
 end

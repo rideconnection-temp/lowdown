@@ -1,5 +1,6 @@
 class SummariesController < ApplicationController
   before_filter :require_user
+  before_filter :require_admin_user, :only=>[:show_create, :create, :show_update, :update]
 
   def index
     @summaries = Summary.current_versions.all

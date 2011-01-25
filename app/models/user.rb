@@ -11,4 +11,9 @@ class User < ActiveRecord::Base
     c.login_field = :email
     c.validate_login_field = false
   end
+
+  def is_admin
+    return level == 100
+  end
+
 end
