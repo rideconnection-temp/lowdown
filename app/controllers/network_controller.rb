@@ -70,9 +70,9 @@ class NetworkController < ApplicationController
       return result
     end
 
-    def self.fields(requested_fields)
+    def self.fields(requested_fields=nil)
       if requested_fields.nil?
-        fields = @@attrs + ["cost_per_hour", "cost_per_mile", "cost_per_trip"]
+        fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip"]
       else
         fields = @@selector_fields + requested_fields.keys
       end
@@ -213,12 +213,12 @@ sum(runs.escort_count * duration) as escort_volunteer_hours,
 0 as admin_volunteer_hours,
 max(allocation_id) as allocation_id
 from trips
-inner join runs on trips.run_id = runs.id
+inner join runs on trips.run_id = runs.base_id
 where
 trips.date between ? and ?
-and allocation_id = ? and valid_end = ? "
+and allocation_id = ? and trips.valid_end = ? and runs.valid_end=? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id'], Trip.end_of_time]))
+      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id'], Trip.end_of_time, Run.end_of_time]))
 
       result = results[0]
       @mileage += result['mileage'].to_f
@@ -362,7 +362,8 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
     #past two weeks
     end_date = Date.today
     start_date = end_date - 14 
-    do_report(groups, group_fields, start_date, end_date, nil)
+    do_report(groups, group_fields, start_date, end_date, nil, nil)
+    @params = {}
     render 'report'
   end
 
@@ -526,6 +527,7 @@ where period_start >= ? and period_end < ? and allocation_id=? and valid_end = ?
 
   def csv
     query = Query.new(params[:q])
+    @params = params
     group_fields = query.group_by
 
     if group_fields.nil?
