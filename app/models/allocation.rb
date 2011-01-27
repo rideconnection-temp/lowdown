@@ -8,4 +8,9 @@ class Allocation < ActiveRecord::Base
   def to_s
     name
   end
+
+  def agency
+    return provider.agency
+  end
+
 end

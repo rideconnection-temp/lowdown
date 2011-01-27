@@ -347,12 +347,12 @@ valid_end = ? "
 
   @@group_mappings = {
 
-"county,provider_id" => "allocations.county, allocations.provider_id", 
-"funding_source,county,provider_id,project_name" => "projects.funding_source, allocations.county, allocations.provider_id, projects.name",
-"funding_source,county,provider_id" => "projects.funding_source, allocations.county, allocations.provider_id",
-"funding_source,provider_id" => "projects.funding_source, allocations.provider_id",
-"name,provider_id" => "projects.name, allocations.provider_id",
-"provider_id,county,name" => "allocations.provider_id, allocations.county, projects.name"
+"county,agency" => "allocations.county, providers.agency",
+"funding_source,county,agency,project_name" => "projects.funding_source, allocations.county, providers.agency, projects.name",
+"funding_source,county,agency" => "projects.funding_source, allocations.county, providers.agency",
+"funding_source,agency" => "projects.funding_source, providers.agency",
+"name,agency" => "projects.name, providers.agency",
+"agency,county,name" => "providers.agency, allocations.county, projects.name"
 
   }
 
@@ -507,6 +507,7 @@ valid_end = ? "
 
   def do_report(groups, group_fields, start_date, end_date, tag, fields)
     group_select = []
+
     for group,field in groups.split(",").zip group_fields
       group_select << "#{group} as #{field}"
     end
@@ -585,16 +586,17 @@ valid_end = ? "
     for record in records
       cur_group = out
       for group in groups
+        group_value = record.send(group)
         if group == last_group
-          if !cur_group.member? record[group]
-            cur_group[record[group]] = []
+          if !cur_group.member? group_value
+            cur_group[group_value] = []
           end
         else
-          if ! cur_group.member? record[group]
-            cur_group[record[group]] = {}
+          if ! cur_group.member? group_value
+            cur_group[group_value] = {}
           end
         end
-        cur_group = cur_group[record[group]]
+        cur_group = cur_group[group_value]
       end
       cur_group << record
     end
