@@ -14,6 +14,7 @@ class SummariesController < ApplicationController
   end
 
   def create
+    clean_new_row
     @summary = Summary.create(params[:summary])
     @summary.save!
     if @summary
@@ -34,6 +35,16 @@ class SummariesController < ApplicationController
 
   def update
     @summary = Summary.current_versions.find(params[:summary][:id])
+    clean_new_row
+
+    @providers = Provider.all
+    @allocations = Allocation.all
+    @summary.update_attributes(params[:summary]) ?
+      redirect_to(:action=>:show_update, :id=>@summary) : render(:action => :show_update)
+  end
+
+  private
+  def clean_new_row
 
     #if the new row is not filled in, don't try to save it
     row_data = params[:summary][:summary_rows_attributes]
@@ -42,11 +53,6 @@ class SummariesController < ApplicationController
     if last_row[:purpose].empty? && last_row[:trips].empty?
       row_data.delete(last_row_index)
     end
-
-    @providers = Provider.all
-    @allocations = Allocation.all
-    @summary.update_attributes(params[:summary]) ?
-      redirect_to(:action=>:show_update, :id=>@summary) : render(:action => :show_update)
   end
 
 end
