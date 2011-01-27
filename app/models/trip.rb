@@ -51,6 +51,9 @@ class Trip < ActiveRecord::Base
 private
 
   def set_duration_and_mileage
+    if !should_run_callbacks
+      return
+    end
     unless secondary_update || bulk_import
       if completed?
         self.duration = ((end_at - start_at) / 60 ).to_i unless end_at.nil? || start_at.nil?
@@ -65,9 +68,12 @@ private
   end
 
   def apportion_shared_rides
+    if !should_run_callbacks
+      return
+    end
     unless secondary_update || bulk_import
       if shared?
-        r = Trip.completed.where(:routematch_share_id => routematch_share_id, :date => date).order(:end_at,:created_at)
+        r = Trip.current_versions.completed.where(:routematch_share_id => routematch_share_id, :date => date).order(:end_at,:created_at)
 #       All these aggregates are run separately.  
 #       could be optimized into one query with a custom SELECT statement.
         trip_count   = r.count
@@ -107,6 +113,9 @@ private
   end
 
   def apportion_new_run_based_trips
+    if !should_run_callbacks
+      return true
+    end
     unless secondary_update || bulk_import
       self.run.save!
     end

@@ -77,7 +77,7 @@ module VersionFu
       if self.table_exists?
         # Finally setup which columns to version
         self.versioned_columns =  new.attributes.keys - 
-          ['created_at', 'updated_at', 'valid_start', 'valid_end', 'base_id']
+          ['created_at', 'updated_at', 'valid_start', 'valid_end', 'base_id', 'id']
       else
         ActiveRecord::Base.logger.warn "Base Table not found"
       end
@@ -88,6 +88,8 @@ module VersionFu
 
   module InstanceMethods
     @@end_of_time = Time.utc(9999, 1, 1, 1, 1)
+
+    attr_accessor :should_run_callbacks
 
     # find first version ever
     def first_version
@@ -111,15 +113,17 @@ module VersionFu
           self.base_id = id          
           self.valid_start = now_rounded
           self.valid_end = @@end_of_time
+          should_run_callbacks=true
       elsif id && base_id
           #an edit to an existing object; may need to create a new
           #version
           instantiate_revision if create_new_version?
+          should_run_callbacks=true
       elsif !id && base_id
           #a new version automatically created; no need to make a new version
           self.id = UUIDTools::UUID.timestamp_create().to_s
+          should_run_callbacks=false
       end
-
       true # Never halt save
     end
     
@@ -138,11 +142,11 @@ module VersionFu
       new_version.valid_start = valid_start
       new_version.valid_end = now_rounded
       new_version.base_id = base_id
-      #new_version.id = UUIDTools::UUID.timestamp_create().to_s
 
-      self.valid_start = new_version.valid_end
+      valid_start = new_version.valid_end
 
-      new_version.save!
+      new_version.should_run_callbacks = false
+      new_version.save!(false)
     end
 
     #This is called before destroy; instead of destroying the record, it simply sets
