@@ -146,7 +146,7 @@ module VersionFu
       valid_start = new_version.valid_end
 
       new_version.should_run_callbacks = false
-      new_version.save!(false)
+      new_version.save!(:validate=>false)
     end
 
     #This is called before destroy; instead of destroying the record, it simply sets
