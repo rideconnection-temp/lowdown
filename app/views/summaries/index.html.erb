@@ -1,6 +1,6 @@
 <% for summary in @summaries %>
 
-Summary for <%= summary.provider.name %><br/>
+Summary for <%= summary.provider.name %> (<%= link_to 'Edit', :action=>:show_update, :id=>summary.id %>)<br/>
 Start: <%= summary.period_start %><br/>
 End: <%= summary.period_end %>
 <table>
@@ -29,6 +29,7 @@ yes
 no
 <% end %>
 </td>
+
 </tr>
 
 <% end %>

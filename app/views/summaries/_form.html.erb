@@ -15,6 +15,7 @@
 <%= f.label :prepared_by %> <%= f.text_field :prepared_by %> <br/>
 <%= f.label :report_prepared %> <%= f.date_select :report_prepared %> <br/>
 <%= f.label :allocation %> <%= f.collection_select :allocation_id, @allocations, :id, :name %><br/>
+<%= f.label :complete %><%= f.check_box :complete %><br/>
 
 <h2>Rows</h2>
 
