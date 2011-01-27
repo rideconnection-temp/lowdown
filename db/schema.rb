@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110124221523) do
+ActiveRecord::Schema.define(:version => 20110126172853) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(:version => 20110124221523) do
   end
 
   create_table "runs", :id => false, :force => true do |t|
-    t.string   "id",             :limit => 36, :null => false
+    t.string   "id",             :limit => 36,                    :null => false
     t.string   "base_id",        :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
@@ -99,10 +99,11 @@ ActiveRecord::Schema.define(:version => 20110124221523) do
     t.integer  "escort_count"
     t.integer  "trip_import_id"
     t.integer  "updated_by"
+    t.boolean  "complete",                     :default => false
   end
 
   create_table "summaries", :id => false, :force => true do |t|
-    t.string   "id",                             :limit => 36,                                :null => false
+    t.string   "id",                             :limit => 36,                                                   :null => false
     t.string   "base_id",                        :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
@@ -125,6 +126,7 @@ ActiveRecord::Schema.define(:version => 20110124221523) do
     t.decimal  "funds",                                        :precision => 10, :scale => 2
     t.integer  "allocation_id"
     t.integer  "updated_by"
+    t.boolean  "complete",                                                                    :default => false
   end
 
   create_table "summary_rows", :id => false, :force => true do |t|
