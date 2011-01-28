@@ -2,8 +2,11 @@
     <div id="crossbar">
       <div class="wrap selfclear">             
         <ul id="sitenav" class="selfclear">
-          <li><%= link_to "Import Trips", :action=>:import %></li>
           <li><%= link_to "View Trips", :action=>:list %></li>
+<% if current_user.is_admin %>
+          <li><%= link_to "Import Trips", :action=>:import %></li>
+          <li><%= link_to "Mark complete", :action=>:show_bulk_update %></li>
+<% end %>
         </ul>
       </div><!-- /.wrap -->
     </div><!-- /#crossbar -->
