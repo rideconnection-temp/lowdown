@@ -48,7 +48,7 @@
     <% if !@tr_open %>
       <tr>
     <% end %>
-<td><%= row.allocation.name %></td>
+<td><%= row.send (group_fields[0]) %></td>
 <% if @fields.member? 'funds' %><td><%= '%.2f' % row.funds %></td><%end%>
 <% if @fields.member? 'agency_other' %><td><%= '%.2f' % row.agency_other %></td><%end%>
 <% if @fields.member? 'vehicle_maint' %><td><%= '%.2f' % row.vehicle_maint %></td><%end%>

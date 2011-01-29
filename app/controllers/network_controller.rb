@@ -99,10 +99,19 @@ class NetworkController < ApplicationController
       end
 
       hash.each do |k,v|
-        self.instance_variable_set("@#{k}", v)
+        instance_variable_set("@#{k}", v)
       end
 
-      self.allocation = Allocation.find(@allocation_id)
+      allocation = Allocation.find(@allocation_id)
+      @agency = allocation.agency
+    end
+
+    def agency
+      return @agency
+    end
+
+    def agency=(agency)
+      @agency = agency
     end
 
     def total
@@ -160,8 +169,20 @@ class NetworkController < ApplicationController
       @escort_volunteer_hours += row.escort_volunteer_hours
     end
 
-    def collect_trips_by_trip(allocation, start_date, end_date)
+    def quarter_sql(field)
+      return "extract(year from #{field}) * 10 + extract(quarter from #{field})"
+    end
 
+    def quarter_sql_fragments(allocation, field)
+      quarter_where = ""
+      if allocation.respond_to? :quarter
+        quarter_where = "#{quarter_sql(field)} = #{allocation.quarter} and "
+      end
+      return quarter_where
+    end
+
+    def collect_trips_by_trip(allocation, start_date, end_date)
+      quarter_where = quarter_sql_fragments(allocation, "trips.date")
 
       sql = "select 
 sum(case when in_trimet_district=true then 1 else 0 end) as in_district_trips,
@@ -171,6 +192,7 @@ count(distinct customer_id) as unduplicated_riders
 from trips
 inner join runs on trips.run_id=runs.base_id and runs.valid_end=?
 where
+#{quarter_where}
 runs.complete=true and 
 trips.date between ? and ?
 and trips.allocation_id = ?
@@ -188,7 +210,7 @@ and trips.valid_end = ?
 
 #For a summary, there are actually two sets of fields that are relevant: period_start/period_end and valid_start/valid_end.  In the attribute-to-for case, we look at the period dates; in the attribute-to-made case, we look at the valid dates (minus one month)
     def collect_trips_by_summary(allocation, start_date, end_date)
-
+      quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
       sql = "select 
 sum(case when in_district=true then trips else 0 end) as in_district_trips,
 sum(case when in_district=false then trips else 0 end) as out_of_district_trips,
@@ -197,6 +219,7 @@ sum(unduplicated_riders) as unduplicated_riders
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where 
+#{quarter_where}
 summaries.complete=true and 
 period_start >= ? and period_end < ? and 
 allocation_id=? and 
@@ -208,11 +231,16 @@ summary_rows.valid_end = ? "
       @in_district_trips += result['in_district_trips'].to_i
       @out_of_district_trips += result['out_of_district_trips'].to_i
       @turn_downs += result['turn_downs'].to_i
-      @undup_riders += result['unduplicated_riders'].to_i 
+      @undup_riders += result['unduplicated_riders'].to_i
+    end
+
+    def quarter
+      q = allocation.quarter.to_s
+      return q[0...4] + 'Q' + q[4]
     end
 
     def collect_runs_by_trip(allocation, start_date, end_date)
-
+      quarter_where = quarter_sql_fragments(allocation, "trips.date")
       sql = "
 select 
 sum(trips.odometer_end - trips.odometer_start) as mileage, 
@@ -224,6 +252,7 @@ max(allocation_id) as allocation_id
 from trips
 inner join runs on trips.run_id = runs.base_id
 where
+#{quarter_where}
 runs.complete=true and 
 trips.date between ? and ?
 and allocation_id = ? and trips.valid_end = ? and runs.valid_end=? "
@@ -239,7 +268,7 @@ and allocation_id = ? and trips.valid_end = ? and runs.valid_end=? "
     end
 
     def collect_runs_by_summary(allocation, start_date, end_date)
-
+      quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
       sql = "select
 sum(total_miles) as mileage,
 sum(driver_hours_paid) as driver_paid_hours,
@@ -247,6 +276,7 @@ sum(driver_hours_volunteer) as driver_volunteer_hours,
 sum(escort_hours_volunteer) as escort_volunteer_hours
 from summaries 
 where 
+#{quarter_where}
 summaries.complete=true and 
 period_start >= ? and 
 period_end < ? and 
@@ -263,6 +293,7 @@ valid_end = ? "
     end
 
     def collect_costs_by_trip(allocation, start_date, end_date)
+      quarter_where = quarter_sql_fragments(allocation, "trips.date")
 
       sql = "
 select 
@@ -275,6 +306,7 @@ max(allocation_id) as allocation_id
 from trips
 inner join runs on trips.run_id = runs.base_id and runs.valid_end=?
 where
+#{quarter_where}
 runs.complete=true and 
 trips.date between ? and ?
 and trips.allocation_id = ?
@@ -294,6 +326,7 @@ sum(fare) + sum(customer_pay) as total
 from trips
 inner join runs on runs.base_id = trips.run_id and run.valid_end=?
 where
+#{quarter_where}
 runs.complete=true and 
 date between ? and ?
 and allocation_id=?
@@ -305,7 +338,7 @@ and valid_end = ? "
     end
 
     def collect_costs_by_summary(allocation, start_date, end_date)
-
+      quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
       sql = "select
 sum(funds),
 sum(agency_other) as agency_other,
@@ -313,6 +346,7 @@ sum(agency_other) as agency_other,
 sum(donations) as donations_fares
 from summaries 
 where 
+#{quarter_where}
 complete=true and 
 period_start >= ? and 
 period_end < ? and 
@@ -332,6 +366,7 @@ valid_end = ? "
 sum(donations + funds + agency_other) as total
 from summaries 
 where
+#{quarter_where}
 complete=true and 
 period_start >= ? and 
 period_end < ? and 
@@ -352,16 +387,16 @@ valid_end = ? "
 "funding_source,county,agency" => "projects.funding_source, allocations.county, providers.agency",
 "funding_source,agency" => "projects.funding_source, providers.agency",
 "name,agency" => "projects.name, providers.agency",
-"agency,county,name" => "providers.agency, allocations.county, projects.name"
-
+"agency,county,name" => "providers.agency, allocations.county, projects.name",
+"agency,quarter" => "providers.agency, quarter",
   }
 
   def index
 
     #network service summary
 
-    groups = "allocations.county,allocations.provider_id"
-    group_fields = ['county', 'provider_id']
+    groups = "allocations.county,providers.agency"
+    group_fields = ['county', 'agency']
 
     #past two weeks
     end_date = Date.today
@@ -505,6 +540,66 @@ valid_end = ? "
 
   private 
 
+  def plus_three_months(date)
+    year = date.year
+    month = date.month
+    if month >= 10
+      month -= 9
+      year += 1
+    else
+      month += 3
+    end
+    Date.new(year, month, date.day)
+  end
+
+  class QuarterAllocation
+
+    def initialize(allocation, quarter_start_date, quarter_end_date)
+      @allocation = allocation
+      @quarter_start_date=quarter_start_date
+      @quarter_end_date=quarter_end_date
+      @quarter=quarter_start_date.year * 10 + quarter_start_date.month / 3
+
+    end
+
+    def quarter
+      return @quarter
+    end
+
+    def method_missing(method_name, *args, &block)
+      @allocation.send method_name, *args, &block
+    end
+
+    def respond_to?(method)
+      if method == :quarter
+        return true
+      end
+      return @allocation.respond_to? method
+    end
+  end
+
+  def apply_quarters(allocations, start_date, end_date)
+    #enumerate quarters between start_date and end_date
+    zero_based_month = start_date.month - 1
+    quarter_start = (zero_based_month / 3) * 3 + 1
+    year = start_date.year
+    quarter_start_date = Date.new(year, quarter_start, 1)
+
+    quarter_end_date = plus_three_months quarter_start_date
+
+    quarters = []
+    begin
+      quarters += allocations.map do |allocation| 
+        QuarterAllocation.new allocation, quarter_start_date, quarter_end_date
+      end
+
+      quarter_start_date = plus_three_months quarter_start_date
+      quarter_end_date = plus_three_months quarter_end_date
+    end while quarter_end_date < end_date
+
+    quarters
+  end
+
   def do_report(groups, group_fields, start_date, end_date, tag, fields)
     group_select = []
 
@@ -519,6 +614,11 @@ valid_end = ? "
     else
       results = Allocation.all
     end
+
+    if group_fields.member? 'quarter'
+      results = apply_quarters(results, start_date, end_date)
+    end
+
     allocations = group(group_fields, results)
 
     apply_to_leaves! group_fields, allocations do | allocationset |
@@ -526,6 +626,7 @@ valid_end = ? "
       row = NetworkReportRow.new
 
       for allocation in allocationset
+        row.agency = allocation.agency
         if allocation['trip_collection_method'] == 'trips'
           row.collect_trips_by_trip(allocation, start_date, end_date)
         else
