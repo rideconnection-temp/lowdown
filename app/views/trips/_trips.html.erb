@@ -43,7 +43,7 @@ No
 </td>
                <td>$<%= trip.fare %></td>
                <td>
-<%= link_to "Details", :action=>:show_trip, :id=>trip.id, :html_options=>{:title=>"View details for this trip"} %></td>
+<%= link_to "Details", :action=>:show, :id=>trip.id, :html_options=>{:title=>"View details for this trip"} %></td>
              </tr>
              <% end %>
            </tbody>

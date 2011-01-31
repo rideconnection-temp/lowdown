@@ -36,6 +36,10 @@ class Trip < ActiveRecord::Base
   def shared?
     routematch_share_id.present?
   end
+  
+  def updated_by_user
+    return (self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by)) #right now, imports run through the command line will have no user info
+  end
 
   def customers_served
     guest_count + attendant_count + 1

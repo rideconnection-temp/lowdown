@@ -1,0 +1,36 @@
+<%= f.hidden_field :id %>
+<%= f.label :customer %> <%= f.collection_select :customer_id, @customers, :id, :name %> <br/>
+<%= f.label :home_address %> <%= f.collection_select :home_address_id, @addresses, :id, :display_name %> <br/>
+<%= f.label :pickup_address %> <%= f.collection_select :pickup_address_id, @addresses, :id, :display_name %> <br/>
+<%= f.label :dropoff_address %> <%= f.collection_select :dropoff_address_id, @addresses, :id, :display_name %> <br/>
+<%= f.label :start_at %> <%= f.date_select :start_at %> <br/>
+<%= f.label :end_at %> <%= f.date_select :end_at %> <br/>
+<%= f.label :odometer_start %> <%= f.text_field :odometer_start %> <br/>
+<%= f.label :odometer_end %> <%= f.text_field :odometer_end %> <br/>
+<%= f.label :fare %> <%= f.text_field :fare %> <br/>
+<%= f.label :purpose_type %> <%= f.text_field :purpose_type %> <br/>
+<%= f.label :guest_count %> <%= f.text_field :guest_count %> <br/>
+<%= f.label :attendant_count %> <%= f.text_field :attendant_count %> <br/>
+<%= f.label :mobility %> <%= f.text_field :mobility %> <br/>
+<%= f.label :calculated_bpa_fare %> <%= f.text_field :calculated_bpa_fare %> <br/>
+<%= f.label :bpa_driver_name %> <%= f.text_field :bpa_driver_name %> <br/>
+<%= f.label :volunteer_trip %> <%= f.check_box :volunteer_trip %> <br/>
+<%= f.label :in_trimet_district %> <%= f.check_box :in_trimet_district %> <br/>
+<%= f.label :routematch_share_id %> <%= f.text_field :routematch_share_id %> <br/>
+<%= f.label :override %> <%= f.text_field :override %> <br/>
+<%= f.label :estimated_trip_distance_in_miles %> <%= f.text_field :estimated_trip_distance_in_miles %> <br/>
+<%= f.label :routematch_pickup_address_id %> <%= f.text_field :routematch_pickup_address_id %> <br/>
+<%= f.label :run_id %> <%= f.text_field :run_id %> <br/>
+<%= f.label :trip_import_id %> <%= f.text_field :trip_import_id %> <br/>
+<%= f.label :routematch_trip_id %> <%= f.text_field :routematch_trip_id %> <br/>
+<%= f.label :result_code %> <%= f.text_field :result_code %> <br/>
+<%= f.label :provider_code %> <%= f.text_field :provider_code %> <br/>
+<%= f.label :allocation_id %> <%= f.text_field :allocation_id %> <br/>
+<%= f.label :customer_pay %> <%= f.text_field :customer_pay %> <br/>
+<%= f.label :duration %> <%= f.text_field :duration %> <br/>
+<%= f.label :mileage %> <%= f.text_field :mileage %> <br/>
+<%= f.label :apportioned_duration %> <%= f.text_field :apportioned_duration %> <br/>
+<%= f.label :apportioned_mileage %> <%= f.text_field :apportioned_mileage %> <br/>
+<%= f.label :apportioned_fare %> <%= f.text_field :apportioned_fare %> <br/>
+<%= f.label :updated_by %> <%= f.text_field :updated_by %> <br/>
+

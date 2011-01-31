@@ -1,6 +1,4 @@
 <% content_for :menu_bar do %>
-    <div id="crossbar">
-      <div class="wrap selfclear">             
         <ul id="sitenav" class="selfclear">
           <li><%= link_to "View summaries", :action=>:index %></li>
 <% if current_user.is_admin %>
@@ -8,8 +6,6 @@
           <li><%= link_to "Mark complete", :action=>:show_bulk_update %></li>
 <% end %>
         </ul>
-      </div><!-- /.wrap -->
-    </div><!-- /#crossbar -->
 <% end %>
 
 <%= render :file => 'layouts/application' %>

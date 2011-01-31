@@ -126,6 +126,7 @@ margin: 0.5em 0 0;
 
 #crossbar {
 background: #000;
+min-height: 1.8em;
 }
 
 ul#sitenav li {
@@ -472,4 +473,25 @@ margin: 1em 0;
 #report-create,
 #tag-create {
 margin: 1em 0;
+}
+
+/* - */
+#history {
+float: right;
+padding: 0.5em 1em 1em 1em;
+margin: 0 0 1em 1em;
+background: #e6e6e6;
+border: 1px solid #5c5c5c;
+-moz-border-radius: 4px;
+-webkit-border-radius: 4px;
+border-radius: 4px;
+}
+
+#history ul {
+list-style-position: inside;
+font-size: 0.9em;
+}
+
+#history ul .update-user {
+font-size: 0.9em;
 }

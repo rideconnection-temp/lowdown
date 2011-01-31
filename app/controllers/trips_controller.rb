@@ -51,7 +51,7 @@ end
 class TripsController < ApplicationController
 
   before_filter :require_user, :except=>[:import]
-  before_filter :require_admin_user, :except=>[:list, :index, :share, :run, :view]
+  before_filter :require_admin_user, :only=>[:import]
 
   def index
     redirect_to :action=>:list
@@ -97,30 +97,19 @@ class TripsController < ApplicationController
     render 'show_import'
   end
 
-  def view
+  def show
+    @trip = Trip.find(params[:id])
+    @customers = Customer.find(:all)
+    @addresses = Address.find(:all)
   end
-
-  def show_bulk_update
+  
+  def update
+    @trip = Trip.current_versions.find(params[:trip][:id])
+    # clean_new_row # needed for Trips?
+    @trip.update_attributes(params[:trip]) ?
+      redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
   end
-
-  def bulk_update
-    updated = 0
-
-    start_day = params[:update]['start_date(1i)'].to_i
-    start_month = params[:update]['start_date(2i)'].to_i
-    start_year = params[:update]['start_date(3i)'].to_i
-    start_date = Date.new(start_day, start_month, start_year)
-
-    end_day = params[:update]['end_date(1i)'].to_i
-    end_month = params[:update]['end_date(2i)'].to_i
-    end_year = params[:update]['end_date(3i)'].to_i
-    end_date = Date.new(end_day, end_month, end_year)
-
-    updated = Run.current_versions.where("date >= ? and date < ?", start_date, end_date).count
-    Run.current_versions.update_all({ :complete=>true }, ["date >= ? and date < ?", start_date, end_date])
-
-    flash[:notice] = "Updated #{updated} records"
-    redirect_to :action=>:show_bulk_update
-  end
+  
+  
 
 end

@@ -103,7 +103,7 @@ $(function(){
         buttonImageOnly: true
     });
     
-    $( "#provider, #funding-source, #report-category, #group-by" ).combobox();
+    $( "#query_provider, #query_allocation, #report-category, #group-by, #trip_customer_id, #trip_home_address_id, #trip_pickup_address_id, #trip_dropoff_address_id" ).combobox();
     
     $('input#file-import').change(function( objEvent ){$('.fakebrowseinput').val($(this).val());});
     

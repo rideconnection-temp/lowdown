@@ -41,7 +41,7 @@ class TripImport < ActiveRecord::Base
   has_many :trips
   has_many :runs
 
-  after_create :import_file, :apportion_imported_shared_rides, :apportion_imported_runs 
+  after_create :import_file##, :apportion_imported_shared_rides, :apportion_imported_runs 
 
 private
 
