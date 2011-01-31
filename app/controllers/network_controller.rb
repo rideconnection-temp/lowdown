@@ -239,6 +239,15 @@ summary_rows.valid_end = ? "
       return q[0...4] + 'Q' + q[4]
     end
 
+    def year
+      return allocation.year.to_s
+    end
+
+    def month
+      return "#{allocation.year}M#{allocation.month}"
+    end
+
+
     def project_number
       return allocation.project_number
     end
@@ -403,6 +412,10 @@ valid_end = ? "
     "quarter" => "quarter"
   }
 
+  @@time_periods = [
+    "year", "quarter", "month"
+  ]
+
   def index
 
     #network service summary
@@ -552,30 +565,26 @@ valid_end = ? "
 
   private 
 
-  def plus_three_months(date)
+  def add_months(date, months)
     year = date.year
-    month = date.month
-    if month >= 10
-      month -= 9
+    month = date.month + months
+    while month > 12
+      month -= 12
       year += 1
-    else
-      month += 3
     end
     Date.new(year, month, date.day)
   end
 
-  class QuarterAllocation
+  class PeriodAllocation
+    attr_accessor :quarter, :year, :month
 
-    def initialize(allocation, quarter_start_date, quarter_end_date)
+    def initialize(allocation, period_start_date, period_end_date)
       @allocation = allocation
-      @quarter_start_date=quarter_start_date
-      @quarter_end_date=quarter_end_date
-      @quarter=quarter_start_date.year * 10 + quarter_start_date.month / 3 + 1
-
-    end
-
-    def quarter
-      return @quarter
+      @period_start_date = period_start_date
+      @period_end_date = period_end_date
+      @quarter = period_start_date.year * 10 + period_start_date.month / 3 + 1
+      @year = period_start_date.year
+      @month = period_start_date.month
     end
 
     def method_missing(method_name, *args, &block)
@@ -583,33 +592,49 @@ valid_end = ? "
     end
 
     def respond_to?(method)
+      if method == :year
+        return true
+      end
       if method == :quarter
+        return true
+      end
+      if method == :month
         return true
       end
       return @allocation.respond_to? method
     end
   end
 
-  def apply_quarters(allocations, start_date, end_date)
-    #enumerate quarters between start_date and end_date
-    zero_based_month = start_date.month - 1
-    quarter_start = (zero_based_month / 3) * 3 + 1
+  def apply_periods(allocations, start_date, end_date, period)
+    #enumerate periods between start_date and end_date
     year = start_date.year
-    quarter_start_date = Date.new(year, quarter_start, 1)
+    if period == 'year'
+      period_start_date = Date.new(year, 1, 1)
+      advance = 12
+    elsif period == 'quarter'
+      zero_based_month = start_date.month - 1
+      quarter_start = (zero_based_month / 3) * 3 + 1
+      period_start_date = Date.new(year, quarter_start, 1)
 
-    quarter_end_date = plus_three_months quarter_start_date
+      advance = 3
+    elsif period == 'month'
+      period_start_date = Date.new(year, start_date.month, 1)
+      advance = 1
+    end
 
-    quarters = []
+    period_end_date = add_months period_start_date, advance
+
+    periods = []
     begin
-      quarters += allocations.map do |allocation| 
-        QuarterAllocation.new allocation, quarter_start_date, quarter_end_date
+      periods += allocations.map do |allocation|
+        PeriodAllocation.new allocation, period_start_date, period_end_date
       end
 
-      quarter_start_date = plus_three_months quarter_start_date
-      quarter_end_date = plus_three_months quarter_end_date
-    end while quarter_end_date < end_date
+      period_start_date = add_months period_start_date, advance
+      period_end_date = add_months period_end_date, advance
+    end while period_end_date <= end_date
 
-    quarters
+    periods
   end
 
 
@@ -634,8 +659,10 @@ valid_end = ? "
       results = Allocation.all
     end
 
-    if group_fields.member? 'quarter'
-      results = apply_quarters(results, start_date, end_date)
+    for period in @@time_periods
+      if group_fields.member? period
+        results = apply_periods(results, start_date, end_date, period)
+      end
     end
 
     allocations = group(group_fields, results)
