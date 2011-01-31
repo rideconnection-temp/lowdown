@@ -612,6 +612,13 @@ valid_end = ? "
     quarters
   end
 
+
+  # Collect all data, and summarize it grouped according to the groups provided.
+  # groups: the names of groupings, in order from coarsest to finest (i.e. project_name, quarter)
+  # group_fields: the names of groupings with table names (i.e. projects.name, quarter)
+  # tag: an allocation tag to restrict the query to
+  # fields: a list of fields to display
+
   def do_report(groups, group_fields, start_date, end_date, tag, fields)
     group_select = []
 
@@ -691,7 +698,22 @@ valid_end = ? "
     end
   end
 
-  # group a set of records by a list of fields
+  # group a set of records by a list of fields.  
+  # groups is a list of fields to group by
+  # records is a list of records
+  # the output is a nested hash, with one level for each element of groups
+  # for example,
+
+  # groups = [kingdom, edible]
+  # records = [platypus, cow, oak, apple, orange, shiitake]
+  # output = {'animal' => { 'no' => ['platypus'], 
+  #                         'yes' => ['cow'] 
+  #                       }, 
+  #           'plant' => { 'no' => 'oak'], 
+  #                        'yes' => ['apple', 'orange']
+  #                       }
+  #           'fungus' => { 'yes' => ['shiitake'] }
+  #          }
   def group(groups, records)
     out = {}
     last_group = groups[-1]
