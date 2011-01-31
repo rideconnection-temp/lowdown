@@ -3,7 +3,14 @@
   <h2>Versions</h2>
   <ul><!-- Right now, the versions method isn't sorted at all. I suspect we'll want to add that (maybe at the model level?) -->
   <% @trip.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse.each do |version| %>
-    <li><%= link_to "#{time_ago_in_words(version.updated_at)} ago", :action=>:show, :id=>version.id, :html_options=>{:title=>"View details for this trip"} %> <span class="update-user">(<%= version.updated_by_user.name %>)</span></li>
+    <li>
+      <% if (version.id == @trip.id) %>
+      <%= time_ago_in_words(version.updated_at) %> ago
+      <% else %>
+      <%= link_to "#{time_ago_in_words(version.updated_at)} ago", :action=>:show, :id=>version.id %>
+      <% end %>
+      <span class="update-user">(<%= version.updated_by_user.name %>)</span>
+    </li>
   <% end %>
   </ul>
 </div><!-- /#history -->
