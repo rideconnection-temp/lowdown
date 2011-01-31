@@ -509,7 +509,7 @@ valid_end = ? "
     do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
     csv_string = CSV.generate do |csv|
       csv << NetworkReportRow.fields(query.fields)
-      apply_to_leaves! group_fields, @results,  do | row |
+      apply_to_leaves! @results, group_fields.size,  do | row |
         csv << row.csv(query.fields)
         nil
       end
@@ -640,7 +640,7 @@ valid_end = ? "
 
     allocations = group(group_fields, results)
 
-    apply_to_leaves! group_fields, allocations do | allocationset |
+    apply_to_leaves! allocations, group_fields.size, do | allocationset |
 
       row = NetworkReportRow.new
 
@@ -740,14 +740,14 @@ valid_end = ? "
 
 
   # Apply the specified block to the leaves of a nested hash (leaves
-  # are defined as elements group_fields.size deep, so that hashes
+  # are defined as elements {depth} levels deep, so that hashes
   # can be leaves)
-  def apply_to_leaves!(group_fields, group, &block) 
-    if group_fields.empty?
+  def apply_to_leaves!(group, depth, &block) 
+    if depth == 0
       return block.call group
     else
       group.each do |k, v|
-        group[k] = apply_to_leaves! group_fields[1..-1], v, &block
+        group[k] = apply_to_leaves! v, depth - 1, &block
       end
       return group
     end
