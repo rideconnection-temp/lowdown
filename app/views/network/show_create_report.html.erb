@@ -55,12 +55,16 @@
             <h3>Group By</h3>
             <div class="group-by-wrap">
               <select id="group-by" name="q[group_by]">
+                <option value="county,quarter">County, Quarter</option>
+                <option value="funding_source,quarter">Funding Source, Quarter</option>
+                <option value="funding_source,funding_subsource,quarter">Funding Source, Funding Sub-source, Quarter</option>
+                <option value="project_number,quarter">Project code, Quarter</option>
                 <option value="county,agency">County, Provider</option>
                 <option value="funding_source,county,agency,project_name">Funding Source, County, Provider, Project Name</option>
                 <option value="funding_source,county,agency">Funding Source, County, Provider</option>
                 <option value="funding_source,agency">Funding Source, Provider</option>
-                <option value="name,agency">Project Name, Provider</option>
-                <option value="agency,county,name">Provider, County, Project Name</option>
+                <option value="project_name,agency">Project Name, Provider</option>
+                <option value="agency,county,project_name">Provider, County, Project Name</option>
               </select>
             </div>
           </div>

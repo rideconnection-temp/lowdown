@@ -239,6 +239,19 @@ summary_rows.valid_end = ? "
       return q[0...4] + 'Q' + q[4]
     end
 
+    def project_number
+      return allocation.project_number
+    end
+
+    def funding_source
+      return allocation.funding_source
+    end
+
+    def funding_subsource
+      return allocation.funding_subsource
+    end
+
+
     def collect_runs_by_trip(allocation, start_date, end_date)
       quarter_where = quarter_sql_fragments(allocation, "trips.date")
       sql = "
@@ -381,14 +394,13 @@ valid_end = ? "
   end
 
   @@group_mappings = {
-
-"county,agency" => "allocations.county, providers.agency",
-"funding_source,county,agency,project_name" => "projects.funding_source, allocations.county, providers.agency, projects.name",
-"funding_source,county,agency" => "projects.funding_source, allocations.county, providers.agency",
-"funding_source,agency" => "projects.funding_source, providers.agency",
-"name,agency" => "projects.name, providers.agency",
-"agency,county,name" => "providers.agency, allocations.county, projects.name",
-"agency,quarter" => "providers.agency, quarter",
+    "agency" => "providers.agency",
+    "county" => "allocations.county",
+    "funding_source" => "projects.funding_source",
+    "funding_subsource" => "projects.funding_subsource",
+    "project_name" => "projects.name",
+    "project_number" => "projects.project_number",
+    "quarter" => "quarter"
   }
 
   def index
@@ -490,9 +502,9 @@ valid_end = ? "
       return render 'show_create_report'
     end
 
-    groups = @@group_mappings[group_fields]
-
     group_fields = group_fields.split(",")
+
+    groups = group_fields.map { |f| @@group_mappings[f] }
 
     do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
     csv_string = CSV.generate do |csv|
@@ -531,9 +543,9 @@ valid_end = ? "
       return render 'show_create_report'
     end
 
-    groups = @@group_mappings[group_fields]
-
     group_fields = group_fields.split(",")
+
+    groups = group_fields.map { |f| @@group_mappings[f] }
 
     do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
   end

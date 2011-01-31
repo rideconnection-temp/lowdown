@@ -5,18 +5,18 @@
         <% @tr_open = true %>
         <tr>
       <% end %>
-      <th rowspan="<%= nested_size(row) + 1 %>">
-	<span><%= get_row(row).instance_variable_get("@#{group_fields[0]}") %></span>
+      <th rowspan="<%= nested_size_with_totals(row) %>">
+	<span><%= get_row(row).send(group_fields[0]) %></span>
       </th>
 
 
-    <%= render :partial=>'nested_rows', :locals=>{:rows=>row, :group_fields=>@group_fields[1..-1]} %>
+    <%= render :partial=>'nested_rows', :locals=>{:rows=>row, :group_fields=>group_fields[1..-1]} %>
 
       <!-- totals -->
       <% row = controller.sum(row) %>
       <!-- you will never be tr_open here -->
       <tr class="totals">
-        <td>Totals</td>
+        <td colspan="<%=group_fields.size - 1%>">Totals</td>
 <% if @fields.member? 'funds' %><td><%= '%.2f' % row.funds %></td><%end%>
 <% if @fields.member? 'agency_other' %><td><%= '%.2f' % row.agency_other %></td><%end%>
 <% if @fields.member? 'vehicle_maint' %><td><%= '%.2f' % row.vehicle_maint %></td><%end%>

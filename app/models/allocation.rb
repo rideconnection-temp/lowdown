@@ -13,4 +13,16 @@ class Allocation < ActiveRecord::Base
     return provider.agency
   end
 
+  def funding_source
+    return project.funding_source
+  end
+
+  def funding_subsource
+    return project.funding_subsource
+  end
+
+  def project_number
+    return project.project_number
+  end
+
 end

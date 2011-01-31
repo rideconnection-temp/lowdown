@@ -17,16 +17,16 @@ module ApplicationHelper
     end
   end
 
-  def nested_size(hash)
-    total = 0
-    for k, v in hash
-      if v.instance_of? Hash
-        total += nested_size v
-      else
-        total += 1
+  def nested_size_with_totals(e)
+    if e.instance_of? Hash
+      total = 1
+      for k, v in e
+        total += nested_size_with_totals v
       end
+      return total
+    else
+      return 1
     end
-    total
   end
 
   def get_row(e)
