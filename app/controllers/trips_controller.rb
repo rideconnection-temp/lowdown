@@ -20,6 +20,12 @@ class Query
       if params["end_date(1i)"]
         @end_date = convert_date(params, :end_date)
       end
+      if params["start_date"]
+        @start_date = Date.parse(params["start_date"])
+      end
+      if params["end_date"]
+        @end_date = Date.parse(params["end_date"])
+      end
       if params[:provider]
         @provider = params[:provider].to_i
       end

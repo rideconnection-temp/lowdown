@@ -97,10 +97,11 @@ $(function(){
         return false;
     });
 
-    $( "#startday, #endday" ).datepicker({
+    $( "#query_start_date, #query_end_date, #startday, #endday" ).datepicker({
         showOn: "button",
         buttonImage: "../images/calendar.png",
-        buttonImageOnly: true
+        buttonImageOnly: true,
+        dateFormat: 'yy-mm-dd' 
     });
     
     $( "#query_provider, #query_allocation, #report-category, #group-by, #trip_customer_id, #trip_home_address_id, #trip_pickup_address_id, #trip_dropoff_address_id" ).combobox();

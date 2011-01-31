@@ -222,7 +222,9 @@ margin: 0.25em 0 1em;
 }
 
 #startday,
-#endday {
+#endday,
+#query_start_date,
+#query_end_date {
 width: 6.5em;
 padding-right: 20px;
 }

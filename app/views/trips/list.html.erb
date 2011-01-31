@@ -3,9 +3,7 @@
          <%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
            <div class="ui-widget">
              Trips between
-           	<span id="startday-wrap"><%= f.date_select :start_date %></span>
-           	and 
-           	<span id="endday-wrap"><%= f.date_select :end_date %></span>
+             <span id="startday-wrap"><%= f.text_field :start_date %></span>and<span id="endday-wrap"><%= f.text_field :end_date %></span>
            	<span id="provider-wrap">
 		  <%= f.collection_select :provider, @providers, :id, :name, :include_blank => true %>
           	</span>
