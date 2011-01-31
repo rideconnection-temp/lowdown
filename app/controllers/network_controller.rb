@@ -173,20 +173,7 @@ class NetworkController < ApplicationController
       @escort_volunteer_hours += row.escort_volunteer_hours
     end
 
-    def quarter_sql(field)
-      return "extract(year from #{field}) * 10 + extract(quarter from #{field})"
-    end
-
-    def quarter_sql_fragments(allocation, field)
-      quarter_where = ""
-      if allocation.respond_to? :quarter
-        quarter_where = "#{quarter_sql(field)} = #{allocation.quarter} and "
-      end
-      return quarter_where
-    end
-
     def collect_trips_by_trip(allocation, start_date, end_date, pending=false)
-      quarter_where = quarter_sql_fragments(allocation, "trips.date")
       pending_where = pending ? "runs.complete=true and " : ""
 
       sql = "select 
@@ -197,13 +184,11 @@ count(distinct customer_id) as unduplicated_riders
 from trips
 inner join runs on trips.run_id=runs.base_id and runs.valid_end=?
 where
-#{quarter_where}
 #{pending_where}
 trips.date between ? and ?
 and trips.allocation_id = ?
 and trips.valid_end = ?
 "
-
       results = ActiveRecord::Base.connection.select_all(bind([sql, Run.end_of_time, start_date, end_date, allocation['id'], Trip.end_of_time]))
 
       result = results[0]
@@ -215,7 +200,6 @@ and trips.valid_end = ?
 
 #For a summary, there are actually two sets of fields that are relevant: period_start/period_end and valid_start/valid_end.  In the attribute-to-for case, we look at the period dates; in the attribute-to-made case, we look at the valid dates (minus one month)
     def collect_trips_by_summary(allocation, start_date, end_date, pending=false)
-      quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
       pending_where = pending ? "runs.complete=true and " : ""
 
       sql = "select 
@@ -226,7 +210,6 @@ sum(unduplicated_riders) as unduplicated_riders
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where 
-#{quarter_where}
 summaries.complete=true and 
 period_start >= ? and period_end < ? and 
 allocation_id=? and 
@@ -269,7 +252,6 @@ summary_rows.valid_end = ? "
 
 
     def collect_runs_by_trip(allocation, start_date, end_date, pending=false)
-      quarter_where = quarter_sql_fragments(allocation, "trips.date")
       pending_where = pending ? "runs.complete=true and " : ""
       sql = "
 select 
@@ -282,7 +264,6 @@ max(allocation_id) as allocation_id
 from trips
 inner join runs on trips.run_id = runs.base_id
 where
-#{quarter_where}
 #{pending_where}
 trips.date between ? and ?
 and allocation_id = ? and trips.valid_end = ? and runs.valid_end=? "
@@ -298,7 +279,6 @@ and allocation_id = ? and trips.valid_end = ? and runs.valid_end=? "
     end
 
     def collect_runs_by_summary(allocation, start_date, end_date, pending=false)
-      quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
       pending_where = pending ? "runs.complete=true and " : ""
       sql = "select
 sum(total_miles) as mileage,
@@ -307,7 +287,6 @@ sum(driver_hours_volunteer) as driver_volunteer_hours,
 sum(escort_hours_volunteer) as escort_volunteer_hours
 from summaries 
 where 
-#{quarter_where}
 summaries.complete=true and 
 period_start >= ? and 
 period_end < ? and 
@@ -324,7 +303,6 @@ valid_end = ? "
     end
 
     def collect_costs_by_trip(allocation, start_date, end_date, pending=false)
-      quarter_where = quarter_sql_fragments(allocation, "trips.date")
       pending_where = pending ? "runs.complete=true and " : ""
       sql = "
 select 
@@ -337,7 +315,6 @@ max(allocation_id) as allocation_id
 from trips
 inner join runs on trips.run_id = runs.base_id and runs.valid_end=?
 where
-#{quarter_where}
 #{pending_where}
 trips.date between ? and ?
 and trips.allocation_id = ?
@@ -357,7 +334,6 @@ sum(fare) + sum(customer_pay) as total
 from trips
 inner join runs on runs.base_id = trips.run_id and run.valid_end=?
 where
-#{quarter_where}
 #{pending_where}
 date between ? and ?
 and allocation_id=?
@@ -369,7 +345,6 @@ and valid_end = ? "
     end
 
     def collect_costs_by_summary(allocation, start_date, end_date, pending=false)
-      quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
       pending_where = pending ? "runs.complete=true and " : ""
       sql = "select
 sum(funds),
@@ -378,7 +353,6 @@ sum(agency_other) as agency_other,
 sum(donations) as donations_fares
 from summaries 
 where 
-#{quarter_where}
 complete=true and 
 period_start >= ? and 
 period_end < ? and 
@@ -398,7 +372,6 @@ valid_end = ? "
 sum(donations + funds + agency_other) as total
 from summaries 
 where
-#{quarter_where}
 complete=true and 
 period_start >= ? and 
 period_end < ? and 
@@ -586,7 +559,7 @@ valid_end = ? "
   end
 
   class PeriodAllocation
-    attr_accessor :quarter, :year, :month
+    attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date
 
     def initialize(allocation, period_start_date, period_end_date)
       @allocation = allocation
@@ -602,13 +575,7 @@ valid_end = ? "
     end
 
     def respond_to?(method)
-      if method == :year
-        return true
-      end
-      if method == :quarter
-        return true
-      end
-      if method == :month
+      if instance_variables.member? "@#{method.to_s}".to_sym
         return true
       end
       return @allocation.respond_to? method
@@ -683,6 +650,11 @@ valid_end = ? "
 
       for allocation in allocationset
         row.agency = allocation.agency
+        if allocation.respond_to? :period_start_date 
+          #this is not working for some reason?
+          start_date = allocation.period_start_date
+          end_date = allocation.period_end_date
+        end
         if allocation['trip_collection_method'] == 'trips'
           row.collect_trips_by_trip(allocation, start_date, end_date, pending)
         else
