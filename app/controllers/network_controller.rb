@@ -9,6 +9,7 @@ class Query
   attr_accessor :group_by
   attr_accessor :tag
   attr_accessor :fields
+  attr_accessor :pending
 
   def convert_date(obj, base)
     return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
@@ -33,6 +34,9 @@ class Query
       end
       if params[:f]
         @fields = params[:f]
+      end
+      if params[:pending]
+        @pending = params[:pending]
       end
     end
   end
@@ -181,8 +185,9 @@ class NetworkController < ApplicationController
       return quarter_where
     end
 
-    def collect_trips_by_trip(allocation, start_date, end_date)
+    def collect_trips_by_trip(allocation, start_date, end_date, pending=false)
       quarter_where = quarter_sql_fragments(allocation, "trips.date")
+      pending_where = pending ? "runs.complete=true and " : ""
 
       sql = "select 
 sum(case when in_trimet_district=true then 1 else 0 end) as in_district_trips,
@@ -193,7 +198,7 @@ from trips
 inner join runs on trips.run_id=runs.base_id and runs.valid_end=?
 where
 #{quarter_where}
-runs.complete=true and 
+#{pending_where}
 trips.date between ? and ?
 and trips.allocation_id = ?
 and trips.valid_end = ?
@@ -209,8 +214,10 @@ and trips.valid_end = ?
     end
 
 #For a summary, there are actually two sets of fields that are relevant: period_start/period_end and valid_start/valid_end.  In the attribute-to-for case, we look at the period dates; in the attribute-to-made case, we look at the valid dates (minus one month)
-    def collect_trips_by_summary(allocation, start_date, end_date)
+    def collect_trips_by_summary(allocation, start_date, end_date, pending=false)
       quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
+      pending_where = pending ? "runs.complete=true and " : ""
+
       sql = "select 
 sum(case when in_district=true then trips else 0 end) as in_district_trips,
 sum(case when in_district=false then trips else 0 end) as out_of_district_trips,
@@ -261,8 +268,9 @@ summary_rows.valid_end = ? "
     end
 
 
-    def collect_runs_by_trip(allocation, start_date, end_date)
+    def collect_runs_by_trip(allocation, start_date, end_date, pending=false)
       quarter_where = quarter_sql_fragments(allocation, "trips.date")
+      pending_where = pending ? "runs.complete=true and " : ""
       sql = "
 select 
 sum(trips.odometer_end - trips.odometer_start) as mileage, 
@@ -275,7 +283,7 @@ from trips
 inner join runs on trips.run_id = runs.base_id
 where
 #{quarter_where}
-runs.complete=true and 
+#{pending_where}
 trips.date between ? and ?
 and allocation_id = ? and trips.valid_end = ? and runs.valid_end=? "
 
@@ -289,8 +297,9 @@ and allocation_id = ? and trips.valid_end = ? and runs.valid_end=? "
 
     end
 
-    def collect_runs_by_summary(allocation, start_date, end_date)
+    def collect_runs_by_summary(allocation, start_date, end_date, pending=false)
       quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
+      pending_where = pending ? "runs.complete=true and " : ""
       sql = "select
 sum(total_miles) as mileage,
 sum(driver_hours_paid) as driver_paid_hours,
@@ -314,9 +323,9 @@ valid_end = ? "
       @escort_volunteer_hours += result['escort_volunteer_hours'].to_f
     end
 
-    def collect_costs_by_trip(allocation, start_date, end_date)
+    def collect_costs_by_trip(allocation, start_date, end_date, pending=false)
       quarter_where = quarter_sql_fragments(allocation, "trips.date")
-
+      pending_where = pending ? "runs.complete=true and " : ""
       sql = "
 select 
 sum(fare) as funds, 
@@ -329,7 +338,7 @@ from trips
 inner join runs on trips.run_id = runs.base_id and runs.valid_end=?
 where
 #{quarter_where}
-runs.complete=true and 
+#{pending_where}
 trips.date between ? and ?
 and trips.allocation_id = ?
 and trips.valid_end = ? "
@@ -349,7 +358,7 @@ from trips
 inner join runs on runs.base_id = trips.run_id and run.valid_end=?
 where
 #{quarter_where}
-runs.complete=true and 
+#{pending_where}
 date between ? and ?
 and allocation_id=?
 and valid_end = ? "
@@ -359,8 +368,9 @@ and valid_end = ? "
       @total_last_year += result['total'].to_f
     end
 
-    def collect_costs_by_summary(allocation, start_date, end_date)
+    def collect_costs_by_summary(allocation, start_date, end_date, pending=false)
       quarter_where = quarter_sql_fragments(allocation, "summaries.period_start")
+      pending_where = pending ? "runs.complete=true and " : ""
       sql = "select
 sum(funds),
 sum(agency_other) as agency_other,
@@ -426,7 +436,7 @@ valid_end = ? "
     #past two weeks
     end_date = Date.today
     start_date = end_date - 14 
-    do_report(groups, group_fields, start_date, end_date, nil, nil)
+    do_report(groups, group_fields, start_date, end_date, nil, nil, false)
     @params = {}
     render 'report'
   end
@@ -519,7 +529,7 @@ valid_end = ? "
 
     groups = group_fields.map { |f| @@group_mappings[f] }
 
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending)
     csv_string = CSV.generate do |csv|
       csv << NetworkReportRow.fields(query.fields)
       apply_to_leaves! @results, group_fields.size,  do | row |
@@ -560,7 +570,7 @@ valid_end = ? "
 
     groups = group_fields.map { |f| @@group_mappings[f] }
 
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields)
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending)
   end
 
   private 
@@ -644,7 +654,7 @@ valid_end = ? "
   # tag: an allocation tag to restrict the query to
   # fields: a list of fields to display
 
-  def do_report(groups, group_fields, start_date, end_date, tag, fields)
+  def do_report(groups, group_fields, start_date, end_date, tag, fields, pending)
     group_select = []
 
     for group,field in groups.split(",").zip group_fields
@@ -674,21 +684,21 @@ valid_end = ? "
       for allocation in allocationset
         row.agency = allocation.agency
         if allocation['trip_collection_method'] == 'trips'
-          row.collect_trips_by_trip(allocation, start_date, end_date)
+          row.collect_trips_by_trip(allocation, start_date, end_date, pending)
         else
-          row.collect_trips_by_summary(allocation, start_date, end_date)
+          row.collect_trips_by_summary(allocation, start_date, end_date, pending)
         end
 
         if allocation['run_collection_method'] == 'trips' or allocation['run_collection_method'] == 'runs'
-          row.collect_runs_by_trip(allocation, start_date, end_date)
+          row.collect_runs_by_trip(allocation, start_date, end_date, pending)
         else
-          row.collect_runs_by_summary(allocation, start_date, end_date)
+          row.collect_runs_by_summary(allocation, start_date, end_date, pending)
         end
 
         if allocation['cost_collection_method'] == 'trips' or allocation['cost_collection_method'] == 'runs'
-          row.collect_costs_by_trip(allocation, start_date, end_date)
+          row.collect_costs_by_trip(allocation, start_date, end_date, pending)
         else
-          row.collect_costs_by_summary(allocation, start_date, end_date)
+          row.collect_costs_by_summary(allocation, start_date, end_date, pending)
         end
 
       end
