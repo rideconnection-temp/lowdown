@@ -558,7 +558,7 @@ valid_end = ? "
       @allocation = allocation
       @quarter_start_date=quarter_start_date
       @quarter_end_date=quarter_end_date
-      @quarter=quarter_start_date.year * 10 + quarter_start_date.month / 3
+      @quarter=quarter_start_date.year * 10 + quarter_start_date.month / 3 + 1
 
     end
 
