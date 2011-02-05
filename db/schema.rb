@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110126172853) do
+ActiveRecord::Schema.define(:version => 20120121105500) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -137,7 +137,7 @@ ActiveRecord::Schema.define(:version => 20110126172853) do
     t.string   "purpose"
     t.integer  "trips"
     t.boolean  "in_district"
-    t.string   "summary_id",  :limit => 36
+    t.string   "summary_id"
     t.integer  "updated_by"
   end
 
@@ -200,8 +200,8 @@ ActiveRecord::Schema.define(:version => 20110126172853) do
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
     t.integer  "allocation_id"
-    t.integer  "home_address_id"
     t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
+    t.integer  "home_address_id"
     t.integer  "duration"
     t.decimal  "mileage",                                        :precision => 6,  :scale => 1
     t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
@@ -229,7 +229,5 @@ ActiveRecord::Schema.define(:version => 20110126172853) do
   end
 
   add_foreign_key "runs", ["trip_import_id"], "trip_imports", ["id"], :name => "runs_trip_import_id_fkey"
-
-  add_foreign_key "taggings", ["tag_id"], "tags", ["id"], :name => "taggings_tag_id_fkey"
 
 end

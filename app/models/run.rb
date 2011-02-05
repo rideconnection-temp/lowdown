@@ -19,7 +19,7 @@ class Run < ActiveRecord::Base
 
   def display_name
     return name if name
-    return "unnamed run #{id} on #{date}"
+    return "unnamed run #{routematch_id} on #{date}"
   end
 
   private
