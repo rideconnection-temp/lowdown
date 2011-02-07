@@ -10,6 +10,7 @@ class Query
   attr_accessor :tag
   attr_accessor :fields
   attr_accessor :pending
+  attr_accessor :adjustment
 
   def convert_date(obj, base)
     return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
@@ -37,6 +38,9 @@ class Query
       end
       if params[:pending]
         @pending = params[:pending]
+      end
+      if params[:adjustment]
+        @adjustment = params[:adjustment]
       end
     end
   end
@@ -150,80 +154,6 @@ class NetworkController < ApplicationController
       return cpm
     end
 
-    def project_name
-      allocation.project.name
-    end
-
-    def include_row(row)
-      @funds += row.funds
-      @fares += row.fares
-
-      @total_last_year += row.total_last_year
-
-      @in_district_trips += row.in_district_trips
-      @out_of_district_trips += row.out_of_district_trips
-
-      @mileage += row.mileage
-
-      @driver_paid_hours += row.driver_paid_hours
-
-      @turn_downs += row.turn_downs
-      @undup_riders += row.undup_riders
-
-      @escort_volunteer_hours += row.escort_volunteer_hours
-    end
-
-    def collect_trips_by_trip(allocation, start_date, end_date, pending=false)
-      pending_where = pending ? "runs.complete=true and " : ""
-
-      sql = "select 
-sum(case when in_trimet_district=true then 1 else 0 end) as in_district_trips,
-sum(case when in_trimet_district=false then 1 else 0 end) as out_of_district_trips,
-sum(case when result_code='TD' then 1 else 0 end) as turn_downs,
-count(distinct customer_id) as unduplicated_riders
-from trips
-inner join runs on trips.run_id=runs.base_id and runs.valid_end=?
-where
-#{pending_where}
-trips.date between ? and ?
-and trips.allocation_id = ?
-and trips.valid_end = ?
-"
-      results = ActiveRecord::Base.connection.select_all(bind([sql, Run.end_of_time, start_date, end_date, allocation['id'], Trip.end_of_time]))
-
-      result = results[0]
-      @in_district_trips += result['in_district_trips'].to_i
-      @out_of_district_trips += result['out_of_district_trips'].to_i
-      @turn_downs += result['turn_downs'].to_i
-      @undup_riders += result['unduplicated_riders'].to_i
-    end
-
-#For a summary, there are actually two sets of fields that are relevant: period_start/period_end and valid_start/valid_end.  In the attribute-to-for case, we look at the period dates; in the attribute-to-made case, we look at the valid dates (minus one month)
-    def collect_trips_by_summary(allocation, start_date, end_date, pending=false)
-      pending_where = pending ? "runs.complete=true and " : ""
-
-      sql = "select 
-sum(case when in_district=true then trips else 0 end) as in_district_trips,
-sum(case when in_district=false then trips else 0 end) as out_of_district_trips,
-sum(turn_downs),
-sum(unduplicated_riders) as unduplicated_riders
-from summaries 
-inner join summary_rows on summary_rows.summary_id = summaries.base_id
-where 
-summaries.complete=true and 
-period_start >= ? and period_end < ? and 
-allocation_id=? and 
-summaries.valid_end = ? and 
-summary_rows.valid_end = ? "
-
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id'], Summary.end_of_time, SummaryRow.end_of_time]))
-      result = results[0]
-      @in_district_trips += result['in_district_trips'].to_i
-      @out_of_district_trips += result['out_of_district_trips'].to_i
-      @turn_downs += result['turn_downs'].to_i
-      @undup_riders += result['unduplicated_riders'].to_i
-    end
-
     def quarter
       q = allocation.quarter.to_s
       return q[0...4] + 'Q' + q[4]
@@ -250,8 +180,146 @@ summary_rows.valid_end = ? "
       return allocation.funding_subsource
     end
 
+    def project_name
+      allocation.project.name
+    end
 
-    def collect_runs_by_trip(allocation, start_date, end_date, pending=false)
+    def include_row(row)
+      @funds += row.funds
+      @fares += row.fares
+
+      @total_last_year += row.total_last_year
+
+      @in_district_trips += row.in_district_trips
+      @out_of_district_trips += row.out_of_district_trips
+
+      @mileage += row.mileage
+
+      @driver_paid_hours += row.driver_paid_hours
+
+      @turn_downs += row.turn_downs
+      @undup_riders += row.undup_riders
+
+      @escort_volunteer_hours += row.escort_volunteer_hours
+    end
+
+    def apply_results(add_result, subtract_result={})
+      for field in add_result.keys
+        var = "@#{field}"
+        old = instance_variable_get var
+        new = old + add_result[field].to_i - subtract_result[field].to_i
+        instance_variable_set var, new
+      end
+    end
+
+    def summaries_add_sql
+      "and summaries.valid_start <= ? and summaries.valid_end > ? and 
+summary_rows.valid_start > ? and summary_rows.valid_start <= ? and summary_rows.valid_end > ? "
+    end
+
+    def collect_adjustment_by_summary(sql, allocation, start_date, end_date)
+      subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? and 
+summary_rows.valid_start < ? and summary_rows.valid_end > ? and summary_rows.valid_end <= ? "
+
+      subtract_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], 
+start_date, start_date, 
+start_date, start_date, end_date]))
+
+      add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? and 
+summary_rows.valid_start < ? and summary_rows.valid_end > ? and summary_rows.valid_end <= ? "
+
+      subtract_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], 
+end_date, end_date, 
+start_date, end_date, end_date]))
+
+      return add_results, subtract_results
+    end
+
+    def collect_adjustment_by_trip(sql, allocation, start_date, end_date)
+
+      #in adjustment mode, we add data from trips that are valid at
+      #end_date, and subtract data form trips that are valid at
+      #start_date.  We ignore trips that are valid at both or neither.
+
+      subtract_sql = sql + "and runs.valid_start <= ? and runs.valid_end >= ?
+and trips.valid_start <= ? and trips.valid_end > ? and trips.valid_end <= ? "
+
+      subtract_results = ActiveRecord::Base.connection.select_all(bind([subtract_sql, allocation['id'], 
+start_date, start_date, 
+start_date, start_date, end_date ]))
+
+      add_sql = sql + "and runs.valid_start <= ? and runs.valid_end >= ?
+and trips.valid_start > ? and trips.valid_start <= ? and trips.valid_end > ? "
+
+      add_results = ActiveRecord::Base.connection.select_all(bind([add_sql, allocation['id'], 
+end_date, end_date, 
+start_date, end_date, end_date ]))
+      return add_results, subtract_results
+    end
+
+    def collect_trips_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
+      pending_where = pending ? "runs.complete=true and " : ""
+
+      sql = "select 
+sum(case when in_trimet_district=true then 1 else 0 end) as in_district_trips,
+sum(case when in_trimet_district=false then 1 else 0 end) as out_of_district_trips,
+sum(case when result_code='TD' then 1 else 0 end) as turn_downs,
+count(distinct customer_id) as undup_riders
+from trips
+inner join runs on trips.run_id=runs.base_id 
+where
+#{pending_where}
+trips.allocation_id = ?
+"
+
+      if adjustment
+        add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
+      else
+        sql += "and runs.valid_end=?
+and trips.valid_end = ?
+and trips.date between ? and ? "
+
+        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], Run.end_of_time, Trip.end_of_time, start_date, end_date]))
+        subtract_results = [{}]
+      end
+
+      apply_results(add_results[0], subtract_results[0])
+    end
+
+    #For a summary, there are actually two sets of fields that are
+    #relevant: period_start/period_end and valid_start/valid_end.  In
+    #the attribute-to-for case, we look at the period dates; in the
+    #attribute-to-made case, we look at the valid dates (minus one
+    #month)
+    def collect_trips_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
+      pending_where = pending ? "runs.complete=true and " : ""
+
+      sql = "select 
+sum(case when in_district=true then trips else 0 end) as in_district_trips,
+sum(case when in_district=false then trips else 0 end) as out_of_district_trips,
+sum(turn_downs) as turn_downs,
+sum(unduplicated_riders) as undup_riders
+from summaries 
+inner join summary_rows on summary_rows.summary_id = summaries.base_id
+where 
+summaries.complete=true and 
+allocation_id=? "
+
+      if adjustment
+        add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
+
+      else
+        sql += "and period_start >= ? and period_end < ? and 
+summaries.valid_end = ? and 
+summary_rows.valid_end = ? "
+
+        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
+        subtract_results = [{}]
+      end
+      apply_results(add_results[0], subtract_results[0])
+    end
+
+    def collect_runs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
       pending_where = pending ? "runs.complete=true and " : ""
       sql = "
 select 
@@ -259,50 +327,55 @@ sum(trips.odometer_end - trips.odometer_start) as mileage,
 sum(duration) as driver_paid_hours,
 sum(case when volunteer_trip=true then duration else 0 end) as driver_volunteer_hours,
 sum(runs.escort_count * duration) as escort_volunteer_hours,
-0 as admin_volunteer_hours,
-max(allocation_id) as allocation_id
+0 as admin_volunteer_hours
 from trips
 inner join runs on trips.run_id = runs.base_id
 where
 #{pending_where}
-trips.date between ? and ?
-and allocation_id = ? and trips.valid_end = ? and runs.valid_end=? "
+allocation_id = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id'], Trip.end_of_time, Run.end_of_time]))
 
-      result = results[0]
-      @mileage += result['mileage'].to_f
-      @driver_paid_hours += result['driver_paid_hours'].to_f
-      @driver_volunteer_hours += result['driver_volunteer_hours'].to_f
-      @escort_volunteer_hours += result['escort_volunteer_hours'].to_f
+      if adjustment
+        collect_adjustments_by_trip(sql, allocation, start_date, end_date)
+      else
+        sql += "and trips.date between ? and ?
+and trips.valid_end = ? and runs.valid_end=? "
+
+        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Trip.end_of_time, Run.end_of_time]))
+        subtract_results = [{}]
+      end
+
+      apply_results(add_results[0], subtract_results[0])
 
     end
 
-    def collect_runs_by_summary(allocation, start_date, end_date, pending=false)
+    def collect_runs_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
       pending_where = pending ? "runs.complete=true and " : ""
       sql = "select
 sum(total_miles) as mileage,
 sum(driver_hours_paid) as driver_paid_hours,
 sum(driver_hours_volunteer) as driver_volunteer_hours,
 sum(escort_hours_volunteer) as escort_volunteer_hours
-from summaries 
+from summaries inner join summary_rows on summary_rows.summary_id=summaries.base_id
 where 
+#{pending_where}
 summaries.complete=true and 
-period_start >= ? and 
-period_end < ? and 
-allocation_id=? and 
-valid_end = ? "
+allocation_id=? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id'], Summary.end_of_time]))
+      if adjustment
+        add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
+      else
+        sql += "and period_start >= ? and period_end < ? and 
+summaries.valid_end = ? and 
+summary_rows.valid_end = ? "
 
-      result = results[0]
-      @mileage += result['mileage'].to_f
-      @driver_paid_hours += result['driver_paid_hours'].to_f
-      @driver_volunteer_hours += result['driver_volunteer_hours'].to_f
-      @escort_volunteer_hours += result['escort_volunteer_hours'].to_f
+        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
+        subtract_results = [{}]
+      end
+      apply_results(add_results[0], subtract_results[0])
     end
 
-    def collect_costs_by_trip(allocation, start_date, end_date, pending=false)
+    def collect_costs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
       pending_where = pending ? "runs.complete=true and " : ""
       sql = "
 select 
@@ -310,77 +383,75 @@ sum(fare) as funds,
 sum(customer_pay) as fares, 
 0 as agency_other,
 0 as vehicle_maint,
-0 as donations_fares,
-max(allocation_id) as allocation_id
+0 as donations_fares
 from trips
-inner join runs on trips.run_id = runs.base_id and runs.valid_end=?
+inner join runs on trips.run_id = runs.base_id
 where
 #{pending_where}
-trips.date between ? and ?
-and trips.allocation_id = ?
-and trips.valid_end = ? "
-
-      results = ActiveRecord::Base.connection.select_all(bind([sql, Run.end_of_time, start_date, end_date, allocation['id'], Trip.end_of_time]))
-
-      result = results[0]
-      @funds += result['funds'].to_f
-      @fares += result['fares'].to_f
-      @agency_other += result['agency_other'].to_f
-      @vehicle_maint += result['vehicle_maint'].to_f
-      @donations_fares += result['donations_fares'].to_f
+trips.allocation_id = ? "
 
       last_year_sql =  "select
-sum(fare) + sum(customer_pay) as total
+sum(fare) + sum(customer_pay) as total_last_year
 from trips
-inner join runs on runs.base_id = trips.run_id and run.valid_end=?
+inner join runs on runs.base_id = trips.run_id
 where
 #{pending_where}
-date between ? and ?
-and allocation_id=?
-and valid_end = ? "
+trips.allocation_id = ? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, Run.end_of_time, start_date.prev_year, end_date.prev_year, allocation['id'], Trip.end_of_time]))
-      result = results[0]
-      @total_last_year += result['total'].to_f
+      if adjustment
+        add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
+        apply_results(add_results[0], subtract_results[0])
+        add_results, subtract_results = collect_adjustment_by_trip(last_year_sql, allocation, start_date.prev_year, end_date.prev_year)
+        apply_results(add_results[0], subtract_results[0])
+      else
+        period_sql = "and trips.date >= ? and 
+trips.date < ? and 
+runs.valid_end = ? "
+        sql += period_sql
+        last_year_sql += period_sql
+        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Run.end_of_time]))
+        apply_results(add_results[0])
+        add_results = ActiveRecord::Base.connection.select_all(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Run.end_of_time]))
+        apply_results(add_results[0])
+      end
     end
 
-    def collect_costs_by_summary(allocation, start_date, end_date, pending=false)
-      pending_where = pending ? "runs.complete=true and " : ""
+    def collect_costs_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
+      pending_where = pending ? "summaries.complete=true and " : ""
       sql = "select
-sum(funds),
+sum(funds) as funds,
 sum(agency_other) as agency_other,
 0 as vehicle_maint,
 sum(donations) as donations_fares
 from summaries 
 where 
-complete=true and 
-period_start >= ? and 
-period_end < ? and 
-allocation_id=? and 
-valid_end = ? "
-
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date, end_date, allocation['id'], Summary.end_of_time]))
-
-      result = results[0]
-      @funds += result['funds'].to_f
-      @agency_other += result['agency_other'].to_f
-      @vehicle_maint += result['vehicle_maint'].to_f
-      @donations_fares += result['donations_fares'].to_f
-
-
+#{pending_where}
+allocation_id=?  
+"
       last_year_sql = "select
-sum(donations + funds + agency_other) as total
+sum(donations + funds + agency_other) as total_last_year
 from summaries 
 where
 complete=true and 
-period_start >= ? and 
-period_end < ? and 
-allocation_id=? and 
-valid_end = ? "
+allocation_id=? "
 
-      results = ActiveRecord::Base.connection.select_all(bind([sql, start_date.prev_year, end_date.prev_year, allocation['id'], Summary.end_of_time]))
-      result = results[0]
-      @total_last_year += result['total'].to_f
+      if adjustment
+        add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
+        apply_results(add_results[0], subtract_results[0])
+        add_results, subtract_results = collect_adjustment_by_summary(last_year_sql, allocation, start_date.prev_year, end_date.prev_year)
+        apply_results(add_results[0], subtract_results[0])
+      else
+        period_sql = "and period_start >= ? and 
+period_end < ? and 
+valid_end = ? "
+        sql += period_sql
+        last_year_sql += period_sql
+        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
+        apply_results(add_results[0])
+
+        add_results = ActiveRecord::Base.connection.select_all(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Summary.end_of_time]))
+        apply_results(add_results[0])
+      end
     end
 
   end
@@ -409,7 +480,7 @@ valid_end = ? "
     #past two weeks
     end_date = Date.today
     start_date = end_date - 14 
-    do_report(groups, group_fields, start_date, end_date, nil, nil, false)
+    do_report(groups, group_fields, start_date, end_date, nil, nil, false, false)
     @params = {}
     render 'report'
   end
@@ -502,7 +573,7 @@ valid_end = ? "
 
     groups = group_fields.map { |f| @@group_mappings[f] }
 
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending)
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending, query.adjustment)
     csv_string = CSV.generate do |csv|
       csv << NetworkReportRow.fields(query.fields)
       apply_to_leaves! @results, group_fields.size,  do | row |
@@ -543,7 +614,7 @@ valid_end = ? "
 
     groups = group_fields.map { |f| @@group_mappings[f] }
 
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending)
+    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending, query.adjustment)
   end
 
   private 
@@ -621,7 +692,7 @@ valid_end = ? "
   # tag: an allocation tag to restrict the query to
   # fields: a list of fields to display
 
-  def do_report(groups, group_fields, start_date, end_date, tag, fields, pending)
+  def do_report(groups, group_fields, start_date, end_date, tag, fields, pending, adjustment)
     group_select = []
 
     for group,field in groups.split(",").zip group_fields
@@ -656,21 +727,21 @@ valid_end = ? "
           end_date = allocation.period_end_date
         end
         if allocation['trip_collection_method'] == 'trips'
-          row.collect_trips_by_trip(allocation, start_date, end_date, pending)
+          row.collect_trips_by_trip(allocation, start_date, end_date, pending, adjustment)
         else
-          row.collect_trips_by_summary(allocation, start_date, end_date, pending)
+          row.collect_trips_by_summary(allocation, start_date, end_date, pending, adjustment)
         end
 
         if allocation['run_collection_method'] == 'trips' or allocation['run_collection_method'] == 'runs'
-          row.collect_runs_by_trip(allocation, start_date, end_date, pending)
+          row.collect_runs_by_trip(allocation, start_date, end_date, pending, adjustment)
         else
-          row.collect_runs_by_summary(allocation, start_date, end_date, pending)
+          row.collect_runs_by_summary(allocation, start_date, end_date, pending, adjustment)
         end
 
         if allocation['cost_collection_method'] == 'trips' or allocation['cost_collection_method'] == 'runs'
-          row.collect_costs_by_trip(allocation, start_date, end_date, pending)
+          row.collect_costs_by_trip(allocation, start_date, end_date, pending, adjustment)
         else
-          row.collect_costs_by_summary(allocation, start_date, end_date, pending)
+          row.collect_costs_by_summary(allocation, start_date, end_date, pending, adjustment)
         end
 
       end

@@ -41,7 +41,7 @@ class TripImport < ActiveRecord::Base
   has_many :trips
   has_many :runs
 
-  after_create :import_file##, :apportion_imported_shared_rides, :apportion_imported_runs 
+  after_create :import_file, :apportion_imported_shared_rides, :apportion_imported_runs 
 
 private
 
@@ -73,6 +73,7 @@ private
     provider_map = {}
     allocation_map = {}
     run_map = {}
+    import_start_time = Time.now
     @record_count = 0
 
     ActiveRecord::Base.transaction do
@@ -259,6 +260,7 @@ private
         #puts "Record #{record_count}: Address map size: #{address_map.size.to_s}, Customer map size: #{customer_map.size.to_s}"
       end # CSV.foreach
     end # Transaction
+    import_end_time = Time.now
     address_map = nil
     customer_map = nil
     run_map = nil
