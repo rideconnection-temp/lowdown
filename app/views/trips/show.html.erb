@@ -2,7 +2,7 @@
 <div id="history">
   <h2>Versions</h2>
   <ul><!-- Right now, the versions method isn't sorted at all. I suspect we'll want to add that (maybe at the model level?) -->
-  <% @trip.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse.each do |version| %>
+  <% @trip.chronological_versions.each do |version| %>
     <li>
       <% if (version.id == @trip.id) %>
       <%= time_ago_in_words(version.updated_at) %> ago

@@ -1,36 +1,34 @@
+<ul class="form">
 <%= f.hidden_field :id %>
-<%= f.label :customer %> <%= f.collection_select :customer_id, @customers, :id, :name %> <br/>
-<%= f.label :home_address %> <%= f.collection_select :home_address_id, @addresses, :id, :display_name %> <br/>
-<%= f.label :pickup_address %> <%= f.collection_select :pickup_address_id, @addresses, :id, :display_name %> <br/>
-<%= f.label :dropoff_address %> <%= f.collection_select :dropoff_address_id, @addresses, :id, :display_name %> <br/>
-<%= f.label :start_at %> <%= f.date_select :start_at %> <br/>
-<%= f.label :end_at %> <%= f.date_select :end_at %> <br/>
-<%= f.label :odometer_start %> <%= f.text_field :odometer_start %> <br/>
-<%= f.label :odometer_end %> <%= f.text_field :odometer_end %> <br/>
-<%= f.label :fare %> <%= f.text_field :fare %> <br/>
-<%= f.label :purpose_type %> <%= f.text_field :purpose_type %> <br/>
-<%= f.label :guest_count %> <%= f.text_field :guest_count %> <br/>
-<%= f.label :attendant_count %> <%= f.text_field :attendant_count %> <br/>
-<%= f.label :mobility %> <%= f.text_field :mobility %> <br/>
-<%= f.label :calculated_bpa_fare %> <%= f.text_field :calculated_bpa_fare %> <br/>
-<%= f.label :bpa_driver_name %> <%= f.text_field :bpa_driver_name %> <br/>
-<%= f.label :volunteer_trip %> <%= f.check_box :volunteer_trip %> <br/>
-<%= f.label :in_trimet_district %> <%= f.check_box :in_trimet_district %> <br/>
-<%= f.label :routematch_share_id %> <%= f.text_field :routematch_share_id %> <br/>
-<%= f.label :override %> <%= f.text_field :override %> <br/>
-<%= f.label :estimated_trip_distance_in_miles %> <%= f.text_field :estimated_trip_distance_in_miles %> <br/>
-<%= f.label :routematch_pickup_address_id %> <%= f.text_field :routematch_pickup_address_id %> <br/>
-<%= f.label :run_id %> <%= f.text_field :run_id %> <br/>
-<%= f.label :trip_import_id %> <%= f.text_field :trip_import_id %> <br/>
-<%= f.label :routematch_trip_id %> <%= f.text_field :routematch_trip_id %> <br/>
-<%= f.label :result_code %> <%= f.text_field :result_code %> <br/>
-<%= f.label :provider_code %> <%= f.text_field :provider_code %> <br/>
-<%= f.label :allocation_id %> <%= f.text_field :allocation_id %> <br/>
-<%= f.label :customer_pay %> <%= f.text_field :customer_pay %> <br/>
-<%= f.label :duration %> <%= f.text_field :duration %> <br/>
-<%= f.label :mileage %> <%= f.text_field :mileage %> <br/>
-<%= f.label :apportioned_duration %> <%= f.text_field :apportioned_duration %> <br/>
-<%= f.label :apportioned_mileage %> <%= f.text_field :apportioned_mileage %> <br/>
-<%= f.label :apportioned_fare %> <%= f.text_field :apportioned_fare %> <br/>
-<%= f.label :updated_by %> <%= f.text_field :updated_by %> <br/>
-
+<li><%= f.label :customer %><%= f.hidden_field :customer_id %><%= text_field_tag :full_customer_name, @customer.name, :disabled => true, :size => 60 %></li>
+<li><%= f.label :home_address %><%= f.hidden_field :home_address_id %><%= text_field_tag :full_home_address, @home_address.display_name, :disabled => true, :size => 60 %></li>
+<li><%= f.label :pickup_address %><%= f.hidden_field :pickup_address_id %><%= text_field_tag :full_pickup_address, @pickup_address.display_name, :disabled => true, :size => 60 %></li>
+<li><%= f.label :dropoff_address %><%= f.hidden_field :dropoff_address_id %><%= text_field_tag :full_dropoff_address, @dropoff_address.display_name, :disabled => true, :size => 60 %></li>
+<li><%= f.label :volunteer_trip, :class => "checkbox" %> <%= f.check_box :volunteer_trip %><%= f.label :in_trimet_district, :class => "checkbox" %> <%= f.check_box :in_trimet_district %></li>
+<li><%= f.label :trip_import_id, 'Trip Import ID' %> <%= f.text_field :trip_import_id, :disabled => true %><% if !@trip.trip_import_id.nil? %> <%= link_to "All trips from this import", url_for(:action=>:import_trips, :id=>@trip.trip_import_id) %><% end %></li>
+<li><%= f.label :routematch_share_id, 'Routematch Share ID' %> <%= f.text_field :routematch_share_id, :disabled => true %><% if !@trip.routematch_share_id.nil? %> <%= link_to "All trips in this shared ride", url_for(:action=>:share, :id=>@trip.routematch_share_id) %><% end %></li>
+<li><%= f.label :run_id %> <%= f.text_field :run_id, :disabled => true %><% if !@trip.run_id.nil? %> <%= link_to "All Trips in this Run", url_for(:action=>:run, :id=>@trip.run_id) %><% end %></li>
+<li><%= f.label :start_at %> <%= f.text_field :start_at, :disabled => true  %></li>
+<li><%= f.label :end_at %> <%= f.text_field :end_at, :disabled => true  %></li>
+<li><%= f.label :odometer_start %> <%= f.text_field :odometer_start %></li>
+<li><%= f.label :odometer_end %> <%= f.text_field :odometer_end %></li>
+<li><%= f.label :mileage %> <%= f.text_field :mileage, :disabled => true, :title => "Calculated from odometer values" %></li>
+<li><%= f.label :fare %> <%= f.text_field :fare %></li>
+<li><%= f.label :purpose_type %> <%= f.text_field :purpose_type %></li>
+<li><%= f.label :guest_count %> <%= f.text_field :guest_count, :size => 3 %></li>
+<li><%= f.label :attendant_count %> <%= f.text_field :attendant_count, :size => 3 %></li>
+<li><%= f.label :mobility %> <%= f.text_field :mobility %></li>
+<li><%= f.label :calculated_bpa_fare, 'Calculated BPA Fare' %> <%= f.text_field :calculated_bpa_fare, :disabled => true %></li>
+<li><%= f.label :bpa_driver_name, 'BPA Driver Name' %> <%= f.text_field :bpa_driver_name %></li>
+<li><%= f.label :override %> <%= f.text_field :override, :disabled => true %></li>
+<li><%= f.label :estimated_trip_distance_in_miles, 'Routematch Estimated Trip Distance'  %> <%= f.text_field :estimated_trip_distance_in_miles, :disabled => true %></li>
+<li><%= f.label :routematch_trip_id, 'Routematch Trip ID' %> <%= f.text_field :routematch_trip_id, :disabled => true %></li>
+<li><%= f.label :result_code %> <%= f.text_field :result_code %></li>
+<li class="allocations"><%= f.label :allocation %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
+<li><%= f.label :customer_pay %> <%= f.text_field :customer_pay %></li>
+<li><%= f.label :duration %> <%= f.text_field :duration, :disabled => true %></li>
+<li><%= f.label :apportioned_duration %> <%= f.text_field :apportioned_duration, :disabled => true %></li>
+<li><%= f.label :apportioned_mileage %> <%= f.text_field :apportioned_mileage, :disabled => true %></li>
+<li><%= f.label :apportioned_fare %> <%= f.text_field :apportioned_fare, :disabled => true %></li>
+<li><%= f.label :updated_by %> <%= text_field_tag :updated_by_name, @updated_by_user.name, :disabled => true %></li>
+</ul>

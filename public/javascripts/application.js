@@ -104,7 +104,8 @@ $(function(){
         dateFormat: 'yy-mm-dd' 
     });
     
-    $( "#query_provider, #query_allocation, #report-category, #group-by, #trip_customer_id, #trip_home_address_id, #trip_pickup_address_id, #trip_dropoff_address_id" ).combobox();
+    $( "#query_provider, #query_allocation, #report-category, #group-by, #trip_allocation_id" ).combobox();
+    $('#trip_guest_count, #trip_attendant_count').spinner({ min: 0, increment: 'fast' });
     
     $('input#file-import').change(function( objEvent ){$('.fakebrowseinput').val($(this).val());});
     

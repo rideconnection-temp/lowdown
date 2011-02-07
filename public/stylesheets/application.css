@@ -497,3 +497,45 @@ font-size: 0.9em;
 #history ul .update-user {
 font-size: 0.9em;
 }
+
+/* - */
+form ul.form {
+list-style-type: none;
+}
+
+form ul.form li {
+margin-bottom: 0.5em;
+}
+
+form ul.form li label {
+display: block;
+font-weight: bold;
+text-transform: capitalize;
+}
+
+form ul.form li label.checkbox {
+display: inline;
+}
+
+form ul.form li input[type=checkbox] {
+margin: 0 1.5em 0 0;
+}
+
+div#main form ul.form li input {
+}
+
+form ul.form fieldset {
+border: 1px solid #333;
+padding: 10px;
+margin-bottom: 10px
+}
+
+form ul.form fieldset legend {
+font-weight: bold;
+padding: 0 4px;
+}
+
+/* - */
+.allocations .ui-autocomplete-input {
+width: 24em;
+}

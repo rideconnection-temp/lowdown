@@ -7,6 +7,7 @@ class Trip < ActiveRecord::Base
   point_in_time
   belongs_to :pickup_address, :class_name => "Address", :foreign_key => "pickup_address_id"
   belongs_to :dropoff_address, :class_name => "Address", :foreign_key => "dropoff_address_id"
+  belongs_to :home_address, :class_name => "Address", :foreign_key => "home_address_id"
   belongs_to :allocation
   belongs_to :run, :primary_key=>"base_id"
   belongs_to :customer
@@ -48,6 +49,10 @@ class Trip < ActiveRecord::Base
     #else
     #  return 1
     #end
+  end
+  
+  def chronological_versions
+    return self.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse
   end
 
   memoize :customers_served

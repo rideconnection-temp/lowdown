@@ -87,6 +87,12 @@ class TripsController < ApplicationController
     @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => {:run_id=>id}
     @run = Run.find(id)
   end
+  
+  def import_trips
+    id = params[:id]
+    @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => {:trip_import_id=>id}
+    @import = TripImport.find(id)
+  end
 
   def show_import
   end
@@ -105,8 +111,12 @@ class TripsController < ApplicationController
 
   def show
     @trip = Trip.find(params[:id])
-    @customers = Customer.find(:all)
-    @addresses = Address.find(:all)
+    @customer = @trip.customer
+    @home_address = @trip.home_address
+    @pickup_address = @trip.pickup_address
+    @dropoff_address = @trip.dropoff_address
+    @updated_by_user = @trip.updated_by_user
+    @allocations = Allocation.find(:all)
   end
   
   def update
