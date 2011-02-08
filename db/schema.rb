@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(:version => 20120121105500) do
     t.integer  "trip_import_id"
     t.integer  "updated_by"
     t.boolean  "complete",                     :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "summaries", :id => false, :force => true do |t|

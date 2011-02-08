@@ -103,10 +103,14 @@ class TripsController < ApplicationController
     end
     file = params['file-import'].tempfile
     processed = TripImport.new(:file_path=>file)
-    processed.save
-
-    flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
-    render 'show_import'
+    if processed.save
+      flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
+      render 'show_import'
+    else
+#     TODO: make into a flash error
+      flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
+      render 'show_import'
+    end
   end
 
   def show

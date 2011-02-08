@@ -9,5 +9,11 @@ class AddFieldsToRun < ActiveRecord::Migration
   end
 
   def self.down
+    change_table :runs do |t|
+      t.remove :start_at
+      t.remove :end_at
+      t.remove :odometer_start
+      t.remove :odometer_end
+    end
   end
 end

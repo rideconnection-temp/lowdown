@@ -38,11 +38,13 @@ end
 
 class TripImport < ActiveRecord::Base
   attr_accessor :record_count
+  attr_accessor :import_start_time
+  attr_accessor :problems
   has_many :trips
   has_many :runs
 
-  after_create :import_file, :apportion_imported_shared_rides, :apportion_imported_runs 
-
+  before_create :import_file, :apportion_imported_shared_rides, :apportion_imported_runs 
+  after_create :associate_records_with_trip_import
 private
 
   def import_file
@@ -72,8 +74,10 @@ private
     customer_map = {}
     provider_map = {}
     allocation_map = {}
+    import_errors = []
     run_map = {}
-    import_start_time = Time.now
+    self.problems = ''
+    self.import_start_time = Time.xmlschema(Time.now.xmlschema)
     @record_count = 0
 
     ActiveRecord::Base.transaction do
@@ -186,89 +190,107 @@ private
           current_allocation = Allocation.where(:routematch_override => record[:override], 
               :routematch_provider_code => record[:provider_code]).first
           if current_allocation.nil?
-            raise "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'" 
-          end
-          current_allocation_id = current_allocation.id
-#         Store the entire allocation object for later use
-          allocation_map[allocation_map_key] = current_allocation
-        end
-
-        if run_map.has_key?(record[:routematch_run_id])
-          current_run_id = run_map[record[:routematch_run_id]]
-        else
-          current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
-          current_run.name = record[:run_name]
-          current_run.date = record[:date]
-#         Though it may be in the import file, don't store run start and end information 
-#         for BPA providers, for whom that data is tracked by-trip.
-#         By-run information is inaccurate for those providers.
-          if allocation_map[allocation_map_key][:run_collection_method] == 'runs' 
-            current_run.start_at = record[:run_start_at]
-            current_run.end_at = record[:run_end_at]
-            current_run.odometer_start = record[:run_odometer_start]
-            current_run.odometer_end = record[:run_odometer_end]
+            import_errors_key = "#{record[:override]}|#{record[:provider_code]}"
+            unless import_errors.include?(import_errors_key) 
+              import_errors << import_errors_key
+              self.problems << "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'.<br/>" 
+            end
           else
-            current_run.start_at = nil
-            current_run.end_at = nil
-            current_run.odometer_start = nil
-            current_run.odometer_end = nil
+            current_allocation_id = current_allocation.id
+#           Store the entire allocation object for later use
+            allocation_map[allocation_map_key] = current_allocation
           end
-          current_run.trip_import_id = self.id
-          current_run.bulk_import = true
-          current_run.save!
-
-          current_run_id = current_run.id
-          run_map[record[:routematch_run_id]] = current_run_id
         end
 
-        current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
-        current_trip.routematch_trip_id = record[:routematch_trip_id]
-        current_trip.date = record[:date]
-        current_trip.result_code = record[:result_code]
-        current_trip.allocation_id = current_allocation_id
-        current_trip.provider_code = record[:provider_code]
-        current_trip.start_at = record[:start_at]
-        current_trip.end_at = record[:end_at]
-        current_trip.odometer_start = record[:odometer_start]
-        current_trip.odometer_end = record[:odometer_end]
-        current_trip.fare = record[:fare]
-        current_trip.customer_pay = record[:customer_pay]
-        current_trip.purpose_type = record[:trip_purpose_type]
-        current_trip.guest_count = record[:guest_count]
-        current_trip.attendant_count = record[:attendant_count]
-        current_trip.mobility = record[:trip_mobility]
-        current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
-        current_trip.bpa_driver_name = record[:bpa_driver_name]
-        current_trip.volunteer_trip = record[:volunteer_trip]
-        current_trip.in_trimet_district = record[:in_trimet_district]
-        current_trip.bpa_billing_distance = record[:bpa_billing_distance]
-        current_trip.routematch_share_id = record[:routematch_share_id]
-        current_trip.override = record[:override]
-        current_trip.estimated_trip_distance_in_miles = record[:estimated_trip_distance_in_miles]
-        current_trip.routematch_pickup_address_id = record[:pickup_routematch_address_id]
-        current_trip.routematch_dropoff_address_id = record[:dropoff_routematch_address_id]
-        current_trip.pickup_address_id = current_pickup_id
-        current_trip.dropoff_address_id = current_dropoff_id
-        current_trip.customer_id = current_customer_id
-        current_trip.home_address_id = current_home_id
-        current_trip.run_id = current_run_id
-        current_trip.trip_import_id = self.id
-        current_trip.bulk_import = true
-        current_trip.save!
+        if current_allocation.present?
+          if record[:routematch_run_id].present?
+            if run_map.has_key?(record[:routematch_run_id])
+              current_run_id = run_map[record[:routematch_run_id]]
+            else
+              current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
+              current_run.name = record[:run_name]
+              current_run.date = record[:date]
+#             Though it may be in the import file, don't store run start and end information 
+#             for BPA providers, for whom that data is tracked by-trip.
+#             By-run information is inaccurate for those providers.
+              if allocation_map[allocation_map_key][:run_collection_method] == 'runs' 
+                current_run.start_at = record[:run_start_at]
+                current_run.end_at = record[:run_end_at]
+                current_run.odometer_start = record[:run_odometer_start]
+                current_run.odometer_end = record[:run_odometer_end]
+              end
+              current_run.trip_import_id = self.id
+              current_run.bulk_import = true
+              current_run.created_at = import_start_time 
+              current_run.save!
 
-        #puts record_count if record_count % 100 == 0
-        #puts "Record #{record_count}: Address map size: #{address_map.size.to_s}, Customer map size: #{customer_map.size.to_s}"
+              current_run_id = current_run.id
+              run_map[record[:routematch_run_id]] = current_run_id
+            end
+          else
+            runless_trips_run_key = record[:date].to_s + record[:override]
+            if run_map.has_key?(runless_trips_run_key)
+              current_run_id = run_map[runless_trips_run_key]
+            else
+              current_run = Run.new
+              current_run.name = 'Not completed ' + record[:date].to_time.strftime("%m-%d-%y")
+              current_run.date = record[:date]
+              current_run.created_at = import_start_time 
+              current_run.save!
+
+              current_run_id = current_run.id
+              run_map[runless_trips_run_key] = current_run_id
+            end
+          end
+
+          current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
+          current_trip.routematch_trip_id = record[:routematch_trip_id]
+          current_trip.date = record[:date]
+          current_trip.result_code = record[:result_code]
+          current_trip.allocation_id = current_allocation_id
+          current_trip.provider_code = record[:provider_code]
+          current_trip.start_at = record[:start_at]
+          current_trip.end_at = record[:end_at]
+          current_trip.odometer_start = record[:odometer_start]
+          current_trip.odometer_end = record[:odometer_end]
+          current_trip.fare = record[:fare]
+          current_trip.customer_pay = record[:customer_pay]
+          current_trip.purpose_type = record[:trip_purpose_type]
+          current_trip.guest_count = record[:guest_count]
+          current_trip.attendant_count = record[:attendant_count]
+          current_trip.mobility = record[:trip_mobility]
+          current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
+          current_trip.bpa_driver_name = record[:bpa_driver_name]
+          current_trip.volunteer_trip = record[:volunteer_trip]
+          current_trip.in_trimet_district = record[:in_trimet_district]
+          current_trip.bpa_billing_distance = record[:bpa_billing_distance]
+          current_trip.routematch_share_id = record[:routematch_share_id]
+          current_trip.override = record[:override]
+          current_trip.estimated_trip_distance_in_miles = record[:estimated_trip_distance_in_miles]
+          current_trip.routematch_pickup_address_id = record[:pickup_routematch_address_id]
+          current_trip.routematch_dropoff_address_id = record[:dropoff_routematch_address_id]
+          current_trip.pickup_address_id = current_pickup_id
+          current_trip.dropoff_address_id = current_dropoff_id
+          current_trip.customer_id = current_customer_id
+          current_trip.home_address_id = current_home_id
+          current_trip.run_id = current_run_id
+          current_trip.bulk_import = true
+          current_trip.created_at = import_start_time 
+          current_trip.save!
+        end # current_allocation.present?
       end # CSV.foreach
     end # Transaction
-    import_end_time = Time.now
     address_map = nil
     customer_map = nil
     run_map = nil
+    if self.problems != ''
+      return false
+    end
     puts "Imported #{@record_count} records"
   end
 
   def apportion_imported_shared_rides
-    trips = self.trips.completed.shared.order(:date,:routematch_share_id)
+    trips = Trip.where(:created_at => self.import_start_time).completed.shared.order(:date,:routematch_share_id)
     trip_count = 0
     this_share_id = 0
     for trip in trips
@@ -283,12 +305,17 @@ private
   end
 
   def apportion_imported_runs
-    runs = self.runs.has_odometer_log.has_time_log
+    runs = Run.where(:created_at => self.import_start_time).has_odometer_log.has_time_log
     run_count = 0
     for run in runs
       run.save!
       run_count += 1
     end
     puts "Apportioned #{run_count} runs"
+  end
+
+  def associate_records_with_trip_import
+    Run.where(:created_at => self.import_start_time).update_all :trip_import_id => self.id
+    Trip.where(:created_at => self.import_start_time).update_all :trip_import_id => self.id
   end
 end
