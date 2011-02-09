@@ -60,10 +60,7 @@ class Trip < ActiveRecord::Base
 private
 
   def set_duration_and_mileage
-    if !should_run_callbacks
-      return
-    end
-    unless secondary_update || bulk_import
+    unless secondary_update 
       if completed?
         self.duration = ((end_at - start_at) / 60 ).to_i unless end_at.nil? || start_at.nil?
         self.mileage = odometer_end - odometer_start unless odometer_end.nil? || odometer_start.nil?
@@ -77,10 +74,10 @@ private
   end
 
   def apportion_shared_rides
-    if !should_run_callbacks
-      return
-    end
     unless secondary_update || bulk_import
+      if should_run_callbacks == false
+        return 
+      end
       if shared?
         r = Trip.current_versions.completed.where(:routematch_share_id => routematch_share_id, :date => date).order(:end_at,:created_at)
 #       All these aggregates are run separately.  
@@ -102,6 +99,7 @@ private
           trip_position += 1
 #         Avoid infinite recursion
           t.secondary_update = true
+
           this_ratio = t.estimated_trip_distance_in_miles / all_est_miles
 
           this_trip_duration = ((ride_duration.to_f * this_ratio) * 100).floor.to_f / 100
@@ -119,6 +117,7 @@ private
         end
       end
     end
+    return true
   end
 
   def apportion_new_run_based_trips

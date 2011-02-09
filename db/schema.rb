@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(:version => 20120121105500) do
     t.boolean  "complete",                     :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "imported_at"
   end
 
   create_table "summaries", :id => false, :force => true do |t|
@@ -210,6 +211,7 @@ ActiveRecord::Schema.define(:version => 20120121105500) do
     t.decimal  "apportioned_mileage",                            :precision => 7,  :scale => 2
     t.decimal  "apportioned_fare",                               :precision => 10, :scale => 2
     t.integer  "updated_by"
+    t.datetime "imported_at"
   end
 
   create_table "users", :force => true do |t|

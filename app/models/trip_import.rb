@@ -202,7 +202,7 @@ private
           end
         end
 
-        if current_allocation.present?
+        if current_allocation_id.present?
           if record[:routematch_run_id].present?
             if run_map.has_key?(record[:routematch_run_id])
               current_run_id = run_map[record[:routematch_run_id]]
@@ -221,7 +221,7 @@ private
               end
               current_run.trip_import_id = self.id
               current_run.bulk_import = true
-              current_run.created_at = import_start_time 
+              current_run.imported_at = import_start_time 
               current_run.save!
 
               current_run_id = current_run.id
@@ -235,7 +235,7 @@ private
               current_run = Run.new
               current_run.name = 'Not completed ' + record[:date].to_time.strftime("%m-%d-%y")
               current_run.date = record[:date]
-              current_run.created_at = import_start_time 
+              current_run.imported_at = import_start_time 
               current_run.save!
 
               current_run_id = current_run.id
@@ -275,7 +275,7 @@ private
           current_trip.home_address_id = current_home_id
           current_trip.run_id = current_run_id
           current_trip.bulk_import = true
-          current_trip.created_at = import_start_time 
+          current_trip.imported_at = import_start_time 
           current_trip.save!
         end # current_allocation.present?
       end # CSV.foreach
@@ -283,14 +283,12 @@ private
     address_map = nil
     customer_map = nil
     run_map = nil
-    if self.problems != ''
-      return false
-    end
+    return false unless self.problems == ''
     puts "Imported #{@record_count} records"
   end
 
   def apportion_imported_shared_rides
-    trips = Trip.where(:created_at => self.import_start_time).completed.shared.order(:date,:routematch_share_id)
+    trips = Trip.where(:imported_at => self.import_start_time).completed.shared.order(:date,:routematch_share_id)
     trip_count = 0
     this_share_id = 0
     for trip in trips
@@ -305,7 +303,7 @@ private
   end
 
   def apportion_imported_runs
-    runs = Run.where(:created_at => self.import_start_time).has_odometer_log.has_time_log
+    runs = Run.where(:imported_at => self.import_start_time).has_odometer_log.has_time_log
     run_count = 0
     for run in runs
       run.save!
@@ -315,7 +313,7 @@ private
   end
 
   def associate_records_with_trip_import
-    Run.where(:created_at => self.import_start_time).update_all :trip_import_id => self.id
-    Trip.where(:created_at => self.import_start_time).update_all :trip_import_id => self.id
+    Run.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
+    Trip.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
   end
 end

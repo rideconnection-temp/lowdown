@@ -91,6 +91,8 @@ module VersionFu
 
     attr_accessor :should_run_callbacks
 
+    @create_new_version = true
+
     # find first version ever
     def first_version
       versions.find :first, :conditions => ["base_id = ? and id = ?", base_id, base_id]
@@ -127,10 +129,14 @@ module VersionFu
       true # Never halt save
     end
     
+    def create_new_version=(val)
+      @create_new_version = !!val
+    end
+
     # This the method to override if you want to have more control over when to version
     def create_new_version?
       # Any versioned column changed?
-      self.versioned_columns.detect {|a| __send__ "#{a}_changed?"}
+      self.versioned_columns.detect {|a| __send__ "#{a}_changed?"} && @create_new_version
     end
     
     def instantiate_revision
@@ -143,7 +149,7 @@ module VersionFu
       new_version.valid_end = now_rounded
       new_version.base_id = base_id
 
-      valid_start = new_version.valid_end
+      self.valid_start = new_version.valid_end
 
       new_version.should_run_callbacks = false
       new_version.save!(:validate=>false)
@@ -152,7 +158,7 @@ module VersionFu
     #This is called before destroy; instead of destroying the record, it simply sets
     #its valid_end to now
     def mark_inactive
-      valid_end = now_rounded
+      self.valid_end = now_rounded
       false
     end
 

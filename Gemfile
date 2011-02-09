@@ -32,7 +32,7 @@ gem 'userstamp'
 # gem 'capistrano'
 
 # To use debugger
-# gem 'ruby-debug'
+gem 'ruby-debug19'
 
 # Bundle the extra gems:
 # gem 'bj'
