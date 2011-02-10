@@ -206,9 +206,9 @@ ActiveRecord::Schema.define(:version => 20120121105500) do
     t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
     t.integer  "home_address_id"
     t.integer  "duration"
-    t.decimal  "mileage",                                        :precision => 6,  :scale => 1
+    t.decimal  "mileage",                                        :precision => 8,  :scale => 1
     t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
-    t.decimal  "apportioned_mileage",                            :precision => 7,  :scale => 2
+    t.decimal  "apportioned_mileage",                            :precision => 9,  :scale => 2
     t.decimal  "apportioned_fare",                               :precision => 10, :scale => 2
     t.integer  "updated_by"
     t.datetime "imported_at"

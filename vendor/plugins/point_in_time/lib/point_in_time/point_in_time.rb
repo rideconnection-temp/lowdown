@@ -91,8 +91,6 @@ module VersionFu
 
     attr_accessor :should_run_callbacks
 
-    @create_new_version = true
-
     # find first version ever
     def first_version
       versions.find :first, :conditions => ["base_id = ? and id = ?", base_id, base_id]
@@ -115,28 +113,24 @@ module VersionFu
           self.base_id = id          
           self.valid_start = now_rounded
           self.valid_end = @@end_of_time
-          should_run_callbacks=true
+          self.should_run_callbacks=true
       elsif id && base_id
           #an edit to an existing object; may need to create a new
           #version
           instantiate_revision if create_new_version?
-          should_run_callbacks=true
+          self.should_run_callbacks=true
       elsif !id && base_id
           #a new version automatically created; no need to make a new version
           self.id = UUIDTools::UUID.timestamp_create().to_s
-          should_run_callbacks=false
+          self.should_run_callbacks=false
       end
       true # Never halt save
     end
     
-    def create_new_version=(val)
-      @create_new_version = !!val
-    end
-
     # This the method to override if you want to have more control over when to version
     def create_new_version?
       # Any versioned column changed?
-      self.versioned_columns.detect {|a| __send__ "#{a}_changed?"} && @create_new_version
+      self.versioned_columns.detect {|a| __send__ "#{a}_changed?"}
     end
     
     def instantiate_revision
