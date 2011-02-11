@@ -288,7 +288,7 @@ private
   end
 
   def apportion_imported_shared_rides
-    trips = Trip.where(:imported_at => self.import_start_time).completed.shared.order(:date,:routematch_share_id)
+    trips = Trip.current_versions.where(:imported_at => self.import_start_time).completed.shared.order(:date,:routematch_share_id)
     trip_count = 0
     this_share_id = 0
     for trip in trips
@@ -303,7 +303,7 @@ private
   end
 
   def apportion_imported_runs
-    runs = Run.where(:imported_at => self.import_start_time).has_odometer_log.has_time_log
+    runs = Run.current_versions.where(:imported_at => self.import_start_time).has_odometer_log.has_time_log
     run_count = 0
     for run in runs
       run.save!
