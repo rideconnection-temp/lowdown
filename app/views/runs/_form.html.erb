@@ -1,0 +1,11 @@
+<ul class="form">
+<%= f.hidden_field :id %>
+<li><%= f.label :routematch_id, 'Routematch ID' %><%= f.text_field :routematch_id, :disabled => true %></li>
+<li><%= f.label :name %><%= f.text_field :name %></li>
+<li><%= f.label :start_at %> <%= f.text_field :start_at, :disabled => true  %></li>
+<li><%= f.label :end_at %> <%= f.text_field :end_at, :disabled => true  %></li>
+<li><%= f.label :odometer_start %><%= f.text_field :odometer_start, :size => 10 %></li>
+<li><%= f.label :odometer_end %><%= f.text_field :odometer_end, :size => 10 %></li>
+<li><%= f.label :escort_count %><%= f.text_field :escort_count, :size => 3 %></li>
+<li><%= f.label :complete, :class => "checkbox" %> <%= f.check_box :complete %></li>
+</ul>

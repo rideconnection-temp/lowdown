@@ -16,10 +16,18 @@ class Run < ActiveRecord::Base
   def created_by
     return first_version.updated_by
   end
+  
+  def updated_by_user
+    return (self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by)) #right now, imports run through the command line will have no user info
+  end
 
   def display_name
     return name if name
     return "unnamed run #{routematch_id} on #{date}"
+  end
+  
+  def chronological_versions
+    return self.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse
   end
 
   private

@@ -8,7 +8,12 @@ class SummariesController < ApplicationController
 
   def show_create
     @summary = Summary.new
-    @summary.summary_rows.build
+    
+    POSSIBLE_TRIP_PURPOSES.each do |purpose|
+      @summary.summary_rows.build(:purpose => purpose, :in_district => true)
+      @summary.summary_rows.build(:purpose => purpose, :in_district => false)
+    end
+    
     @providers = Provider.all
     @allocations = Allocation.all
   end

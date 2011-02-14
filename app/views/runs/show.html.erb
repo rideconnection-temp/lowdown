@@ -1,0 +1,24 @@
+<% if @run.versions.count > 1 %>
+<div id="history">
+  <h2>Versions</h2>
+  <ul>
+  <% @run.chronological_versions.each do |version| %>
+    <li>
+      <% if (version.id == @run.id) %>
+      <%= time_ago_in_words(version.valid_start) %> ago
+      <% else %>
+      <%= link_to "#{time_ago_in_words(version.valid_start)} ago", :action=>:show, :id=>version.id %>
+      <% end %>
+      <span class="update-user">(<%= version.updated_by_user.name %>)</span>
+    </li>
+  <% end %>
+  </ul>
+</div><!-- /#history -->
+<% end %>
+<%= form_for @run, :url=>{:action=>:update} do |f| %>
+  <%= render :partial => "form", :locals=>{:f=>f} %>
+
+  <br/>
+
+  <%= submit_tag 'Update' %>
+<% end %>

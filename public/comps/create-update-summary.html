@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lowdown</title>
+  <link href="../stylesheets/screen-reset.css?1291744853" media="screen" rel="stylesheet" type="text/css" />
+  <!--[if lt IE 8]><link href="../stylesheets/ie.css?1291744853" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
+  <link href="../stylesheets/print-reset.css?1291744853" media="print" rel="stylesheet" type="text/css" />
+  
+  <link href="../stylesheets/ui.combobox.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="../stylesheets/ui-custom/jquery-ui-1.8.6.custom.css?1291744853" media="screen" rel="stylesheet" type="text/css" />
+
+  <link href="../stylesheets/ui.spinner.css?1297092860" media="screen" rel="stylesheet" type="text/css" />
+  
+  <link href="../stylesheets/application.css?1297091344" media="screen" rel="stylesheet" type="text/css" />
+
+  <script src="../javascripts/jquery-1.4.2.min.js?1291744853" type="text/javascript"></script>
+  <script src="../javascripts/jquery-ui-1.8.6.custom.min.js?1291744853" type="text/javascript"></script>
+  <script src="../javascripts/ui.spinner.min.js?1291744853" type="text/javascript"></script>
+  <script src="../javascripts/application.js?1297092050" type="text/javascript"></script>
+</head>
+<body>
+
+  <div id="header">
+    <div class="wrap selfclear">
+      <a id="logo" href="/"><strong>Low</strong>down</a>
+
+      <div id="login-area">
+        <a href="#">Chris Patterson</a> | <a href="#">Log out</a>
+      </div>
+    </div><!-- /.wrap -->
+  </div><!-- /#header -->
+  <div id="crossbar">
+    <div class="wrap selfclear">             
+              <ul id="sitenav" class="selfclear">
+
+          <li><a href="/summaries">View summaries</a></li>
+          <li><a href="/summaries/show_create">Create Summary</a></li>
+          <li><a href="/summaries/show_bulk_update">Mark complete</a></li>
+        </ul>
+
+    </div><!-- /.wrap -->
+  </div><!-- /#crossbar -->
+
+   <div id="main">
+     <div class="wrap selfclear">
+             <div id="history">
+         <h2>Versions</h2>
+         <ul>
+           <li>
+             less than a minute ago
+             <span class="update-user">(Chris Patterson)</span>
+
+           </li>
+           <li>
+             <a href="/summaries/show/406f5644-3832-11e0-8e8a-60fb42fffeef">12 days ago</a>
+             <span class="update-user">(Chris Patterson)</span>
+           </li>
+         </ul>
+       </div><!-- /#history -->
+       
+       <form accept-charset="UTF-8" action="/summaries/update" class="edit_summary" id="edit_summary_acd65180-33ae-11e0-8a88-60fb42fffeef" method="post"
+       <ul class="form">
+         <input id="summary_id" name="summary[id]" type="hidden" value="acd65180-33ae-11e0-8a88-60fb42fffeef" />
+         <li class="providers"><label for="summary_provider">Provider</label> <select id="summary_provider_id" name="summary[provider_id]"><option value="1" selected="selected">American Cancer Society</option>
+<option value="2">American Red Cross</option>
+<option value="3">City Ride</option>
+
+<option value="4">Endambo</option>
+<option value="5">Emmanuel Temple</option>
+<option value="6">Forest Grove</option>
+<option value="7">MFS Project Linkage</option>
+<option value="8">North Plains Senior Center</option>
+<option value="9">Northwest Portland Ministries</option>
+<option value="10">Other</option>
+<option value="11">Pacificab</option>
+<option value="12">Ride Connection SVP</option>
+
+<option value="13">Ride Connection East Multnomah County</option>
+<option value="14">Ride Connection Washington County</option>
+<option value="15">Urban League</option>
+<option value="16">Unknown</option>
+<option value="17">RC West Linn</option>
+<option value="18">Wapato Shores</option>
+<option value="19">Neighborhood House</option>
+<option value="20">Northwest Pilot Project</option>
+<option value="21">Impact Northwest</option>
+
+<option value="22">David's Harp</option>
+<option value="23">Providence ElderPlace</option></select></li>
+
+<li class="allocations"><label for="summary_allocation">Allocation</label> <select id="summary_allocation_id" name="summary[allocation_id]"><option value="1" selected="selected">Commute - City Ride</option>
+
+<option value="2">Commute - Pacificab</option>
+<option value="3">Commute - Wapato Shores</option>
+<option value="4">Commute - Endambo</option>
+<option value="5">Commute Voucher - City Ride</option>
+<option value="6">Commute Voucher - Pacificab</option>
+<option value="7">Commute Voucher - Wapato Shores</option>
+<option value="8">Commute Voucher - Endambo</option>
+<option value="9">General Public - City Ride</option>
+<option value="10">General Public - Pacificab</option>
+
+<option value="11">General Public - Wapato Shores</option>
+<option value="12">General Public - Endambo</option>
+<option value="13">General Public Voucher - Endambo</option>
+<option value="14">General Public Voucher - City Ride</option>
+<option value="15">General Public Voucher - Pacificab</option>
+<option value="16">General Public Voucher - Wapato Shores</option>
+<option value="17">SPD - Endambo</option>
+<option value="18">SPD - City Ride</option>
+<option value="19">SPD - Pacificab</option>
+
+<option value="20">SPD - Wapato Shores</option>
+<option value="21">Urban JARC - Endambo</option>
+<option value="22">Urban JARC - City Ride</option>
+<option value="23">Urban JARC - Pacificab</option>
+<option value="24">Urban JARC - Wapato Shores</option>
+<option value="25">Elderly &amp; Disabled - Endambo</option>
+<option value="26">Elderly &amp; Disabled - City Ride</option>
+
+<option value="27">Elderly &amp; Disabled - Pacificab</option>
+<option value="28">Elderly &amp; Disabled - Wapato Shores</option>
+<option value="29">ACS Multnomah County</option>
+<option value="30">Urban Floor of Service - City Ride</option>
+<option value="31">SW Portland RideAbout</option>
+<option value="32">RC East County ADS Support (Cherry Blossom)</option>
+<option value="33">RC East County Volunteer Service</option>
+
+<option value="34">RC East County STF Service</option>
+<option value="35">Red Cross King City RideAbout</option>
+<option value="36">MFS ADS Support (Cherry Blossom)</option>
+<option value="37">MFS Hollywood RideAbout</option>
+<option value="38">MFS N-NE RideAbout</option>
+<option value="39">MFS East Portland STF Formula Service</option>
+<option value="40">MFS Volunteer Service</option>
+<option value="41">MFS Mid-County U-Ride</option>
+<option value="42">NW Portland Ministries Downtown RideAbout</option>
+
+<option value="43">NW Portland Ministries Volunteer Service</option>
+<option value="44">NW Portland Ministries STF Formula Service</option>
+<option value="45">Urban Floor of Service - Pacificab</option>
+<option value="46">Red Cross ADS Support</option>
+<option value="47">Red Cross Beaverton U-Ride</option>
+<option value="48">Red Cross Multnomah Co. Volunteer Service</option>
+<option value="49">Red Cross Multnomah Co. STF Formula Service</option>
+<option value="50">Red Cross N-NE RideAbout</option>
+<option value="51">Red Cross Washington Co. Volunteer Service</option>
+
+<option value="52">Red Cross Washington Co. STF Formula Service</option>
+<option value="53">Urban Floor of Service - Wapato Shores</option>
+<option value="54">Urban Floor of Service - Endambo</option>
+<option value="55">North Plains General Public Voucher</option>
+<option value="56">North Plains General Public</option>
+<option value="57">ACS Clackamas County</option>
+<option value="58">ACS Washington County</option>
+<option value="59">Red Cross Beaverton RideAbout</option>
+<option value="60">MFS Mid-County RideAbout</option>
+
+<option value="61">SPD - Washington County Office</option>
+<option value="62">Urban JARC - Washington County Office</option>
+<option value="63">Commute Voucher - Washington County Office</option>
+<option value="64">Commute - Washington County Office</option>
+<option value="65">Washington County Community Bus</option>
+<option value="66">General Public Voucher - Washington County Office</option>
+<option value="67">General Public - Washington County Office</option>
+<option value="68">Elderly &amp; Disabled - Unassigned</option>
+
+<option value="69">General Public - Unassigned</option>
+<option value="70">SPD - Unassigned</option>
+<option value="71">Elderly &amp; Disabled - Washington County Office</option>
+<option value="72">Urban League N-NE Rideabout</option>
+<option value="73">Northwest Pilot Project</option>
+<option value="74">Impact NW STF Formula Service</option>
+<option value="75">Neighborhood House STF Formula Service</option>
+<option value="76">David's Harp</option>
+
+<option value="77">Providence Elder Place</option>
+<option value="78">Red Cross STF Formula Out-of-District Service</option>
+<option value="79">Impact NW ADS Support (Cherry Blossom)</option>
+<option value="80">Elderly &amp; Disabled U-Ride</option></select></li>
+<li><label for="summary_period_start">Summary Period</label>
+<span id="summary-period-start-wrap"><input id="summary_period_start" name="summary[period_start]" size="30" type="text" value="2011-02-14" /></span> and 
+<span id="summary-period-end-wrap"><input id="summary_period_end" name="summary[period_end]" size="30" type="text" value="2011-02-14" /></span>
+</li>
+<li>
+  <table id="summary-row-info">
+    <thead>
+      <tr>
+        <th>Purpose</th>
+        <th>In-District</th>
+        <th>Out of District</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Life-Sustaining Medical</td>
+        <td><input id="summary_summary_rows_attributes_0_trips" name="summary[summary_rows_attributes][0][trips]" size="3" type="text" value="1" /></td>
+        <td><input id="summary_summary_rows_attributes_1_trips" name="summary[summary_rows_attributes][1][trips]" size="3" type="text" value="0" /</td>
+      </tr>
+      <tr>
+        <td>Medical</td>
+        <td><input id="summary_summary_rows_attributes_0_trips" name="summary[summary_rows_attributes][2][trips]" size="3" type="text" value="1" /></td>
+        <td><input id="summary_summary_rows_attributes_1_trips" name="summary[summary_rows_attributes][3][trips]" size="3" type="text" value="0" /</td>
+      </tr>
+      <tr>
+        <td>Nutrition</td>
+        <td><input id="summary_summary_rows_attributes_0_trips" name="summary[summary_rows_attributes][4][trips]" size="3" type="text" value="1" /></td>
+        <td><input id="summary_summary_rows_attributes_1_trips" name="summary[summary_rows_attributes][5][trips]" size="3" type="text" value="0" /</td>
+      </tr>
+      <tr>
+        <td>Personal/Support Services</td>
+        <td><input id="summary_summary_rows_attributes_0_trips" name="summary[summary_rows_attributes][6][trips]" size="3" type="text" value="1" /></td>
+        <td><input id="summary_summary_rows_attributes_1_trips" name="summary[summary_rows_attributes][7][trips]" size="3" type="text" value="0" /</td>
+      </tr>
+      <tr>
+        <td>Recreation</td>
+        <td><input id="summary_summary_rows_attributes_0_trips" name="summary[summary_rows_attributes][8][trips]" size="3" type="text" value="1" /></td>
+        <td><input id="summary_summary_rows_attributes_1_trips" name="summary[summary_rows_attributes][9][trips]" size="3" type="text" value="0" /</td>
+      </tr>
+      <tr>
+        <td>School/Work</td>
+        <td><input id="summary_summary_rows_attributes_0_trips" name="summary[summary_rows_attributes][10][trips]" size="3" type="text" value="1" /></td>
+        <td><input id="summary_summary_rows_attributes_1_trips" name="summary[summary_rows_attributes][11][trips]" size="3" type="text" value="0" /</td>
+      </tr>
+      <tr>
+        <td>Shopping</td>
+        <td><input id="summary_summary_rows_attributes_0_trips" name="summary[summary_rows_attributes][12][trips]" size="3" type="text" value="1" /></td>
+        <td><input id="summary_summary_rows_attributes_1_trips" name="summary[summary_rows_attributes][13][trips]" size="3" type="text" value="0" /</td>
+      </tr>
+      <tr>
+        <td>Volunteer Work</td>
+        <td><input id="summary_summary_rows_attributes_0_trips" name="summary[summary_rows_attributes][14][trips]" size="3" type="text" value="1" /></td>
+        <td><input id="summary_summary_rows_attributes_1_trips" name="summary[summary_rows_attributes][15][trips]" size="3" type="text" value="0" /</td>
+      </tr>
+      </tr>
+    </tbody>
+  </table>
+</li>
+<li><label for="summary_total_miles">Total miles</label> <input id="summary_total_miles" name="summary[total_miles]" size="3" type="text" value="20" /></li>
+<li><label for="summary_driver_hours_paid">Driver hours paid</label> <input id="summary_driver_hours_paid" name="summary[driver_hours_paid]" size="3" type="text" value="0" /></li>
+<li><label for="summary_driver_hours_volunteer">Driver hours volunteer</label> <input id="summary_driver_hours_volunteer" name="summary[driver_hours_volunteer]" size="3" type="text" value="0" /></li>
+<li><label for="summary_escort_hours_volunteer">Escort hours volunteer</label> <input id="summary_escort_hours_volunteer" name="summary[escort_hours_volunteer]" size="3" type="text" value="0" /></li>
+<li><label for="summary_administrative_hours_volunteer">Administrative hours volunteer</label> <input id="summary_administrative_hours_volunteer" name="summary[administrative_hours_volunteer]" size="3" type="text" value="0" /></li>
+<li><label for="summary_unduplicated_riders">Unduplicated riders</label> <input id="summary_unduplicated_riders" name="summary[unduplicated_riders]" size="3" type="text" value="0" /></li>
+<li><label for="summary_compliments">Compliments</label> <input id="summary_compliments" name="summary[compliments]" size="3" type="text" value="0" /></li>
+<li><label for="summary_complaints">Complaints</label> <input id="summary_complaints" name="summary[complaints]" size="3" type="text" value="0" /></li>
+<li><label for="summary_prepared_by">Prepared by</label> <input id="summary_prepared_by" name="summary[prepared_by]" size="30" type="text" value="User Name" /></li>
+<li><label for="summary_report_prepared">Report prepared</label>
+  <span id="summary-report-wrap"><input id="summary_report_prepared" name="summary[report_prepared]" size="30" type="text" value="2011-02-14" /></span>
+</li>
+<li><label for="summary_complete">Complete</label><input name="summary[complete]" type="hidden" value="0" /><input id="summary_complete" name="summary[complete]" type="checkbox" value="1" /></li>
+</ul>
+
+
+  <input name="commit" type="submit" value="Update" />
+</form>
+     </div><!-- /.wrap -->
+   </div><!-- /#main -->
+</body>
+</html>
+

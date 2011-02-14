@@ -1,0 +1,28 @@
+         <h2 id="result-count"><%= @runs.total_entries %> runs found.</h2>
+         <table id="run-results">
+           <thead>
+             <tr>
+               <th>Routematch ID</th>
+               <th>Start Time</th>
+               <th>End Time</th>
+               <th>Odometer Start</th>
+               <th>Odometer End</th>
+               <th>Escort Count</th>
+               <th></th>
+             </tr>
+           </thead>
+           <tbody>
+             <% @runs.each do |run| %>
+             <tr>
+               <td><%= run.routematch_id %></td>
+               <td><%= run.start_at %></td>
+               <td><%= run.end_at %></td>
+               <td><%= run.odometer_start %></td>
+               <td><%= run.odometer_end %></td>
+               <td><%= run.escort_count %></td>
+               <td><%= link_to "Details", :action=>:show, :id=>run.id %></td>
+             </tr>
+             <% end %>
+           </tbody>
+         </table>
+<%= will_paginate @runs %>

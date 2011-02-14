@@ -224,7 +224,10 @@ margin: 0.25em 0 1em;
 #startday,
 #endday,
 #query_start_date,
-#query_end_date {
+#query_end_date, 
+#summary_report_prepared, 
+#summary_period_start, 
+#summary_period_end {
 width: 6.5em;
 padding-right: 20px;
 }
@@ -286,25 +289,29 @@ margin: 0.5em 0;
 }
 
 #trip-results,
-#grouped-results {
+#grouped-results,
+#run-results {
 margin: 0;
 width: 100%;
 }
 
 #trip-results thead th,
-#grouped-results thead th {
+#grouped-results thead th,
+#run-results thead th {
 font-weight: bold;
 padding: 0.3em;
 border-bottom: 1px solid #222;
 }
 
 #trip-results tbody tr:nth-child(odd),
-#grouped-results tbody tr:nth-child(odd)  {
+#grouped-results tbody tr:nth-child(odd),
+#run-results tbody tr:nth-child(odd)  {
 background: #f1f2f3;
 }
 
 #trip-results tbody td,
-#grouped-results tbody td {
+#grouped-results tbody td,
+#run-results tbody td {
 padding: 0.2em 0.3em;
 }
 
@@ -536,6 +543,18 @@ padding: 0 4px;
 }
 
 /* - */
-.allocations .ui-autocomplete-input {
+.providers .ui-autocomplete-input,
+.allocations .ui-autocomplete-input  {
 width: 24em;
+}
+
+/* - */
+
+#summary-row-info th {
+font-weight: bold;
+}
+
+#summary-row-info th, 
+#summary-row-info td {
+padding: 0.3em 0.6em 0.3em 0;
 }
