@@ -9,10 +9,10 @@ End: <%= summary.period_end %>
 Purpose
 </th>
 <th>
-Trips
+In-district Trips
 </th>
 <th>
-In-district
+Out-of-district Trips
 </th>
 </tr>
 <% for row in summary.summary_rows %>
@@ -20,14 +20,10 @@ In-district
 <td>
     <%= row.purpose %>
 <td>
-<%= row.trips %> 
+<%= row.in_district_trips %>
 </td>
 <td>
-<% if row.in_district %>
-yes
-<% else %>
-no
-<% end %>
+<%= row.out_of_district_trips %>
 </td>
 
 </tr>

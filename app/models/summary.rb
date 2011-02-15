@@ -5,11 +5,26 @@ class Summary < ActiveRecord::Base
             :creator_attribute  => :updated_by
 
   has_many :summary_rows, :order=>'purpose'
-  belongs_to :provider
+  belongs_to :allocation
 
-  accepts_nested_attributes_for :summary_rows, :allow_destroy => true, :reject_if => :all_blank
+  accepts_nested_attributes_for :summary_rows, :reject_if => :all_blank
+
+  attr_accessor :force_update
 
   def created_by
-    return first_version.updated_by
+    return first_version.updater
   end
+
+  def updater
+    return User.find(updated_by)
+  end
+
+  def provider
+    return allocation.provider
+  end
+
+  def create_new_version?
+    self.versioned_columns.detect {|a| __send__ "#{a}_changed?"} || self.summary_rows.detect {|a| a.create_new_version? }
+  end
+
 end

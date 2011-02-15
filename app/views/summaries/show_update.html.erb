@@ -1,7 +1,27 @@
+
+     <div class="wrap selfclear">
+<div id="history">
+         <h2>Versions</h2>
+         <ul>
+<% for version in @versions %>
+           <li>
+             <% if version.latest? %>
+               <%= time_ago_in_words version.valid_start %> ago
+             <% else %>
+               <%= link_to time_ago_in_words(version.valid_start), :action=>:show_update, :id=>version.id %> ago
+             <% end %>
+             by <span class="update-user"><%= version.updater.name %></span>
+
+           </li>
+<% end %>
+         </ul>
+       </div><!-- /#history -->
+
 <%= form_for @summary, :url=>{:action=>:update} do |f| %>
   <%= render :partial => "form", :locals=>{:f=>f} %>
 
-  <br/>
 
   <%= submit_tag 'Update' %>
 <% end %>
+
+</div><!-- /.wrap -->

@@ -1,41 +1,44 @@
 <%= f.hidden_field :id %>
+       <ul class="form">
+         <li class="allocations">
+<%= f.label :allocation %> <%= f.collection_select :allocation_id, @allocations, :id, :name %> </li>
 
-<%= f.label :provider %> <%= f.collection_select :provider_id, @providers, :id, :name %> <br/>
-<%= f.label :period_start %> <%= f.date_select :period_start %> <br/>
-<%= f.label :period_end %> <%= f.date_select :period_end %> <br/>
+<li><label for="summary_period_start">Summary Month</label>
+<span id="summary-period-start-wrap"> <%= f.text_field :period_start %></span> 
+</li>
 
-<%= f.label :total_miles %> <%= f.text_field :total_miles %> <br/>
-<%= f.label :driver_hours_paid %> <%= f.text_field :driver_hours_paid %> <br/>
-<%= f.label :driver_hours_volunteer %> <%= f.text_field :driver_hours_volunteer %> <br/>
-<%= f.label :escort_hours_volunteer %> <%= f.text_field :escort_hours_volunteer %> <br/>
-<%= f.label :administrative_hours_volunteer %> <%= f.text_field :administrative_hours_volunteer %> <br/>
-<%= f.label :unduplicated_riders %> <%= f.text_field :unduplicated_riders %> <br/>
-<%= f.label :compliments %> <%= f.text_field :compliments %> <br/>
-<%= f.label :complaints %> <%= f.text_field :complaints %> <br/>
-<%= f.label :prepared_by %> <%= f.text_field :prepared_by %> <br/>
-<%= f.label :report_prepared %> <%= f.date_select :report_prepared %> <br/>
-<%= f.label :allocation %> <%= f.collection_select :allocation_id, @allocations, :id, :name %><br/>
-<%= f.label :complete %><%= f.check_box :complete %><br/>
-
-<h2>Rows</h2>
-
+<li>
+  <table id="summary-row-info">
+    <thead>
+      <tr>
+        <th>Purpose</th>
+        <th>In-District</th>
+        <th>Out of District</th>
+      </tr>
+    </thead>
+    <tbody>
 <%= f.fields_for :summary_rows do |row_form| %>
-<br/><hr/><br/>
-    <% if row_form.object.new_record? %>
-      Add a new row:<br/>
-    <% end %>
-    <%= row_form.label :purpose %>
-    <%= row_form.text_field :purpose %><br/>
-
-    <%= row_form.label :trips %>
-    <%= row_form.text_field :trips %><br/>
-
-    <%= row_form.label :in_district %>
-    <%= row_form.check_box :in_district %><br/>
-
-    <% unless row_form.object.new_record? %>
-      <%= row_form.check_box '_destroy' %>
-      <%= row_form.label '_destroy', 'Remove' %><br/>
-    <% end %>
+<%= row_form.hidden_field :purpose %>
+      <tr>
+        <td><%= row_form.label row_form.object.purpose %></td>
+        <td><%= row_form.text_field :in_district_trips %></td>
+        <td><%= row_form.text_field :out_of_district_trips %></td>
+      </tr>
 <% end %>
 
+
+    </tbody>
+  </table>
+</li>
+<li><%= f.label :total_miles %> <%= f.text_field :total_miles %></li>
+
+
+<li><%= f.label :driver_hours_paid %> <%= f.text_field :driver_hours_paid %></li>
+<li><%= f.label :driver_hours_volunteer %> <%= f.text_field :driver_hours_volunteer %></li>
+<li><%= f.label :escort_hours_volunteer %> <%= f.text_field :escort_hours_volunteer %></li>
+<li><%= f.label :administrative_hours_volunteer %> <%= f.text_field :administrative_hours_volunteer %></li>
+<li><%= f.label :unduplicated_riders %> <%= f.text_field :unduplicated_riders %></li>
+<li><%= f.label :allocation %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li.
+<li><%= f.label :complete %><%= f.check_box :complete %></li>
+
+</ul>
