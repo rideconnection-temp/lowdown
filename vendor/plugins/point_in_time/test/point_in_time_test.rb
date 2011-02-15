@@ -134,6 +134,8 @@ class VersionFuTest < ActiveSupport::TestCase
   
    test 'find latest version' do
      assert_equal pages(:welcome), pages(:welcome_1).versions.latest
+     assert pages(:welcome).latest?
+     assert ! pages(:welcome_1).latest?
    end
   
    test 'find previous version' do
