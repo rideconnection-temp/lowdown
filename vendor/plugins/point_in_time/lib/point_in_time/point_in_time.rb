@@ -158,7 +158,11 @@ module VersionFu
 
     def end_of_time
       return @@end_of_time
-     end
+    end
+
+    def latest?
+      return valid_end == @@end_of_time
+    end
 
   end
 end
