@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110215015816) do
+ActiveRecord::Schema.define(:version => 20110215194613) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -105,6 +105,11 @@ ActiveRecord::Schema.define(:version => 20110215015816) do
     t.datetime "imported_at"
   end
 
+  add_index "runs", ["base_id"], :name => "runs_base_id_idx"
+  add_index "runs", ["date"], :name => "runs_date_idx"
+  add_index "runs", ["valid_end"], :name => "runs_valid_end_idx"
+  add_index "runs", ["valid_start"], :name => "runs_valid_start_idx"
+
   create_table "summaries", :id => false, :force => true do |t|
     t.string   "id",                             :limit => 36,                                                   :null => false
     t.string   "base_id",                        :limit => 36
@@ -125,6 +130,9 @@ ActiveRecord::Schema.define(:version => 20110215015816) do
     t.integer  "allocation_id"
     t.integer  "updated_by"
     t.boolean  "complete",                                                                    :default => false
+    t.integer  "administrative"
+    t.integer  "operations"
+    t.integer  "vehicle_maint"
   end
 
   create_table "summary_rows", :id => false, :force => true do |t|
@@ -134,7 +142,7 @@ ActiveRecord::Schema.define(:version => 20110215015816) do
     t.datetime "valid_end"
     t.string   "purpose"
     t.integer  "in_district_trips"
-    t.string   "summary_id",            :limit => 36
+    t.string   "summary_id"
     t.integer  "updated_by"
     t.integer  "out_of_district_trips"
   end
@@ -198,8 +206,8 @@ ActiveRecord::Schema.define(:version => 20110215015816) do
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
     t.integer  "allocation_id"
-    t.integer  "home_address_id"
     t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
+    t.integer  "home_address_id"
     t.integer  "duration"
     t.decimal  "mileage",                                        :precision => 8,  :scale => 1
     t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
@@ -208,6 +216,11 @@ ActiveRecord::Schema.define(:version => 20110215015816) do
     t.integer  "updated_by"
     t.datetime "imported_at"
   end
+
+  add_index "trips", ["allocation_id", "date"], :name => "trips_allocation_date_idx"
+  add_index "trips", ["base_id"], :name => "trips_base_id_idx"
+  add_index "trips", ["date"], :name => "trips_date_idx"
+  add_index "trips", ["run_id"], :name => "trips_run_id_idx"
 
   create_table "users", :force => true do |t|
     t.string   "name",                             :null => false
@@ -228,7 +241,5 @@ ActiveRecord::Schema.define(:version => 20110215015816) do
   end
 
   add_foreign_key "runs", ["trip_import_id"], "trip_imports", ["id"], :name => "runs_trip_import_id_fkey"
-
-  add_foreign_key "taggings", ["tag_id"], "tags", ["id"], :name => "taggings_tag_id_fkey"
 
 end
