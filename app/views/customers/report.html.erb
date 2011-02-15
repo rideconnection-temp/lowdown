@@ -1,0 +1,60 @@
+Report from <%= @star_date %><br/>
+
+<table>
+  <tr>
+    <th>Case Manager</th>
+    <th>Date Enrolled</th>
+    <th>Customer</th>
+    <th>Prime Number</th>
+    <th>Service End</th>
+    <th>Approved Rides</th>
+    <th>Billed Rides</th>
+    <th>Billable Mileage</th>
+    <th>Scooter/Wheelchair</th>
+  </tr>
+
+<% for customer in @customers %>
+<tr>
+<td>nope</td>
+<td>nope</td>
+<td><%= customer.first_name %> <%= customer.middle_initial %> <%= customer.last_name %> </td>
+<td>nope</td>
+<td>?</td>
+<td><%= customer.approved_rides(@start_date, @end_date) %></td>
+<td><%= customer.billed_rides(@start_date, @end_date) %></td>
+<td><%= customer.billable_mileage(@start_date, @end_date) %></td>
+<td><%= customer.mobility %></td>
+</tr>
+<% end %>
+
+</table>
+
+<br/>
+
+<table>
+  <tr>
+    <th>Mobility</th>
+    <th>Approved Rides</td>
+    <th>Billed Rides</td>
+    <th>Mileage</td>
+  </tr>
+  <tr>
+    <th>All</th>
+    <td><%= @wc_approved_rides + @nonwc_approved_rides %></td>
+    <td><%= @wc_billed_rides + @nonwc_billed_rides %></td>
+    <td><%= @wc_mileage + @nonwc_mileage %></td>
+  </tr>
+  <tr>
+    <th>Not Wheelchair/Scooter</th>
+    <td><%= @nonwc_approved_rides %></td>
+    <td><%= @nonwc_billed_rides %></td>
+    <td><%= @nonwc_mileage %></td>
+  </tr>
+  <tr>
+    <th>Wheelchair/Scooter</th>
+    <td><%= @wc_approved_rides %></td>
+    <td><%= @wc_billed_rides %></td>
+    <td><%= @wc_mileage %></td>
+  </tr>
+
+</table>
