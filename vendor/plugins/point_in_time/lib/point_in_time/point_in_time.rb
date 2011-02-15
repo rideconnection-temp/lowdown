@@ -96,6 +96,10 @@ module VersionFu
       versions.find :first, :conditions => ["base_id = ? and id = ?", base_id, base_id]
     end
 
+    def current_version
+      versions.find :last, :conditions => ["base_id = ? and id = ?", base_id, base_id]
+    end
+
     def find_version(date)
       versions.find :first, :conditions=>['valid_start <= ? and valid_end > ?', date, date]
     end
