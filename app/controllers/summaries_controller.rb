@@ -54,13 +54,14 @@ class SummariesController < ApplicationController
   end
 
   def show_update
-    @summary = Summary.current_versions.find params[:id]
+    @summary = Summary.find params[:id]
     @allocations = Allocation.all
     @versions = @summary.versions.reverse
   end
 
   def update
-    @summary = Summary.current_versions.find(params[:summary][:id])
+    old_version = Summary.find(params[:summary][:id])
+    @summary = old_version.current_version
 
     @allocations = Allocation.all
 
