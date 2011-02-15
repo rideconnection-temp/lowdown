@@ -40,7 +40,7 @@ class Query
         @pending = params[:pending]
       end
       if params[:adjustment]
-        @adjustment = params[:adjustment]
+        @adjustment = params[:adjustment].to_s == "1"
       end
     end
   end
@@ -212,23 +212,18 @@ class NetworkController < ApplicationController
       end
     end
 
-    def summaries_add_sql
-      "and summaries.valid_start <= ? and summaries.valid_end > ? and 
-summary_rows.valid_start > ? and summary_rows.valid_start <= ? and summary_rows.valid_end > ? "
-    end
-
     def collect_adjustment_by_summary(sql, allocation, start_date, end_date)
       subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? and 
 summary_rows.valid_start < ? and summary_rows.valid_end > ? and summary_rows.valid_end <= ? "
 
-      subtract_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], 
+      subtract_results = ActiveRecord::Base.connection.select_all(bind([subtract_sql, allocation['id'], 
 start_date, start_date, 
 start_date, start_date, end_date]))
 
       add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? and 
 summary_rows.valid_start < ? and summary_rows.valid_end > ? and summary_rows.valid_end <= ? "
 
-      subtract_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], 
+      add_results = ActiveRecord::Base.connection.select_all(bind([add_sql, allocation['id'], 
 end_date, end_date, 
 start_date, end_date, end_date]))
 
@@ -336,7 +331,7 @@ allocation_id = ? "
 
 
       if adjustment
-        collect_adjustments_by_trip(sql, allocation, start_date, end_date)
+        add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
       else
         sql += "and trips.date between ? and ?
 and trips.valid_end = ? and runs.valid_end=? "
@@ -424,6 +419,7 @@ sum(agency_other) as agency_other,
 0 as vehicle_maint,
 sum(donations) as donations_fares
 from summaries 
+inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where 
 #{pending_where}
 allocation_id=?  
@@ -431,6 +427,7 @@ allocation_id=?
       last_year_sql = "select
 sum(donations + funds + agency_other) as total_last_year
 from summaries 
+inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where
 complete=true and 
 allocation_id=? "
@@ -441,15 +438,15 @@ allocation_id=? "
         add_results, subtract_results = collect_adjustment_by_summary(last_year_sql, allocation, start_date.prev_year, end_date.prev_year)
         apply_results(add_results[0], subtract_results[0])
       else
-        period_sql = "and period_start >= ? and 
-period_end < ? and 
-valid_end = ? "
+        period_sql = "and summaries.period_start >= ? and 
+summaries.period_end < ? and 
+summaries.valid_end = ? and summary_rows.valid_end = ? "
         sql += period_sql
         last_year_sql += period_sql
-        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
+        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
         apply_results(add_results[0])
 
-        add_results = ActiveRecord::Base.connection.select_all(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Summary.end_of_time]))
+        add_results = ActiveRecord::Base.connection.select_all(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Summary.end_of_time, SummaryRow.end_of_time]))
         apply_results(add_results[0])
       end
     end
@@ -481,7 +478,7 @@ valid_end = ? "
     end_date = Date.today
     start_date = end_date - 14 
     do_report(groups, group_fields, start_date, end_date, nil, nil, false, false)
-    @params = {}
+    @params = {:q=>{}}
     render 'report'
   end
 
