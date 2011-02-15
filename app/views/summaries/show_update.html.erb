@@ -5,7 +5,7 @@
          <ul>
 <% for version in @versions %>
            <li>
-             <% if version.latest? %>
+             <% if version == @summary %>
                <%= time_ago_in_words version.valid_start %> ago
              <% else %>
                <%= link_to time_ago_in_words(version.valid_start), :action=>:show_update, :id=>version.id %> ago
@@ -17,6 +17,11 @@
          </ul>
        </div><!-- /#history -->
 
+<% if ! @summary.latest? %>
+
+<div><b>You are viewing an old version created on <%= @summary.valid_start.to_s(:pretty) %></b></div>
+
+<% end %>
 <%= form_for @summary, :url=>{:action=>:update} do |f| %>
   <%= render :partial => "form", :locals=>{:f=>f} %>
 
