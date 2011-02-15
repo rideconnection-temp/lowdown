@@ -25,4 +25,7 @@ class Allocation < ActiveRecord::Base
     return project.project_number
   end
 
+  def project_name
+    project.name
+  end
 end
