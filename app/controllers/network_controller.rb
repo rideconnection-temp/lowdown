@@ -290,8 +290,8 @@ and trips.date between ? and ? "
       pending_where = pending ? "runs.complete=true and " : ""
 
       sql = "select 
-sum(case when in_district=true then trips else 0 end) as in_district_trips,
-sum(case when in_district=false then trips else 0 end) as out_of_district_trips,
+in_district_trips,
+out_of_district_trips,
 sum(turn_downs) as turn_downs,
 sum(unduplicated_riders) as undup_riders
 from summaries 

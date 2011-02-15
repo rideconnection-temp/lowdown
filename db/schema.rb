@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110209194359) do
+ActiveRecord::Schema.define(:version => 20110215015816) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -118,11 +118,6 @@ ActiveRecord::Schema.define(:version => 20110209194359) do
     t.integer  "escort_hours_volunteer"
     t.integer  "administrative_hours_volunteer"
     t.integer  "unduplicated_riders"
-    t.integer  "compliments"
-    t.integer  "complaints"
-    t.integer  "provider_id"
-    t.string   "prepared_by"
-    t.date     "report_prepared"
     t.integer  "turn_downs"
     t.decimal  "agency_other",                                 :precision => 10, :scale => 2
     t.decimal  "donations",                                    :precision => 10, :scale => 2
@@ -133,15 +128,15 @@ ActiveRecord::Schema.define(:version => 20110209194359) do
   end
 
   create_table "summary_rows", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "base_id",     :limit => 36
+    t.string   "id",                    :limit => 36, :null => false
+    t.string   "base_id",               :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
     t.string   "purpose"
-    t.integer  "trips"
-    t.boolean  "in_district"
-    t.string   "summary_id",  :limit => 36
+    t.integer  "in_district_trips"
+    t.string   "summary_id",            :limit => 36
     t.integer  "updated_by"
+    t.integer  "out_of_district_trips"
   end
 
   create_table "taggings", :force => true do |t|
