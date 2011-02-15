@@ -256,8 +256,8 @@ start_date, end_date, end_date ]))
       pending_where = pending ? "runs.complete=true and " : ""
 
       sql = "select 
-sum(case when in_trimet_district=true then 1 else 0 end) as in_district_trips,
-sum(case when in_trimet_district=false then 1 else 0 end) as out_of_district_trips,
+sum(case when in_trimet_district=true then 1 + guest_count + attendant_count else 0 end) as in_district_trips,
+sum(case when in_trimet_district=false then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips,
 sum(case when result_code='TD' then 1 else 0 end) as turn_downs,
 count(distinct customer_id) as undup_riders
 from trips
@@ -290,8 +290,8 @@ and trips.date between ? and ? "
       pending_where = pending ? "runs.complete=true and " : ""
 
       sql = "select 
-in_district_trips,
-out_of_district_trips,
+sum(in_district_trips) as in_district_trips,
+sum(out_of_district_trips) as out_of_district_trips,
 sum(turn_downs) as turn_downs,
 sum(unduplicated_riders) as undup_riders
 from summaries 
@@ -318,10 +318,10 @@ summary_rows.valid_end = ? "
       pending_where = pending ? "runs.complete=true and " : ""
       sql = "
 select 
-sum(trips.odometer_end - trips.odometer_start) as mileage, 
-sum(duration) as driver_paid_hours,
-sum(case when volunteer_trip=true then duration else 0 end) as driver_volunteer_hours,
-sum(runs.escort_count * duration) as escort_volunteer_hours,
+sum(apportioned_mileage) as mileage, 
+sum(case when volunteer_trip=false then apportioned_duration else 0 end) as driver_paid_hours,
+sum(case when volunteer_trip=true  then apportioned_duration else 0 end) as driver_volunteer_hours,
+sum(runs.escort_count * apportioned_duration) as escort_volunteer_hours,
 0 as admin_volunteer_hours
 from trips
 inner join runs on trips.run_id = runs.base_id
