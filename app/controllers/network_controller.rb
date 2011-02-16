@@ -51,10 +51,6 @@ class Query
 
 end
 
-def bind(args)
-  return ActiveRecord::Base.__send__(:sanitize_sql_for_conditions, args, '')
-end
-
 class NetworkController < ApplicationController
 
   before_filter :require_user
