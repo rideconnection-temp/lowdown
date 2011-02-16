@@ -4,7 +4,9 @@
 <%= f.label :allocation %> <%= f.collection_select :allocation_id, @allocations, :id, :name %> </li>
 
 <li><label for="summary_period_start">Summary Month</label>
-<span id="summary-period-start-wrap"> <%= f.text_field :period_start %></span> 
+<span id="summary-period-start-wrap"> <%= f.date_select :period_start, :discard_day=>true %>
+</span> 
+
 </li>
 
 <li>
