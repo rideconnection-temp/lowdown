@@ -92,26 +92,14 @@ class NetworkController < ApplicationController
 
     end
 
-    def initialize(hash = nil)
+    def initialize(fields_to_show = nil)
 
-      if hash.nil?
-        for k in numeric_fields
-          self.instance_variable_set("@#{k}", 0.0)
-        end
-
-        return #because this is a summary row, do not set up anything further
+      for k in numeric_fields
+        self.instance_variable_set("@#{k}", 0.0)
       end
 
-      for field in numeric_fields
-        hash[field.to_s] = hash[field.to_s].to_f
-      end
+      @fields_to_show = fields_to_show
 
-      hash.each do |k,v|
-        instance_variable_set("@#{k}", v)
-      end
-
-      allocation = Allocation.find(@allocation_id)
-      @agency = allocation.agency
     end
 
     def agency
@@ -123,7 +111,14 @@ class NetworkController < ApplicationController
     end
 
     def total
-      return @funds + @fares + @agency_other + @vehicle_maint + @donations
+      total = 0
+      cost_fields = [:funds, :fares, :agency_other, :vehicle_maint, :donations, :administrative, :operations]
+      for field in cost_fields
+        if @fields_to_show.nil? or @fields_to_show.member? field.to_sym
+          total += instance_variable_get("@#{field}")
+        end
+      end
+      return total
     end
 
     def driver_total_hours
@@ -139,15 +134,15 @@ class NetworkController < ApplicationController
     end
 
     def cost_per_hour
-      return @funds / driver_total_hours
+      return total / driver_total_hours
     end
 
     def cost_per_trip
-      return @funds / total_trips
+      return total / total_trips
     end
 
     def cost_per_mile
-      cpm = @funds / @mileage
+      cpm = total / @mileage
       if @mileage == 0
         return -1
       end
@@ -752,7 +747,7 @@ summaries.valid_end = ? "
 
     apply_to_leaves! allocations, group_fields.size, do | allocationset |
 
-      row = NetworkReportRow.new
+      row = NetworkReportRow.new fields
 
       for allocation in allocationset
         row.agency = allocation.agency
