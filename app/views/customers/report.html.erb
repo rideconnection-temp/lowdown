@@ -15,11 +15,11 @@ Report from <%= @star_date %><br/>
 
 <% for customer in @customers %>
 <tr>
-<td>nope</td>
-<td>nope</td>
+<td><%= customer.case_manager %></td>
+<td><%= customer.date_enrolled %></td>
 <td><%= customer.first_name %> <%= customer.middle_initial %> <%= customer.last_name %> </td>
-<td>nope</td>
-<td>?</td>
+<td><%= customer.prime_number %></td>
+<td><%= customer.service_end %></td>
 <td><%= customer.approved_rides(@start_date, @end_date) %></td>
 <td><%= customer.billed_rides(@start_date, @end_date) %></td>
 <td><%= customer.billable_mileage(@start_date, @end_date) %></td>
