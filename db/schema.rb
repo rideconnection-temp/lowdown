@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110216172527) do
+ActiveRecord::Schema.define(:version => 20110216192209) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(:version => 20110216172527) do
     t.date     "date_enrolled"
     t.string   "prime_number"
     t.date     "service_end"
+    t.integer  "approved_rides"
   end
 
   create_table "projects", :force => true do |t|
