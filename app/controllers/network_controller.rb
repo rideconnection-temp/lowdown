@@ -61,11 +61,11 @@ class NetworkController < ApplicationController
   before_filter :require_admin_user, :except=>[:csv, :tag_index, :show_create_report, :report, :index]
 
   class NetworkReportRow
-    @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year]
+    @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
     attr_accessor *@@attrs
 
     def numeric_fields
-      return [:funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders]
+      return [:funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations]
     end
 
     @@selector_fields = ['allocation', 'county', 'provider_id', 'project_name']
@@ -201,6 +201,12 @@ class NetworkController < ApplicationController
       @undup_riders += row.undup_riders
 
       @escort_volunteer_hours += row.escort_volunteer_hours
+
+      @vehicle_maint += row.vehicle_maint
+
+      @administrative += row.administrative
+      @operations += row.operations
+
     end
 
     def apply_results(add_result, subtract_result={})
@@ -377,7 +383,6 @@ select
 sum(fare) as funds, 
 sum(customer_pay) as fares, 
 0 as agency_other,
-0 as vehicle_maint,
 0 as donations
 from trips
 inner join runs on trips.run_id = runs.base_id
@@ -416,7 +421,6 @@ runs.valid_end = ? "
       sql = "select
 sum(funds) as funds,
 sum(agency_other) as agency_other,
-0 as vehicle_maint,
 sum(donations) as donations
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.base_id
@@ -451,7 +455,41 @@ summaries.valid_end = ? and summary_rows.valid_end = ? "
       end
     end
 
+    def collect_operation_data_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
+      pending_where = pending ? "summaries.complete=true and " : ""
+      sql = "select
+sum(operations) as operations,
+sum(administrative) as administrative,
+sum(vehicle_maint) as vehicle_maint
+from summaries 
+where 
+#{pending_where}
+allocation_id=?  
+"
+      if adjustment
+        subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end >= ? "
+
+        subtract_results = ActiveRecord::Base.connection.select_all(bind([subtract_sql, allocation['id'], 
+start_date, start_date]))
+
+        add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end >= ? "
+
+        add_results = ActiveRecord::Base.connection.select_all(bind([add_sql, allocation['id'], 
+end_date, end_date ]))
+
+        apply_results(add_results[0], subtract_results[0])
+      else
+        period_sql = "and summaries.period_start >= ? and 
+summaries.period_end < ? and 
+summaries.valid_end = ? "
+        sql += period_sql
+        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
+        apply_results(add_results[0])
+      end
+    end
+
   end
+
 
   @@group_mappings = {
     "agency" => "providers.agency",
@@ -740,6 +778,8 @@ summaries.valid_end = ? and summary_rows.valid_end = ? "
         else
           row.collect_costs_by_summary(allocation, start_date, end_date, pending, adjustment)
         end
+
+        row.collect_operation_data_by_summary(allocation, start_date, end_date, pending, adjustment)
 
       end
       row.allocation = allocationset[0]
