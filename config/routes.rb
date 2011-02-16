@@ -1,4 +1,6 @@
 Lowdown::Application.routes.draw do
+  get "dashboard/index"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -56,7 +58,7 @@ Lowdown::Application.routes.draw do
   post   'login(.:format)'  => 'user_session#create',  :as => :login
   delete 'logout(.:format)' => 'user_session#destroy', :as => :logout
 
-  root :to => 'user_session#new' # login page
+  root :to => 'dashboard#index'
 
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
