@@ -1,4 +1,4 @@
-Report from <%= @star_date %><br/>
+SPD Report from <%= @start_date %><br/>
 
 <table>
   <tr>
@@ -13,17 +13,18 @@ Report from <%= @star_date %><br/>
     <th>Scooter/Wheelchair</th>
   </tr>
 
-<% for customer in @customers %>
+<% for customer_row in @customer_rows.values.sort {|a,b| a[:customer].name <=> b[:customer].name } %>
+<% customer = customer_row[:customer] %>
 <tr>
 <td><%= customer.case_manager %></td>
 <td><%= customer.date_enrolled %></td>
 <td><%= customer.first_name %> <%= customer.middle_initial %> <%= customer.last_name %> </td>
 <td><%= customer.prime_number %></td>
 <td><%= customer.service_end %></td>
-<td><%= customer.approved_rides(@start_date, @end_date) %></td>
-<td><%= customer.billed_rides(@start_date, @end_date) %></td>
-<td><%= customer.billable_mileage(@start_date, @end_date) %></td>
-<td><%= customer.mobility %></td>
+<td><%= customer.approved_rides %></td>
+<td><%= customer_row[:billed_rides] %></td>
+<td><%= "%.2f" % customer_row[:billable_mileage] %></td>
+<td><%= customer_row[:mobility] %></td>
 </tr>
 <% end %>
 
@@ -40,21 +41,27 @@ Report from <%= @star_date %><br/>
   </tr>
   <tr>
     <th>All</th>
-    <td><%= @wc_approved_rides + @nonwc_approved_rides %></td>
-    <td><%= @wc_billed_rides + @nonwc_billed_rides %></td>
-    <td><%= @wc_mileage + @nonwc_mileage %></td>
+    <td><%= @approved_rides %></td>
+    <td><%= @wc_billed_rides + @nonwc_billed_rides + @unknown_billed_rides %></td>
+    <td><%= "%.2f" % (@wc_mileage + @nonwc_mileage + @unknown_mileage) %></td>
   </tr>
   <tr>
     <th>Not Wheelchair/Scooter</th>
-    <td><%= @nonwc_approved_rides %></td>
+    <td></td>
     <td><%= @nonwc_billed_rides %></td>
-    <td><%= @nonwc_mileage %></td>
+    <td><%= "%.2f" % @nonwc_mileage %></td>
   </tr>
   <tr>
     <th>Wheelchair/Scooter</th>
-    <td><%= @wc_approved_rides %></td>
+    <td></td>
     <td><%= @wc_billed_rides %></td>
-    <td><%= @wc_mileage %></td>
+    <td><%= "%.2f" % @wc_mileage %></td>
+  </tr>
+  <tr>
+    <th>Unknown</th>
+    <td></td>
+    <td><%= @unknown_billed_rides %></td>
+    <td><%= "%.2f" % @unknown_mileage %></td>
   </tr>
 
 </table>
