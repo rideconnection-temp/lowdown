@@ -11,8 +11,9 @@
                <th rowspan="2"><%= @group_fields[-1] %></th>
 <% if @fields.member? 'funds' %><th rowspan="2">Funds</th><% end %>
 <% if @fields.member? 'agency_other' %><th rowspan="2">Agency Other</th><% end %>
-<% if @fields.member? 'vehicle_maint' %><th rowspan="2">Vechicle Maint.</th><% end %>
-<% if @fields.member? 'donations_fares' %><th rowspan="2">Donations Fares</th><% end %>
+<% if @fields.member? 'vehicle_maint' %><th rowspan="2">Vehicle Maint.</th><% end %>
+<% if @fields.member? 'donations' %><th rowspan="2">Donations</th><% end %>
+<% if @fields.member? 'fares' %><th rowspan="2">Fares</th><% end %>
 <% if @fields.member? 'total' %><th rowspan="2">Total</th><% end %>
 <% if @fields.member? 'in_district_trips' %><th rowspan="2">In District Rides</th><% end %>
 <% if @fields.member? 'out_of_district_trips' %><th rowspan="2">Out of District Rides</th><% end %>
