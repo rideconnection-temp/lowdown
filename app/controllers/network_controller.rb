@@ -61,11 +61,11 @@ class NetworkController < ApplicationController
   before_filter :require_admin_user, :except=>[:csv, :tag_index, :show_create_report, :report, :index]
 
   class NetworkReportRow
-    @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year]
+    @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year]
     attr_accessor *@@attrs
 
     def numeric_fields
-      return [:funds, :fares, :agency_other, :vehicle_maint, :donations_fares, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders]
+      return [:funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders]
     end
 
     @@selector_fields = ['allocation', 'county', 'provider_id', 'project_name']
@@ -123,7 +123,7 @@ class NetworkController < ApplicationController
     end
 
     def total
-      return @funds + @fares + @agency_other + @vehicle_maint + @donations_fares
+      return @funds + @fares + @agency_other + @vehicle_maint + @donations
     end
 
     def driver_total_hours
@@ -378,7 +378,7 @@ sum(fare) as funds,
 sum(customer_pay) as fares, 
 0 as agency_other,
 0 as vehicle_maint,
-0 as donations_fares
+0 as donations
 from trips
 inner join runs on trips.run_id = runs.base_id
 where
@@ -417,7 +417,7 @@ runs.valid_end = ? "
 sum(funds) as funds,
 sum(agency_other) as agency_other,
 0 as vehicle_maint,
-sum(donations) as donations_fares
+sum(donations) as donations
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where 
