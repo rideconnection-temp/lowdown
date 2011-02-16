@@ -787,6 +787,7 @@ summaries.valid_end = ? "
       row
     end
 
+    @levels = group_fields.size
     @group_fields = group_fields
     @results = allocations
     @start_date = start_date
