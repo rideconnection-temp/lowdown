@@ -38,6 +38,7 @@
                 'N/A' :
                 ('%.2f' % row.cost_per_mile) %></td><%end%>
 <% if @fields.member? 'cost_per_hour' %><td><%= '%.2f' % row.cost_per_hour %></td><%end%>
+<% if @fields.member? 'miles_per_ride' %><td><%= '%.2f' % row.miles_per_ride %></td><%end%>
 <% if @fields.member? 'turn_downs' %><td><%= row.turn_downs %></td><%end%>
 <% if @fields.member? 'undup_riders' %><td><%= row.undup_riders %></td><%end%>
 <% if @fields.member? 'escort_volunteer_hours' %><td><%= row.escort_volunteer_hours %></td><%end%>
@@ -71,6 +72,7 @@
 <% if @fields.member? 'cost_per_trip' %><td><%= '%.2f' % row.cost_per_trip %></td><%end%>
 <% if @fields.member? 'cost_per_mile' %><td><%= '%.2f' % row.cost_per_mile %></td><%end%>
 <% if @fields.member? 'cost_per_hour' %><td><%= '%.2f' % row.cost_per_hour %></td><%end%>
+<% if @fields.member? 'miles_per_ride' %><td><%= '%.2f' % row.miles_per_ride %></td><%end%>
 <% if @fields.member? 'turn_downs' %><td><%= row.turn_downs %></td><%end%>
 <% if @fields.member? 'undup_riders' %><td><%= row.undup_riders %></td><%end%>
 <% if @fields.member? 'escort_volunteer_hours' %><td><%= row.escort_volunteer_hours %></td><%end%>

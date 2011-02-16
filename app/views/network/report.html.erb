@@ -26,6 +26,7 @@
 <% if @fields.member? 'cost_per_trip' %><th rowspan="2">Cost/Trip</th><% end %>
 <% if @fields.member? 'cost_per_mile' %><th rowspan="2">Cost/Mile</th><% end %>
 <% if @fields.member? 'cost_per_hour' %><th rowspan="2">Cost/Hour</th><% end %>
+<% if @fields.member? 'miles_per_ride' %><th rowspan="2">Miles/Ride</th><% end %>
 <% if @fields.member? 'turn_downs' %><th rowspan="2">Turn Downs</th><% end %>
 <% if @fields.member? 'undup_riders' %><th rowspan="2">Undup Riders</th><% end %>
 <% if @fields['volunteer_hours'] > 0 %><th colspan="<%= @fields['volunteer_hours'] %>">Volunteer Hours</th><% end %>

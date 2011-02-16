@@ -149,6 +149,10 @@ class NetworkController < ApplicationController
       return cpm
     end
 
+    def miles_per_ride
+      return @mileage / total_trips
+    end
+
     def quarter
       q = allocation.quarter.to_s
       return q[0...4] + 'Q' + q[4]
