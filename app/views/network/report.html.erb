@@ -5,4 +5,4 @@
 
    <%= link_to "CSV", @params.merge({:action=>:csv}) %><br/>
 
-<%= render :partial=> "report", :locals=>{:results=>@results} %>
+<%= render :partial=> "report", :locals=>{:results=>@results, :group_fields=>@group_fields} %>

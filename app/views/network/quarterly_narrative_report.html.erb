@@ -1,0 +1,26 @@
+<% for field, rows in @allocations %>
+<% allocation = get_row(rows).allocation %>
+
+<h1>Quarterly Narrative Report - Quarter <%=@quarter%></h1>
+<%= @query.start_date %> - <%= @query.end_date.prev_day %> 
+
+Provider Name: <%= allocation.provider.name %><br/>
+Program: <%= allocation.name %> <br/>
+County: <%= allocation.county %><br/>
+Funding Source: <%= allocation.project.funding_source %><br/>
+
+<div>Instructions: Please review the numbers provided for this funding
+source. If any discrepencies are found, they should be reported on the
+last page of this report. In the event there is a discrepency with
+ride numbers, please indicate your corrections in terms of "in" and
+"out" of district rides and which Ride Purpose catagories this change
+effects.</div>
+
+<%= render :partial=> "report", :locals=>{:results=>rows, :group_fields=>@group_fields[1..-1]} %>
+
+<br/>
+Signature: _______________________ </br>
+
+<div style="page-break-before: always;"></div>
+
+<% end %>

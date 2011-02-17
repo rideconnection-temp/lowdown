@@ -163,9 +163,12 @@ class NetworkController < ApplicationController
     end
 
     def month
-      return "#{allocation.year}M#{allocation.month}"
+      return Date.new(allocation.year, allocation.month, 1).strftime "%Y %b"
     end
 
+    def name
+      return allocation.name
+    end
 
     def project_number
       return allocation.project_number
@@ -493,11 +496,13 @@ summaries.valid_end = ? "
   @@group_mappings = {
     "agency" => "providers.agency",
     "county" => "allocations.county",
+    "name" => "allocations.name",
     "funding_source" => "projects.funding_source",
     "funding_subsource" => "projects.funding_subsource",
     "project_name" => "projects.name",
     "project_number" => "projects.project_number",
-    "quarter" => "quarter"
+    "quarter" => "quarter",
+    "month" => "month"
   }
 
   @@time_periods = [
@@ -521,6 +526,11 @@ summaries.valid_end = ? "
 
 
   def show_create_report
+    @query = Query.new(params[:q])
+    @tags = Allocation.tag_counts
+  end
+
+  def show_create_quarterly
     @query = Query.new(params[:q])
     @tags = Allocation.tag_counts
   end
@@ -649,6 +659,19 @@ summaries.valid_end = ? "
     groups = group_fields.map { |f| @@group_mappings[f] }
 
     do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending, query.adjustment)
+  end
+
+  def quarterly_narrative_report
+    @query = Query.new(params[:q])
+    @query.end_date = @query.start_date.next_month.next_month.next_month
+
+    groups = "allocations.name,month"
+    group_fields = ['name', 'month']
+
+    do_report(groups, group_fields, @query.start_date, @query.end_date, nil, nil, false, false)
+
+    @quarter = @query.start_date.month / 3 + 1
+    @allocations = @results
   end
 
   private 

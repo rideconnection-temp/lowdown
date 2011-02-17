@@ -28,4 +28,5 @@ class Allocation < ActiveRecord::Base
   def project_name
     project.name
   end
+
 end
