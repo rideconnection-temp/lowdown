@@ -4,18 +4,10 @@ require 'capybara/dsl'
 
 class TripsControllerTest < ActionController::TestCase
   include Capybara
+  fixtures :users
 
   test "should accept imports" do
     Capybara.default_selector = :xpath
-
-    visit "/user_session/show_init"
-
-    fill_in 'user_name', :with=>'admin'
-    fill_in 'user_email', :with=>'admin@example.com'
-    fill_in 'user_password', :with=>'passwordx'
-    fill_in 'user_password_confirmation', :with=>'passwordx'
-    click_button("Create user")
-
 
     visit "/trips/import"
 
@@ -30,12 +22,8 @@ class TripsControllerTest < ActionController::TestCase
 
     assert page.find('//h2[@id="result-count"]').text =~ /0 trips/
 
-    select('2010', :from => 'query[start_date(1i)]')
-    select('2010', :from => 'query[end_date(1i)]')
-    select('September', :from => 'query[start_date(2i)]')
-    select('September', :from => 'query[end_date(2i)]')
-    select('1', :from => 'query[start_date(3i)]')
-    select('1', :from => 'query[end_date(3i)]')
+    fill_in "query[start_date]", :with => "2010-9-1"
+    fill_in "query[end_date]", :with => "2010-9-1"
 
     click_button("Search")
     assert page.find('//h2[@id="result-count"]').text =~ /1 trip/

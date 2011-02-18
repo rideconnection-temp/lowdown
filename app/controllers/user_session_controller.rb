@@ -25,14 +25,14 @@ class UserSessionController < ActionController::Base
 
   def show_init
     if User.count > 0
-      return render_text "already initialized"
+      return render :text => "already initialized"
     end
     @user = User.new
   end
 
   def init
     if User.count > 0
-      return render_text "already initialized"
+      return render :text => "already initialized"
     end
     params[:user][:level] = 100
     @user = User.create(params[:user])

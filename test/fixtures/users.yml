@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+testuser:
+  name: user
+  email: user@example.com
+  login_count: 4
+  level: 100
+  crypted_password: xx
+  persistence_token: xx

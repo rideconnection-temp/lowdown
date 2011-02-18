@@ -23,6 +23,10 @@ class ApplicationController < ActionController::Base
   end
     
   def require_user
+    if ::Rails.env == "test"
+      @current_user = User.find_by_name("user")
+    end
+
     if current_user
       if current_user.login_count == 1 && controller_name != 'users' 
         flash[:notice] = "Since this is your first time here, please change your password"

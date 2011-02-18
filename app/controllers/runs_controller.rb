@@ -1,12 +1,13 @@
 class RunsController < ApplicationController
   before_filter :require_user
+  before_filter :require_admin_user, :except=>[:index, :show]
   
   def index
     @runs = Run.current_versions.paginate :page => params[:page], :per_page => 30, :order => 'created_at desc, routematch_id asc'
   end
   
   def create
-    @run = Run.find(params[:id])
+    @run = Run.new(params[:run])
   end
 
   def show
