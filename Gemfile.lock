@@ -42,7 +42,6 @@ GEM
       activemodel (= 3.0.3)
       activesupport (= 3.0.3)
     activesupport (3.0.3)
-    acts-as-taggable-on (2.0.6)
     archive-tar-minitar (0.5.2)
     arel (2.0.3)
     automatic_foreign_key (1.1.8)
@@ -132,7 +131,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  acts-as-taggable-on
   authlogic!
   automatic_foreign_key
   capybara

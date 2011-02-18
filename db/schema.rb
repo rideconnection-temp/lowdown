@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110216220845) do
+ActiveRecord::Schema.define(:version => 20110218173203) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -90,6 +90,16 @@ ActiveRecord::Schema.define(:version => 20110216220845) do
     t.datetime "updated_at"
   end
 
+  create_table "reports", :force => true do |t|
+    t.date    "start_date"
+    t.date    "end_date"
+    t.string  "group_by"
+    t.string  "allocation_list"
+    t.string  "field_list"
+    t.boolean "pending"
+    t.boolean "adjustment"
+  end
+
   create_table "runs", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36,                    :null => false
     t.string   "base_id",        :limit => 36
@@ -151,23 +161,6 @@ ActiveRecord::Schema.define(:version => 20110216220845) do
     t.string   "summary_id"
     t.integer  "updated_by"
     t.integer  "out_of_district_trips"
-  end
-
-  create_table "taggings", :force => true do |t|
-    t.integer  "tag_id"
-    t.integer  "taggable_id"
-    t.string   "taggable_type"
-    t.integer  "tagger_id"
-    t.string   "tagger_type"
-    t.string   "context"
-    t.datetime "created_at"
-  end
-
-  add_index "taggings", ["tag_id"], :name => "index_taggings_on_tag_id"
-  add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context"
-
-  create_table "tags", :force => true do |t|
-    t.string "name"
   end
 
   create_table "trip_imports", :force => true do |t|

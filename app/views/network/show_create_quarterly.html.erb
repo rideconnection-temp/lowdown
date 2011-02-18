@@ -1,5 +1,5 @@
         <h1>Create Quarterly Narrative Report</h1>
-        <%= form_for @query, :as => :q, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"quarterly_narrative_report"} do |f| %>
+        <%= form_for @report, :as => :q, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"quarterly_narrative_report"} do |f| %>
           <div class="ui-widget">
            	service for the quarter beginning
 	           <span id="startday-wrap"><%= f.date_select :start_date, :discard_day=>true %></span>

@@ -5,4 +5,18 @@
 
    <%= link_to "CSV", @params.merge({:action=>:csv}) %><br/>
 
+   <!-- save report link -->
+   <%= form_for @report, :url=>{:action=>:save_report} do |f| %>
+   <%= f.hidden_field :id %>
+   <%= f.hidden_field :group_by %>
+   <%= f.hidden_field :start_date, :value=>@start_date  %>
+   <%= f.hidden_field :end_date, :value=>@end_date %>
+   <%= f.hidden_field :allocation_list %>
+   <%= f.hidden_field :field_list %>
+   <%= f.submit "Save this report as " %>
+   <%= f.text_field :name %>
+   <% end %>
+<br/>
+
+
 <%= render :partial=> "report", :locals=>{:results=>@results, :group_fields=>@group_fields} %>

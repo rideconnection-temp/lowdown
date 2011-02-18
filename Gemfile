@@ -19,8 +19,6 @@ gem 'will_paginate', '3.0.pre2'
 
 gem 'capybara'
 
-gem 'acts-as-taggable-on'
-
 gem 'automatic_foreign_key'
 
 gem 'userstamp'

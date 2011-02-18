@@ -1,56 +1,5 @@
 require 'csv'
 
-class Query
-  extend ActiveModel::Naming
-  include ActiveModel::Conversion
-
-  attr_accessor :start_date
-  attr_accessor :end_date
-  attr_accessor :group_by
-  attr_accessor :tag
-  attr_accessor :fields
-  attr_accessor :pending
-  attr_accessor :adjustment
-
-  def convert_date(obj, base)
-    return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
-  end
-
-  def initialize(params)
-    if params
-      if params["start_date(1i)"]
-        @start_date = convert_date(params, :start_date)
-      else
-        @end_date = Date.today
-        @start_date = @end_date - 14
-      end
-      if params["end_date(1i)"]
-        @end_date = convert_date(params, :end_date)
-      end
-      if params[:group_by]
-        @group_by = params[:group_by]
-      end
-      if params[:tag]
-        @tag = params[:tag]
-      end
-      if params[:f]
-        @fields = params[:f]
-      end
-      if params[:pending]
-        @pending = params[:pending]
-      end
-      if params[:adjustment]
-        @adjustment = params[:adjustment].to_s == "1"
-      end
-    end
-  end
-
-  def persisted?
-    false
-  end
-
-end
-
 def bind(args)
   return ActiveRecord::Base.__send__(:sanitize_sql_for_conditions, args, '')
 end
@@ -58,7 +7,7 @@ end
 class NetworkController < ApplicationController
 
   before_filter :require_user
-  before_filter :require_admin_user, :except=>[:csv, :tag_index, :show_create_report, :report, :index]
+  before_filter :require_admin_user, :except=>[:csv, :predefined_report_index, :show_create_report, :report, :index]
 
   class NetworkReportRow
     @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
@@ -523,89 +472,22 @@ summaries.valid_end = ? "
     render 'report'
   end
 
+  def report_index
+    @reports = Report.all
+  end
 
   def show_create_report
-    @query = Query.new(params[:q])
-    @tags = Allocation.tag_counts
+    @report = Report.new(params[:q])
+    @allocations = Allocation.all
   end
 
   def show_create_quarterly
-    @query = Query.new(params[:q])
-    @tags = Allocation.tag_counts
-  end
-
-  def show_create_tag
-    @providers = Provider.all
-    @allocations_with_tag = Set.new()
-  end
-
-  def create_tag
-    tag_name = params[:tag_name]
-    if tag_name.to_s.size == 0
-      flash[:notice] = "Need a name for this tag"
-      return render show_create_tag
-    end
-
-    tag = ActsAsTaggableOn::Tag.find_or_create_with_like_by_name tag_name
-
-    for id in params[:a]
-      alloc = Allocation.find(id)
-      alloc.tag_list = alloc.tag_list + [tag]
-      alloc.save!
-    end
-
-    flash[:notice] = "Created"
-    return redirect_to :action=>'tag_index'
-  end
-
-  def delete_tag
-    tag_name = params[:id]
-    allocations = Allocation.tagged_with(tag_name)
-    for allocation in allocations
-      allocation.tag_list.delete tag_name
-      allocation.save!
-    end
-    return redirect_to :action=>'tag_index'
-  end
-
-  def show_edit_tag
-    @tag_name = params[:id]    
-    @providers = Provider.all
-    tagged = Allocation.tagged_with(@tag_name).map do |p|
-      p.id
-    end
-
-    @allocations_with_tag = Set.new(tagged)
-  end
-
-  def edit_tag
-    tag_name = params[:id]
-
-    tag = ActsAsTaggableOn::Tag.find_or_create_with_like_by_name tag_name
-
-    should_be_tagged = Set.new(params[:a].map do |x| x.to_i end)
-    for allocation in Allocation.all
-      if should_be_tagged.member? allocation.id
-        if ! allocation.tag_list.member? tag_name
-          allocation.tag_list = allocation.tag_list + [tag]
-        end
-      else
-        allocation.tag_list.delete tag_name
-      end
-      allocation.save!
-    end
-
-    return redirect_to :action=>'tag_index'
-
-  end
-
-  def tag_index
-    @tags = Allocation.tag_counts
+    @report = Report.new(params[:q])
   end
 
   def csv
-    query = Query.new(params[:q])
-    group_fields = query.group_by
+    report = Report.new(params[:q])
+    group_fields = report.group_by
 
     if group_fields.nil?
       show_create_report
@@ -616,11 +498,11 @@ summaries.valid_end = ? "
 
     groups = group_fields.map { |f| @@group_mappings[f] }
 
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending, query.adjustment)
+    do_report(groups, group_fields, report.start_date, report.end_date, report.allocations, report.fields, report.pending, report.adjustment)
     csv_string = CSV.generate do |csv|
-      csv << NetworkReportRow.fields(query.fields)
+      csv << NetworkReportRow.fields(report.fields)
       apply_to_leaves! @results, group_fields.size,  do | row |
-        csv << row.csv(query.fields)
+        csv << row.csv(report.fields)
         nil
       end
     end
@@ -644,9 +526,16 @@ summaries.valid_end = ? "
   end
 
   def report
-    query = Query.new(params[:q])
+    if params[:report] and params[:report][:id]
+      report = Report.find(params[:report][:id])
+      report.update_attributes params[:report]
+    else
+      report = Report.new(params[:q])
+      report.fields = params[:q][:fields]
+      report.allocations = params[:q][:allocations]
+    end
     @params = params
-    group_fields = query.group_by
+    group_fields = report.group_by
 
     if group_fields.nil?
       show_create_report
@@ -657,19 +546,32 @@ summaries.valid_end = ? "
 
     groups = group_fields.map { |f| @@group_mappings[f] }
 
-    do_report(groups, group_fields, query.start_date, query.end_date, query.tag, query.fields, query.pending, query.adjustment)
+    do_report(groups, group_fields, report.start_date, report.end_date, report.allocations, report.fields, report.pending, report.adjustment)
+    @report = report
+  end
+
+  def save_report
+    if params[:report][:id].empty?
+      report = Report.new(params[:report])
+    else
+      report = Report.find(params[:report][:id])
+      report.update_attributes(params[:report])
+    end
+    report.save!
+    flash[:notice] = "Saved #{report.name}"
+    redirect_to :action=>:report, :id=>report.id
   end
 
   def quarterly_narrative_report
-    @query = Query.new(params[:q])
-    @query.end_date = @query.start_date.next_month.next_month.next_month
+    @report = Report.new(params[:q])
+    @report.end_date = @report.start_date.next_month.next_month.next_month
 
     groups = "allocations.name,month"
     group_fields = ['name', 'month']
 
-    do_report(groups, group_fields, @query.start_date, @query.end_date, nil, nil, false, false)
+    do_report(groups, group_fields, @report.start_date, @report.end_date, nil, nil, false, false)
 
-    @quarter = @query.start_date.month / 3 + 1
+    @quarter = @report.start_date.month / 3 + 1
     @allocations = @results
   end
 
@@ -745,10 +647,10 @@ summaries.valid_end = ? "
   # Collect all data, and summarize it grouped according to the groups provided.
   # groups: the names of groupings, in order from coarsest to finest (i.e. project_name, quarter)
   # group_fields: the names of groupings with table names (i.e. projects.name, quarter)
-  # tag: an allocation tag to restrict the query to
+  # allocation: an list of allocations to restrict the report to
   # fields: a list of fields to display
 
-  def do_report(groups, group_fields, start_date, end_date, tag, fields, pending, adjustment)
+  def do_report(groups, group_fields, start_date, end_date, allocations, fields, pending, adjustment)
     group_select = []
 
     for group,field in groups.split(",").zip group_fields
@@ -757,10 +659,10 @@ summaries.valid_end = ? "
 
     group_select = group_select.join(",")
 
-    if tag.to_s.size > 0
-      results = Allocation.tagged_with(tag).all
-    else
+    if allocations.nil? or allocations.size == 0
       results = Allocation.all
+    else
+      results = Allocation.where(["id in ?", allocations]).all
     end
 
     for period in @@time_periods
@@ -815,10 +717,13 @@ summaries.valid_end = ? "
     @start_date = start_date
     @end_date = end_date
     @tr_open = false
-    @fields = fields
-    if @fields.nil?
-      @fields = {}
+    @fields = {}
+    if fields.nil? or fields.empty?
       NetworkReportRow.fields.each do |field| 
+        @fields[field] = 1
+      end
+    else
+      fields.each do |field| 
         @fields[field] = 1
       end
     end

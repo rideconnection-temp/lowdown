@@ -2,7 +2,7 @@
 <% allocation = get_row(rows).allocation %>
 
 <h1>Quarterly Narrative Report - Quarter <%=@quarter%></h1>
-<%= @query.start_date %> - <%= @query.end_date.prev_day %> 
+<%= @report.start_date %> - <%= @report.end_date.prev_day %> 
 
 Provider Name: <%= allocation.provider.name %><br/>
 Program: <%= allocation.name %> <br/>

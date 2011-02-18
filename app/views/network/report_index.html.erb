@@ -1,0 +1,47 @@
+<% if @reports.size == 0 %>
+
+No reports.<br/>
+
+<% end %>
+
+<%= link_to "Define new report", :action=>:show_create_report %>
+
+<% for report in @reports %>
+
+<h2><%= report.name %> </h2>
+<div>
+<% if report.allocations.empty? %>
+All allocations<br/>
+<% else %>
+  <ul>
+  <% for allocation in report.allocations %>
+    <li><%= allocation.name %></li>
+  <% end %>
+  </ul>
+<% end %>
+
+Fields:
+<% if report.fields.empty? %>
+All
+<% else %> 
+<%= report.fields.sort.join(", ") %><br/>
+<% end %>
+
+Group by:
+<%= report.group_by %><br/>
+
+<form action="<%= url_for :action=>:report %>">
+<input type="hidden" name="report[id]" value="<%= report.id %>" />
+<label for="report[start_date]">Start date</label><input type="text" name="report[start_date]" value="<%= @start_date %>" /><br/>
+<label for="report[end_date]">End date</label><input type="text" name="report[end_date]" value="<%= @end_date %>" /><br/>
+
+<input type="hidden" name="report[adjustment]" value="0" /><br/>
+<input type="hidden" name="report[pending]" value="0" /><br/>
+<label for="report[adjustment]">Adjustments?</label><input type="checkbox" name="report[adjustment]" value="1" />
+<label for="report[pending]">Pending?</label><input type="checkbox" name="report[pending]" value="1" />
+<input type="submit" name="View Report" value="View Report"/>
+</form>
+
+</div>
+
+<% end %>

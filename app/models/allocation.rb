@@ -3,8 +3,6 @@ class Allocation < ActiveRecord::Base
   belongs_to :provider
   belongs_to :project
 
-  acts_as_taggable
-
   def to_s
     name
   end

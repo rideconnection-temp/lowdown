@@ -1,9 +1,9 @@
         <h1>Create Report</h1>
-        <%= form_for @query, :as => :q, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"report"} do |f| %>
+        <%= form_for @report, :as => :q, :html=>{:id=>"create-report", :method=>:post}, :url=>{:action=>"report"} do |f| %>
           <div class="ui-widget">
              Report on
              <span id="report-category-wrap">
-               <%= f.collection_select :tag, @tags, :name, :name, :include_blank=>"all" %>
+               <%= f.collection_select :allocations, @allocations, :id, :name, {}, {:multiple=>true} %>
            	</span>
            	service between the beginning of
 	           <span id="startday-wrap"><%= f.date_select :start_date, :discard_day=>true %></span>
@@ -19,37 +19,37 @@
               <fieldset class="selfclear">
                 <!-- PLEASE NOTE: These fields are currently in the order they appear on the report. We may decide to present them in some other order (like alphabetical), but the current approach isn't random -->
                 <div class="fourcol">
-                  <input type="checkbox" checked name="q[f[funds]]" id="funds" value="1" /><label for="funds">Funds</label><br />
-                  <input type="checkbox" checked name="q[f[fares]]" id="fares" value="1" /><label for="fares">Fares</label><br />
-                  <input type="checkbox" checked name="q[f[agency_other]]" id="agency_other" value="1" /><label for="agency_other">Agency Other</label><br />
-                  <input type="checkbox" checked name="q[f[vehicle_maint]]" id="vehicle_maint" value="1" /><label for="vehicle_maint">Vehicle Maint.</label><br />
-                  <input type="checkbox" checked name="q[f[operations]]" id="operations" value="1" /><label for="operations">Operations</label><br />
-                  <input type="checkbox" checked name="q[f[administrative]]" id="administrative" value="1" /><label for="administrative">Administrative</label><br />
-                  <input type="checkbox" checked name="q[f[donations]]" id="donations" value="1" /><label for="donations">Donations</label><br />
-                  <input type="checkbox" checked name="q[f[total]]" id="total" value="1" /><label for="total">Total</label>
+                  <input type="checkbox" checked name="q[fields[funds]]" id="funds" value="1" /><label for="funds">Funds</label><br />
+                  <input type="checkbox" checked name="q[fields[fares]]" id="fares" value="1" /><label for="fares">Fares</label><br />
+                  <input type="checkbox" checked name="q[fields[agency_other]]" id="agency_other" value="1" /><label for="agency_other">Agency Other</label><br />
+                  <input type="checkbox" checked name="q[fields[vehicle_maint]]" id="vehicle_maint" value="1" /><label for="vehicle_maint">Vehicle Maint.</label><br />
+                  <input type="checkbox" checked name="q[fields[operations]]" id="operations" value="1" /><label for="operations">Operations</label><br />
+                  <input type="checkbox" checked name="q[fields[administrative]]" id="administrative" value="1" /><label for="administrative">Administrative</label><br />
+                  <input type="checkbox" checked name="q[fields[donations]]" id="donations" value="1" /><label for="donations">Donations</label><br />
+                  <input type="checkbox" checked name="q[fields[total]]" id="total" value="1" /><label for="total">Total</label>
                 </div>
                 <div class="fourcol">
-                  <input type="checkbox" checked name="q[f[in_district_trips]]" id="in_district_trips" value="1" /><label for="in_district_trips">In District Rides</label><br />
-                  <input type="checkbox" checked name="q[f[out_of_district_trips]]" id="out_of_district_trips" value="1" /><label for="out_of_district_trips">Out of District Rides</label><br />
+                  <input type="checkbox" checked name="q[fields[in_district_trips]]" id="in_district_trips" value="1" /><label for="in_district_trips">In District Rides</label><br />
+                  <input type="checkbox" checked name="q[fields[out_of_district_trips]]" id="out_of_district_trips" value="1" /><label for="out_of_district_trips">Out of District Rides</label><br />
 
-                  <input type="checkbox" checked name="q[f[total_last_year]]" id="total_last_year" value="1" /><label for="total_last_year">Total this Period Last Year</label><br />
-                  <input type="checkbox" checked name="q[f[mileage]]" id="mileage" value="1" /><label for="mileage">Mileage</label><br />
-                  <input type="checkbox" checked name="q[f[driver_volunteer_hours]]" id="driver_volunteer_hours" value="1" /><label for="driver_volunteer_hours">Volunteer Hours</label>
+                  <input type="checkbox" checked name="q[fields[total_last_year]]" id="total_last_year" value="1" /><label for="total_last_year">Total this Period Last Year</label><br />
+                  <input type="checkbox" checked name="q[fields[mileage]]" id="mileage" value="1" /><label for="mileage">Mileage</label><br />
+                  <input type="checkbox" checked name="q[fields[driver_volunteer_hours]]" id="driver_volunteer_hours" value="1" /><label for="driver_volunteer_hours">Volunteer Hours</label>
                 </div>
                 <div class="fourcol">
-                  <input type="checkbox" checked name="q[f[driver_paid_hours]]" id="driver_paid_hours" value="1" /><label for="driver_paid_hours">Paid Hours</label><br />
-                  <input type="checkbox" checked name="q[f[driver_total_hours]]" id="driver_total_hours" value="1" /><label for="driver_total_hours">Total Hours</label><br />
-                  <input type="checkbox" checked name="q[f[cost_per_trip]]" id="cost_per_trip" value="1" /><label for="cost_per_trip">Cost/Trip</label><br />
-                  <input type="checkbox" checked name="q[f[cost_per_mile]]" id="cost_per_mile" value="1" /><label for="cost_per_mile">Cost/Mile</label><br />
-                  <input type="checkbox" checked name="q[f[cost_per_hour]]" id="cost_per_hour" value="1" /><label for="cost_per_hour">Cost/Hour</label>
-                  <input type="checkbox" name="q[f[miles_per_ride]]" id="miles_per_ride" value="1" /><label for="miles_per_ride">Miles/Ride</label>
+                  <input type="checkbox" checked name="q[fields[driver_paid_hours]]" id="driver_paid_hours" value="1" /><label for="driver_paid_hours">Paid Hours</label><br />
+                  <input type="checkbox" checked name="q[fields[driver_total_hours]]" id="driver_total_hours" value="1" /><label for="driver_total_hours">Total Hours</label><br />
+                  <input type="checkbox" checked name="q[fields[cost_per_trip]]" id="cost_per_trip" value="1" /><label for="cost_per_trip">Cost/Trip</label><br />
+                  <input type="checkbox" checked name="q[fields[cost_per_mile]]" id="cost_per_mile" value="1" /><label for="cost_per_mile">Cost/Mile</label><br />
+                  <input type="checkbox" checked name="q[fields[cost_per_hour]]" id="cost_per_hour" value="1" /><label for="cost_per_hour">Cost/Hour</label>
+                  <input type="checkbox" name="q[fields[miles_per_ride]]" id="miles_per_ride" value="1" /><label for="miles_per_ride">Miles/Ride</label>
                 </div>
                 <div class="fourcol">
-                  <input type="checkbox" checked name="q[f[turn_downs]]" id="turn_downs" value="1" /><label for="turn_downs">Turn Downs</label><br />
-                  <input type="checkbox" checked name="q[f[undup_riders]]" id="undup_riders" value="1" /><label for="undup_riders">Undup Riders</label><br />
-                  <input type="checkbox" checked name="q[f[escort_volunteer_hours]]" id="escort_volunteer_hours" value="1" /><label for="escort_volunteer_hours">Escort Hours</label><br />
-                  <input type="checkbox" checked name="q[f[admin_volunteer_hours]]" id="admin_volunteer_hours" value="1" /><label for="admin_volunteer_hours">Admin Hours</label><br />
-                  <input type="checkbox" checked name="q[f[total_volunteer_hours]]" id="total_volunteer_hours" value="1" /><label for="total_volunteer_hours">Total Hours</label>
+                  <input type="checkbox" checked name="q[fields[turn_downs]]" id="turn_downs" value="1" /><label for="turn_downs">Turn Downs</label><br />
+                  <input type="checkbox" checked name="q[fields[undup_riders]]" id="undup_riders" value="1" /><label for="undup_riders">Undup Riders</label><br />
+                  <input type="checkbox" checked name="q[fields[escort_volunteer_hours]]" id="escort_volunteer_hours" value="1" /><label for="escort_volunteer_hours">Escort Hours</label><br />
+                  <input type="checkbox" checked name="q[fields[admin_volunteer_hours]]" id="admin_volunteer_hours" value="1" /><label for="admin_volunteer_hours">Admin Hours</label><br />
+                  <input type="checkbox" checked name="q[fields[total_volunteer_hours]]" id="total_volunteer_hours" value="1" /><label for="total_volunteer_hours">Total Hours</label>
                 </div>
               </fieldset>
             </div>
