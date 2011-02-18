@@ -295,7 +295,7 @@ and trips.date between ? and ? "
     #attribute-to-made case, we look at the valid dates (minus one
     #month)
     def collect_trips_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
-      pending_where = pending ? "runs.complete=true and " : ""
+      pending_where = pending ? "summaries.complete=true and " : ""
 
       sql = "select 
 sum(in_district_trips) as in_district_trips,
@@ -305,7 +305,7 @@ sum(unduplicated_riders) as undup_riders
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where 
-summaries.complete=true and 
+#{pending_where}
 allocation_id=? "
 
       if adjustment
@@ -353,7 +353,7 @@ and trips.valid_end = ? and runs.valid_end=? "
     end
 
     def collect_runs_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
-      pending_where = pending ? "runs.complete=true and " : ""
+      pending_where = pending ? "summaries.complete=true and " : ""
       sql = "select
 sum(total_miles) as mileage,
 sum(driver_hours_paid) as driver_paid_hours,
@@ -362,7 +362,6 @@ sum(escort_hours_volunteer) as escort_volunteer_hours
 from summaries inner join summary_rows on summary_rows.summary_id=summaries.base_id
 where 
 #{pending_where}
-summaries.complete=true and 
 allocation_id=? "
 
       if adjustment
@@ -435,7 +434,7 @@ sum(donations + funds + agency_other) as total_last_year
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where
-complete=true and 
+#{pending_where}
 allocation_id=? "
 
       if adjustment
