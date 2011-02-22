@@ -1,0 +1,254 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Lowdown Comp :: Network Service Summary</title>
+<link type="text/css" href="../stylesheets/screen-reset.css" rel="stylesheet" media="screen, projection" />
+<link type="text/css" href="../stylesheets/print-reset.css" rel="stylesheet" media="print" />
+<!--[if lt IE 8]><link rel="stylesheet" href="../stylesheets/ie.css" type="text/css" media="screen, projection"><![endif]-->
+
+
+<link type="text/css" href="../stylesheets/ui.combobox.css" rel="stylesheet" media="screen, projection" />
+<link type="text/css" href="../stylesheets/ui-custom/jquery-ui-1.8.6.custom.css" rel="stylesheet" media="screen, projection" />
+<link type="text/css" href="../stylesheets/ui.spinner.css" rel="stylesheet" media="screen, projection" />
+<link type="text/css" href="../stylesheets/ui.combobox.css" rel="stylesheet" media="screen, projection" />
+
+
+<link type="text/css" href="../stylesheets/application.css" rel="stylesheet" media="screen, projection" />
+
+<script src="../javascripts/jquery-1.4.2.min.js"></script>
+<script src="../javascripts/jquery-ui-1.8.6.custom.min.js"></script>
+<script src="../javascripts/ui.spinner.min.js"></script>
+<script src="../javascripts/application.js"></script>
+</head>
+<body>
+    <div id="header">
+      <div class="wrap selfclear">
+        <a id="logo" href="#"><strong>Low</strong>down</a>
+        <div id="login-area">
+            <a href="#">Kevin Chambers</a> | <a href="#">Log out</a>
+        </div>
+      </div><!-- /.wrap -->
+    </div><!-- /#header -->
+    <div id="crossbar">
+      <div class="wrap selfclear">             
+        <ul id="sitenav" class="selfclear">
+          <li><a href="#">Import Trips</a></li>
+          <li><a href="#">View Trips</a></li>
+        </ul>
+      </div><!-- /.wrap -->
+    </div><!-- /#crossbar -->
+    <div id="main">
+      <div class="wrap selfclear">
+         <h1>Ride Purpose Report</h1>
+         <h2><strong>Jan 1, 2010</strong> through <strong>June 30, 2010</strong></h2>
+         <table id="purpose-results">
+           <thead>
+             <tr>
+               <th></th>
+               <th>Medical</th>
+               <th>Life-Sustaining Medical</th>
+               <th>Personal Business Supportive Services</th>
+               <th>Shopping</th>
+               <th>School / Work</th>
+               <th>Volunteer Work</th>
+               <th>Recreation</th>
+               <th>Nutrition</th>
+               <th>Medicaid</th>
+               <th>Total</th>
+             </tr>
+           </thead>
+           <tbody>
+              <tr>
+                <th class="contrast banner" colspan="11">Clackamas</th>
+              </tr>
+              <tr>
+                <th scope="row">American CS</th>
+                <td>0</td>
+                <td>8</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <th scope="row">Clackamas Co. Consort</th>
+                <td>8,949</td>
+                <td>2,177</td>
+                <td>9,117</td>
+                <td>15,467</td>
+                <td>1,286</td>
+                <td>1,264</td>
+                <td>13,115</td>
+                <td>29,092</td>
+                <td>0</td>
+                <td>80,467</td>
+              </tr>
+              <tr>
+                <th scope="row">Edwards Center</th>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>2,755</td>
+                <td>0</td>
+                <td>745</td>
+                <td>0</td>
+                <td>0</td>
+                <td>3,500</td>
+              </tr>
+              <tr>
+                <th class="contrast" scope="row">County Totals</th>
+                <td>8,949</td>
+                <td>2,185</td>
+                <td>9,117</td>
+                <td>15,467</td>
+                <td>4,041</td>
+                <td>1,264</td>
+                <td>13,860</td>
+                <td>29,092</td>
+                <td>0</td>
+                <td>83,975</td>
+              </tr>
+              <tr>
+                <th scope="row">% of total county trips</th>
+                <td>10.66%</td>
+                <td>2.60%</td>
+                <td>10.86%</td>
+                <td>18.42%</td>
+                <td>4.81%</td>
+                <td>1.51%</td>
+                <td>16.50%</td>
+                <td>234.64%</td>
+                <td>0.00%</td>
+                <td>100.00%</td>
+              </tr>
+           </tbody>
+
+            <tbody>
+               <tr>
+                 <th class="contrast banner" colspan="11">Multnomah</th>
+               </tr>
+               <tr>
+                 <th scope="row">American CS</th>
+                 <td>0</td>
+                 <td>8</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>8</td>
+               </tr>
+               <tr>
+                 <th scope="row">Clackamas Co. Consort</th>
+                 <td>8,949</td>
+                 <td>2,177</td>
+                 <td>9,117</td>
+                 <td>15,467</td>
+                 <td>1,286</td>
+                 <td>1,264</td>
+                 <td>13,115</td>
+                 <td>29,092</td>
+                 <td>0</td>
+                 <td>80,467</td>
+               </tr>
+               <tr>
+                 <th scope="row">Edwards Center</th>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>2,755</td>
+                 <td>0</td>
+                 <td>745</td>
+                 <td>0</td>
+                 <td>0</td>
+                 <td>3,500</td>
+               </tr>
+               <tr>
+                 <th class="contrast" scope="row">County Totals</th>
+                 <td>8,949</td>
+                 <td>2,185</td>
+                 <td>9,117</td>
+                 <td>15,467</td>
+                 <td>4,041</td>
+                 <td>1,264</td>
+                 <td>13,860</td>
+                 <td>29,092</td>
+                 <td>0</td>
+                 <td>83,975</td>
+               </tr>
+               <tr>
+                 <th scope="row">% of total county trips</th>
+                 <td>10.66%</td>
+                 <td>2.60%</td>
+                 <td>10.86%</td>
+                 <td>18.42%</td>
+                 <td>4.81%</td>
+                 <td>1.51%</td>
+                 <td>16.50%</td>
+                 <td>234.64%</td>
+                 <td>0.00%</td>
+                 <td>100.00%</td>
+               </tr>
+            </tbody>
+            <tbody class="totals">
+              <tr>
+                <th class="contrast" scope="row">Grand Totals</th>
+                <td>128,430</td>
+                <td>7,716</td>
+                <td>38,108</td>
+                <td>53,124</td>
+                <td>28,747</td>
+                <td>11,976</td>
+                <td>39,383</td>
+                <td>56,575</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <th class="contrast" scope="row">Tri County Totals</th>
+                <td>128,430</td>
+                <td>7,716</td>
+                <td>38,108</td>
+                <td>53,124</td>
+                <td>28,747</td>
+                <td>11,976</td>
+                <td>39,383</td>
+                <td>56,575</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <th class="contrast" scope="row">% of total Tri County Trips</th>
+                <td>35.28%</td>
+                <td>2.12%</td>
+                <td>10.47%</td>
+                <td>14.59%</td>
+                <td>7.90%</td>
+                <td>3.29%</td>
+                <td>10.82%</td>
+                <td>15.54%</td>
+                <td>0.00%</td>
+              </tr>
+            </tbody>
+         </table>
+      </div><!-- /.wrap -->
+    </div><!-- /#main -->
+<!--[if !IE]><!-->
+  <script>
+  //<![CDATA[
+  $('#grouped-results tbody tr th:first-child').height($('#grouped-results tbody tr th:first-child span').width() * 2).width(15);
+  $('#grouped-results tbody tr th:first-child span').width(25);
+  //]]>
+  </script>
+<!--<![endif]-->
+
+
+</body>
+</html>

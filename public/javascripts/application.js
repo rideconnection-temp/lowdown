@@ -104,7 +104,7 @@ $(function(){
         dateFormat: 'yy-mm-dd' 
     });
     
-    $( "#query_provider, #query_allocation, #report-category, #group-by, #trip_allocation_id, #summary_provider_id, #summary_allocation_id" ).combobox();
+    $( "#query_provider, #query_allocation, #report-category, #group-by, #trip_allocation_id, #summary_provider_id, #summary_allocation_id" ).selectmenu();
     $('#trip_guest_count, #trip_attendant_count, #summary_total_miles, #summary_driver_hours_paid, #summary_driver_hours_volunteer, #summary_escort_hours_volunteer, #summary_administrative_hours_volunteer, #summary_unduplicated_riders, #summary_compliments, #summary_complaints, #summary_summary_rows_attributes_0_trips, #summary_summary_rows_attributes_1_trips, #run_odometer_start, #run_odometer_end, #run_escort_count').spinner({ min: 0, increment: 'fast' });
     
     $('input#file-import').change(function( objEvent ){$('.fakebrowseinput').val($(this).val());});
