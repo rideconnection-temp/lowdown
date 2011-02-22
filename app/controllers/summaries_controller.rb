@@ -29,6 +29,9 @@ class SummariesController < ApplicationController
   end
 
   def show_bulk_update
+    if !flash[:notice] 
+      flash[:notice] = "This will mark all summaries within the selected range as complete. There is no 'undo'."
+    end
   end
 
   def bulk_update
