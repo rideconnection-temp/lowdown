@@ -90,6 +90,10 @@ vertical-align: middle;
 
 .ui-button { margin-left: -1px; }
 
+.ui-selectmenu-menu li a, 
+.ui-selectmenu-status {
+padding-left: 0.4em;
+}
 
 /*-----------------------
 General Page Structure

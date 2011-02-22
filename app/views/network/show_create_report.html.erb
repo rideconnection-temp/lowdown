@@ -1,11 +1,12 @@
         <h1>Create Report</h1>
         <%= form_for @report, :as => :q, :html=>{:id=>"create-report", :method=>:post}, :url=>{:action=>"report"} do |f| %>
           <div class="ui-widget">
-             Report on
+             <h2>Allocations to include</h2>
              <span id="report-category-wrap">
                <%= f.collection_select :allocations, @allocations, :id, :name, {}, {:multiple=>true} %>
-           	</span>
-           	service between the beginning of
+           	</span><br /><br />
+           	<h2>Date Range</h2>
+           	Service between the beginning of
 	           <span id="startday-wrap"><%= f.date_select :start_date, :discard_day=>true %></span>
            	and just before the beginning of
            	<span id="endday-wrap"><%= f.date_select :end_date, :discard_day=>true %></span>
@@ -41,7 +42,7 @@
                   <input type="checkbox" checked name="q[fields[driver_total_hours]]" id="driver_total_hours" value="1" /><label for="driver_total_hours">Total Hours</label><br />
                   <input type="checkbox" checked name="q[fields[cost_per_trip]]" id="cost_per_trip" value="1" /><label for="cost_per_trip">Cost/Trip</label><br />
                   <input type="checkbox" checked name="q[fields[cost_per_mile]]" id="cost_per_mile" value="1" /><label for="cost_per_mile">Cost/Mile</label><br />
-                  <input type="checkbox" checked name="q[fields[cost_per_hour]]" id="cost_per_hour" value="1" /><label for="cost_per_hour">Cost/Hour</label>
+                  <input type="checkbox" checked name="q[fields[cost_per_hour]]" id="cost_per_hour" value="1" /><label for="cost_per_hour">Cost/Hour</label><br />
                   <input type="checkbox" name="q[fields[miles_per_ride]]" id="miles_per_ride" value="1" /><label for="miles_per_ride">Miles/Ride</label>
                 </div>
                 <div class="fourcol">
@@ -72,7 +73,7 @@
             </div>
           </div>
 
-	  <%= f.label :adjustment, :class => "checkbox" %> <%= f.check_box :adjustment %><br/>
+	  <%= f.label :adjustment, "Use adjusted values?", :class => "checkbox" %> <%= f.check_box :adjustment %><br/>
 
           <input id="report-create" type="submit" value="Create Report" />
         <% end %><!-- end form -->
