@@ -118,11 +118,14 @@ GEM
       rubyzip
     sqlite3-ruby (1.3.2)
     thor (0.14.4)
+    timeliness (0.3.3)
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.23)
     userstamp (2.0.1)
     uuidtools (2.1.1)
+    validates_timeliness (3.0.5)
+      timeliness (~> 0.3.2)
     will_paginate (3.0.pre2)
     xpath (0.1.2)
       nokogiri (~> 1.3)
@@ -141,4 +144,5 @@ DEPENDENCIES
   sqlite3-ruby
   userstamp
   uuidtools
+  validates_timeliness
   will_paginate (= 3.0.pre2)

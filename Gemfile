@@ -23,6 +23,8 @@ gem 'automatic_foreign_key'
 
 gem 'userstamp'
 
+gem 'validates_timeliness'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

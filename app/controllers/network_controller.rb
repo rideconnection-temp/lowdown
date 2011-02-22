@@ -460,6 +460,7 @@ summaries.valid_end = ? "
   def index
 
     #network service summary
+    @report = Report.new
 
     groups = "allocations.county,providers.agency"
     group_fields = ['county', 'agency']
@@ -528,11 +529,13 @@ summaries.valid_end = ? "
   def report
     if params[:report] and params[:report][:id]
       report = Report.find(params[:report][:id])
-      report.update_attributes params[:report]
+      if ! report.update_attributes params[:report] 
+        return redirect_to(:action=>:report_index, :id=>report.id)
+      end
     else
-      report = Report.new(params[:q])
-      report.fields = params[:q][:fields]
-      report.allocations = params[:q][:allocations]
+      report = Report.new(params[:report])
+      report.field_list = params[:report][:field_list]
+      report.allocation_list = params[:report][:allocation_list]
     end
     @params = params
     group_fields = report.group_by
