@@ -1,0 +1,66 @@
+<h1>Ride Purpose Report</h1>
+<h2><strong>Jan 1, 2010</strong> through <strong>June 30, 2010</strong></h2>
+<table id="purpose-results">
+  <thead>
+    <tr>
+      <th></th>
+      <% for purpose in @trip_purposes %>
+      <th><%= purpose %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+      <% for county, providers in @counties %>
+       <tr>
+         <th class="contrast banner" colspan="<%= @trip_purposes.size + 1 %>"><%= county %></th>
+       </tr>
+  
+        <% for provider, row in providers %>
+         <tr>
+           <th scope="row"><%= provider.name %></th>
+           <% for purpose in @trip_purposes %>
+             <td><%= row.by_purpose[purpose] %></td>
+           <% end %>
+         </tr>
+        <% end %>
+
+        <!-- totals -->
+        <tr>
+          <th class="contrast" scope="row">County Totals</th>
+           <% total = controller.sum_ride_purposes(providers) %>
+           <% for purpose in @trip_purposes %>
+             <td><%= total.by_purpose[purpose] %></td>
+           <% end %>
+        </tr>
+
+        <!-- percentages -->
+        <tr>
+           <% percentages = total.percentages %>
+          <th scope="row">% of total county trips</th>
+          <% for purpose in @trip_purposes %>
+             <td><%= "%.2f" % percentages[purpose] %></td>
+          <% end %>
+        </tr>
+      <% end %>
+  
+  </tbody>
+  <tbody class="totals">
+      <!-- grand totals -->
+      <tr>
+        <th class="contrast" scope="row">Grand  Totals</th>
+         <% total = controller.sum_ride_purposes(@counties) %>
+         <% for purpose in @trip_purposes %>
+           <td><%= total.by_purpose[purpose] %></td>
+         <% end %>
+      </tr>
+
+        <!-- grand total percentages -->
+      <tr>
+         <% percentages = total.percentages %>
+        <th scope="row">% of total trips</th>
+        <% for purpose in @trip_purposes %>
+           <td><%= "%.2f" % percentages[purpose] %></td>
+        <% end %>
+      </tr>
+   </tbody>
+</table>
