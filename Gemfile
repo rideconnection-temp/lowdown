@@ -25,6 +25,10 @@ gem 'userstamp'
 
 gem 'validates_timeliness'
 
+gem 'rails-ujs'
+
+gem 'jquery-rails', '>= 0.2.6'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

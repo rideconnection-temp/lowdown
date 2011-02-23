@@ -637,6 +637,11 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     @trip_purposes = RidePurposeRow.trip_purposes
   end
 
+  def delete_report
+    report = Report.destroy(params[:report][:id])
+    redirect_to :action=>:report_index
+  end
+
   def report
     if params[:report] and params[:report][:id]
       report = Report.find(params[:report][:id])
