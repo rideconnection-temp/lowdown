@@ -229,6 +229,8 @@ margin: 0.25em 0 1em;
 #endday,
 #query_start_date,
 #query_end_date, 
+#query_period_start,
+#query_period_end,
 #summary_report_prepared, 
 #summary_period_start, 
 #summary_period_end {
@@ -324,7 +326,8 @@ margin: 0.5em 0;
 #trip-results,
 #grouped-results,
 #run-results,
-#purpose-results {
+#purpose-results,
+#summary-results {
 margin: 0;
 width: 100%;
 border-collapse: collapse;
@@ -333,7 +336,8 @@ border-collapse: collapse;
 #trip-results thead th,
 #grouped-results thead th,
 #run-results thead th,
-#purpose-results thead th {
+#purpose-results thead th,
+#summary-results thead th {
 font-weight: bold;
 padding: 0.3em;
 border-bottom: 1px solid #222;
@@ -342,7 +346,8 @@ border-bottom: 1px solid #222;
 #trip-results tbody tr:nth-child(odd),
 #grouped-results tbody tr:nth-child(odd),
 #run-results tbody tr:nth-child(odd),
-#purpose-results tbody tr:nth-child(odd)  {
+#purpose-results tbody tr:nth-child(odd),
+#summary-results tbody tr:nth-child(odd)  {
 background: #f1f2f3;
 }
 
@@ -350,7 +355,8 @@ background: #f1f2f3;
 #grouped-results tbody td,
 #run-results tbody td,
 #purpose-results tbody td,
-#purpose-results tbody th {
+#purpose-results tbody th,
+#summary-results tbody td {
 padding: 0.2em 0.3em;
 }
 
@@ -447,6 +453,25 @@ tr.totals td {
 font-weight: bold;
 border-bottom: 1px solid #ccc;
 }
+
+#summary-results .status-complete,
+#summary-results .status-incomplete {
+display: block;
+height: 20px;
+width: 20px;
+overflow: hidden;
+text-indent: -9999em;
+margin: 0 auto;
+}
+
+#summary-results .status-complete {
+background: url(../images/spirit20/system-tick-alt-02.png) no-repeat;
+}
+
+#summary-results .status-incomplete {
+background: url(../images/system-tick-incomplete.png) no-repeat;
+}
+
 
 .pagination {
 text-align: center;

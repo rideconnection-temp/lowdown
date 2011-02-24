@@ -97,7 +97,7 @@ $(function(){
         return false;
     });
 
-    $( "#query_start_date, #query_end_date, #startday, #endday, #summary_period_start, #summary_period_end, #summary_report_prepared" ).datepicker({
+    $( "#query_start_date, #query_end_date, #query_period_start, #query_period_end, #startday, #endday, #summary_period_start, #summary_period_end, #summary_report_prepared" ).datepicker({
         showOn: "button",
         buttonImage: "../images/calendar.png",
         buttonImageOnly: true,
