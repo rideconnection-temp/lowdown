@@ -173,14 +173,14 @@ class NetworkController < ApplicationController
       subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? and 
 summary_rows.valid_start < ? and summary_rows.valid_end > ? and summary_rows.valid_end <= ? "
 
-      subtract_results = ActiveRecord::Base.connection.select_all(bind([subtract_sql, allocation['id'], 
+      subtract_results = ActiveRecord::Base.connection.select_one(bind([subtract_sql, allocation['id'], 
 start_date, start_date, 
 start_date, start_date, end_date]))
 
       add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? and 
 summary_rows.valid_start < ? and summary_rows.valid_end > ? and summary_rows.valid_end <= ? "
 
-      add_results = ActiveRecord::Base.connection.select_all(bind([add_sql, allocation['id'], 
+      add_results = ActiveRecord::Base.connection.select_one(bind([add_sql, allocation['id'], 
 end_date, end_date, 
 start_date, end_date, end_date]))
 
@@ -196,14 +196,14 @@ start_date, end_date, end_date]))
       subtract_sql = sql + "and runs.valid_start <= ? and runs.valid_end >= ?
 and trips.valid_start <= ? and trips.valid_end > ? and trips.valid_end <= ? "
 
-      subtract_results = ActiveRecord::Base.connection.select_all(bind([subtract_sql, allocation['id'], 
+      subtract_results = ActiveRecord::Base.connection.select_one(bind([subtract_sql, allocation['id'], 
 start_date, start_date, 
 start_date, start_date, end_date ]))
 
       add_sql = sql + "and runs.valid_start <= ? and runs.valid_end >= ?
 and trips.valid_start > ? and trips.valid_start <= ? and trips.valid_end > ? "
 
-      add_results = ActiveRecord::Base.connection.select_all(bind([add_sql, allocation['id'], 
+      add_results = ActiveRecord::Base.connection.select_one(bind([add_sql, allocation['id'], 
 end_date, end_date, 
 start_date, end_date, end_date ]))
       return add_results, subtract_results
@@ -230,18 +230,18 @@ trips.allocation_id = ?
 and trips.valid_end = ?
 and trips.date between ? and ? "
 
-        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], Run.end_of_time, Trip.end_of_time, start_date, end_date]))
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], Run.end_of_time, Trip.end_of_time, start_date, end_date]))
 
         undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where allocation_id=? and valid_end=? and result_code = 'COMP' group by customer_id, year) as  morx where date (year || '-' || month || '-' || 1)  between ? and ? "
 
-        rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.add_months(6), end_date.add_months(6)]))
+        row = ActiveRecord::Base.connection.select_one(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.add_months(6), end_date.add_months(6)]))
 
-        add_results[0]['undup_riders'] = rows[0]['undup_riders'].to_i
+        add_results['undup_riders'] = row['undup_riders'].to_i
 
-        subtract_results = [{}]
+        subtract_results = {}
       end
 
-      apply_results(add_results[0], subtract_results[0])
+      apply_results(add_results, subtract_results)
     end
 
     #For a summary, there are actually two sets of fields that are
@@ -271,10 +271,10 @@ allocation_id=? "
 summaries.valid_end = ? and 
 summary_rows.valid_end = ? "
 
-        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
-        subtract_results = [{}]
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
+        subtract_results = {}
       end
-      apply_results(add_results[0], subtract_results[0])
+      apply_results(add_results, subtract_results)
     end
 
     def collect_runs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
@@ -299,11 +299,11 @@ allocation_id = ? "
         sql += "and trips.date between ? and ?
 and trips.valid_end = ? and runs.valid_end=? "
 
-        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Trip.end_of_time, Run.end_of_time]))
-        subtract_results = [{}]
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Trip.end_of_time, Run.end_of_time]))
+        subtract_results = {}
       end
 
-      apply_results(add_results[0], subtract_results[0])
+      apply_results(add_results, subtract_results)
 
     end
 
@@ -326,10 +326,10 @@ allocation_id=? "
 summaries.valid_end = ? and 
 summary_rows.valid_end = ? "
 
-        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
-        subtract_results = [{}]
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
+        subtract_results = {}
       end
-      apply_results(add_results[0], subtract_results[0])
+      apply_results(add_results, subtract_results)
     end
 
     def collect_costs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
@@ -356,19 +356,19 @@ trips.allocation_id = ? "
 
       if adjustment
         add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
-        apply_results(add_results[0], subtract_results[0])
+        apply_results(add_results, subtract_results)
         add_results, subtract_results = collect_adjustment_by_trip(last_year_sql, allocation, start_date.prev_year, end_date.prev_year)
-        apply_results(add_results[0], subtract_results[0])
+        apply_results(add_results, subtract_results)
       else
         period_sql = "and trips.date >= ? and 
 trips.date < ? and 
 runs.valid_end = ? "
         sql += period_sql
         last_year_sql += period_sql
-        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Run.end_of_time]))
-        apply_results(add_results[0])
-        add_results = ActiveRecord::Base.connection.select_all(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Run.end_of_time]))
-        apply_results(add_results[0])
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Run.end_of_time]))
+        apply_results(add_results)
+        add_results = ActiveRecord::Base.connection.select_one(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Run.end_of_time]))
+        apply_results(add_results)
       end
     end
 
@@ -394,20 +394,20 @@ allocation_id=? "
 
       if adjustment
         add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
-        apply_results(add_results[0], subtract_results[0])
+        apply_results(add_results, subtract_results)
         add_results, subtract_results = collect_adjustment_by_summary(last_year_sql, allocation, start_date.prev_year, end_date.prev_year)
-        apply_results(add_results[0], subtract_results[0])
+        apply_results(add_results, subtract_results)
       else
         period_sql = "and summaries.period_start >= ? and 
 summaries.period_end < ? and 
 summaries.valid_end = ? and summary_rows.valid_end = ? "
         sql += period_sql
         last_year_sql += period_sql
-        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
-        apply_results(add_results[0])
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
+        apply_results(add_results)
 
-        add_results = ActiveRecord::Base.connection.select_all(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Summary.end_of_time, SummaryRow.end_of_time]))
-        apply_results(add_results[0])
+        add_results = ActiveRecord::Base.connection.select_one(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Summary.end_of_time, SummaryRow.end_of_time]))
+        apply_results(add_results)
       end
     end
 
@@ -425,22 +425,22 @@ allocation_id=?
       if adjustment
         subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end >= ? "
 
-        subtract_results = ActiveRecord::Base.connection.select_all(bind([subtract_sql, allocation['id'], 
+        subtract_results = ActiveRecord::Base.connection.select_one(bind([subtract_sql, allocation['id'], 
 start_date, start_date]))
 
         add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end >= ? "
 
-        add_results = ActiveRecord::Base.connection.select_all(bind([add_sql, allocation['id'], 
+        add_results = ActiveRecord::Base.connection.select_one(bind([add_sql, allocation['id'], 
 end_date, end_date ]))
 
-        apply_results(add_results[0], subtract_results[0])
+        apply_results(add_results, subtract_results)
       else
         period_sql = "and summaries.period_start >= ? and 
 summaries.period_end < ? and 
 summaries.valid_end = ? "
         sql += period_sql
-        add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
-        apply_results(add_results[0])
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
+        apply_results(add_results)
       end
     end
 
