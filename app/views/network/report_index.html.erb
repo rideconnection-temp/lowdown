@@ -39,8 +39,12 @@ Group by:
 <input type="hidden" name="report[pending]" value="0" /><br/>
 <label for="report[adjustment]">Adjustments?</label><input type="checkbox" name="report[adjustment]" value="1" />
 <label for="report[pending]">Pending?</label><input type="checkbox" name="report[pending]" value="1" />
-<input type="submit" name="View Report" value="View Report"/>
+<input type="submit" name="commit" value="View Report"/>
 </form>
+<%= form_for report, :url=>{:action=>:delete_report} do |f| %>
+<input type="hidden" name="report[id]" value="<%= report.id %>" />
+<%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?" %>
+<% end %>
 
 </div>
 

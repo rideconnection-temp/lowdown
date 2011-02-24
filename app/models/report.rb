@@ -1,5 +1,8 @@
 class Report < ActiveRecord::Base
   validates_presence_of :name
+  validates_date :start_date
+  validates_date :end_date
+  attr_accessor :is_new
 
   def allocations
     if allocation_list.nil? or allocation_list.empty?
