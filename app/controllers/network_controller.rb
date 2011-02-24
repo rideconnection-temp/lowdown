@@ -704,6 +704,106 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     @allocations = @results
   end
 
+  def show_create_age_and_ethnicity
+    @providers = Provider.all
+    @agencies = @providers.map { |x| "%s:%s" % [x.agency, x.branch] }
+  end
+
+  def age_and_ethnicity
+    @start_date = Date.new(params[:q]["start_date(1i)"].to_i, params[:q]["start_date(2i)"].to_i, 1)
+
+    @agency, @branch = params[:q][:agency_branch].split(":")
+
+    allocations = Allocation.joins(:provider).where(["agency = ? and branch = ?", @agency, @branch])
+    if allocations.empty?
+      flash[:notice] = "No allocations for this agency/branch"
+      return redirect_to :action=>:show_create_age_and_ethnicity
+    end
+
+    allocation_ids = allocations.map { |x| x.id }
+
+    undup_riders_sql = "select count(*) as undup_riders, %s from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips inner join customers on trips.customer_id=customers.id where allocation_id in (?) and valid_end=? and result_code = 'COMP' group by customer_id, year) as customer_ids, customers where year = ? %%s and customers.id=customer_id group by %s"
+
+    #unduplicated by age this month
+    undup_riders_age_sql = undup_riders_sql % ["age(customers.birthdate) > interval '60 years' as over60", "over60"]
+    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "and month = ?", 
+                                                          allocation_ids, Trip.end_of_time, 
+                                                          @start_date.add_months(6).year, 
+                                                          @start_date.add_months(6).month]))
+
+    @current_month_unduplicated_old = @current_month_unduplicated_young = @current_month_unduplicated_unknown = 0
+    for row in rows
+      if row['over60'] == 't'
+        @current_month_unduplicated_old = row['undup_riders'].to_i
+      elsif row['over60'] == 'f'
+        @current_month_unduplicated_young = row['undup_riders'].to_i
+      else
+        @current_month_unduplicated_unknown = row['undup_riders'].to_i
+      end
+    end
+
+    #same, but w/disability
+    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "and month = ? and disabled=true",
+                                                          allocation_ids, Trip.end_of_time, 
+                                                          @start_date.add_months(6).year, 
+                                                          @start_date.add_months(6).month]))
+
+
+    @disability_disclosed_old = @disability_disclosed_young = @disability_disclosed_unknown = 0
+    for row in rows
+      if row['over60'] == 't'
+        @disability_disclosed_old = row['undup_riders'].to_i
+      elsif row['over60'] == 'f'
+        @disability_disclosed_young = row['undup_riders'].to_i
+      else
+        @disability_disclosed_unknown = row['undup_riders'].to_i
+      end
+    end
+
+    #unduplicated by age ytd
+    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "",
+                                                          allocation_ids, Trip.end_of_time, 
+                                                          @start_date.add_months(6).year]))
+
+    @ytd_age_old = @ytd_age_young = @ytd_age_unknown = 0
+    for row in rows
+      if row['over60'] == 't'
+        @ytd_age_old = row['undup_riders'].to_i
+      elsif row['over60'] == 'f'
+        @ytd_age_young = row['undup_riders'].to_i
+      else
+        @ytd_age_unknown = row['undup_riders'].to_i
+      end
+    end
+
+
+    #now, by ethnicity
+    undup_riders_ethnicity_sql = undup_riders_sql % ["race", "race"]
+    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_ethnicity_sql % "and month = ?",
+                                                          allocation_ids, Trip.end_of_time, 
+                                                          @start_date.add_months(6).year, 
+                                                          @start_date.add_months(6).month]))
+
+    @ethnicity = {}
+    for row in rows
+      @ethnicity[row["race"]] = {"unduplicated" => row["unduplicated"]}
+    end
+
+    #ethnicity ytd
+    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_ethnicity_sql % "",
+                                                          allocation_ids, Trip.end_of_time, 
+                                                          @start_date.add_months(6).year]))
+
+    for row in rows
+      race = row["race"]
+      if ! @ethnicity.member? race
+        @ethnicity[race] = {"unduplicated" => 0}
+      end
+      @ethnicity[race]["ytd"] = row["unduplicated"]
+    end
+
+  end
+
   private 
 
   class PeriodAllocation
