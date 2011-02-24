@@ -469,7 +469,7 @@ summaries.valid_end = ? "
     end_date = Date.today
     start_date = end_date - 14 
     do_report(groups, group_fields, start_date, end_date, nil, nil, false, false)
-    @params = {:q=>{}}
+    @params = {:report=>{}}
     render 'report'
   end
 
@@ -478,16 +478,16 @@ summaries.valid_end = ? "
   end
 
   def show_create_report
-    @report = Report.new(params[:q])
+    @report = Report.new(params[:report])
     @allocations = Allocation.all
   end
 
   def show_create_quarterly
-    @report = Report.new(params[:q])
+    @report = Report.new(params[:report])
   end
 
   def csv
-    report = Report.new(params[:q])
+    report = Report.new(params[:report])
     group_fields = report.group_by
 
     if group_fields.nil?
@@ -650,7 +650,11 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       end
     else
       report = Report.new(params[:report])
-      report.field_list = params[:report][:field_list]
+      if params[:report].member? :field_list
+        report.field_list = params[:report][:field_list]
+      else
+        report.fields = params[:report][:fields]
+      end
       report.allocation_list = params[:report][:allocation_list]
     end
     @params = params
@@ -682,7 +686,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
   end
 
   def quarterly_narrative_report
-    @report = Report.new(params[:q])
+    @report = Report.new(params[:report])
     @report.end_date = @report.start_date.next_month.next_month.next_month
 
     groups = "allocations.name,month"
