@@ -215,8 +215,7 @@ start_date, end_date, end_date ]))
       sql = "select 
 sum(case when in_trimet_district=true then 1 + guest_count + attendant_count else 0 end) as in_district_trips,
 sum(case when in_trimet_district=false then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips,
-sum(case when result_code='TD' then 1 else 0 end) as turn_downs,
-count(distinct customer_id) as undup_riders
+sum(case when result_code='TD' then 1 else 0 end) as turn_downs
 from trips
 inner join runs on trips.run_id=runs.base_id 
 where
@@ -232,6 +231,13 @@ and trips.valid_end = ?
 and trips.date between ? and ? "
 
         add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], Run.end_of_time, Trip.end_of_time, start_date, end_date]))
+
+        undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where allocation_id=? and valid_end=? group by customer_id, year) as  morx where date (year || '-' || month || '-' || 1)  between ? and ? "
+
+        rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.add_months(6), end_date.add_months(6)]))
+
+        add_results[0]['undup_riders'] = rows[0]['undup_riders'].to_i
+
         subtract_results = [{}]
       end
 
