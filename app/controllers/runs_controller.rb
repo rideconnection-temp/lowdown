@@ -1,3 +1,59 @@
+claclass Query
+  extend ActiveModel::Naming
+  include ActiveModel::Conversion
+
+  attr_accessor :start_date
+  attr_accessor :end_date
+
+  attr_accessor :provider
+  attr_accessor :allocation
+
+  def convert_date(obj, base)
+    return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
+  end
+
+  def initialize(params)
+    if params
+      if params["start_date(1i)"]
+        @start_date = convert_date(params, :start_date)
+      end
+      if params["end_date(1i)"]
+        @end_date = convert_date(params, :end_date)
+      end
+      if params["start_date"]
+        @start_date = Date.parse(params["start_date"])
+      end
+      if params["end_date"]
+        @end_date = Date.parse(params["end_date"])
+      end
+      if params[:provider]
+        @provider = params[:provider].to_i
+      end
+      if params[:allocation]
+        @allocation = params[:allocation].to_i
+      end
+    end
+  end
+
+  def persisted?
+    false
+  end
+
+  def conditions
+    d = {}
+    if start_date
+      d[:date] = start_date..end_date
+    end
+    if provider && provider != 0
+      d["allocations.provider_id"] = provider
+    end
+    if allocation && allocation != 0
+      d[:allocation_id] = allocation
+    end
+    d
+  end
+end
+
 class RunsController < ApplicationController
   before_filter :require_user
   before_filter :require_admin_user, :except=>[:index, :show]

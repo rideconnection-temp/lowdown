@@ -1,35 +1,12 @@
-<% for summary in @summaries %>
-
-Summary for <%= summary.provider.name %> (<%= link_to 'Edit', :action=>:show_update, :id=>summary.id %>)<br/>
-Start: <%= summary.period_start %><br/>
-End: <%= summary.period_end %>
-<table>
-<tr>
-<th>
-Purpose
-</th>
-<th>
-In-district Trips
-</th>
-<th>
-Out-of-district Trips
-</th>
-</tr>
-<% for row in summary.summary_rows %>
-<tr>
-<td>
-    <%= row.purpose %>
-<td>
-<%= row.in_district_trips %>
-</td>
-<td>
-<%= row.out_of_district_trips %>
-</td>
-
-</tr>
-
-<% end %>
-
-</table>
-
-<% end %>
+   <h1>View Summaries</h1>
+   <%= form_for @query, :html=>{:id=>"summary-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
+     <div class="ui-widget">
+       Summaries between
+       <span id="period_start-wrap"><%= f.text_field :period_start %></span>and<span id="period_end-wrap"><%= f.text_field :period_end %></span>
+     	<span id="funding-source-wrap">
+<%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
+    	</span>
+    	<input id="summary-search" type="submit" value="Search" />
+     </div>
+   <% end %> 
+<%= render "summaries" %>
