@@ -700,16 +700,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
 
   private 
 
-  def add_months(date, months)
-    year = date.year
-    month = date.month + months
-    while month > 12
-      month -= 12
-      year += 1
-    end
-    Date.new(year, month, date.day)
-  end
-
   class PeriodAllocation
     attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date
 
@@ -751,7 +741,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       advance = 1
     end
 
-    period_end_date = add_months period_start_date, advance
+    period_end_date = period_start_date.add_months advance
 
     periods = []
     begin
@@ -759,8 +749,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
         PeriodAllocation.new allocation, period_start_date, period_end_date
       end
 
-      period_start_date = add_months period_start_date, advance
-      period_end_date = add_months period_end_date, advance
+      period_start_date = period_start_date.add_months advance
+      period_end_date = period_end_date.add_months advance
     end while period_end_date <= end_date
 
     periods
