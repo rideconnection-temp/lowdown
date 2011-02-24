@@ -232,7 +232,7 @@ and trips.date between ? and ? "
 
         add_results = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], Run.end_of_time, Trip.end_of_time, start_date, end_date]))
 
-        undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where allocation_id=? and valid_end=? group by customer_id, year) as  morx where date (year || '-' || month || '-' || 1)  between ? and ? "
+        undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where allocation_id=? and valid_end=? and result_code = 'COMP' group by customer_id, year) as  morx where date (year || '-' || month || '-' || 1)  between ? and ? "
 
         rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.add_months(6), end_date.add_months(6)]))
 
