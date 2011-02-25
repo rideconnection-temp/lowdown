@@ -4,12 +4,12 @@ def bind(args)
   return ActiveRecord::Base.__send__(:sanitize_sql_for_conditions, args, '')
 end
 
-class NetworkController < ApplicationController
+class ReportsController < ApplicationController
 
   before_filter :require_user
   before_filter :require_admin_user, :except=>[:csv, :show_create_report, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly]
 
-  class NetworkReportRow
+  class ReportRow
     @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
     attr_accessor *@@attrs
 
@@ -21,7 +21,7 @@ class NetworkController < ApplicationController
     def csv(requested_fields = nil)
       result = []
 
-      the_fields = NetworkReportRow.fields(requested_fields)
+      the_fields = ReportRow.fields(requested_fields)
       the_fields.each do |attr|
         result << self.send(attr).to_s
       end
@@ -491,7 +491,7 @@ summaries.valid_end = ? "
 
     do_report(groups, group_fields, report.start_date, report.end_date, report.allocations, report.fields, report.pending, report.adjustment)
     csv_string = CSV.generate do |csv|
-      csv << NetworkReportRow.fields(report.fields)
+      csv << ReportRow.fields(report.fields)
       apply_to_leaves! @results, group_fields.size,  do | row |
         csv << row.csv(report.fields)
         nil
@@ -505,7 +505,7 @@ summaries.valid_end = ? "
 
   def sum(rows, out=nil)
     if out.nil?
-      out = NetworkReportRow.new
+      out = ReportRow.new
     end
     if rows.instance_of? Hash
       rows.each do |key, row|
@@ -879,7 +879,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
 
     apply_to_leaves! allocations, group_fields.size, do | allocationset |
 
-      row = NetworkReportRow.new fields
+      row = ReportRow.new fields
 
       for allocation in allocationset
         row.agency = allocation.agency
@@ -923,7 +923,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     @tr_open = false
     @fields = {}
     if fields.nil? or fields.empty?
-      NetworkReportRow.fields.each do |field| 
+      ReportRow.fields.each do |field| 
         @fields[field] = 1
       end
     else
