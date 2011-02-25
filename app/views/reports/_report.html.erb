@@ -2,7 +2,7 @@
            <thead>
              <tr>
                <th rowspan="2" colspan="<%= @group_fields.size - 1 %>"></th>
-               <th rowspan="2"><%= @group_fields[-1] %></th>
+               <th rowspan="2"><%= @group_fields[-1].sub("_id","").sub("_"," ").capitalize %></th>
 <% if @fields.member? 'funds' %><th rowspan="2">Funds</th><% end %>
 <% if @fields.member? 'agency_other' %><th rowspan="2">Agency Other</th><% end %>
 <% if @fields.member? 'vehicle_maint' %><th rowspan="2">Vehicle Maint.</th><% end %>
