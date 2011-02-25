@@ -7,7 +7,7 @@ end
 class NetworkController < ApplicationController
 
   before_filter :require_user
-  before_filter :require_admin_user, :except=>[:csv, :predefined_report_index, :show_create_report, :report, :index]
+  before_filter :require_admin_user, :except=>[:csv, :show_create_report, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly]
 
   class NetworkReportRow
     @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
@@ -464,22 +464,6 @@ summaries.valid_end = ? "
   ]
 
   def index
-
-    #network service summary
-    @report = Report.new
-
-    groups = "allocations.county,providers.agency"
-    group_fields = ['county', 'agency']
-
-    #past two weeks
-    end_date = Date.today
-    start_date = end_date - 14 
-    do_report(groups, group_fields, start_date, end_date, nil, nil, false, false)
-    @params = {:report=>{}}
-    render 'report'
-  end
-
-  def report_index
     @reports = Report.all
   end
 
@@ -645,14 +629,14 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
 
   def delete_report
     report = Report.destroy(params[:report][:id])
-    redirect_to :action=>:report_index
+    redirect_to :action=>:index
   end
 
   def report
     if params[:report] and params[:report][:id]
       report = Report.find(params[:report][:id])
       if ! report.update_attributes params[:report] 
-        return redirect_to(:action=>:report_index, :id=>report.id)
+        return redirect_to(:action=>:index, :id=>report.id)
       end
     else
       report = Report.new(params[:report])
