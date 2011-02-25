@@ -234,7 +234,7 @@ and trips.date between ? and ? "
 
         undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where allocation_id=? and valid_end=? and result_code = 'COMP' group by customer_id, year) as  morx where date (year || '-' || month || '-' || 1)  between ? and ? "
 
-        row = ActiveRecord::Base.connection.select_one(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.add_months(6), end_date.add_months(6)]))
+        row = ActiveRecord::Base.connection.select_one(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.advance(:months=>6), end_date.advance(:months=>6)]))
 
         add_results['undup_riders'] = row['undup_riders'].to_i
 
@@ -714,7 +714,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
 
     @agency, @branch = params[:q][:agency_branch].split(":")
 
-    allocations = Allocation.joins(:provider).where(["agency = ? and branch = ?", @agency, @branch])
+    allocations = Allocation.joins(:provider).where(["agency = ? and branch = ? and exists(select id from trips where trips.allocation_id=allocations.id)", @agency, @branch])
+
     if allocations.empty?
       flash[:notice] = "No allocations for this agency/branch"
       return redirect_to :action=>:show_create_age_and_ethnicity
@@ -728,8 +729,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     undup_riders_age_sql = undup_riders_sql % ["age(customers.birthdate) > interval '60 years' as over60", "over60"]
     rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "and month = ?", 
                                                           allocation_ids, Trip.end_of_time, 
-                                                          @start_date.add_months(6).year, 
-                                                          @start_date.add_months(6).month]))
+                                                          @start_date.advance(:months=>6).year, 
+                                                          @start_date.advance(:months=>6).month]))
 
     @current_month_unduplicated_old = @current_month_unduplicated_young = @current_month_unduplicated_unknown = 0
     for row in rows
@@ -745,8 +746,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     #same, but w/disability
     rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "and month = ? and disabled=true",
                                                           allocation_ids, Trip.end_of_time, 
-                                                          @start_date.add_months(6).year, 
-                                                          @start_date.add_months(6).month]))
+                                                          @start_date.advance(:months=>6).year, 
+                                                          @start_date.advance(:months=>6).month]))
 
 
     @disability_disclosed_old = @disability_disclosed_young = @disability_disclosed_unknown = 0
@@ -763,7 +764,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     #unduplicated by age ytd
     rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "",
                                                           allocation_ids, Trip.end_of_time, 
-                                                          @start_date.add_months(6).year]))
+                                                          @start_date.advance(:months=>6).year]))
 
     @ytd_age_old = @ytd_age_young = @ytd_age_unknown = 0
     for row in rows
@@ -781,8 +782,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     undup_riders_ethnicity_sql = undup_riders_sql % ["race", "race"]
     rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_ethnicity_sql % "and month = ?",
                                                           allocation_ids, Trip.end_of_time, 
-                                                          @start_date.add_months(6).year, 
-                                                          @start_date.add_months(6).month]))
+                                                          @start_date.advance(:months=>6).year, 
+                                                          @start_date.advance(:months=>6).month]))
 
     @ethnicity = {}
     for row in rows
@@ -792,7 +793,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     #ethnicity ytd
     rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_ethnicity_sql % "",
                                                           allocation_ids, Trip.end_of_time, 
-                                                          @start_date.add_months(6).year]))
+                                                          @start_date.advance(:months=>6).year]))
 
     for row in rows
       race = row["race"]
@@ -847,7 +848,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       advance = 1
     end
 
-    period_end_date = period_start_date.add_months advance
+    period_end_date = period_start_date.advance(:months=>advance)
 
     periods = []
     begin
@@ -855,8 +856,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
         PeriodAllocation.new allocation, period_start_date, period_end_date
       end
 
-      period_start_date = period_start_date.add_months advance
-      period_end_date = period_end_date.add_months advance
+      period_start_date = period_start_date.advance(:months=>advance)
+      period_end_date = period_end_date.advance(:months=>advance)
     end while period_end_date <= end_date
 
     periods
