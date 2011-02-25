@@ -688,7 +688,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     end
     report.save!
     flash[:notice] = "Saved #{report.name}"
-    redirect_to :action=>:report, :id=>report.id
+    redirect_to :action=>:report, :report=>{:id=>report.id}
   end
 
   def quarterly_narrative_report
