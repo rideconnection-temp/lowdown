@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110224202414) do
+ActiveRecord::Schema.define(:version => 20120121105500) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(:version => 20110224202414) do
     t.date     "service_end"
     t.integer  "approved_rides"
     t.boolean  "disabled"
+    t.string   "spd_office",                    :limit => 25
   end
 
   create_table "projects", :force => true do |t|
@@ -92,6 +93,7 @@ ActiveRecord::Schema.define(:version => 20110224202414) do
   end
 
   create_table "reports", :force => true do |t|
+    t.string  "name"
     t.date    "start_date"
     t.date    "end_date"
     t.string  "group_by"
@@ -99,7 +101,6 @@ ActiveRecord::Schema.define(:version => 20110224202414) do
     t.string  "field_list"
     t.boolean "pending"
     t.boolean "adjustment"
-    t.string  "name"
   end
 
   create_table "runs", :id => false, :force => true do |t|
@@ -122,11 +123,6 @@ ActiveRecord::Schema.define(:version => 20110224202414) do
     t.datetime "updated_at"
     t.datetime "imported_at"
   end
-
-  add_index "runs", ["base_id"], :name => "runs_base_id_idx"
-  add_index "runs", ["date"], :name => "runs_date_idx"
-  add_index "runs", ["valid_end"], :name => "runs_valid_end_idx"
-  add_index "runs", ["valid_start"], :name => "runs_valid_start_idx"
 
   create_table "summaries", :id => false, :force => true do |t|
     t.string   "id",                             :limit => 36,                                                   :null => false
@@ -218,13 +214,7 @@ ActiveRecord::Schema.define(:version => 20110224202414) do
     t.datetime "imported_at"
   end
 
-  add_index "trips", ["customer_id"], :name => "by_fy"
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
-  add_index "trips", ["allocation_id", "date"], :name => "trips_allocation_date_idx"
-  add_index "trips", ["base_id"], :name => "trips_base_id_idx"
-  add_index "trips", ["customer_id"], :name => "trips_by_customer"
-  add_index "trips", ["date"], :name => "trips_date_idx"
-  add_index "trips", ["run_id"], :name => "trips_run_id_idx"
 
   create_table "users", :force => true do |t|
     t.string   "name",                             :null => false
