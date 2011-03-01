@@ -55,7 +55,7 @@ private
         :home_address_1, :home_address_2, :home_city, :home_state, :home_postal_code, 
         :home_x_coordinate, :home_y_coordinate, :home_in_trimet_district, 
         :language_preference, :birthdate, :email, :customer_type, :monthly_household_income, :household_size,
-        :spd_case_manager, :spd_office, :spd_date_enrolled, :spd_service_end, :spd_approved_rides,
+        :spd_prime_number, :spd_case_manager, :spd_office, :spd_date_enrolled, :spd_service_end, :spd_approved_rides,
         :routematch_run_id, :run_name, :run_start_at, :run_end_at, :run_odometer_start, :run_odometer_end,
         :routematch_trip_id, :date, 
         :provider_code, :provider_name, :provider_type, 
@@ -134,6 +134,12 @@ private
           current_customer.customer_type = record[:customer_type]
           current_customer.monthly_household_income = record[:monthly_household_income]
           current_customer.household_size = record[:household_size]
+          current_customer.spd_office = record[:spd_office]
+          current_customer.case_manager = record[:spd_case_manager]
+          current_customer.prime_number = record[:spd_prime_number]
+          current_customer.approved_rides = record[:spd_approved_rides]
+          current_customer.date_enrolled = record[:spd_date_enrolled]
+          current_customer.service_end = record[:spd_service_end]
           current_customer.address_id = current_home_id
           current_customer.save!
 
