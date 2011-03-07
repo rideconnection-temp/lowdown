@@ -7,7 +7,7 @@ end
 class ReportsController < ApplicationController
 
   before_filter :require_user
-  before_filter :require_admin_user, :except=>[:csv, :show_create_report, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly]
+  before_filter :require_admin_user, :except=>[:csv, :show_create_report, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly, :show_create_active_rider]
 
   class ReportRow
     @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
@@ -474,6 +474,10 @@ summaries.valid_end = ? "
 
   def show_create_quarterly
     @report = Report.new(params[:report])
+  end
+  
+  def show_create_active_rider
+    @allocations = Allocation.all
   end
 
   def csv

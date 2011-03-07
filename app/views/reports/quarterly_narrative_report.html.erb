@@ -1,13 +1,12 @@
-<% for field, rows in @allocations %>
-<% allocation = get_row(rows).allocation %>
 
 <h1>Quarterly Narrative Report - Quarter <%=@quarter%></h1>
-<%= @report.start_date %> - <%= @report.end_date.prev_day %> 
 
-Provider Name: <%= allocation.provider.name %><br/>
-Program: <%= allocation.name %> <br/>
-County: <%= allocation.county %><br/>
-Funding Source: <%= allocation.project.funding_source %><br/>
+<% for field, rows in @allocations %>
+<% allocation = get_row(rows).allocation %>
+<h2><%= allocation.provider.name %> (<%= @report.start_date %> - <%= @report.end_date.prev_day %>)</h2>
+<h3>Program: <%= allocation.name %></h3>
+<h3>County: <%= allocation.county %></h3>
+<h3>Funding Source: <%= allocation.project.funding_source %></h3>
 
 <div>Instructions: Please review the numbers provided for this funding
 source. If any discrepancies are found, they should be reported on the
@@ -21,6 +20,5 @@ effects.</div>
 <br/>
 Signature: _______________________ </br>
 
-<div style="page-break-before: always;"></div>
-
+<hr style="page-break-after: always;"/>
 <% end %>

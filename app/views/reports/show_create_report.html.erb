@@ -57,7 +57,7 @@
           </div>
           <div class="ui-widget">
             <h3>Group By</h3>
-            <div class="group-by-wrap">
+            <div class="group-by-wrap-preselect">
               <select id="group-by" name="report[group_by]">
                 <option value="county,quarter">County, Quarter</option>
                 <option value="funding_source,quarter">Funding Source, Quarter</option>
@@ -72,6 +72,17 @@
               </select>
             </div>
           </div>
+          <h3>Or manually select fields to group by</h3>
+          <div class="group-by-wrap">
+            <select id="group-by-1">
+              <option value="County">County</option>
+              <option value="Funding Source">Funding Source</option>
+              <option value="Project Name">Project Name</option>
+              <option value="Provider">Provider</option>
+            </select>
+            <a class="remove-group-by" href="#"><img src="../images/spirit20/system-stop.png" alt="-" title="Remove this grouping criteria" /></a> <a class="add-group-by" href="#"><img src="../images/spirit20/system-save-alt-02.png" alt="+"  title="Add another group by field" /></a>
+          </div>
+          
 
 	  <%= f.label :adjustment, "Use adjusted values?", :class => "checkbox" %> <%= f.check_box :adjustment %><br/>
 

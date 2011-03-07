@@ -1,0 +1,125 @@
+      <h1>Active Rider Report</h1>
+      <form>
+        <div class="ui-widget">
+          Choose month
+          <div id="start_selector" class="monthpicker"></div>
+       	<input id="summary-search" type="submit" value="Search" />
+        </div>
+      </form>
+
+      <script>
+      // <![CDATA[
+      $(document).ready(function(){
+        $("#start_selector").monthpicker(monthcallback);
+        $("#end_selector").monthpicker(monthcallback);
+
+        function monthcallback(data,$e){
+        	$e.next('input.monthtarget').val(data['year'] + '-' + zeroPad(data['month']));
+        }
+
+        function zeroPad(value) {
+            return (parseInt(value, 10) < 10) ? ("0" + value.toString()) : value;
+        }
+      });
+      // ]]>
+      </script>
+<br />
+<h2>Month: Jan 2011</h2>
+<table id="active-rider-results" class="results">
+  <thead>
+    <tr>
+      <th>Case Manager</th>
+      <th>Date Enrolled</th>
+      <th>Customer</th>
+      <th>Prime Number</th>
+      <th>Service End</th>
+      <th>Approved Rides</th>
+      <th>Billed Rides</th>
+      <th>Billable Mileage</th>
+      <th>Scooter or WC</th>
+    </tr>
+  </thead>
+  <tbody>
+       <tr>
+         <th class="contrast banner" colspan="9">Beaverton</th>
+       </tr>
+       <tr>
+         <td>L4</td>
+         <td>12/04/07</td>
+         <td>Customer Name</td>
+         <td>RW300V4C</td>
+         <td>11/01/11</td>
+         <td>46</td>
+         <td>46</td>
+         <td>301.4</td>
+         <td>Yes</td>
+       </tr>
+       <tr>
+         <td>L4</td>
+         <td>12/04/07</td>
+         <td>Customer Name</td>
+         <td>RW300V4C</td>
+         <td>11/01/11</td>
+         <td>46</td>
+         <td>46</td>
+         <td>301.4</td>
+         <td>Yes</td>
+       </tr>
+       <tr>
+         <td>L4</td>
+         <td>12/04/07</td>
+         <td>Customer Name</td>
+         <td>RW300V4C</td>
+         <td>11/01/11</td>
+         <td>46</td>
+         <td>46</td>
+         <td>301.4</td>
+         <td>Yes</td>
+       </tr>
+       <tr>
+         <td>L4</td>
+         <td>12/04/07</td>
+         <td>Customer Name</td>
+         <td>RW300V4C</td>
+         <td>11/01/11</td>
+         <td>46</td>
+         <td>46</td>
+         <td>301.4</td>
+         <td>Yes</td>
+       </tr>
+       <tr>
+         <td>L4</td>
+         <td>12/04/07</td>
+         <td>Customer Name</td>
+         <td>RW300V4C</td>
+         <td>11/01/11</td>
+         <td>46</td>
+         <td>46</td>
+         <td>301.4</td>
+         <td>Yes</td>
+       </tr>
+       <tr>
+         <td>L4</td>
+         <td>12/04/07</td>
+         <td>Customer Name</td>
+         <td>RW300V4C</td>
+         <td>11/01/11</td>
+         <td>46</td>
+         <td>46</td>
+         <td>301.4</td>
+         <td>Yes</td>
+       </tr>
+       <tr>
+         <td>L4</td>
+         <td>12/04/07</td>
+         <td>Customer Name</td>
+         <td>RW300V4C</td>
+         <td>11/01/11</td>
+         <td>46</td>
+         <td>46</td>
+         <td>301.4</td>
+         <td>Yes</td>
+       </tr>
+
+       </tbody>
+</table>
