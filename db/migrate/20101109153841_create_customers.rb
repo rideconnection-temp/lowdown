@@ -1,7 +1,7 @@
 class CreateCustomers < ActiveRecord::Migration
   def self.up
     create_table :customers do |t|
-      t.integer :routematch_customer_id
+      t.integer :routematch_customer_id, :references=>nil
       t.string :last_name
       t.string :first_name
       t.string :middle_initial

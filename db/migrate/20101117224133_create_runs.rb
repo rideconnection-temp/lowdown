@@ -2,7 +2,7 @@ class CreateRuns < ActiveRecord::Migration
   def self.up
     create_table :runs do |t|
       t.date :date
-      t.integer :routematch_share_id
+      t.integer :routematch_share_id, :references=>nil
 
       t.timestamps
     end

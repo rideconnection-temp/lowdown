@@ -2,7 +2,7 @@ class CreateTrips < ActiveRecord::Migration
   def self.up
     create_table :trips, :id =>false do |t|
       t.string :id, :limit => 36, :null => false, :unique => true
-      t.string :base_id, :limit => 36
+      t.string :base_id, :limit => 36, :references=>nil
       t.datetime :valid_start
       t.datetime :valid_end
       t.date :date
@@ -25,13 +25,13 @@ class CreateTrips < ActiveRecord::Migration
       t.boolean :volunteer_trip
       t.boolean :in_trimet_district
       t.float :bpa_billing_distance
-      t.integer :routematch_share_id
+      t.integer :routematch_share_id, :references=>nil
       t.boolean :override
       t.float :estimated_trip_distance_in_miles
-      t.integer :pickup_address_id
-      t.integer :routematch_pickup_address_id
-      t.integer :dropoff_address_id
-      t.integer :routematch_dropoff_address_id
+      t.integer :pickup_address_id, :references=>:addresses
+      t.integer :routematch_pickup_address_id, :references=>nil
+      t.integer :dropoff_address_id, :references=>:addresses
+      t.integer :routematch_dropoff_address_id, :references=>nil
       t.timestamps
     end
   end

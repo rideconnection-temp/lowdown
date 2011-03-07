@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120121105500) do
+ActiveRecord::Schema.define(:version => 20110301180325) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -154,9 +154,9 @@ ActiveRecord::Schema.define(:version => 20120121105500) do
     t.string   "base_id",               :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
+    t.string   "summary_id"
     t.string   "purpose"
     t.integer  "in_district_trips"
-    t.string   "summary_id"
     t.integer  "updated_by"
     t.integer  "out_of_district_trips"
   end
@@ -203,8 +203,8 @@ ActiveRecord::Schema.define(:version => 20120121105500) do
     t.string   "result_code",                      :limit => 5
     t.string   "provider_code",                    :limit => 10
     t.integer  "allocation_id"
-    t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
     t.integer  "home_address_id"
+    t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
     t.integer  "duration"
     t.decimal  "mileage",                                        :precision => 8,  :scale => 1
     t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
@@ -234,6 +234,13 @@ ActiveRecord::Schema.define(:version => 20120121105500) do
     t.integer  "level",             :default => 0
   end
 
+  add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
+
   add_foreign_key "runs", ["trip_import_id"], "trip_imports", ["id"], :name => "runs_trip_import_id_fkey"
+
+  add_foreign_key "summary_rows", ["summary_id"], "summaries", ["id"], :name => "summary_rows_summary_id_fkey"
+
+  add_foreign_key "trips", ["pickup_address_id"], "addresses", ["id"], :name => "trips_pickup_address_id_fkey"
+  add_foreign_key "trips", ["dropoff_address_id"], "addresses", ["id"], :name => "trips_dropoff_address_id_fkey"
 
 end

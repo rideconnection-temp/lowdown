@@ -1,7 +1,7 @@
 class CreateAddresses < ActiveRecord::Migration
   def self.up
     create_table :addresses do |t|
-      t.integer :routematch_address_id
+      t.integer :routematch_address_id, :references=>nil
       t.string :common_name
       t.string :building_name
       t.string :address_1

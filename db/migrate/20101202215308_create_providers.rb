@@ -6,7 +6,7 @@ class CreateProviders < ActiveRecord::Migration
       t.string :agency, :limit => 50
       t.string :branch, :limit => 50
       t.string :subcontractor, :limit => 50
-      t.string :routematch_id, :limit => 10
+      t.string :routematch_id, :limit => 10, :references=>nil
 
       t.timestamps
 
