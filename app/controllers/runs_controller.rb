@@ -36,22 +36,6 @@ class Query
   end
 end
 
-# end_of_month was dropped from Rails 3, really?
-# FIXME - Adding this to application_helper.rb doesn't make it available to models. where's the best place for this to live?
-class Date
-   def self.last_day_of_the_month(yyyy, mm)
-     new(yyyy, mm, -1)
-   end
-end
- 
-def monthify(options={})
-   today = Date.today
-   default_options = {:yyyy => today.year, :mm => today.month, :monthend => false}
-   options = default_options.merge options
-   dd = (options[:monthend]) ? Date.last_day_of_the_month(options[:yyyy].to_i, options[:mm].to_i) : Date.new(options[:yyyy], options[:mm], 1)
-   return dd
-end
-
 class RunsController < ApplicationController
   before_filter :require_user
   before_filter :require_admin_user, :except=>[:index, :show]
