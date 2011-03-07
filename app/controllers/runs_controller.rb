@@ -1,36 +1,23 @@
-claclass Query
+class Query
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date
-  attr_accessor :end_date
-
-  attr_accessor :provider
-  attr_accessor :allocation
+  attr_accessor :start_at
+  attr_accessor :end_at
 
   def convert_date(obj, base)
-    return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
+    return DateTime.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
   end
 
   def initialize(params)
     if params
-      if params["start_date(1i)"]
-        @start_date = convert_date(params, :start_date)
+      if params["start_at"]
+        splitstart = params["start_at"].split("-")
+        @start_at = monthify({:yyyy => splitstart[0].to_i, :mm => splitstart[1].to_i})
       end
-      if params["end_date(1i)"]
-        @end_date = convert_date(params, :end_date)
-      end
-      if params["start_date"]
-        @start_date = Date.parse(params["start_date"])
-      end
-      if params["end_date"]
-        @end_date = Date.parse(params["end_date"])
-      end
-      if params[:provider]
-        @provider = params[:provider].to_i
-      end
-      if params[:allocation]
-        @allocation = params[:allocation].to_i
+      if params["end_at"]
+        splitend = params["end_at"].split("-")
+        @end_at = monthify({:yyyy => splitend[0].to_i, :mm => splitend[1].to_i, :monthend => true})
       end
     end
   end
@@ -41,17 +28,28 @@ claclass Query
 
   def conditions
     d = {}
-    if start_date
-      d[:date] = start_date..end_date
-    end
-    if provider && provider != 0
-      d["allocations.provider_id"] = provider
-    end
-    if allocation && allocation != 0
-      d[:allocation_id] = allocation
+    if start_at
+      d[:start_at] = start_at..end_at
+      d[:end_at] = start_at..end_at
     end
     d
   end
+end
+
+# end_of_month was dropped from Rails 3, really?
+# FIXME - Adding this to application_helper.rb doesn't make it available to models. where's the best place for this to live?
+class Date
+   def self.last_day_of_the_month(yyyy, mm)
+     new(yyyy, mm, -1)
+   end
+end
+ 
+def monthify(options={})
+   today = Date.today
+   default_options = {:yyyy => today.year, :mm => today.month, :monthend => false}
+   options = default_options.merge options
+   dd = (options[:monthend]) ? Date.last_day_of_the_month(options[:yyyy].to_i, options[:mm].to_i) : Date.new(options[:yyyy], options[:mm], 1)
+   return dd
 end
 
 class RunsController < ApplicationController
@@ -59,7 +57,15 @@ class RunsController < ApplicationController
   before_filter :require_admin_user, :except=>[:index, :show]
   
   def index
-    @runs = Run.current_versions.paginate :page => params[:page], :per_page => 30, :order => 'created_at desc, routematch_id asc'
+    @query = Query.new(params[:query])
+    if @query.conditions.empty?
+      @query.end_at = DateTime.now
+      @query.start_at = @query.end_at.beginning_of_month
+      flash[:notice] = 'No search criteria set - showing default (current month)'
+    end
+
+    @runs = Run.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions
+
   end
   
   def create
@@ -76,6 +82,22 @@ class RunsController < ApplicationController
       redirect_to(:action=>:show, :id=>@run) : render(:action => :show)
   end
 
+  def bulk_update
+    updated = 0
 
+    @query = Query.new(params[:query])
+    if @query.conditions.empty?
+      flash[:error] = "Cannot update without conditions"
+    else
+      for run in Run.current_versions :conditions => @query.conditions
+        updated += 1
+        run.complete = true
+        run.save!
+      end
+      flash[:notice] = "Updated #{updated} records"
+
+    end
+    redirect_to :action=>:index
+  end
 
 end

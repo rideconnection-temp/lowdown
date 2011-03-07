@@ -1,0 +1,25 @@
+/* basic style */ 
+.monthpicker {margin:0; padding:0; font:bold 12px Arial; color:#ffe; background-image:url(bg.png)}
+.monthpicker {-moz-user-select:none; user-select:none}
+.monthpicker th{padding-left:20px}
+.monthpicker td{padding:0px}
+.monthpicker a{text-decoration:none; color:#333}
+.monthpicker a:hover{background:#ffe}
+.monthpicker a:hover span{background:#ffe; color:#f60}
+.monthpicker a.li{position:relative}
+.monthpicker ul{list-style:none; margin:0; padding:0}
+.monthpicker ul table{width:100%; border-collapse:collapse}
+.monthpicker ul ul{position:absolute; visibility:hidden; left:-1px; top:20px; z-index:2; border:1px solid #999}
+.monthpicker ul ul .selected{background:#f60; color:#fff}
+.monthpicker li{position:relative; width:60px; float:left; text-align:center}
+.monthpicker li a{display:block}
+.monthpicker .li:hover ul{background:#ffe; visibility:visible}
+.monthpicker .li:hover li a:hover{background:#09f; color:#ffe}
+.monthpicker span{display:inline-block; width:58px; padding:1px; line-height:19px; text-align:center; cursor:pointer}
+.monthpicker .month span{width:40px}
+.monthpicker .selected{background:#ffe}
+/* print style */
+@media print{
+.monthpicker span{display:none}
+.monthpicker .selected{display:block}
+}

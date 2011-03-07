@@ -1,4 +1,6 @@
          <h2 id="result-count"><%= @runs.total_entries %> runs found.</h2>
+         <% if @runs.total_entries > 0 %>
+            <%= link_to 'Mark all as complete', :action=>:bulk_update, "query[start_at]" => @query.start_at, "query[end_at]" => @query.end_at %>
          <table id="run-results">
            <thead>
              <tr>
@@ -8,6 +10,7 @@
                <th>Odometer Start</th>
                <th>Odometer End</th>
                <th>Escort Count</th>
+               <th>Complete</th>
                <th></th>
              </tr>
            </thead>
@@ -20,9 +23,11 @@
                <td><%= run.odometer_start %></td>
                <td><%= run.odometer_end %></td>
                <td><%= run.escort_count %></td>
+               <td><span class="status-<%= (run.complete) ? "" : "in" %>complete"><%= run.complete %></span></td>
                <td><%= link_to "Details", :action=>:show, :id=>run.id %></td>
              </tr>
              <% end %>
            </tbody>
          </table>
+         <% end %>
 <%= will_paginate @runs %>

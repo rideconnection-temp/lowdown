@@ -96,6 +96,16 @@ $(function(){
         $('#flash').slideUp(150);
         return false;
     });
+    
+    //$(".monthpicker").monthpicker("1995-12", monthcallback);
+    
+    function monthcallback(data,$e){
+    	$e.next('input.monthtarget').val(data['year'] + '-' + zeroPad(data['month']));
+    }
+    
+    function zeroPad(value) {
+        return (parseInt(value, 10) < 10) ? ("0" + value.toString()) : value;
+    }
 
     $( "#query_start_date, #query_end_date, #query_period_start, #query_period_end, #startday, #endday, #summary_period_start, #summary_period_end, #summary_report_prepared" ).datepicker({
         showOn: "button",

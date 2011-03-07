@@ -14,10 +14,10 @@ class Query
   def initialize(params)
     if params
       if params["period_start(1i)"]
-        @start_date = convert_date(params, :start_date)
+        @period_start = convert_date(params, :start_date)
       end
       if params["period_end(1i)"]
-        @end_date = convert_date(params, :end_date)
+        @period_end = convert_date(params, :end_date)
       end
       if params["period_start"]
         @period_start = Date.parse(params["period_start"])

@@ -1,2 +1,31 @@
 <h1>View Runs</h1>
+   <%= form_for @query, :html=>{:id=>"run-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
+     <div class="ui-widget">
+       Runs from
+       <div id="start_selector" class="monthpicker"></div>
+       <%= f.hidden_field :start_at, :class => "monthtarget" %>
+       through
+       <div id="end_selector" class="monthpicker"></div>
+       <%= f.hidden_field :end_at, :class => "monthtarget" %>
+    	<input id="summary-search" type="submit" value="Search" />
+     </div>
+   <% end %>
+   
+   <script>
+   // <![CDATA[
+   $(document).ready(function(){
+     $("#start_selector").monthpicker("<%= @query.start_at.strftime('%Y-%m') %>", monthcallback);
+     $("#end_selector").monthpicker("<%= @query.end_at.strftime('%Y-%m') %>", monthcallback);
+     
+     function monthcallback(data,$e){
+     	$e.next('input.monthtarget').val(data['year'] + '-' + zeroPad(data['month']));
+     }
+
+     function zeroPad(value) {
+         return (parseInt(value, 10) < 10) ? ("0" + value.toString()) : value;
+     }
+   });
+   // ]]>
+   </script>
+   
 <%= render "runs" %>
