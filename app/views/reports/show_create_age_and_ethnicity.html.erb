@@ -1,0 +1,11 @@
+        <h1>Create Age And Ethnicity Report</h1>
+        <%= form_for @report, :as => :q, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"age_and_ethnicity"} do |f| %>
+          <div class="ui-widget">
+           	service for the month
+	           <span id="startday-wrap"><%= f.date_select :start_date, :discard_day=>true %></span>
+          </div>
+
+	        <%= f.collection_select :agency_branch, @agencies, :to_s, :to_s %>
+
+          <input id="report-create" type="submit" value="Create Report" />
+        <% end %><!-- end form -->

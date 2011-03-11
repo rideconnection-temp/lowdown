@@ -27,4 +27,6 @@ class Allocation < ActiveRecord::Base
     project.name
   end
 
+  scope :spd, includes(:project).where(:projects => {:funding_source => 'SPD'})
+
 end

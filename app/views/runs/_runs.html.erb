@@ -1,6 +1,6 @@
          <h2 id="result-count"><%= @runs.total_entries %> runs found.</h2>
          <% if @runs.total_entries > 0 %>
-            <%= link_to 'Mark all as complete', :action=>:bulk_update, "query[start_at]" => @query.start_at, "query[end_at]" => @query.end_at %>
+            <%= link_to 'Mark all as complete', :action=>:bulk_update, "query[start_date]" => @query.start_date, "query[end_date]" => @query.end_date %>
          <table id="run-results">
            <thead>
              <tr>

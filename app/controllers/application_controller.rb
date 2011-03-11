@@ -12,6 +12,13 @@ class ApplicationController < ActionController::Base
     end
     return @current_user
   end
+  
+  # end_of_month was dropped from Rails 3, really?
+  class Date
+     def self.last_day_of_the_month(yyyy, mm)
+       new(yyyy, mm, -1)
+     end
+  end
 
   private
 
@@ -52,6 +59,14 @@ class ApplicationController < ActionController::Base
       end
     end
     return false
+  end
+
+  def monthify(options={})
+     today = Date.today
+     default_options = {:yyyy => today.year, :mm => today.month, :monthend => false}
+     options = default_options.merge options
+     dd = (options[:monthend]) ? Date.last_day_of_the_month(options[:yyyy].to_i, options[:mm].to_i) : Date.new(options[:yyyy], options[:mm], 1)
+     return dd
   end
 
 end
