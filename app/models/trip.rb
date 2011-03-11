@@ -44,11 +44,6 @@ class Trip < ActiveRecord::Base
 
   def customers_served
     guest_count + attendant_count + 1
-    #if routematch_share_id
-    #  return Trip.count(:conditions=>{:routematch_share_id=>routematch_share_id})
-    #else
-    #  return 1
-    #end
   end
   
   def chronological_versions

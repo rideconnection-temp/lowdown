@@ -477,7 +477,7 @@ summaries.valid_end = ? "
   end
   
   def show_create_active_rider
-    @allocations = Allocation.all
+    @allocations = Allocation.spd.all
   end
 
   def csv
