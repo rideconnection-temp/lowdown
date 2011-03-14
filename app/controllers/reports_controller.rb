@@ -852,7 +852,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     end
 
   end
-end
   private 
 
   class PeriodAllocation
