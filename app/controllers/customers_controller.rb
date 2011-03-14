@@ -7,7 +7,7 @@ class CustomersController < ApplicationController
   end
 
   def report
-    @start_date = Date.parse(params[:date])
+    @start_date = DateTime.parse(params[:date])
     @end_date = @start_date.next_month
 
     trips = Trip.joins(:allocation=>:project).where("date between ? and ? and valid_end = ? and funding_source='SPD'", @start_date, @end_date, Trip.end_of_time)

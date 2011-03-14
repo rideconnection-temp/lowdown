@@ -2,6 +2,14 @@ class Trip < ActiveRecord::Base
   require 'bigdecimal'
   extend ActiveSupport::Memoizable
 
+  class << self
+    def date_range(start_date, after_end_date)
+      start_date = start_date.to_date
+      after_end_date = after_end_date.to_date
+      where("trips.date >= ? AND trips.date < ?",start_date,after_end_date)
+    end
+  end
+
   stampable :updater_attribute  => :updated_by,
             :creator_attribute  => :updated_by
   point_in_time
@@ -25,6 +33,7 @@ class Trip < ActiveRecord::Base
 
   scope :completed, where(:result_code => 'COMP')
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
+  scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
 
   def created_by
     return first_version.updated_by
