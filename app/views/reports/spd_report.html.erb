@@ -1,0 +1,67 @@
+SPD Report from <%= @start_date %><br/>
+
+<table>
+  <tr>
+    <th>Case Manager</th>
+    <th>Date Enrolled</th>
+    <th>Customer</th>
+    <th>Prime Number</th>
+    <th>Service End</th>
+    <th>Approved Rides</th>
+    <th>Billed Rides</th>
+    <th>Billable Mileage</th>
+    <th>Scooter/Wheelchair</th>
+  </tr>
+
+<% for customer_row in @customer_rows.values.sort {|a,b| a[:customer].name <=> b[:customer].name } %>
+<% customer = customer_row[:customer] %>
+<tr>
+<td><%= customer.case_manager %></td>
+<td><%= customer.date_enrolled %></td>
+<td><%= customer.first_name %> <%= customer.middle_initial %> <%= customer.last_name %> </td>
+<td><%= customer.prime_number %></td>
+<td><%= customer.service_end %></td>
+<td><%= customer.approved_rides %></td>
+<td><%= customer_row[:billed_rides] %></td>
+<td><%= "%.2f" % customer_row[:billable_mileage] %></td>
+<td><%= customer_row[:mobility] %></td>
+</tr>
+<% end %>
+
+</table>
+
+<br/>
+
+<table>
+  <tr>
+    <th>Mobility</th>
+    <th>Approved Rides</td>
+    <th>Billed Rides</td>
+    <th>Mileage</td>
+  </tr>
+  <tr>
+    <th>All</th>
+    <td><%= @approved_rides %></td>
+    <td><%= @wc_billed_rides + @nonwc_billed_rides + @unknown_billed_rides %></td>
+    <td><%= "%.2f" % (@wc_mileage + @nonwc_mileage + @unknown_mileage) %></td>
+  </tr>
+  <tr>
+    <th>Not Wheelchair/Scooter</th>
+    <td></td>
+    <td><%= @nonwc_billed_rides %></td>
+    <td><%= "%.2f" % @nonwc_mileage %></td>
+  </tr>
+  <tr>
+    <th>Wheelchair/Scooter</th>
+    <td></td>
+    <td><%= @wc_billed_rides %></td>
+    <td><%= "%.2f" % @wc_mileage %></td>
+  </tr>
+  <tr>
+    <th>Unknown</th>
+    <td></td>
+    <td><%= @unknown_billed_rides %></td>
+    <td><%= "%.2f" % @unknown_mileage %></td>
+  </tr>
+
+</table>
