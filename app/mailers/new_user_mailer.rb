@@ -5,7 +5,7 @@ class NewUserMailer < ActionMailer::Base
   def new_user_email(user, password)
     @user = user
     @password = password
-    @url = "http://localhost:3000"
+    @url = root_url
     mail(:to => user.email,  :subject => "Welcome to Lowdown")
  end
 
