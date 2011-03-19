@@ -12,13 +12,6 @@ class ApplicationController < ActionController::Base
     end
     return @current_user
   end
-  
-  # end_of_month was dropped from Rails 3, really?
-  class Date
-     def self.last_day_of_the_month(yyyy, mm)
-       new(yyyy, mm, -1)
-     end
-  end
 
   private
 
