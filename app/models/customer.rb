@@ -8,6 +8,6 @@ class Customer < ActiveRecord::Base
   validates_uniqueness_of :routematch_customer_id
 
   def name
-    return "#{first_name} #{middle_initial} #{last_name}"
+    return "#{last_name}, #{first_name} #{middle_initial}"
   end
 end
