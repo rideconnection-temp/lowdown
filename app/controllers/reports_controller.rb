@@ -801,8 +801,9 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     @start_date = DateTime.parse(params[:date])
     @end_date = @start_date.next_month
 
-    trips = Trip.current_records.completed.spd.date_range(@start_date,@end_date)
+    trips = Trip.current_records.completed.spd.date_range(@start_date,@end_date).include(:customer)
 
+    @spd_offices = {}
     @customer_rows = {}
     @approved_rides = 0
     @wc_billed_rides = @nonwc_billed_rides = @unknown_billed_rides = 0
@@ -817,37 +818,31 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
         wheelchair = true
       end
 
-      key = [trip.customer_id, wheelchair]
+      row_key = [trip.customer_id, wheelchair]
       customer = trip.customer
-      row = @customer_rows[key]
+      office_key = customer.spd_office
+      @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
+
+      row = @customer_rows[office_key][row_key]
       if row.nil?
         row = {:customer => customer,
                :billed_rides=>0, :billable_mileage=>0, :mobility=>wheelchair}
-        @customer_rows[key] = row
+        @customer_rows[office_key][row_key] = row
       end
 
       row[:billed_rides] += 1
-      mileage = trip.estimated_trip_distance_in_miles
-      if mileage < 5
-        rounded_mileage = 0
-      elsif mileage < 25
-        rounded_mileage = mileage - 5
-      else
-        rounded_mileage = 20
-      end
-
-      row[:billable_mileage] += rounded_mileage
+      row[:billable_mileage] += trip.spd_mileage
 
       @approved_rides += customer.approved_rides.to_i
       if wheelchair == "unknown"
         @unknown_billed_rides += 1
-        @unknown_mileage += rounded_mileage
+        @unknown_mileage += trip.spd_mileage
       elsif wheelchair
         @wc_billed_rides += 1
-        @wc_mileage += rounded_mileage
+        @wc_mileage += trip.spd_mileage
       else
         @nonwc_billed_rides += 1
-        @nonwc_mileage += rounded_mileage
+        @nonwc_mileage += trip.spd_mileage
       end
     end
 

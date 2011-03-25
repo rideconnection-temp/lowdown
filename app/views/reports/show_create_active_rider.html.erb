@@ -40,86 +40,24 @@
     </tr>
   </thead>
   <tbody>
-       <tr>
-         <th class="contrast banner" colspan="9">Beaverton</th>
-       </tr>
-       <tr>
-         <td>L4</td>
-         <td>12/04/07</td>
-         <td>Customer Name</td>
-         <td>RW300V4C</td>
-         <td>11/01/11</td>
-         <td>46</td>
-         <td>46</td>
-         <td>301.4</td>
-         <td>Yes</td>
-       </tr>
-       <tr>
-         <td>L4</td>
-         <td>12/04/07</td>
-         <td>Customer Name</td>
-         <td>RW300V4C</td>
-         <td>11/01/11</td>
-         <td>46</td>
-         <td>46</td>
-         <td>301.4</td>
-         <td>Yes</td>
-       </tr>
-       <tr>
-         <td>L4</td>
-         <td>12/04/07</td>
-         <td>Customer Name</td>
-         <td>RW300V4C</td>
-         <td>11/01/11</td>
-         <td>46</td>
-         <td>46</td>
-         <td>301.4</td>
-         <td>Yes</td>
-       </tr>
-       <tr>
-         <td>L4</td>
-         <td>12/04/07</td>
-         <td>Customer Name</td>
-         <td>RW300V4C</td>
-         <td>11/01/11</td>
-         <td>46</td>
-         <td>46</td>
-         <td>301.4</td>
-         <td>Yes</td>
-       </tr>
-       <tr>
-         <td>L4</td>
-         <td>12/04/07</td>
-         <td>Customer Name</td>
-         <td>RW300V4C</td>
-         <td>11/01/11</td>
-         <td>46</td>
-         <td>46</td>
-         <td>301.4</td>
-         <td>Yes</td>
-       </tr>
-       <tr>
-         <td>L4</td>
-         <td>12/04/07</td>
-         <td>Customer Name</td>
-         <td>RW300V4C</td>
-         <td>11/01/11</td>
-         <td>46</td>
-         <td>46</td>
-         <td>301.4</td>
-         <td>Yes</td>
-       </tr>
-       <tr>
-         <td>L4</td>
-         <td>12/04/07</td>
-         <td>Customer Name</td>
-         <td>RW300V4C</td>
-         <td>11/01/11</td>
-         <td>46</td>
-         <td>46</td>
-         <td>301.4</td>
-         <td>Yes</td>
-       </tr>
-
-       </tbody>
+    <% for office in @customer_rows.keys.sort %>
+      <tr>
+        <th class="contrast banner" colspan="9">Beaverton</th>
+      </tr>
+      <% for customer_row in @customer_rows[office].values.sort {|a,b| a[:customer].name <=> b[:customer].name } %>
+        <% customer = customer_row[:customer] %>
+        <tr>
+          <td><%= customer.case_manager %></td>
+          <td><%= customer.date_enrolled %></td>
+          <td><%= customer.first_name %> <%= customer.middle_initial %> <%= customer.last_name %> </td>
+          <td><%= customer.prime_number %></td>
+          <td><%= customer.service_end %></td>
+          <td><%= customer.approved_rides %></td>
+          <td><%= customer_row[:billed_rides] %></td>
+          <td><%= "%.2f" % customer_row[:billable_mileage] %></td>
+          <td><%= customer_row[:mobility] %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
 </table>

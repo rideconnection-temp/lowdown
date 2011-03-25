@@ -59,6 +59,16 @@ class Trip < ActiveRecord::Base
     return self.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse
   end
 
+  def spd_mileage
+    if self.estimated_trip_distance_in_miles < 5
+      return 0
+    elsif self.estimated_trip_distance_in_miles < 25
+      return self.estimated_trip_distance_in_miles - 5
+    else
+      return 20
+    end
+  end
+
   memoize :customers_served
 
 private
