@@ -1,7 +1,4 @@
 class CustomersController < ApplicationController
-
-  before_filter :require_user
-
   def show_create_report
 
   end

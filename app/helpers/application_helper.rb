@@ -5,16 +5,19 @@ module ApplicationHelper
     
     "<a class=\"#{klass}\" href=\"http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=#{escaped_address}&sll=#{address.y_coordinate},#{address.x_coordinate}&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=#{escaped_address}&t=h&z=16\" title=\"#{address.full_address}\">#{address.display_name}</a>"
   end
-
-  def flash_messages
-    if flash[:notice]
+  def flash_type(type)
+   if flash[type]
       "<div id=\"flash\">
          <a class=\"closer\" href=\"#\">Close</a>
-         <div class=\"info\">#{flash[:notice]}</div>   
+         <div class=\"info\">#{flash[type]}</div>   
       </div>"
     else
       ''
     end
+  end
+
+  def flash_messages
+    return flash_type(:notice) + flash_type(:alert)
   end
 
   def nested_size_with_totals(e)

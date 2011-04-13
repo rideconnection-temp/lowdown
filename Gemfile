@@ -9,7 +9,7 @@ gem 'pg'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
 
-gem 'authlogic', :git => 'https://github.com/binarylogic/authlogic.git'
+gem "devise"
 
 gem 'uuidtools'
 

@@ -1,15 +1,15 @@
 <table>
 <tr>
-<th>Name</th>
 <th>Email</th>
+<th>Role</th>
 </tr>
 <% for user in @users %>
 <tr>
 <td>
-<%= user.name %> 
+<%= user.email %> 
 </td>
 <td>
-<%= user.email %> 
+<%= user.is_admin ? "Admin" : "User" %> 
 </td>
 </tr>
 <% end %>
@@ -17,6 +17,6 @@
 
 <br/>
 
-<% if user.is_admin %>
+<% if current_user.is_admin %>
 <%= link_to "New user", :action=>"show_create" %>
 <% end %>

@@ -1,16 +1,17 @@
 class User < ActiveRecord::Base
-  validates :name,  :presence => true
-  validates :email, :presence => true, :uniqueness => true
-  validates_presence_of :password
-  validates_confirmation_of :password
-
   model_stamper
+  validates_confirmation_of :password
+  validates_uniqueness_of :email
 
-  
-  acts_as_authentic do |c|
-    c.login_field = :email
-    c.validate_login_field = false
-  end
+  belongs_to :current_provider, :class_name=>"Provider", :foreign_key => :current_provider_id
+
+  # Include default devise modules. Others available are:
+  # :token_authenticatable, :confirmable, :lockable and :timeoutable
+  devise :database_authenticatable, 
+         :recoverable, :rememberable, :trackable, :validatable
+
+  # Setup accessible (or protected) attributes for your model
+  attr_accessible :email, :password, :password_confirmation, :remember_me
 
   def is_admin
     return level == 100

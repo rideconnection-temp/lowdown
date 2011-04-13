@@ -34,7 +34,7 @@
       <a id="logo" href="/"><strong>Low</strong>down</a>
       <div id="login-area">
         <% if current_user %>
-        <a href="#"><%= current_user.name %></a> | <a href="#">Log out</a>
+        <a href="#"><%= current_user.email %></a> | <%= link_to "Log out", logout_path, {:method=>"post"} %></a>
         <% end %>
       </div>
     </div><!-- /.wrap -->

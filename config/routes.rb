@@ -1,6 +1,4 @@
 Lowdown::Application.routes.draw do
-  get "dashboard/index"
-
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -54,13 +52,18 @@ Lowdown::Application.routes.draw do
 
   # See how all your routes lay out with "rake routes"
 
-  get    'login(.:format)'  => 'user_session#new',     :as => :login
-  post   'login(.:format)'  => 'user_session#create',  :as => :login
-  delete 'logout(.:format)' => 'user_session#destroy', :as => :logout
-
+  devise_for :users, :controllers=>{:sessions=>"users"} do
+    get "new_user" => "users#new_user"
+    get "users/show_create" => "users#show_create"
+    post "users/create_user" => "users#create_user"
+    get "init" => "users#show_init"
+    post "init" => "users#init"
+    post "logout", :to => "users#sign_out"
+    get "users/index" => "users#index"
+  end
   root :to => 'dashboard#index'
 
-
+  get "dashboard/index"
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   
