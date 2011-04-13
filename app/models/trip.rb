@@ -59,6 +59,16 @@ class Trip < ActiveRecord::Base
     return self.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse
   end
 
+  def wheelchair?
+    if mobility == "Ambulatory" 
+      false
+    elsif mobility.nil?
+      nil
+    else
+      true
+    end
+  end 
+
   def spd_mileage
     if self.estimated_trip_distance_in_miles < 5
       return 0

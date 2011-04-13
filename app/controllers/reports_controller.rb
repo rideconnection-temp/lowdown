@@ -477,7 +477,45 @@ summaries.valid_end = ? "
   end
   
   def show_create_active_rider
-    @allocations = Allocation.spd.all
+    @start_date = DateTime.parse(params[:date] || '2010-12-1')
+    @after_end_date = @start_date.next_month
+
+    trips = Trip.current_versions.completed.spd.date_range(@start_date,@after_end_date).includes(:customer)
+
+    @spd_offices = {}
+    @customer_rows = {}
+    @approved_rides = 0
+    @wc_billed_rides = @nonwc_billed_rides = @unknown_billed_rides = 0
+    @wc_mileage = @nonwc_mileage = @unknown_mileage = 0
+
+    for trip in trips
+      row_key = [trip.customer_id, wheelchair]
+      customer = trip.customer
+      office_key = customer.spd_office
+      @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
+
+      row = @customer_rows[office_key][row_key]
+      if row.nil?
+        row = {:customer => customer,
+               :billed_rides=>0, :billable_mileage=>0, :mobility=>wheelchair}
+        @customer_rows[office_key][row_key] = row
+      end
+
+      row[:billed_rides] += 1
+      row[:billable_mileage] += trip.spd_mileage
+
+      @approved_rides += customer.approved_rides.to_i
+      if trip.wheelchair?.nil?
+        @unknown_billed_rides += 1
+        @unknown_mileage += trip.spd_mileage
+      elsif trip.wheelchair?
+        @wc_billed_rides += 1
+        @wc_mileage += trip.spd_mileage
+      else
+        @nonwc_billed_rides += 1
+        @nonwc_mileage += trip.spd_mileage
+      end
+    end
   end
 
   def csv
@@ -798,7 +836,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
   end
 
   def spd_report
-    @start_date = DateTime.parse(params[:date])
+    @start_date = DateTime.parse(params[:date] || '2010-12-1')
     @end_date = @start_date.next_month
 
     trips = Trip.current_records.completed.spd.date_range(@start_date,@end_date).include(:customer)
@@ -845,7 +883,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
         @nonwc_mileage += trip.spd_mileage
       end
     end
-
   end
   private 
 
