@@ -55,8 +55,6 @@ class Query
 end
 
 class TripsController < ApplicationController
-
-  before_filter :require_user, :except=>[:import]
   before_filter :require_admin_user, :only=>[:import]
 
   def index

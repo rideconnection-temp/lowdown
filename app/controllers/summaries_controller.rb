@@ -49,7 +49,6 @@ class Query
 end
 
 class SummariesController < ApplicationController
-  before_filter :require_user
   before_filter :require_admin_user, :except=>[:index]
 
   def index

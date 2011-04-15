@@ -6,7 +6,6 @@ end
 
 class ReportsController < ApplicationController
 
-  before_filter :require_user
   before_filter :require_admin_user, :except=>[:csv, :show_create_report, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly, :show_create_active_rider]
 
   class ReportRow

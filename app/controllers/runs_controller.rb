@@ -55,7 +55,6 @@ class Query
 end
 
 class RunsController < ApplicationController
-  before_filter :require_user
   before_filter :require_admin_user, :except=>[:index, :show]
   
   def index
