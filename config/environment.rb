@@ -22,6 +22,7 @@ TRIP_PURPOSE_TO_SUMMARY_PURPOSE = {
 nil => "Unspecified"
     }
 
+EMAIL_FROM = "apps@rideconnection.com"
 
 # Initialize the rails application
 Lowdown::Application.initialize!
