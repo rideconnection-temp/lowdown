@@ -1,5 +1,5 @@
 class NewUserMailer < ActionMailer::Base
-  default :from => "novalis@openplans.org"
+  default :from => EMAIL_FROM
 
 
   def new_user_email(user, password)
