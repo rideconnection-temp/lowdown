@@ -1,5 +1,5 @@
 <% content_for :menu_bar do %>
-        <ul id="sitenav" class="selfclear">
+        <ul id="subnav" class="selfclear">
           <li><%= link_to "View Trips", :action=>:list %></li>
 <% if current_user.is_admin %>
           <li><%= link_to "Import Trips", :action=>:import %></li>

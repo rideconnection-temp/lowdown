@@ -1,4 +1,7 @@
-        <h1>Create Report</h1>
+<div id="page-header">
+  <h1>Create Report</h1>
+</div>
+
         <%= form_for @report, :html=>{:id=>"create-report", :method=>:post}, :url=>{:action=>"report"} do |f| %>
           <div class="ui-widget">
              <h2>Allocations to include</h2>
@@ -86,5 +89,8 @@
 
 	  <%= f.label :adjustment, "Use adjusted values?", :class => "checkbox" %> <%= f.check_box :adjustment %><br/>
 
-          <input id="report-create" type="submit" value="Create Report" />
+          <div class="actions">
+            <input id="report-create" type="submit" value="Create Report" />
+          </div>
+
         <% end %><!-- end form -->

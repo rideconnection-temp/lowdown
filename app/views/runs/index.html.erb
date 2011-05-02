@@ -1,4 +1,7 @@
-<h1>View Runs</h1>
+<div id="page-header">
+  <h1>View Runs</h1>
+</div>
+
    <%= form_for @query, :html=>{:id=>"run-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
      <div class="ui-widget">
        Runs between <span id="startdate-wrap"><%= f.text_field :start_date %></span>and<span id="enddate-wrap"><%= f.text_field :end_date %></span>

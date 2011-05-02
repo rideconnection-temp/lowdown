@@ -1,12 +1,18 @@
-   <h1>View Summaries</h1>
-   <%= form_for @query, :html=>{:id=>"summary-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
-     <div class="ui-widget">
-       Summaries between
-       <span id="period_start-wrap"><%= f.text_field :period_start %></span>and<span id="period_end-wrap"><%= f.text_field :period_end %></span>
-     	<span id="funding-source-wrap">
-<%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
-    	</span>
-    	<input id="summary-search" type="submit" value="Search" />
-     </div>
-   <% end %> 
+<div id="page-header">
+  <h1>View Summaries</h1>
+</div>
+
+<%= form_for @query, :html=>{:id=>"summary-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
+
+  Summaries between
+  <%= f.text_field :period_start %>
+  and
+  <%= f.text_field :period_end %>
+
+  <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
+
+  <input id="summary-search" type="submit" value="Search" />
+
+<% end %> 
+
 <%= render "summaries" %>

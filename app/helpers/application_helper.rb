@@ -40,4 +40,10 @@ module ApplicationHelper
       end
   end
   
+  def bodytag_class
+    a = controller.class.to_s.underscore.gsub(/_controller$/, '')
+    b = controller.action_name.underscore
+    "#{a} #{b}".gsub(/_/, '-')
+  end
+
 end

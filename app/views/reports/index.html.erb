@@ -1,51 +1,55 @@
+<div id="page-header">
+  <h1>Reports</h1>
+</div>
+
 <% if @reports.size == 0 %>
-
-No reports.<br/>
-
+<p>No reports.</p>
 <% end %>
-
-<%= link_to "Define new report", :action=>:show_create_report %>
 
 <% for report in @reports %>
 
-<h2><%= report.name %> </h2>
-<div>
+<h2 class="section-header"><%= report.name %></h2>
+
 <% if report.allocations.empty? %>
-All allocations<br/>
+All allocations
 <% else %>
-  <ul>
+<ul>
   <% for allocation in report.allocations %>
-    <li><%= allocation.name %></li>
+  <li><%= allocation.name %></li>
   <% end %>
-  </ul>
+</ul>
 <% end %>
 
 Fields:
 <% if report.fields.empty? %>
 All
 <% else %> 
-<%= report.fields.sort.join(", ") %><br/>
+<%= report.fields.sort.join(", ") %>
 <% end %>
 
 Group by:
-<%= report.group_by %><br/>
+<%= report.group_by %>
 
 <form action="<%= url_for :action=>:report %>">
-<input type="hidden" name="report[id]" value="<%= report.id %>" />
-<label for="report[start_date]">Start date</label><input type="text" name="report[start_date]" value="<%= @start_date %>" /><br/>
-<label for="report[end_date]">End date</label><input type="text" name="report[end_date]" value="<%= @end_date %>" /><br/>
+  <fieldset>
+    <input type="hidden" name="report[id]" value="<%= report.id %>" />
+    <label for="report[start_date]">Start date</label><input type="text" name="report[start_date]" value="<%= @start_date %>" />
+    <label for="report[end_date]">End date</label><input type="text" name="report[end_date]" value="<%= @end_date %>" />
 
-<input type="hidden" name="report[adjustment]" value="0" /><br/>
-<input type="hidden" name="report[pending]" value="0" /><br/>
-<label for="report[adjustment]">Adjustments?</label><input type="checkbox" name="report[adjustment]" value="1" />
-<label for="report[pending]">Pending?</label><input type="checkbox" name="report[pending]" value="1" />
-<input type="submit" name="commit" value="View Report"/>
+    <input type="hidden" name="report[adjustment]" value="0" />
+    <input type="hidden" name="report[pending]" value="0" />
+    <label for="report[adjustment]">Adjustments?</label><input type="checkbox" name="report[adjustment]" value="1" />
+    <label for="report[pending]">Pending?</label><input type="checkbox" name="report[pending]" value="1" />
+    <input type="submit" name="commit" value="View Report"/>
+  </fieldset>
 </form>
 <%= form_for report, :url=>{:action=>:delete_report} do |f| %>
 <input type="hidden" name="report[id]" value="<%= report.id %>" />
 <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?" %>
 <% end %>
 
-</div>
+<hr />
+
+<%= link_to 'Define New Report', { :action=>:show_create_report }, :class=>'action-bttn' %>
 
 <% end %>

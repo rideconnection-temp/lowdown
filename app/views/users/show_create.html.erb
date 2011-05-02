@@ -1,3 +1,7 @@
+<div id="page-header">
+  <h1>Add New User</h1>
+</div>
+
 <%= form_for :user, :url=>{:action=>:create_user} do |f| %>
 
 <%= render :partial=>"form", :locals=>{:f => f}%>

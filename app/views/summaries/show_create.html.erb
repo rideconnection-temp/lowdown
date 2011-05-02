@@ -1,7 +1,13 @@
+<div id="page-header">
+  <h1>Create Summary</h1>
+</div>
+
 <%= form_for @summary, :url=>{:action=>:create} do |f| %>
   <%= render :partial => "form", :locals=>{:f=>f} %>
 
-  <br/>
 
-  <%= submit_tag 'Create' %>
+  <div class="actions">
+    <%= submit_tag 'Create' %>
+  </div>
+
 <% end %>

@@ -1,4 +1,7 @@
-      <h1>Active Rider Report</h1>
+<div id="page-header">
+  <h1>Active Rider Report</h1>
+</div>
+
       <form>
         <div class="ui-widget">
           Choose month
@@ -42,7 +45,7 @@
   <tbody>
     <% for office in @customer_rows.keys.sort %>
       <tr>
-        <th class="contrast banner" colspan="9">Beaverton</th>
+        <td class="contrast banner" colspan="9">Beaverton</td>
       </tr>
       <% for customer_row in @customer_rows[office].values.sort {|a,b| a[:customer].name <=> b[:customer].name } %>
         <% customer = customer_row[:customer] %>

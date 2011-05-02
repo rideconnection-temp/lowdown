@@ -2,8 +2,7 @@
 <html>
 <head>
   <title>Lowdown</title>
-  <%= stylesheet_link_tag 'screen-reset' %>
-  <!--[if lt IE 8]><%= stylesheet_link_tag 'ie' %><![endif]-->
+  <%= stylesheet_link_tag 'style', :media=>"screen" %>
   <%= stylesheet_link_tag 'print-reset', :media=>"print" %>
   
   <%= stylesheet_link_tag 'monthpicker.css' %>
@@ -12,8 +11,6 @@
   <%= stylesheet_link_tag 'jquery.multiselect.css' %>
   <%= stylesheet_link_tag 'ui.spinner.css' %>
   
-  <%= stylesheet_link_tag 'application' %>
-
   <%= javascript_include_tag 'jquery-1.4.2.min' %>
   <%= javascript_include_tag 'jquery-ui-1.8.6.custom.min' %>
   <%= javascript_include_tag 'jquery-ui-selectmenu' %>
@@ -27,7 +24,7 @@
 
   <%= csrf_meta_tag %>
 </head>
-<body>
+<body class="<%= bodytag_class %>">
 
   <div id="header">
     <div class="wrap selfclear">
@@ -41,16 +38,32 @@
   </div><!-- /#header -->
   <div id="crossbar">
     <div class="wrap selfclear">             
-      <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
+      <ul id="primary-nav" class="selfclear">
+        <li class="reports"><a href="/reports/">Reports</a></li>
+        <li class="summaries"><a href="/summaries/">Summaries</a></li>
+        <li class="trips"><a href="/trips/">Trips</a></li>
+        <li class="runs"><a href="/runs/">Runs</a></li>
+        <li class="users"><a href="/users/index">Users</a></li>
+      </ul>
+      <ul id="secondary-nav" class="selfclear">
+      </ul>
     </div><!-- /.wrap -->
   </div><!-- /#crossbar -->
 
 
-   <div id="main">
-     <div class="wrap selfclear">
-       <%= raw flash_messages %>
-       <%= yield %>
+  <div id="main">
+
+    <div class="wrap selfclear">
+
+      <%= raw flash_messages %>
+
+      <%= content_for?(:menu_bar) ? yield(:menu_bar) : '' %>
+
+      <%= yield %>
+
      </div><!-- /.wrap -->
-   </div><!-- /#main -->
+
+  </div><!-- /#main -->
+
 </body>
 </html>
