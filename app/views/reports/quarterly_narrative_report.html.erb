@@ -1,5 +1,6 @@
-
-<h1>Quarterly Narrative Report - Quarter <%=@quarter%></h1>
+<div id="page-header">
+  <h1>Quarterly Narrative Report - Quarter <%=@quarter%></h1>
+</div>
 
 <% for field, rows in @allocations %>
 <% allocation = get_row(rows).allocation %>

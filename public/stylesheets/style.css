@@ -586,6 +586,7 @@ form div.actions input[type="submit"]:hover {
 /* tables */
 table {
     width: 100%;
+    overflow: hidden;
     margin-bottom: 10px;
     border-top: 5px solid #2e6399;
     border-bottom: 10px solid #f7f7f7;
@@ -631,6 +632,25 @@ table th {
     text-align: left;
     background: #2e6399;
     color: #ddd;
+}
+th.rotate-270 {
+    text-align: left;
+}
+th.rotate-270 div {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+th.rotate-270 span {
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    overflow: visible;
+    z-index: 100;
+    -webkit-transform: rotate(-90deg); 
+    -moz-transform: rotate(-90deg);	
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 table tr.report-item td {
     border-top: 1px solid #2e6399;
@@ -728,6 +748,7 @@ body.index #calendar { margin: 0 0 20px; border-bottom: 1px solid #bbb; }
   
 .ui-datepicker-trigger {
     padding-left: 5px;
+    margin-right: 5px;
     vertical-align: middle;
 }
 
@@ -1040,6 +1061,10 @@ body.users a.action-bttn {
  * Reports
  *
  */
+.report-header {
+    margin: 0 10px 10px 0;
+    float: left;
+}
 ul.reports {
     list-style: none;
     margin-left: 0;
@@ -1052,6 +1077,9 @@ ul.reports li a {
     text-decoration: none;
     background: url(images/reports-stack.png) left center no-repeat scroll;
 }
+p input[type="checkbox"] { 
+    vertical-align: middle; 
+}
 #report-checkbox-area {
 }
 #report-checkbox-area ol {
@@ -1063,6 +1091,6 @@ ul.reports li a {
 #report-checkbox-area ol li {
     margin-bottom: 10px;
 }
-.group-by-wrap, .adjusted-values, .some-checkboxes {
+.group-by-wrap, .adjusted-values {
     margin-bottom: 10px;
 }
