@@ -1,5 +1,4 @@
-<%= f.label :email %>
-<%= f.text_field :email %><br/>
-
-<%= f.label :level %>
-<%= f.text_field :level %> (enter 0 for an ordinary user or 100 for an updater)<br/>
+<ol class="section fourth">
+  <li><%= f.label :email, "Email: " %> <%= f.text_field :email %></li>
+  <li><%= f.label :level, "Level: " %> <%= f.text_field :level %> (enter 0 for an ordinary user or 100 for an updater)</li>
+</ol>

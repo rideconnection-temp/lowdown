@@ -1,22 +1,32 @@
-         <h1>Network Service Summary</h1>
+<div id="page-header">
+  <h1>Network Service Summary</h1>
+</div>
 
-	 Start: <%= @start_date %><br/>
-	 End: <%= @end_date %> <br/>
+<p>
+  Start: <%= @start_date %> 
+  <span class="separator">|</span> 
+  End: <%= @end_date %> 
+  <span class="separator">|</span> 
+  <%= link_to "CSV", @params.merge({:action=>:csv}) %>
+</p>
 
-   <%= link_to "CSV", @params.merge({:action=>:csv}) %><br/>
+<%= form_for @report, :url=>{:action=>:save_report} do |f| %>
 
-   <!-- save report link -->
-   <%= form_for @report, :url=>{:action=>:save_report} do |f| %>
-   <%= f.hidden_field :id %>
-   <%= f.hidden_field :group_by %>
-   <%= f.hidden_field :start_date, :value=>@start_date  %>
-   <%= f.hidden_field :end_date, :value=>@end_date %>
-   <%= f.hidden_field :allocation_list %>
-   <%= f.hidden_field :field_list %>
-   <%= f.submit "Save this report as " %>
-   <%= f.text_field :name %>
-   <% end %>
-<br/>
+  <!-- save report link -->
 
+  <%= f.hidden_field :id %>
+  <%= f.hidden_field :group_by %>
+  <%= f.hidden_field :start_date, :value=>@start_date  %>
+  <%= f.hidden_field :end_date, :value=>@end_date %>
+  <%= f.hidden_field :allocation_list %>
+  <%= f.hidden_field :field_list %>
+
+<p>
+  <%= f.label :name, "Save this report as:" %>
+  <%= f.text_field :name %>
+  <%= f.submit "Save" %>
+</p>
+
+<% end %>
 
 <%= render :partial=> "report", :locals=>{:results=>@results, :group_fields=>@group_fields} %>

@@ -4,11 +4,11 @@
  <% rows.each do |group_name, row| %>
       <% if !@tr_open %>
         <% @tr_open = true %>
-        <tr>
+        <tr class="report-item">
       <% end %>
-      <th rowspan="<%= nested_size_with_totals(row) %>">
+      <td rowspan="<%= nested_size_with_totals(row) %>" class="report-item">
 	<span><%= get_row(row).send(group_fields[0]) %></span>
-      </th>
+      </td>
 
 
     <%= render :partial=>'nested_rows', :locals=>{:rows=>row, :group_fields=>group_fields[1..-1]} %>

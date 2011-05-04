@@ -3,11 +3,14 @@
 </div>
 
 <%= form_for :user, :url=>{:action=>:create_user} do |f| %>
+  <fieldset>
 
-<%= render :partial=>"form", :locals=>{:f => f}%>
+  <%= render :partial=>"form", :locals=>{:f => f}%>
 
-<%= f.submit 'Create' %>
+  <div class="actions">
+    <%= f.submit 'Create' %>
+    <p>An email will be sent to the user with their password when you click "Create".</p>
+  </div>
 
-<br/>An email will be sent to the user with their password when you click "Create".<br/>
-
+  </fieldset>
 <% end %>

@@ -455,7 +455,7 @@ ol.section li {
     margin-bottom: 10px;
     clear: left;
 }
-ol.section li label {
+form label {
     font-weight: bold;
 }
 fieldset {
@@ -631,6 +631,25 @@ table th {
     text-align: left;
     background: #2e6399;
     color: #ddd;
+}
+table tr.report-item td {
+    border-top: 1px solid #2e6399;
+}
+table td.report-item {
+    background: #ddd;
+    font-weight: bold;
+}
+div.table-wrapper {
+    width: 100%;
+    overflow: auto;
+    padding-bottom: -20px;
+}
+div.table-wrapper table {
+    margin-bottom: 0;
+    border-bottom: 0;
+}
+div.table-wrapper table th {
+    white-space: nowrap;
 }
 
 /*
@@ -817,12 +836,12 @@ input.delete:active {
 p.profile-actions .edit {
     float: right;
 }
-p.profile-actions .separator {
-    display: none;
-}
-p.activation-dates .separator {
+.separator {
     padding: 0 0.4em;
     color: #bbb;
+}
+p.profile-actions .separator {
+    display: none;
 }
 p.activation-dates label {
     font-weight: bold;
@@ -1014,4 +1033,36 @@ body.reports a.action-bttn {
 }
 body.users a.action-bttn {
     background: #eee url(images/user--plus.png) 0.8em center no-repeat scroll;
+}
+
+/*
+ *
+ * Reports
+ *
+ */
+ul.reports {
+    list-style: none;
+    margin-left: 0;
+}
+ul.reports li {
+    margin: 0 0 10px;
+}
+ul.reports li a {
+    padding: 5px 0 5px 20px;
+    text-decoration: none;
+    background: url(images/reports-stack.png) left center no-repeat scroll;
+}
+#report-checkbox-area {
+}
+#report-checkbox-area ol {
+    list-style: none;
+    margin: 0;
+    float: left;
+    width: 20%;
+}
+#report-checkbox-area ol li {
+    margin-bottom: 10px;
+}
+.group-by-wrap, .adjusted-values, .some-checkboxes {
+    margin-bottom: 10px;
 }
