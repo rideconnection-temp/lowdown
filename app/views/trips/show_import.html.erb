@@ -3,11 +3,15 @@
 </div>
 
 <%=form_tag url_for(:action=>:import), :method=>:post, :multipart => true %>
+  <fieldset>
 
-  <div class="ui-widget">
-    <input id="file-import" name="file-import" type="file" value="" size="20" />
-    <div class="fakebrowse" class="selfclear"><input class="fakebrowseinput" type="text" /><span class="fakebutton">browse</span></div>
-    
-    <input id="trip-import" type="submit" value="Import" />
-  </div>
+    <ol class="section first">
+      <li><input id="file-import" name="file-import" type="file" value="" size="20" /></li>
+    </ol>
+
+    <div class="actions">
+      <input id="trip-import" type="submit" value="Import" />
+    </div>
+
+  </fieldset>
 </form>

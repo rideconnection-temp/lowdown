@@ -1,50 +1,51 @@
-<%= f.hidden_field :id %>
-       <ul class="form">
-         <li class="allocations">
-<%= f.label :allocation %> <%= f.collection_select :allocation_id, @allocations, :id, :name %> </li>
+  <%= f.hidden_field :id %>
 
-<li><label for="summary_period_start">Summary Month</label>
-<span id="summary-period-start-wrap"> <%= f.date_select :period_start, :discard_day=>true %>
-</span> 
+  <fieldset>
 
-</li>
+    <ol class="section summary-form-part-one">
+      <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
 
-<li>
-  <table id="summary-row-info">
-    <thead>
-      <tr>
-        <th>Purpose</th>
-        <th>In-District</th>
-        <th>Out of District</th>
-      </tr>
-    </thead>
-    <tbody>
-<%= f.fields_for :summary_rows do |row_form| %>
-<%= row_form.hidden_field :purpose %>
-      <tr>
-        <td><%= row_form.label row_form.object.purpose %></td>
-        <td><%= row_form.text_field :in_district_trips %></td>
-        <td><%= row_form.text_field :out_of_district_trips %></td>
-      </tr>
-<% end %>
+      <li><%= f.label :period_start, "Summary Month:" %> <%= f.date_select :period_start, :discard_day=>true %></li>
+    </ol>
 
+    <ol class="section summary-form-part-two">
+      <li><%= f.label :total_miles, "Total Miles:" %> <%= f.text_field :total_miles %></li>
+      <li><%= f.label :unduplicated_riders, "Unduplicated Riders:" %> <%= f.text_field :unduplicated_riders %></li>
+      <li><%= f.label :driver_hours_paid, "Driver Hours Paid" %> <%= f.text_field :driver_hours_paid %></li>
+      <li><%= f.label :driver_hours_volunteer, "Driver Volunteer Hours" %> <%= f.text_field :driver_hours_volunteer %></li>
+      <li><%= f.label :escort_hours_volunteer, "Escort Volunteer Hours" %> <%= f.text_field :escort_hours_volunteer %></li>
+      <li><%= f.label :administrative_hours_volunteer, "Admin Volunteer Hours:" %> <%= f.text_field :administrative_hours_volunteer %></li>
+      <li><%= f.label :administrative, "Administrative:" %> <%= f.text_field :administrative %></li>
+      <li><%= f.label :operations, "Operations:" %> <%= f.text_field :operations %></li>
+      <li><%= f.label :vehicle_maint, "Vehicle Maintenance:" %> <%= f.text_field :vehicle_maint %></li>
+      <li><%= f.label :administrative, "Funds:" %> <%= f.text_field :funds %></li>
+      <li><%= f.label :operations, "Donations:" %> <%= f.text_field :donations %></li>
+      <li><%= f.label :vehicle_maint, "Agency Other:" %> <%= f.text_field :agency_other %></li>
+      <li><%= f.label :complete, "Complete:" %><%= f.check_box :complete %></li>
+    </ol>
 
-    </tbody>
-  </table>
-</li>
-<li><%= f.label :total_miles %> <%= f.text_field :total_miles %></li>
-<li><%= f.label :unduplicated_riders %> <%= f.text_field :unduplicated_riders %></li>
-<li><%= f.label :driver_hours_paid %> <%= f.text_field :driver_hours_paid %></li>
-<li><%= f.label :driver_hours_volunteer %> <%= f.text_field :driver_hours_volunteer %></li>
-<li><%= f.label :escort_hours_volunteer %> <%= f.text_field :escort_hours_volunteer %></li>
-<li><%= f.label :administrative_hours_volunteer %> <%= f.text_field :administrative_hours_volunteer %></li>
-<li><%= f.label :administrative, "Administrative" %> <%= f.text_field :administrative %></li>
-<li><%= f.label :operations, "Operations" %> <%= f.text_field :operations %></li>
-<li><%= f.label :vehicle_maint, "Vehicle Maintenance" %> <%= f.text_field :vehicle_maint %></li>
-<li><%= f.label :administrative, "Funds" %> <%= f.text_field :funds %></li>
-<li><%= f.label :operations, "Donations" %> <%= f.text_field :donations %></li>
-<li><%= f.label :vehicle_maint, "Agency Other" %> <%= f.text_field :agency_other %></li>
+    <ol class="section summary-form-part-three">
+      <li>
+        <table id="summary-row-info">
+          <thead>
+            <tr>
+              <th>Purpose</th>
+              <th>In-District</th>
+              <th>Out of District</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= f.fields_for :summary_rows do |row_form| %>
+            <%= row_form.hidden_field :purpose %>
+            <tr>
+              <td><%= row_form.label row_form.object.purpose %></td>
+              <td><%= row_form.text_field :in_district_trips %></td>
+              <td><%= row_form.text_field :out_of_district_trips %></td>
+            </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </li>
+    </ol>
 
-<li><%= f.label :complete %><%= f.check_box :complete %></li>
-
-</ul>
+  </fieldset>

@@ -2,32 +2,15 @@
   <h1>Active Rider Report</h1>
 </div>
 
-      <form>
-        <div class="ui-widget">
-          Choose month
-          <div id="start_selector" class="monthpicker"></div>
-       	<input id="summary-search" type="submit" value="Search" />
-        </div>
-      </form>
+<form>
+  <p>
+    <label>Choose Month:</label> <%= date_select :start_selector, :discard_day=>true %>
+  	<input id="summary-search" type="submit" value="Search" />
+  </p>
+</form>
 
-      <script>
-      // <![CDATA[
-      $(document).ready(function(){
-        $("#start_selector").monthpicker(monthcallback);
-        $("#end_selector").monthpicker(monthcallback);
-
-        function monthcallback(data,$e){
-        	$e.next('input.monthtarget').val(data['year'] + '-' + zeroPad(data['month']));
-        }
-
-        function zeroPad(value) {
-            return (parseInt(value, 10) < 10) ? ("0" + value.toString()) : value;
-        }
-      });
-      // ]]>
-      </script>
-<br />
 <h2>Month: Jan 2011</h2>
+
 <table id="active-rider-results" class="results">
   <thead>
     <tr>

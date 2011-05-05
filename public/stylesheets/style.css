@@ -497,6 +497,19 @@ fieldset ol.fourth {
     float: left;
     width: 65%;
 }
+fieldset ol.summary-form-part-one {
+    float: left;
+    width: 40%;
+}
+fieldset ol.summary-form-part-two {
+    float: right;
+    width: 32%;
+}
+fieldset ol.summary-form-part-three {
+    float: left;
+    width: 65%;
+    clear: left;
+}
 fieldset ol.section li label {
     float: left;
     width: 35%;
@@ -520,6 +533,10 @@ fieldset ol.fourth li textarea {
 }
 fieldset ol.section li input.full {
     width: 60%;
+}
+fieldset select.full {
+    min-width: 100%;
+    height: 10em;
 }
 fieldset ol.section li.passengers input {
     max-width: 3em;
@@ -1080,17 +1097,25 @@ ul.reports li a {
 p input[type="checkbox"] { 
     vertical-align: middle; 
 }
+#report-fields-to-include {
+    float: left;
+}
 #report-checkbox-area {
+    float: left;
+    background: #f5f5f5;
+    border: 1px solid #bbb;
+    padding: 10px;
+    margin: 0 10px 10px 0;
 }
 #report-checkbox-area ol {
     list-style: none;
     margin: 0;
     float: left;
-    width: 20%;
+    margin-right: 20px;
 }
 #report-checkbox-area ol li {
     margin-bottom: 10px;
 }
-.group-by-wrap, .adjusted-values {
+#group-by, #group-by-1 {
     margin-bottom: 10px;
 }

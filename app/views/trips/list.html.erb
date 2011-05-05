@@ -2,17 +2,23 @@
   <h1>View Trips</h1>
 </div>
 
-         <%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
-           <div class="ui-widget">
-             Trips between
-             <span id="startday-wrap"><%= f.text_field :start_date %></span>and<span id="endday-wrap"><%= f.text_field :end_date %></span>
-           	<span id="provider-wrap">
-		  <%= f.collection_select :provider, @providers, :id, :name, :include_blank => true %>
-          	</span>
-           	<span id="funding-source-wrap">
-		  <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
-          	</span>
-          	<input id="trip-search" type="submit" value="Search" />
-           </div>
-         <% end %>
+<%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
+  <fieldset>
+    <ol class="section first">
+      <li><%= f.label :start_date, "After:" %> <%= f.text_field :start_date, :class=>"datepicker" %></li>
+      <li><%= f.label :end_date, "Before:" %> <%= f.text_field :end_date, :class=>"datepicker" %></li>
+    </ol>
+
+    <ol class="section fourth">
+      <li><%= f.label :provider, "Provider:" %> <%= f.collection_select :provider, @providers, :id, :name, :include_blank => true %></li>
+      <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %></li>
+    </ol>
+
+    <div class="actions">
+      <input id="trip-search" type="submit" value="Search" />
+    </div>
+
+  </fieldset>
+<% end %>
+
 <%= render "trips" %>

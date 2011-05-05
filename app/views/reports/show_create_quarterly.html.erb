@@ -2,14 +2,17 @@
   <h1>Create Quarterly Narrative Report</h1>
 </div>
 
-        <%= form_for @report, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"quarterly_narrative_report"} do |f| %>
-          <div class="ui-widget">
-           	service for the quarter beginning
-	           <span id="startday-wrap"><%= f.date_select :start_date, :discard_day=>true %></span>
-          </div>
+<%= form_for @report, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"quarterly_narrative_report"} do |f| %>
+  <fieldset>
 
-          <div class="actions">
-            <input id="report-create" type="submit" value="Create Report" />
-          </div>
+    <p>
+      <%= f.label :start_date, "Service for Quarter Beginning:" %>
+      <%= f.date_select :start_date, :discard_day=>true %>
+    </p>
 
-        <% end %><!-- end form -->
+    <div class="actions">
+      <input id="report-create" type="submit" value="Create Report" />
+    </div>
+
+  </fieldset>
+<% end %><!-- end form -->

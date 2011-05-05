@@ -3,16 +3,22 @@
 </div>
 
 <%= form_for @query, :html=>{:id=>"summary-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
+  <fieldset>
+    <h2>Summary Period</h2>
+    <ol class="section fourth">
+      <li><%= f.label :period_start, "Beginning:" %> <%= f.text_field :period_start, :class=>"datepicker" %></li>
+      <li><%= f.label :period_end, "Ending (Before):" %> <%= f.text_field :period_end, :class=>"datepicker" %></li>
+      <li>
+        <h2>Allocations</h2>
+        <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
+      </li>
+    </ol>
 
-  Summaries between
-  <%= f.text_field :period_start %>
-  and
-  <%= f.text_field :period_end %>
+    <div class="actions">
+      <input id="summary-search" type="submit" value="Search" />
+    </div>
 
-  <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
-
-  <input id="summary-search" type="submit" value="Search" />
-
+  </fieldset>
 <% end %> 
 
 <%= render "summaries" %>
