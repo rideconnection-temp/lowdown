@@ -641,33 +641,14 @@ tr {
 tr.odd {
     background: #f7f7f7;
 }
-table td,
-table th {
+table td {
     padding: 5px 10px 10px;
 }
 table th {
+    padding: 5px 5px 10px;
     text-align: left;
     background: #2e6399;
     color: #ddd;
-}
-th.rotate-270 {
-    text-align: left;
-}
-th.rotate-270 div {
-    height: 100%;
-    width: 100%;
-    position: relative;
-}
-th.rotate-270 span {
-    display: block;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    overflow: visible;
-    z-index: 100;
-    -webkit-transform: rotate(-90deg); 
-    -moz-transform: rotate(-90deg);	
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 table tr.report-item td {
     border-top: 1px solid #2e6399;
@@ -675,11 +656,17 @@ table tr.report-item td {
 table td.report-item {
     background: #ddd;
     font-weight: bold;
+    font-size: 90%;
+    padding: 5px 5px 10px;
+    text-align: center;
 }
 div.table-wrapper {
     width: 100%;
     overflow: auto;
     padding-bottom: -20px;
+}
+div.table-wrapper thead {
+    font-size: 75%;
 }
 div.table-wrapper table {
     margin-bottom: 0;

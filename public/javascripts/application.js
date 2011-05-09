@@ -31,6 +31,14 @@ $(document).ready(function() {
     constrainInput: false
   });
 
+  $('th.wrap').each(function(index, element) {
+    var th = $(element), word_array, last_word, first_part;
+    word_array = th.html().split(/\s+/); // split on spaces
+    th.html(word_array.join('<br />')); // join 'em back together with line breaks
+  });
+
+
+
 
 //  $('th.rotate-270').each(function() {
 //    var innerSpan = $(this).find('span').get(0);
