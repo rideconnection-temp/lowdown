@@ -43,7 +43,9 @@ class UsersController < Devise::SessionsController
     end
     password = ActiveSupport::SecureRandom.base64(6)
     params[:user][:password] = params[:user][:password_confirmation] = password
-    @user = User.create(params[:user])
+    @user = User.new(params[:user])
+    @user.level = params[:user][:level]
+    @user.save!
     NewUserMailer.new_user_email(@user, password).deliver
     flash[:notice] = "User #{@user.email} created"
     redirect_to :action=>:index, :controller=>:users
