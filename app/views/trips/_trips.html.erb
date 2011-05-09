@@ -1,51 +1,57 @@
-         <h2 id="result-count"><%= @trips.total_entries %> trips found.</h2>
-         <table id="trip-results">
-           <thead>
-             <tr>
-               <th>Customer</th>
-               <th>Status</th>
-               <th>Provider</th>
-               <th>Funding Source</th>
-               <th>Pickup</th>
-               <th>Dropoff</th>
-               <th>Customers Served</th>
-               <th>Shared</th>
-               <th>Run Name</th>
-               <th>Fare</th>
-               <th></th>
-             </tr>
-           </thead>
-           <tbody>
-             <% @trips.each do |trip| %>
-             <tr>
-               <td><a href="#"> <%= trip.customer.name %> </a></td>
-               <td><% trip.result_code %></td>
-               <td> <%= trip.allocation.provider.name %></td>
-               <td> <%= trip.allocation.project.funding_source %></td>
-               <td>
-                 <%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
-               <td>
-                 <%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
-               <td><%= trip.customers_served %></td>
-               <td>
-<% if trip.customers_served > 1 %>
-<%= link_to "Yes", url_for(:action=>:share, :id=>trip.routematch_share_id), :html_options=>{:title=>"View all trips in this shared ride"} %></td>
-<% else %>
-No
-<% end %>
-               <td>
-<% if trip.run %>
-<%= link_to trip.run.display_name, url_for(:action=>:run, :id=>trip.run.base_id), :html_options=>{:title=>"View all trips in this Run"} %></td>
-<% else %>
-(no run)
-<% end %>
+<h2 id="result-count"><%= @trips.total_entries %> trip<% if @trips.total_entries != 1 %>s<% end %> found.</h2>
 
-</td>
-               <td>$<%= trip.fare %></td>
-               <td>
-<%= link_to "Details", :action=>:show, :id=>trip.id, :html_options=>{:title=>"View details for this trip"} %></td>
-             </tr>
-             <% end %>
-           </tbody>
-         </table>
+<% if @trips.total_entries > 0 %>
+
+<table id="trip-results">
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Status</th>
+      <th>Provider</th>
+      <th>Funding Source</th>
+      <th>Pickup</th>
+      <th>Dropoff</th>
+      <th>Customers Served</th>
+      <th>Shared</th>
+      <th>Run Name</th>
+      <th>Fare</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @trips.each do |trip| %>
+    <tr>
+      <td><a href="#"> <%= trip.customer.name %> </a></td>
+      <td><% trip.result_code %></td>
+      <td> <%= trip.allocation.provider.name %></td>
+      <td> <%= trip.allocation.project.funding_source %></td>
+      <td>
+      <%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
+      <td>
+      <%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
+      <td><%= trip.customers_served %></td>
+      <td>
+      <% if trip.customers_served > 1 %>
+      <%= link_to "Yes", url_for(:action=>:share, :id=>trip.routematch_share_id), :html_options=>{:title=>"View all trips in this shared ride"} %></td>
+      <% else %>
+      No
+      <% end %>
+      <td>
+      <% if trip.run %>
+      <%= link_to trip.run.display_name, url_for(:action=>:run, :id=>trip.run.base_id), :html_options=>{:title=>"View all trips in this Run"} %></td>
+      <% else %>
+      (no run)
+      <% end %>
+      
+      </td>
+      <td>$<%= trip.fare %></td>
+      <td>
+      <%= link_to "Details", :action=>:show, :id=>trip.id, :html_options=>{:title=>"View details for this trip"} %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
 <%= will_paginate @trips %>
+
+<% end %>
