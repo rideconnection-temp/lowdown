@@ -52,5 +52,5 @@
 <% end %>
 
 <% if group_fields.size == @levels %>
-<%= render :partial=>'totals', :locals=>{:row=>rows, :group_fields=>group_fields[1..-1]} %>
+<%= render :partial=>'totals', :locals=>{:row=>rows, :group_fields=>group_fields} %>
 <% end %>
