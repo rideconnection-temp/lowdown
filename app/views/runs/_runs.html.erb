@@ -2,7 +2,7 @@
 
 <% if @runs.total_entries > 0 %>
 
-<%= link_to 'Mark All Complete', { :action=>:bulk_update, "query[start_date]" => @query.start_date, "query[end_date]" => @query.end_date }, :class=>"mark-complete" %>
+<%= link_to 'Mark All Complete', { :action=>:bulk_update, "query[start_date]" => @query.start_date, "query[end_date]" => @query.end_date }, {:class=>"mark-complete", :confirm=>"Are you sure you want to mark all runs complete?" %>
 
 <table id="run-results">
   <thead>
