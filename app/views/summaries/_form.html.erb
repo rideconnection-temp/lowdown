@@ -5,7 +5,7 @@
     <ol class="section summary-form-part-one">
       <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
 
-      <li><%= f.label :period_start, "Summary Month:" %> <%= f.date_select :period_start, :discard_day=>true %></li>
+      <li><%= f.label :period_start, "Summary Month:" %> <%= f.text_field :period_start %></li>
     </ol>
 
     <ol class="section summary-form-part-two">
