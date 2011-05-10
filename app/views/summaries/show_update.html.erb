@@ -14,7 +14,7 @@
              <% else %>
                <%= link_to time_ago_in_words(version.valid_start), :action=>:show_update, :id=>version.id %> ago
              <% end %>
-             by <span class="update-user"><%= version.updater.name %></span>
+             by <span class="update-user"><%= version.updater.email %></span>
 
            </li>
 <% end %>
