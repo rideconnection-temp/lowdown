@@ -127,7 +127,21 @@ class TripsController < ApplicationController
     @trip.update_attributes(params[:trip]) ?
       redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
   end
-  
-  
 
+  def show_bulk_update
+
+  end
+
+  def bulk_update
+
+   start_date = Date.parse(params[:start_date])
+   end_date = Date.parse(params[:end_date])
+
+   updated = Run.current_versions.where("date >= ? and date < ?", start_date, end_date).count
+
+   Run.current_versions.update_all({ :complete=>true }, ["date >= ? and date < ?", start_date, end_date])
+
+   flash[:notice] = "Updated #{updated} records"
+   redirect_to :action=>:show_bulk_update
+  end
 end
