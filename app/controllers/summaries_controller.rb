@@ -19,11 +19,11 @@ class Query
       if params["period_end(1i)"]
         @period_end = convert_date(params, :end_date)
       end
-      if params["period_start"]
-        @period_start = Date.parse(params["period_start"])
+      if params[:start_date]
+        @period_start = Date.parse(params[:start_date])
       end
-      if params["period_end"]
-        @period_end = Date.parse(params["period_end"])
+      if params[:end_date]
+        @period_end = Date.parse(params[:end_date])
       end
       if params[:allocation]
         @allocation = params[:allocation].to_i
@@ -37,9 +37,9 @@ class Query
 
   def conditions
     d = {}
-    if period_start
-      d[:period_start] = period_start..period_end
-      d[:period_end] = period_start..period_end
+    if @period_start
+      d[:period_start] = @period_start..@period_end
+      d[:period_end] = @period_start..@period_end
     end
     if allocation && allocation != 0
       d[:allocation_id] = allocation
@@ -97,9 +97,9 @@ class SummariesController < ApplicationController
   def bulk_update
     updated = 0
 
-    @query = Query.new(params[:query])
+    @query = Query.new(params)
     if @query.conditions.empty?
-      flash[:error] = "Cannot update without conditions"
+      flash[:alert] = "Cannot update without date range"
     else
       for summary in Summary.current_versions :conditions => @query.conditions, :joins=>:allocation
         updated += 1
@@ -109,7 +109,7 @@ class SummariesController < ApplicationController
       flash[:notice] = "Updated #{updated} records"
 
     end
-    redirect_to :action=>:index
+    redirect_to :action=>:show_bulk_update
   end
 
   def show_update

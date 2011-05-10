@@ -5,7 +5,7 @@
 <%= form_tag :action=>:bulk_update, :method=>"POST" do  %>
   <fieldset>
 
-    <p><strong>Mark all summaries complete for periods between:</strong> <%= date_select :update, :start_date %> and <%= date_select :update, :end_date %></p>
+    <p><strong>Mark all summaries complete for periods between:</strong> <%= text_field_tag :start_date %> and <%= text_field_tag :end_date %></p>
 
     <div class="actions">
       <%= submit_tag 'Update' %>
