@@ -26,7 +26,7 @@
       <% if @fields.member? 'undup_riders' %><th rowspan="2" class="wrap">Undup Riders</th><% end %>
       <% if @fields['volunteer_hours'] > 0 %><th colspan="<%= @fields['volunteer_hours'] %>">Volunteer Hours</th><% end %>
     </tr>
-    <tr>
+    <tr class="sub-header">
       <% if @fields.member? 'driver_volunteer_hours' %><th class="wrap">Volunteer</th><% end %>
       <% if @fields.member? 'driver_paid_hours' %><th class="wrap">Paid</th><% end %>
       <% if @fields.member? 'driver_total_hours' %><th class="wrap">Total</th><% end %>

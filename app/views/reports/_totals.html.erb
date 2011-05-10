@@ -2,7 +2,7 @@
       <!-- totals -->
       <% row = controller.sum(row) %>
       <!-- you will never be tr_open here -->
-      <tr class="totals">
+      <tr class="<% if group_fields.size >= 2 %>sum-<% end %>totals">
         <td colspan="<%=group_fields.size%>">Totals</td>
 <% if @fields.member? 'funds' %><td><%= '%.2f' % row.funds %></td><%end%>
 <% if @fields.member? 'agency_other' %><td><%= '%.2f' % row.agency_other %></td><%end%>

@@ -64,7 +64,6 @@ h2 {
     line-height: 1.2;
 }
 
-
 /*
  *
  * Base Styles 
@@ -326,7 +325,6 @@ body.users #primary-nav li.users a:link, body.users #primary-nav li.users a:visi
     color: #009FFB;
 }
 
-
 /* subnav - section navigation */
 #subnav {
     float: right;
@@ -362,7 +360,6 @@ body.users #primary-nav li.users a:link, body.users #primary-nav li.users a:visi
 .section-header {
     margin: 10px 0;
 }
-
 
 /*
  *
@@ -600,8 +597,10 @@ form div.actions input[type="submit"] {
 form div.actions input[type="submit"]:hover {
     background: #009FFB;
 }
+
 /* tables */
 table {
+    font-size: 12px;
     width: 100%;
     overflow: hidden;
     margin-bottom: 10px;
@@ -626,15 +625,6 @@ table {
     -moz-border-radius-bottomleft: 5px;
     border-bottom-left-radius: 5px;
 }
-#calendar table {
-    border: 0;
-    border-collapse: collapse;
-    background: #fff;
-    margin: 0;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-}
 tr {
     background: #fff;
 }
@@ -643,20 +633,35 @@ tr.odd {
 }
 table td {
     padding: 5px 10px 10px;
+    border-right: 1px solid #eee;
+}
+table td:last-child {
+    border-right: 0;
 }
 table th {
-    padding: 5px 5px 10px;
+    padding: 5px;
     text-align: left;
     background: #2e6399;
     color: #ddd;
+    font-size: 10px;
+    letter-spacing: -0.2px;
+    border-right: 1px solid #3674b3;
+}
+table th:last-child {
+    border-right: 0;
+}
+table tr.sub-header th {
+    border-top: 1px dotted #3674b3;
+    vertical-align: bottom;
 }
 table tr.report-item td {
     border-top: 1px solid #2e6399;
 }
 table td.report-item {
-    background: #ddd;
+    background: #E5F2FF;
+    border-right: 1px solid #E5F2FF;
     font-weight: bold;
-    font-size: 90%;
+    font-size: 11px;
     padding: 5px 5px 10px;
     text-align: center;
 }
@@ -665,63 +670,20 @@ div.table-wrapper {
     overflow: auto;
     padding-bottom: -20px;
 }
-div.table-wrapper thead {
-    font-size: 75%;
-}
 div.table-wrapper table {
     margin-bottom: 0;
     border-bottom: 0;
 }
-div.table-wrapper table th {
-    white-space: nowrap;
+table tr.sum-totals {
+    background-color: #ffffc6;
 }
-
-/*
- *
- * Calendar
- *
- */
-#calendar { margin: 0; }
-body.index #calendar { margin: 0 0 20px; border-bottom: 1px solid #bbb; }
-
-/* buttons */
-.ui-button-text-icon-primary .ui-icon-seek-prev, .ui-button-text-icons .ui-icon-seek-prev, .ui-button-icons-only .ui-icon-seek-prev { left: 50% !important; }
-.ui-button-text-icon-primary .ui-icon-seek-next, .ui-button-text-icons .ui-icon-seek-next, .ui-button-icons-only .ui-icon-seek-next { left: 50% !important; }
-.ui-button-icons-only .ui-icon-home { left: .5em !important; }
-
-/* colors */
-.wc-container{}
-.wc-toolbar{
-    background:#BBCCFF; border:none; padding:5px !important;
-    -webkit-border-top-left-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -moz-border-radius-topright: 5px;
-    border-top-right-radius: 5px;
+table tr.sum-totals td {
+    border-right: 1px solid #f5f58e;
+    font-weight: bold;
 }
-.wc-header{background:#E3E9FF;border:none;font-size:11px;}
-.wc-header{border-bottom:2px solid #BBCCFF;}
-.wc-hour-end, .wc-hour-header{color:#666666;border-color:#ccc}
-.wc-hour-header,
-.wc-grid-timeslot-header,
-.wc-business-hours{background:#F6F9FC;}
-.wc-column-odd{background:transparent;}
-.wc-column-even{background:#ddddbe;}
-.wc-time-slots .wc-today {background-color: #ffffcc;}
-.wc-grid-timeslot-header {border-left:1px solid #bbb;}
-.wc-scrollable-grid .wc-day-column-last,
-.wc-scrollable-grid .wc-day-column-middle,
-.wc-scrollable-grid .wc-day-column-first{border-color:#ddd;}
-/*calendar*/
-.wc-day-column-first,
-.wc-day-column-last,
-.wc-day-column-middle,
-.wc-time-slot{border-color: #ccc;}
-.wc-header .wc-day-column-header.wc-today{background-color:#FAD163;border-color:#FAD163;}
-.wc-header .wc-today.wc-user-header{font-weight:normal;}
-.wc-today.wc-day-column-last{border-right:3px double #FAD163;}
-.wc-today.wc-day-column-first{border-left:3px double #FAD163;}
+table tr.sum-totals td:last-child {
+    border-right: 0;
+}
 
 /*
  *
@@ -758,35 +720,9 @@ body.index #calendar { margin: 0 0 20px; border-bottom: 1px solid #bbb; }
 
 /*
  *
- * Customers, Users, Drivers, Vehicles
+ * Icon'd Buttons
  *
  */
-.customer-search {
-    margin-bottom: 10px;
-}
-.customer-search label {
-    font-weight: bold;
-}
-.customer-list td,
-.customer-list th {
-    padding: 10px 10px 10px 0;
-}
-.customer-list td.plurality {
-    padding: 10px 0 10px 10px;
-}
-span.group,
-span.individual {
-    display: block;
-    height: 16px;
-    width: 16px;
-    text-indent: -9999px;
-}
-span.group {
-    background: url(images/users.png) left center no-repeat scroll;
-}
-span.individual {
-    background: url(images/user.png) left center no-repeat scroll;
-}
 a.edit,
 a.new-trip,
 a.delete,
@@ -954,81 +890,6 @@ div.pagination span.prev_page.disabled {
 }
 div.pagination span.next_page.disabled {
     float: right;
-}
-
-/*
- *
- * Reports
- *
- */
-ul.reports {
-    list-style: none;
-    margin-left: 0;
-}
-ul.reports li {
-    margin: 0 0 10px;
-}
-ul.reports li a {
-    padding: 5px 0 5px 20px;
-    text-decoration: none;
-    background: url(images/reports-stack.png) left center no-repeat scroll;
-}
-
-/*
- *
- * Funding Sources
- *
- */
-ul.funding-sources {
-    list-style: none;
-    margin-left: 0;
-}
-ul.funding-sources li {
-    margin: 0 0 10px;
-}
-ul.funding-sources li a {
-    padding: 5px 0 5px 20px;
-    text-decoration: none;
-    background: url(images/credit-card.png) left center no-repeat scroll;
-}
-
-/*
- *
- * Providers
- *
- */
-td.admin,
-td.editor,
-td.user,
-td.active,
-td.inactive,
-tr.active td.name,
-tr.inactive td.name {
-    padding-left: 36px;
-}
-td.admin {
-    background: url(images/user-worker-boss.png) 10px 0.75em no-repeat scroll;
-}
-td.editor {
-    background: url(images/user-worker.png) 10px 0.75em no-repeat scroll;
-}
-td.user {
-    background: url(images/user.png) 10px 0.75em no-repeat scroll;
-}
-td.active {
-    background: url(images/dashboard--plus.png) 10px 0.75em no-repeat scroll;
-}
-td.inactive {
-    background: url(images/dashboard--inactive.png) 10px 0.75em no-repeat scroll;
-}
-td.inactive {
-    background: url(images/dashboard--inactive.png) 10px 0.75em no-repeat scroll;
-}
-tr.active td.name {
-    background: url(images/car.png) 10px 0.75em no-repeat scroll;
-}
-tr.inactive td.name {
-    background: url(images/car--inactive.png) 10px 0.75em no-repeat scroll;
 }
 
 /*
