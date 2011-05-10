@@ -476,7 +476,7 @@ summaries.valid_end = ? "
   end
   
   def show_create_active_rider
-    @start_date = DateTime.parse(params[:date] || '2010-12-1')
+    @start_date = Date.parse(params[:date] || '2010-12-1')
     @after_end_date = @start_date.next_month
 
     trips = Trip.current_versions.completed.spd.date_range(@start_date,@after_end_date).includes(:customer)
@@ -835,7 +835,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
   end
 
   def spd_report
-    @start_date = DateTime.parse(params[:date] || '2010-12-1')
+    @start_date = Date.parse(params[:date] || '2010-12-1')
     @end_date = @start_date.next_month
 
     trips = Trip.current_records.completed.spd.date_range(@start_date,@end_date).include(:customer)
