@@ -7,23 +7,13 @@ class Query
 
   attr_accessor :allocation
 
-  def convert_date(obj, base)
-    return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
-  end
-
   def initialize(params)
     if params
-      if params["period_start(1i)"]
-        @period_start = convert_date(params, :start_date)
+      if params[:period_start]
+        @period_start = Date.parse(params[:period_start])
       end
-      if params["period_end(1i)"]
-        @period_end = convert_date(params, :end_date)
-      end
-      if params[:start_date]
-        @period_start = Date.parse(params[:start_date])
-      end
-      if params[:end_date]
-        @period_end = Date.parse(params[:end_date])
+      if params[:period_end]
+        @period_end = Date.parse(params[:period_end])
       end
       if params[:allocation]
         @allocation = params[:allocation].to_i
@@ -101,7 +91,7 @@ class SummariesController < ApplicationController
     if @query.conditions.empty?
       flash[:alert] = "Cannot update without date range"
     else
-      for summary in Summary.current_versions :conditions => @query.conditions, :joins=>:allocation
+      for summary in Summary.current_versions.find(:all, :conditions=>@query.conditions)
         updated += 1
         summary.complete = true
         summary.save!
