@@ -415,6 +415,10 @@ body.users #primary-nav li.users a:link, body.users #primary-nav li.users a:visi
     float: right;
 }
 
+#result-count {
+    float: left;
+}
+
 fieldset ol.section li div.field_with_errors {
     display: inline;
     color: #e5004d;
@@ -726,10 +730,7 @@ table tr.sum-totals td:last-child {
 a.edit,
 a.new-trip,
 a.delete,
-a.new-maintenance,
-a.edit-maintenance,
-a.edit-driver,
-a.edit-vehicle {
+a.mark-complete {
     padding: 5px 0 5px 20px;
     text-decoration: none;
     font-size: 11px;
@@ -745,18 +746,11 @@ a.delete {
     background: url(images/cross-button.png) left center no-repeat scroll;
     color: #e5004d;
 }
-a.new-maintenance {
-    background: url(images/wrench--plus.png) left center no-repeat scroll;
+a.mark-complete {
+    background: url(images/tick.png) left center no-repeat scroll;
+    float: right;
 }
-a.edit-maintenance {
-    background: url(images/wrench--pencil.png) left center no-repeat scroll;
-}
-a.edit-driver {
-    background: url(images/pencil.png) left center no-repeat scroll;
-}
-a.edit-vehicle {
-    background: url(images/pencil.png) left center no-repeat scroll;
-}
+
 a.delete:hover,
 a.delete:active {
     color: #ff4d88;
@@ -794,53 +788,9 @@ input.delete:active {
     text-decoration: underline;
 }
 
-p.profile-actions .edit {
-    float: right;
-}
 .separator {
     padding: 0 0.4em;
     color: #bbb;
-}
-p.profile-actions .separator {
-    display: none;
-}
-p.activation-dates label {
-    font-weight: bold;
-}
-
-div.customer-profile,
-div.vehicle-profile,
-div.trip-profile,
-div.report {
-    border-top: 1px solid #bbb;
-    padding: 20px 0 0;
-    margin: 0 0 20px;
-}
-div.customer-profile dl,
-div.vehicle-profile dl,
-div.trip-profile dl,
-div.report dl {
-    float: left;
-    width: 33%;
-    margin: 0;
-}
-div.customer-profile dt,
-div.vehicle-profile dt,
-div.trip-profile dt,
-div.report dt {
-    font-weight: bold;
-    float: left;
-    width: 30%;
-    margin-right: 2%;
-    clear: both;
-}
-div.customer-profile dd,
-div.vehicle-profile dd,
-div.trip-profile dd,
-div.report dd {
-    margin-bottom: 15px;
-    float: left;
-    width: 60%;
 }
 
 /*
