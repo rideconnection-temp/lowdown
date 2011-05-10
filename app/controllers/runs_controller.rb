@@ -88,7 +88,7 @@ class RunsController < ApplicationController
 
     @query = Query.new(params[:query])
     if @query.conditions.empty?
-      flash[:error] = "Cannot update without conditions"
+      flash[:alert] = "Cannot update without date range"
     else
       for run in Run.current_versions :conditions => @query.conditions
         updated += 1
