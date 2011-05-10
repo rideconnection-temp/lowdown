@@ -64,8 +64,8 @@ class TripsController < ApplicationController
   def list
     @query = Query.new(params[:query])
     if @query.conditions.empty?
-      @query.end_date = Time.now
-      @query.start_date = @query.end_date - 5 * 24 * 60 * 60
+      @query.end_date = Date.today
+      @query.start_date = @query.end_date - 5 
       flash[:notice] = 'No search criteria set - showing default (past 5 days)'
     end
 
