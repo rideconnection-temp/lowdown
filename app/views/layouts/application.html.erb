@@ -28,11 +28,11 @@
   <div id="crossbar">
     <div class="wrap selfclear">             
       <ul id="primary-nav" class="selfclear">
-        <li class="reports"><a href="/reports/">Reports</a></li>
-        <li class="summaries"><a href="/summaries/">Summaries</a></li>
-        <li class="trips"><a href="/trips/">Trips</a></li>
-        <li class="runs"><a href="/runs/">Runs</a></li>
-        <li class="users"><a href="/users/index">Users</a></li>
+        <li class="reports"><%= link_to "Reports", :controller => "reports" %></li>
+        <li class="summaries"><%= link_to "Summaries", :controller => "summaries" %></li>
+        <li class="trips"><%= link_to "Trips", :controller => "trips" %></li>
+        <li class="runs"><%= link_to "Runs", :controller => "runs" %></li>
+        <li class="users"><%= link_to "Users", :controller => "users", :action => "index" %></li>
       </ul>
       <ul id="secondary-nav" class="selfclear">
       </ul>

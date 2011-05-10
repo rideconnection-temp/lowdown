@@ -3,9 +3,9 @@
 </div>
 
 <ul id="dashboard">
-  <li><a href="/reports/">Reports</a></li>
-  <li><a href="/summaries/">Summaries</a></li>
-  <li><a href="/trips/">Trips</a></li>
-  <li><a href="/runs/">Runs</a></li>
-  <li><a href="/users/index">Users</a></li>
+  <li><%= link_to "Reports", :controller => "reports" %></li>
+  <li><%= link_to "Summaries", :controller => "summaries" %></li>
+  <li><%= link_to "Trips", :controller => "trips" %></li>
+  <li><%= link_to "Runs", :controller => "runs" %></li>
+  <li><%= link_to "Users", :controller => "users", :action => "index" %></li>
 </ul>
