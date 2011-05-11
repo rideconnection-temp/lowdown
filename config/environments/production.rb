@@ -46,4 +46,12 @@ Lowdown::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+
+  # Needed for sending new users' confirmation email
+  config.action_mailer.default_url_options = { :host => 'apps.rideconnection.org/service' }
+
 end
+
+# Turn off auto TLS for e-mail
+ActionMailer::Base.smtp_settings[:enable_starttls_auto] = false
+
