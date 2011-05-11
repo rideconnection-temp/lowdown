@@ -6,8 +6,8 @@
   Start: <%= @start_date %> 
   <span class="separator">|</span> 
   End: <%= @end_date %> 
-  <span class="separator">|</span> 
-  <%= link_to "CSV", @params.merge({:action=>:csv}) %>
+  <span class="separator csv">|</span> 
+  <%= link_to "CSV", @params.merge({:action=>:csv}), :class=>"csv" %>
 </p>
 
 <%= form_for @report, :url=>{:action=>:save_report} do |f| %>
