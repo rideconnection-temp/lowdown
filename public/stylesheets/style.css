@@ -638,6 +638,7 @@ tr.odd {
 table td {
     padding: 5px 10px 10px;
     border-right: 1px solid #eee;
+    text-align: right;
 }
 table td:last-child {
     border-right: 0;
