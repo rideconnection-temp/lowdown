@@ -691,9 +691,15 @@ table tr.sum-totals td:last-child {
 
 /*
  *
- * Timepicker 
+ * DatePicker & DateTimePicker 
  *
  */
+input.datepicker {
+    width: 6em;
+}
+.ui-datepicker-trigger:hover {
+    cursor: pointer;
+}
 #ui-datepicker-div table {
     border-bottom: 0;
     border-top: 0;
