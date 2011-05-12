@@ -698,7 +698,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       else
         report.fields = params[:report][:fields]
       end
-      report.allocation_list = params[:report][:allocation_list]
+      report.allocations = params[:report][:allocations]
     end
     @params = params
     group_fields = report.group_by
@@ -723,6 +723,12 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       report = Report.find(params[:report][:id])
       report.update_attributes(params[:report])
     end
+    if params[:report].member? :field_list
+      report.field_list = params[:report][:field_list]
+    else
+      report.fields = params[:report][:fields]
+    end
+    report.allocations = params[:report][:allocations]
     report.save!
     flash[:notice] = "Saved #{report.name}"
     redirect_to :action=>:report, :report=>{:id=>report.id}
@@ -982,7 +988,11 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     if allocations.nil? or allocations.size == 0
       results = Allocation.all
     else
-      results = Allocation.where(["id in ?", allocations]).all
+      if allocations[0].instance_of? Allocation
+        results = allocations
+      else
+        results = Allocation.find(allocations).all
+      end
     end
 
     for period in @@time_periods
