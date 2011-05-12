@@ -5,12 +5,11 @@
 <%= form_tag :action=>:bulk_update, :method=>"POST" do  %>
   <fieldset>
 
-    <ol class="section">
-      <li>
-      Mark all runs complete for periods between
-      <%= text_field_tag :start_date %> and
-      <%= text_field_tag :end_date %>
-      </li>
+    <p>Mark all runs complete for the following period:</p>
+
+    <ol class="section first">
+      <li><%= label_tag :start_date, "Start Date:" %> <%= text_field_tag :start_date, nil, :class=>"datepicker" %></li>
+      <li><%= label_tag :end_date, "End Date:" %> <%= text_field_tag :end_date, nil, :class=>"datepicker" %></li>
     </ol>
 
     <div class="actions">

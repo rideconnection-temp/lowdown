@@ -5,8 +5,8 @@
 <%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
   <fieldset>
     <ol class="section first">
-      <li><%= f.label :start_date, "After:" %> <%= f.text_field :start_date, :class=>"datepicker" %></li>
-      <li><%= f.label :end_date, "Before:" %> <%= f.text_field :end_date, :class=>"datepicker" %></li>
+      <li><%= f.label :start_date, "Start Date:" %> <%= f.text_field :start_date, :class=>"datepicker" %></li>
+      <li><%= f.label :end_date, "End Date:" %> <%= f.text_field :end_date, :class=>"datepicker" %></li>
     </ol>
 
     <ol class="section fourth">
