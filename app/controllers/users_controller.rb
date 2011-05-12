@@ -2,10 +2,8 @@ class UsersController < Devise::SessionsController
   require 'new_user_mailer'
 
   def new
-    print "HERE\n"
     #hooked up to sign_in
     if User.count == 0
-      print "redirect to show_init\n"
       return redirect_to :action=>:show_init
     end
   end
@@ -14,7 +12,6 @@ class UsersController < Devise::SessionsController
   def show_init
     #create initial user
     if User.count > 0
-      print "redirect to new\n"
       return redirect_to :action=>:new
     end
     @user = User.new

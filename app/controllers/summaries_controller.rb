@@ -42,11 +42,12 @@ class SummariesController < ApplicationController
   before_filter :require_admin_user, :except=>[:index]
 
   def index
-
     @query = Query.new(params[:query])
     if @query.conditions.empty?
       @query.period_end = Date.today
       @query.period_start = @query.period_end - 30
+      params[:query] = {:period_start => @query.period_start.to_s,
+        :period_end => @query.period_end.to_s}
       flash[:notice] = 'No search criteria set - showing default (past 30 days)'
     end
 

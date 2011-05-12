@@ -8,15 +8,15 @@ class Report < ActiveRecord::Base
     if allocation_list.nil? or allocation_list.empty?
       return []
     else
-      return Allocation.where("id in ?", allocation_list.split(","))
+      return Allocation.find(allocation_list.split(",").map(&:to_i))
     end
   end
 
   def allocations=(list)
-    if list.respond_to? :values
-      list = list.values
+    if list.respond_to? :keys
+      list = list.keys
     end
-    allocation_list = list.sort.map {|t| t.to_s}.join(",") 
+    self.allocation_list = list.sort.map(&:to_s).join(",")
   end
 
   def fields
@@ -28,10 +28,10 @@ class Report < ActiveRecord::Base
   end
 
   def fields=(list)
-    if list.respond_to? :values
-      list = list.values
+    if list.respond_to? :keys
+      list = list.keys
     end
-    field_list = list.sort.map {|t| t.to_s}.join(",") 
+    self.field_list = list.sort.map(&:to_s).join(",")
   end
 
 end

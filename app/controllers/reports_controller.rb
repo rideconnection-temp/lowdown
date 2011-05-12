@@ -31,7 +31,7 @@ class ReportsController < ApplicationController
       if requested_fields.nil?
         fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip"]
       else
-        fields = @@selector_fields + requested_fields.keys
+        fields = @@selector_fields + requested_fields
       end
       fields.delete 'driver_hours'
       fields.delete 'volunteer_hours'
@@ -518,7 +518,19 @@ summaries.valid_end = ? "
   end
 
   def csv
-    report = Report.new(params[:report])
+    if params[:report][:id]
+      report = Report.find(params[:report][:id])
+    else
+      report = Report.new(params[:report])
+      if params[:report].member? :field_list
+        report.field_list = params[:report][:field_list]
+      else
+        report.fields = params[:report][:fields]
+      end
+      if params[:report][:allocations]
+        report.allocations = params[:report][:allocations ]
+      end
+    end
     group_fields = report.group_by
 
     if group_fields.nil?
@@ -686,7 +698,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       else
         report.fields = params[:report][:fields]
       end
-      report.allocation_list = params[:report][:allocation_list]
+      report.allocations = params[:report][:allocations]
     end
     @params = params
     group_fields = report.group_by
@@ -711,6 +723,12 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       report = Report.find(params[:report][:id])
       report.update_attributes(params[:report])
     end
+    if params[:report].member? :field_list
+      report.field_list = params[:report][:field_list]
+    else
+      report.fields = params[:report][:fields]
+    end
+    report.allocations = params[:report][:allocations]
     report.save!
     flash[:notice] = "Saved #{report.name}"
     redirect_to :action=>:report, :report=>{:id=>report.id}
@@ -907,6 +925,16 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       end
       return @allocation.respond_to? method
     end
+
+    def to_s
+      if period_end_date-period_start_date < 32
+        return period_start_date.strftime "%Y %b"
+      elsif period_end_date-period_start_date < 320
+        return '%sQ%s' % [period_start_date.year, (period_start_date.month / 3 + 1)]
+      else
+        return period_start.year.to_s
+      end
+    end
   end
 
   def apply_periods(allocations, start_date, end_date, period)
@@ -960,7 +988,11 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
     if allocations.nil? or allocations.size == 0
       results = Allocation.all
     else
-      results = Allocation.where(["id in ?", allocations]).all
+      if allocations[0].instance_of? Allocation
+        results = allocations
+      else
+        results = Allocation.find(allocations).all
+      end
     end
 
     for period in @@time_periods
