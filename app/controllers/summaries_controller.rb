@@ -45,10 +45,10 @@ class SummariesController < ApplicationController
     @query = Query.new(params[:query])
     if @query.conditions.empty?
       @query.period_end = Date.today
-      @query.period_start = @query.period_end - 30
+      @query.period_start = @query.period_end.prev_month
       params[:query] = {:period_start => @query.period_start.to_s,
         :period_end => @query.period_end.to_s}
-      flash.now[:notice] = 'No search criteria set - showing default (past 30 days)'
+      flash.now[:notice] = 'No search criteria set - showing default (past month)'
     end
 
     @allocations = Allocation.find :all
