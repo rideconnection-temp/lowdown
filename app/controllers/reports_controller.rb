@@ -907,6 +907,16 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       end
       return @allocation.respond_to? method
     end
+
+    def to_s
+      if period_end_date-period_start_date < 32
+        return period_start_date.strftime "%Y %b"
+      elsif period_end_date-period_start_date < 320
+        return '%sQ%s' % [period_start_date.year, (period_start_date.month / 3 + 1)]
+      else
+        return period_start.year.to_s
+      end
+    end
   end
 
   def apply_periods(allocations, start_date, end_date, period)
