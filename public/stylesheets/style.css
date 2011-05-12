@@ -638,7 +638,6 @@ tr.odd {
 table td {
     padding: 5px 10px 10px;
     border-right: 1px solid #eee;
-    text-align: right;
 }
 table td:last-child {
     border-right: 0;
@@ -662,7 +661,10 @@ table tr.sub-header th {
 table tr.report-item td {
     border-top: 1px solid #2e6399;
 }
-table td.report-item {
+div.report-wrapper td {
+    text-align: right;
+}
+div.report-wrapper td.report-item {
     background: #E5F2FF;
     border-right: 1px solid #E5F2FF;
     font-weight: bold;
@@ -670,12 +672,12 @@ table td.report-item {
     padding: 5px 5px 10px;
     text-align: center;
 }
-div.table-wrapper {
+div.report-wrapper {
     width: 100%;
     overflow: auto;
     padding-bottom: -20px;
 }
-div.table-wrapper table {
+div.report-wrapper table {
     margin-bottom: 0;
     border-bottom: 0;
 }
