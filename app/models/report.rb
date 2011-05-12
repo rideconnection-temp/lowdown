@@ -13,6 +13,10 @@ class Report < ActiveRecord::Base
   end
 
   def allocations=(list)
+    if list.to_s.empty?
+      self.allocation_list = ''
+      return
+    end
     if list.respond_to? :keys
       list = list.keys
     end
@@ -28,6 +32,10 @@ class Report < ActiveRecord::Base
   end
 
   def fields=(list)
+    if list.to_s.empty?
+      self.field_list = ''
+      return
+    end
     if list.respond_to? :keys
       list = list.keys
     end

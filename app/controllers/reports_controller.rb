@@ -693,12 +693,14 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       end
     else
       report = Report.new(params[:report])
-      if params[:report].member? :field_list
-        report.field_list = params[:report][:field_list]
-      else
-        report.fields = params[:report][:fields]
+      if params[:report]
+        if params[:report].member? :field_list
+          report.field_list = params[:report][:field_list]
+        else
+          report.fields = params[:report][:fields]
+        end
+        report.allocations = params[:report][:allocations]
       end
-      report.allocations = params[:report][:allocations]
     end
     @params = params
     group_fields = report.group_by
