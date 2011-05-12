@@ -31,7 +31,7 @@ class ReportsController < ApplicationController
       if requested_fields.nil?
         fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip"]
       else
-        fields = @@selector_fields + requested_fields.keys
+        fields = @@selector_fields + requested_fields
       end
       fields.delete 'driver_hours'
       fields.delete 'volunteer_hours'
@@ -518,7 +518,19 @@ summaries.valid_end = ? "
   end
 
   def csv
-    report = Report.new(params[:report])
+    if params[:report][:id]
+      report = Report.find(params[:report][:id])
+    else
+      report = Report.new(params[:report])
+      if params[:report].member? :field_list
+        report.field_list = params[:report][:field_list]
+      else
+        report.fields = params[:report][:fields]
+      end
+      if params[:report][:allocations]
+        report.allocations = params[:report][:allocations ]
+      end
+    end
     group_fields = report.group_by
 
     if group_fields.nil?
