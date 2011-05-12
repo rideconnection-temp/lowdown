@@ -6,8 +6,9 @@
   <fieldset>
     <h2>Summary Period</h2>
     <ol class="section fourth">
-      <li><%= f.label :period_start, "Beginning:" %> <%= f.text_field :period_start, :class=>"datepicker" %></li>
-      <li><%= f.label :period_end, "Ending (Before):" %> <%= f.text_field :period_end, :class=>"datepicker" %></li>
+      <li><label>Start Date:</label> <%= date_select( :period_start, "", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
+      <li><label>End Date:</label> <%= date_select( :period_end, "", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
+
       <li>
         <h2>Allocations</h2>
         <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
