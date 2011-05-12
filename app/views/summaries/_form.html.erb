@@ -4,8 +4,7 @@
 
     <ol class="section summary-form-part-one">
       <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
-
-      <li><%= f.label :period_start, "Summary Month:" %> <%= f.text_field :period_start %></li>
+      <li><label>Summary Month:</label> <%= date_select( :period_start, "", :end_year => Time.now.year, :order => [:month, :year], :default => Time.now - 1.month ) %></li>
     </ol>
 
     <ol class="section summary-form-part-two">
