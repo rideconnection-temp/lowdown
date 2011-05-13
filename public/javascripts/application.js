@@ -64,7 +64,7 @@ $(document).ready(function() {
     newOption.removeClass("template");
 
     // add remove link to new option span
-    var newOptionRemoveLink = $("<a>Remove</a>").click(function() {
+    var newOptionRemoveLink = $('<a class="delete">Remove</a>').click(function() {
 	$(this).parent().remove();
         updateCustomOptionValue();
     });

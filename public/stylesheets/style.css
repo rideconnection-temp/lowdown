@@ -747,7 +747,8 @@ input.datepicker {
 a.edit,
 a.new-trip,
 a.delete,
-a.mark-complete {
+a.mark-complete,
+a.add {
     padding: 5px 0 5px 20px;
     text-decoration: none;
     font-size: 11px;
@@ -767,17 +768,23 @@ a.mark-complete {
     background: url(images/tick.png) left center no-repeat scroll;
     float: right;
 }
+a.add {
+    background: url(images/plus-button.png) left center no-repeat scroll;
+}
 
 a.delete:hover,
 a.delete:active {
     color: #ff4d88;
+    cursor: pointer;
 }
 a.new-trip:hover,
 a.new-trip:active,
 a.edit:hover,
 a.edit:active,
 a.delete:hover,
-a.delete:active {
+a.delete:active,
+a.add:hover,
+a.add:active {
     text-decoration: underline;
 }
 a.cancel {
