@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110412225438) do
+ActiveRecord::Schema.define(:version => 20110513162502) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -97,8 +97,8 @@ ActiveRecord::Schema.define(:version => 20110412225438) do
     t.date    "start_date"
     t.date    "end_date"
     t.string  "group_by"
-    t.string  "allocation_list"
-    t.string  "field_list"
+    t.text    "allocation_list"
+    t.text    "field_list"
     t.boolean "pending"
     t.boolean "adjustment"
   end
