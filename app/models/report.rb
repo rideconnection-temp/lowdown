@@ -42,4 +42,8 @@ class Report < ActiveRecord::Base
     self.field_list = list.sort.map(&:to_s).join(",")
   end
 
+  def query_end_date
+    return end_date.next_day
+  end
+
 end

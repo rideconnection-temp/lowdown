@@ -68,7 +68,7 @@ class SummariesController < ApplicationController
   end
 
   def create
-    @summary = Summary.create(params[:summary])
+    @summary = Summary.new(params[:summary])
     @summary.period_end = @summary.period_start.next_month
     @summary.save!
     if @summary
