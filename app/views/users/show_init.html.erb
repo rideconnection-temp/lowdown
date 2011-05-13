@@ -4,15 +4,14 @@
 
 <%= form_for @user, :url=>:init do |f| %>
 
-Email:<br/>
-<%= f.text_field :email %><br/>
+<ol class="section fourth">
+  <li><label>Email:</label><%= f.text_field :email %></li>
+  <li><label>Password:</label><%= f.password_field :password %></li>
+  <li><label>Password confirmation:</label><%= f.password_field :password_confirmation %></li>
+</ol>
 
-Password:<br/>
-<%= f.password_field :password %><br/>
-
-Password confirmation:<br/>
-<%= f.password_field :password_confirmation %><br/>
-
-<%= f.submit "Create" %>
+<div class="actions">
+  <%= f.submit "Create" %>
+</div>
 
 <% end %>

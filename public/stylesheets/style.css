@@ -427,9 +427,7 @@ fieldset ol.section li div.field_with_errors {
 div#error_explanation {
     color: #e5004d;
     background-color: #ffffc6;
-    border-top: 1px solid #bbb;
-    border-right: 1px solid #bbb;
-    border-left: 1px solid #bbb;
+    border: 1px solid #bbb;
     padding: 15px;
 }
 div#error_explanation h2 {
