@@ -24,4 +24,6 @@ Lowdown::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   config.action_mailer.default_url_options = { :host => 'rideconn.dev.openplans.org:3000' }
+
+  config.action_mailer.delivery_method = :smtp
 end
