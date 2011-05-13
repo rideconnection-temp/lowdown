@@ -542,7 +542,7 @@ summaries.valid_end = ? "
 
     groups = group_fields.map { |f| @@group_mappings[f] }
 
-    do_report(groups, group_fields, report.start_date, report.end_date, report.allocations, report.fields, report.pending, report.adjustment)
+    do_report(groups, group_fields, report.start_date, report.query_end_date, report.allocations, report.fields, report.pending, report.adjustment)
     csv_string = CSV.generate do |csv|
       csv << ReportRow.fields(report.fields)
       apply_to_leaves! @results, group_fields.size,  do | row |
@@ -714,7 +714,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
 
     groups = group_fields.map { |f| @@group_mappings[f] }
 
-    do_report(groups, group_fields, report.start_date, report.end_date, report.allocations, report.fields, report.pending, report.adjustment)
+    do_report(groups, group_fields, report.start_date, report.query_end_date, report.allocations, report.fields, report.pending, report.adjustment)
     @report = report
   end
 
@@ -738,12 +738,12 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
 
   def quarterly_narrative_report
     @report = Report.new(params[:report])
-    @report.end_date = @report.start_date.next_month.next_month.next_month
+    @report.end_date = @report.start_date.next_month.next_month.next_month.prev_day
 
     groups = "allocations.name,month"
     group_fields = ['name', 'month']
 
-    do_report(groups, group_fields, @report.start_date, @report.end_date, nil, nil, false, false)
+    do_report(groups, group_fields, @report.start_date, @report.query_end_date, nil, nil, false, false)
 
     @quarter = @report.start_date.month / 3 + 1
     @allocations = @results

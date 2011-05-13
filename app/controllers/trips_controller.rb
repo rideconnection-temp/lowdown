@@ -137,9 +137,9 @@ class TripsController < ApplicationController
    start_date = Date.parse(params[:start_date])
    end_date = Date.parse(params[:end_date])
 
-   updated = Run.current_versions.where("date >= ? and date < ?", start_date, end_date).count
+   updated = Run.current_versions.where("date >= ? and date <= ?", start_date, end_date).count
 
-   Run.current_versions.update_all({ :complete=>true }, ["date >= ? and date < ?", start_date, end_date])
+   Run.current_versions.update_all({ :complete=>true }, ["date >= ? and date <= ?", start_date, end_date])
 
    flash[:notice] = "Updated #{updated} records"
    redirect_to :action=>:show_bulk_update
