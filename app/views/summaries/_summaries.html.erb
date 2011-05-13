@@ -1,6 +1,7 @@
          <h2 id="result-count"><%= @summaries.total_entries %> summaries found.</h2>
       <% if @summaries.total_entries > 0 %>
          <%= link_to 'Mark all as complete', :action=>:bulk_update, "query[period_start]" => params[:query][:period_start], "query[period_end]" => params[:query][:period_end], "query[allocation]" => params[:query][:allocation] %>
+ <div class="report-wrapper">
          <table id="summary-results">
            <thead>
              <tr>
@@ -36,5 +37,6 @@
              <% end %>
            </tbody>
          </table>
+</div>
        <% end %>
 <%= will_paginate @summaries %>

@@ -2,6 +2,7 @@
 
 <% if @trips.total_entries > 0 %>
 
+<div class="report-wrapper">
 <table id="trip-results">
   <thead>
     <tr>
@@ -51,6 +52,7 @@
     <% end %>
   </tbody>
 </table>
+</div>
 
 <%= will_paginate @trips %>
 

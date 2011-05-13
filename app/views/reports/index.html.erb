@@ -8,63 +8,63 @@
 
 <% for report in @reports %>
 
-<h2 class="report-header"><%= report.name %></h2>
+<div class="predefined-report">
 
-<%= form_for report, :url=>{:action=>:delete_report} do |f| %>
-  <input type="hidden" name="report[id]" value="<%= report.id %>" />
-  <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete' %>
-<% end %>
-
-<form action="<%= url_for :action=>:report %>">
-  <fieldset>
-    <p>
-      <strong>Allocations:</strong>
-      <% if report.allocations.empty? %>
-        All
-      <% else %>
-        <% for allocation in report.allocations %>
-        <%= allocation.name %>
-        <%= ", " unless allocation == report.allocations.last %>
-        <% end %>
-      <% end %>
-
-      <span class="separator">|</span>
-
-      <strong>Fields:</strong>
-      <% if report.fields.empty? %>
-      All
-      <% else %> 
-      <%= report.fields.sort.join(", ") %>
-      <% end %>
-
-      <span class="separator">|</span>
-
-      <strong>Group By:</strong>
-      <%= report.group_by %>
-    </p>
-
+  <%= form_for report, :url=>{:action=>:delete_report} do |f| %>
     <input type="hidden" name="report[id]" value="<%= report.id %>" />
-    <input type="hidden" name="report[adjustment]" value="0" />
-    <input type="hidden" name="report[pending]" value="0" />
+    <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
+  <% end %>
 
-    <ol class="section first">
-      <li><label>Start Date:</label> <%= date_select( :report, "start_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
-      <li><label>End Date:</label> <%= date_select( :report, "end_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
-    </ol>
+  <form action="<%= url_for :action=>:report %>" class="run-report">
+    <fieldset>
+      <h2 class="report-header"><%= report.name %></h2>
 
-    <ol class="section second">
-      <li><label for="report[adjustment]">Adjustments:</label><input type="checkbox" name="report[adjustment]" value="1" /></li>
-      <li><label for="report[pending]">Pending:</label><input type="checkbox" name="report[pending]" value="1" /></li>
-    </ol>
+      <p>
+        <strong>Allocations:</strong>
+        <% if report.allocations.empty? %>
+          All
+        <% else %>
+          <% for allocation in report.allocations %>
+          <%= allocation.name %>
+          <%= ", " unless allocation == report.allocations.last %>
+          <% end %>
+        <% end %>
 
-    <div class="actions">
+        <span class="separator">|</span>
+
+        <strong>Fields:</strong>
+        <% if report.fields.empty? %>
+        All
+        <% else %> 
+        <%= report.fields.sort.join(", ") %>
+        <% end %>
+
+        <span class="separator">|</span>
+
+        <strong>Group By:</strong>
+        <%= report.group_by %>
+      </p>
+
+      <input type="hidden" name="report[id]" value="<%= report.id %>" />
+      <input type="hidden" name="report[adjustment]" value="0" />
+      <input type="hidden" name="report[pending]" value="0" />
+
+      <ol>
+        <li><label>Start Date:</label> <%= date_select( :report, "start_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
+        <li><label>End Date:</label> <%= date_select( :report, "end_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
+        <li><input type="checkbox" name="report[adjustment]" value="1" /> <label for="report[adjustment]">Adjustments</label></li>
+        <li><input type="checkbox" name="report[pending]" value="1" /> <label for="report[pending]">Pending</label></li>
+      </ol>
+
       <input type="submit" name="commit" value="View Report"/>
-    </div>
-  </fieldset>
-</form>
+
+    </fieldset>
+  </form>
+
+</div>
+
+<% end %>
 
 <hr />
-
-<% end %>
 
 <%= link_to 'Define New Report', { :action=>:show_create_report }, :class=>'action-bttn' %>

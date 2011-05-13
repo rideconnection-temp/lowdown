@@ -320,7 +320,7 @@ body.reports #primary-nav li.reports a:link, body.reports #primary-nav li.report
 body.summaries #primary-nav li.summaries a:link, body.summaries #primary-nav li.summaries a:visited,
 body.trips #primary-nav li.trips a:link, body.trips #primary-nav li.trips a:visited,
 body.runs #primary-nav li.runs a:link, body.runs #primary-nav li.runs a:visited,
-body.users #primary-nav li.users a:link, body.users #primary-nav li.users a:visited {
+body.users #secondary-nav li.users a:link, body.users #secondary-nav li.users a:visited {
     background: #fff;
     color: #009FFB;
 }
@@ -554,6 +554,9 @@ fieldset ol.section li div input.full {
 }
 fieldset ol.section li p {
     line-height: 1.231; 
+}
+fieldset ol.section li p.disabled-input {
+    margin-left: 37%;
 }
 fieldset ol.section li ul {
     list-style: none;
@@ -890,10 +893,6 @@ body.users a.action-bttn {
  * Reports
  *
  */
-.report-header {
-    margin: 0 10px 10px 0;
-    float: left;
-}
 ul.reports {
     list-style: none;
     margin-left: 0;
@@ -930,4 +929,62 @@ p input[type="checkbox"] {
 }
 #group-by, #group-by-1 {
     margin-bottom: 10px;
+}
+
+/* Predefined Reports */
+.report-header {
+    border-bottom: 1px solid #bbb; 
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+div.predefined-report {
+    position: relative;
+}
+div.predefined-report form.run-report {
+  clear: none;
+}
+div.predefined-report form.edit_report {
+}
+input.delete-report {
+    background: url(images/cross-button.png) left center no-repeat scroll;
+    color: #e5004d;
+    text-decoration: none;
+    font-size: 11px;
+    line-height: 16px;
+    border: 0;
+    padding: 5px 0 5px 17px;
+    float: right;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+input.delete-report:hover,
+input.delete-report:active {
+    color: #ff4d88;
+    text-decoration: underline;
+}
+div.predefined-report ol {
+    list-style: none;
+    margin: 0 0 10px;
+    float: left;
+}
+div.predefined-report ol li {
+    float: left;
+    margin-right: 20px;
+}
+
+div.predefined-report form.run-report input[type="submit"] {
+    background: #0081CC;
+    color: #fff;
+    font-size: 15px;
+    text-decoration: none;
+    border: 0;
+    padding: 0.3em 0.6em;
+    margin-top: -0.3em;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+div.predefined-report form.run-report input[type="submit"]:hover {
+    background: #009FFB;
 }

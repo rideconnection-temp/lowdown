@@ -31,14 +31,25 @@
           <option value="funding_source,agency">Funding Source, Provider</option>
           <option value="project_name,agency">Project Name, Provider</option>
           <option value="agency,county,project_name">Provider, County, Project Name</option>
+	  <option value="">Define Custom Grouping...</option>
         </select>
-        <p><strong>&hellip;or manually select fields to group by:</strong></p>
-        <select id="group-by-1">
-          <option value="County">County</option>
-          <option value="Funding Source">Funding Source</option>
-          <option value="Project Name">Project Name</option>
-          <option value="Provider">Provider</option>
-        </select>
+
+	<div style="display:none;" id="group-by-custom-section">
+	        <p><strong>Select fields to group by:</strong></p>
+
+		<span id="group-by-custom-wrapper">
+	        	<span class="template">
+			  <select>
+		            <option value="county">County</option>
+        		    <option value="funding_source">Funding Source</option>
+		            <option value="project_name">Project Name</option>
+        		    <option value="agency">Provider</option>
+	        	  </select>
+  			</span>
+		</span>
+
+		<p><a href="#">Add New Group Field</a></p>
+	</div>
       </li>
     </ol>
 
