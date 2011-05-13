@@ -5,7 +5,9 @@ require 'capybara/dsl'
 class TripsControllerTest < ActionController::TestCase
   include Capybara
   fixtures :users
-
+  setup do
+    sign_in users(:admin)
+  end
   test "should accept imports" do
     Capybara.default_selector = :xpath
 

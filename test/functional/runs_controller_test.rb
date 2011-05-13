@@ -1,7 +1,9 @@
 require 'test_helper'
 
 class RunsControllerTest < ActionController::TestCase
-
+  setup do
+    sign_in users(:admin)
+  end
   test "should get index" do
 
     get :index
