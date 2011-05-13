@@ -7,8 +7,18 @@ class Query
 
   attr_accessor :allocation
 
+  def convert_date(obj, base)
+    return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
+  end
+
   def initialize(params)
     if params
+      if params["period_start(1i)"]
+        @period_start = convert_date(params, "period_start")
+      end
+      if params["period_end(1i)"]
+        @period_end = convert_date(params, "period_end")
+      end
       if params[:period_start]
         @period_start = Date.parse(params[:period_start])
       end
@@ -44,7 +54,8 @@ class SummariesController < ApplicationController
   def index
     @query = Query.new(params[:query])
     if @query.conditions.empty?
-      @query.period_end = Date.today
+      today = Date.today
+      @query.period_end = Date.new(today.year, today.month, 1)
       @query.period_start = @query.period_end.prev_month
       params[:query] = {:period_start => @query.period_start.to_s,
         :period_end => @query.period_end.to_s}
@@ -52,7 +63,6 @@ class SummariesController < ApplicationController
     end
 
     @allocations = Allocation.find :all
-
     @summaries = Summary.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
 
   end
