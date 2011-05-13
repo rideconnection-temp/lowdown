@@ -93,9 +93,16 @@ class SummariesController < ApplicationController
       flash[:alert] = "Cannot update without date range"
     else
       for summary in Summary.current_versions.find(:all, :conditions=>@query.conditions)
+        next if summary.complete            
         updated += 1
+        old_rows = summary.summary_rows.map &:clone
         summary.complete = true
         summary.save!
+        prev = summary.previous
+        for row in old_rows
+          row.summary_id=prev.id
+          row.save!
+        end
       end
       flash[:notice] = "Updated #{updated} records"
 
@@ -115,8 +122,19 @@ class SummariesController < ApplicationController
 
     @allocations = Allocation.all
 
+    #gather up the old row objects
+    old_rows = @summary.summary_rows.map &:clone
+
     @summary.update_attributes(params[:summary]) ?
       redirect_to(:action=>:show_update, :id=>@summary) : render(:action => :show_update)
+    #this created a new prior version, to which we want to reassign the
+    #newly-created old-valued summary rows
+    prev = @summary.previous
+    for row in old_rows
+      row.summary_id=prev.id
+      row.save!
+    end
+
     @summary.period_end = @summary.period_start.next_month
   end
 
