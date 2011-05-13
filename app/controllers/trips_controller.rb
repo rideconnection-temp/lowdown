@@ -42,7 +42,7 @@ class Query
   def conditions
     d = {}
     if start_date
-      d[:date] = start_date..(end_date.next_day)
+      d[:date] = start_date..end_date
     end
     if provider && provider != 0
       d["allocations.provider_id"] = provider

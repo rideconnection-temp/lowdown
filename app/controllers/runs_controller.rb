@@ -62,9 +62,7 @@ class RunsController < ApplicationController
     if @query.conditions.empty?
       @query.end_date = Date.today
       @query.start_date = @query.end_date - 30
-      flash[:notice] = 'No search criteria set - showing default (most recent 30 days)'
-    else
-      flash[:notice] = nil
+      flash.now[:notice] = 'No search criteria set - showing default (most recent 30 days)'
     end
 
     @runs = Run.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions

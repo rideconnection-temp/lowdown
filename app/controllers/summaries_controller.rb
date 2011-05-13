@@ -45,10 +45,10 @@ class SummariesController < ApplicationController
     @query = Query.new(params[:query])
     if @query.conditions.empty?
       @query.period_end = Date.today
-      @query.period_start = @query.period_end - 30
+      @query.period_start = @query.period_end.prev_month
       params[:query] = {:period_start => @query.period_start.to_s,
         :period_end => @query.period_end.to_s}
-      flash[:notice] = 'No search criteria set - showing default (past 30 days)'
+      flash.now[:notice] = 'No search criteria set - showing default (past month)'
     end
 
     @allocations = Allocation.find :all
@@ -80,8 +80,8 @@ class SummariesController < ApplicationController
   end
 
   def show_bulk_update
-    if !flash[:notice] 
-      flash[:notice] = "This will mark all summaries within the selected range as complete. There is no 'undo'."
+    if !flash.now[:notice]
+      flash.now[:notice] = "This will mark all summaries within the selected range as complete. There is no 'undo'."
     end
   end
 
