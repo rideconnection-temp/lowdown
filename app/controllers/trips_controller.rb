@@ -1,3 +1,5 @@
+require 'csv'
+
 class Query
   extend ActiveModel::Naming
   include ActiveModel::Conversion
@@ -7,6 +9,8 @@ class Query
 
   attr_accessor :provider
   attr_accessor :allocation
+
+  attr_accessor :format
 
   def convert_date(obj, base)
     return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
@@ -31,6 +35,9 @@ class Query
       end
       if params[:allocation]
         @allocation = params[:allocation].to_i
+      end
+      if params[:allocation]
+        @format = params[:format]
       end
     end
   end
@@ -73,7 +80,26 @@ class TripsController < ApplicationController
     @allocations = Allocation.find :all
 
 
-    @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
+    @trips = Trip.current_versions.find(:all, :include=>[:pickup_address, :dropoff_address, :run, :customer, :allocation], :conditions=>@query.conditions)
+
+    if @query.format == 'csv'
+      unused_columns = ["id", "base_id", "trip_import_id", "allocation_id", 
+                        "home_address_id", "pickup_address_id", 
+                        "dropoff_address_id", "customer_id", "run_id"] 
+
+      good_columns = Trip.column_names.find_all {|x| ! unused_columns.member? x}
+
+      csv = ""
+      CSV.generate(csv) do |csv|
+        for trip in @trips
+          csv << good_columns.map {|x| trip.send(x)} + [trip.customer.name, trip.allocation.name, trip.run.name] + address_fields(trip.home_address) + address_fields(trip.pickup_address) + address_fields(trip.dropoff_address)
+        end
+      end
+      return render :text=>csv
+    else
+      @trips = @trips.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
+      
+    end
   end
 
   def share
@@ -143,5 +169,9 @@ class TripsController < ApplicationController
 
    flash[:notice] = "Updated #{updated} records"
    redirect_to :action=>:show_bulk_update
+  end
+
+  def address_fields(address)
+    [address.common_name, address.building_name, address.address_1, address.address_2, address.city, address.state, address.postal_code]
   end
 end
