@@ -1,9 +1,9 @@
 <% content_for :menu_bar do %>
         <ul id="subnav" class="selfclear">
-          <li><%= link_to "View summaries", :action=>:index %></li>
+          <li><%= link_to "View Summaries", :action=>:index %></li>
 <% if current_user.is_admin %>
           <li><%= link_to "Create Summary", :action=>:show_create %></li>
-          <li><%= link_to "Mark complete", :action=>:show_bulk_update %></li>
+          <li><%= link_to "Mark Complete", :action=>:show_bulk_update %></li>
 <% end %>
         </ul>
 <% end %>

@@ -1,12 +1,17 @@
 <div id="page-header">
-  <h1>Mark Complete</h1>
+  <h1>Mark Summaries Complete</h1>
 </div>
 
 <%= form_tag :action=>:bulk_update, :method=>"POST" do  %>
   <fieldset>
 
-    <p><strong>Mark all summaries complete for periods between:</strong> <%= text_field_tag :period_start %> and <%= text_field_tag :period_end %></p>
+    <p>Mark all summaries complete for the following period:</p>
 
+    <ol class="section first">
+      <li><%= label_tag :start_date, "Start Date:" %> <%= text_field_tag :period_start, nil, :class=>"datepicker" %></li>
+      <li><%= label_tag :end_date, "End Date:" %> <%= text_field_tag :period_end, nil, :class=>"datepicker" %></li>
+    </ol>
+    
     <div class="actions">
       <%= submit_tag 'Update' %>
     </div>
