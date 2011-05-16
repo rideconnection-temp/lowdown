@@ -62,6 +62,7 @@ Lowdown::Application.routes.draw do
     get "users/index" => "users#index"
     get "users/show_change_password" => "users#show_change_password"
     match "users/change_password"  => "users#change_password"
+    post "users/update" => "users#update"
   end
   root :to => 'dashboard#index'
 

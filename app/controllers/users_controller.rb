@@ -1,5 +1,5 @@
 class UsersController < Devise::SessionsController
-  before_filter :require_admin_user, :only=>[:index, :show_create, :create_user]
+  before_filter :require_admin_user, :only=>[:index, :show_create, :create_user, :deactivate, :update]
 
   require 'new_user_mailer'
 
@@ -64,6 +64,19 @@ class UsersController < Devise::SessionsController
     redirect_to :action=>:index, :controller=>:users
   end
 
+  
+  def update
+    @user = User.find(params[:id])
+    if @user.update_attributes!(params[:user])
+      flash[:notice] = "User %s updated" % @user.email
+      redirect_to :action=>:index
+    else
+      flash.now[:alert] = "Error: " + @user.errors
+      render :action=>:index      
+    end
+  end
+  
+
   def sign_out
     scope = Devise::Mapping.find_scope!(current_user)
     current_user = nil
@@ -73,6 +86,6 @@ class UsersController < Devise::SessionsController
   end
 
   def index
-    @users = User.all
+    @users = User.order("level,email").all
   end
 end

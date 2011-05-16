@@ -6,14 +6,37 @@
 <tr>
 <th>Email</th>
 <th>Role</th>
+<th></th>
 </tr>
 <% for user in @users %>
 <tr>
 <td>
-<%= user.email %> 
+<% if user.active %> 
+  <%= user.email %>
+<% else %>
+  <s><%= user.email %></s>
+<% end %>
 </td>
 <td>
-<%= user.is_admin ? "Admin" : "User" %> 
+<%= form_tag users_update_path do %>
+<%= hidden_field_tag :id, user.id %>
+<%= label_tag :user_level, "Level: " %> 
+<%= select_tag('user[level]', options_for_select([["Admin", 100], ["User", 0]], user.level)) %><br/> 
+<%= submit_tag "Change" %>
+<% end %>
+</td>
+<td>
+
+<%= form_tag users_update_path do %>
+  <%= hidden_field_tag :id, user.id %>
+  <% if user.active %> 
+    <%= hidden_field_tag 'user[active]', 'false' %>
+    <%= submit_tag "Deactivate" %>
+  <% else %>
+    <%= hidden_field_tag 'user[active]', 'true' %>
+    <%= submit_tag "Reactivate" %>
+  <% end %>
+<% end %>
 </td>
 </tr>
 <% end %>

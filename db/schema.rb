@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110513162502) do
+ActiveRecord::Schema.define(:version => 20110516180313) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -217,9 +217,9 @@ ActiveRecord::Schema.define(:version => 20110513162502) do
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
 
   create_table "users", :force => true do |t|
-    t.string   "email",                               :default => "", :null => false
-    t.string   "encrypted_password",   :limit => 128, :default => "", :null => false
-    t.string   "password_salt",                       :default => "", :null => false
+    t.string   "email",                               :default => "",   :null => false
+    t.string   "encrypted_password",   :limit => 128, :default => "",   :null => false
+    t.string   "password_salt",                       :default => "",   :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
@@ -231,6 +231,7 @@ ActiveRecord::Schema.define(:version => 20110513162502) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "level"
+    t.boolean  "active",                              :default => true, :null => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
