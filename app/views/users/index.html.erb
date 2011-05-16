@@ -16,12 +16,15 @@
 <% else %>
   <s><%= user.email %></s>
 <% end %>
+<% if user == current_user %>
+<span class="separator">|</span> <%= link_to "Change Password", { :action=>"show_change_password" }, :class=>'change-password' %>
+<% end %>
 </td>
 <td>
 <%= form_tag users_update_path do %>
 <%= hidden_field_tag :id, user.id %>
 <%= label_tag :user_level, "Level: " %> 
-<%= select_tag('user[level]', options_for_select([["Admin", 100], ["User", 0]], user.level)) %><br/> 
+<%= select_tag('user[level]', options_for_select([["Admin", 100], ["User", 0]], user.level)) %>
 <%= submit_tag "Change" %>
 <% end %>
 </td>

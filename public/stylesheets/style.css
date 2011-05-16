@@ -746,7 +746,8 @@ a.edit,
 a.new-trip,
 a.delete,
 a.mark-complete,
-a.add {
+a.add,
+a.change-password {
     padding: 5px 0 5px 20px;
     text-decoration: none;
     font-size: 11px;
@@ -768,6 +769,9 @@ a.mark-complete {
 }
 a.add {
     background: url(images/plus-button.png) left center no-repeat scroll;
+}
+a.change-password {
+    background: url(images/lock.png) left center no-repeat scroll;
 }
 
 a.delete:hover,
