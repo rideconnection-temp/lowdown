@@ -1,4 +1,6 @@
 class UsersController < Devise::SessionsController
+  before_filter :require_admin_user, :only=>[:index, :show_create, :create_user]
+
   require 'new_user_mailer'
 
   def new
@@ -31,6 +33,20 @@ class UsersController < Devise::SessionsController
 
   def show_create
     @user = User.new
+  end
+
+  def show_change_password
+    @user = current_user
+  end
+
+  def change_password
+    if current_user.update_attributes(:password=>params[:user][:password], :password_confirmation=>params[:user][:password_confirmation])
+      flash[:notice] = "Password changed"
+      redirect_to '/'
+    else
+      flash.now[:alert] = "Error updating password"
+      render :action=>:show_change_password
+    end
   end
 
   def create_user

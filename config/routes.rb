@@ -60,6 +60,8 @@ Lowdown::Application.routes.draw do
     post "init" => "users#init"
     post "logout", :to => "users#sign_out"
     get "users/index" => "users#index"
+    get "users/show_change_password" => "users#show_change_password"
+    match "users/change_password"  => "users#change_password"
   end
   root :to => 'dashboard#index'
 
