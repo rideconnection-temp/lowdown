@@ -942,7 +942,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       if period_end_date-period_start_date < 32
         return period_start_date.strftime "%Y %b"
       elsif period_end_date-period_start_date < 320
-        fiscal_period_start_year = period_start_year.advance(:months=>6)
+        fiscal_period_start_date = period_start_date.advance(:months=>6)
         return '%sQ%s' % [fiscal_period_start_date.year, (fiscal_period_start_date.month / 3 + 1)]
       else
         return period_start.year.to_s
