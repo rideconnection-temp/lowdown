@@ -28,7 +28,7 @@ class ReportsController < ApplicationController
     end
 
     def self.fields(requested_fields=nil)
-      if requested_fields.nil?
+      if requested_fields.nil? || requested_fields.empty?
         fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip"]
       else
         fields = @@selector_fields + requested_fields
@@ -103,7 +103,17 @@ class ReportsController < ApplicationController
 
     def quarter
       q = allocation.quarter.to_s
-      return q[0...4] + 'Q' + q[4]
+      #adjust for fiscal year
+      year = q[0...4].to_i
+      quarter = q[4].to_i
+      if quarter >= 3
+        quarter -= 2
+        year += 1
+      else
+        quarter += 2
+      end
+
+      return '%sQ%s' % [year, quarter]
     end
 
     def year
@@ -932,7 +942,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid
       if period_end_date-period_start_date < 32
         return period_start_date.strftime "%Y %b"
       elsif period_end_date-period_start_date < 320
-        return '%sQ%s' % [period_start_date.year, (period_start_date.month / 3 + 1)]
+        fiscal_period_start_date = period_start_date.advance(:months=>6)
+        return '%sQ%s' % [fiscal_period_start_date.year, (fiscal_period_start_date.month / 3 + 1)]
       else
         return period_start.year.to_s
       end
