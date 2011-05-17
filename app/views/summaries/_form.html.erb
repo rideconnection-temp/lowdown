@@ -68,6 +68,10 @@
 	      <td><%= @summary.summary_rows.map(&:in_district_trips).inject(:+) %></td>
 	      <td><%= @summary.summary_rows.map(&:out_of_district_trips).inject(:+) %></td>
 	    </tr>
+	    <tr>
+	      <td>Grand Total</td>
+	      <td colspan="2"><%= @summary.summary_rows.map {|x| x.in_district_trips + x.out_of_district_trips} .inject(:+) %></td>
+	    </tr>
 	    <% end %>
 
           </tbody>
