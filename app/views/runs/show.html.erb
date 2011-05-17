@@ -13,12 +13,22 @@
     </li>
   <% end %>
   </ul>
+
+  <% if ! @run.latest? %>
+  <br />
+  <div class="notice">You are viewing an old version created on <%= @run.valid_start.to_s(:pretty) %></div>
+  <% end %>
+
 </div><!-- /#history -->
 <% end %>
 <%= form_for @run, :url=>{:action=>:update} do |f| %>
-  <%= render :partial => "form", :locals=>{:f=>f} %>
+  <fieldset>
+  
+    <%= render :partial => "form", :locals=>{:f=>f} %>
 
-  <br/>
+    <div class="actions">
+      <%= submit_tag 'Update' %>
+    </div>
 
-  <%= submit_tag 'Update' %>
+  </fieldset>
 <% end %>
