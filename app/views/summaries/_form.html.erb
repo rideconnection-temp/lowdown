@@ -61,6 +61,15 @@
               <td><%= row_form.text_field :out_of_district_trips %></td>
             </tr>
             <% end %>
+
+	    <% if !f.object.new_record? %>
+	    <tr>
+	      <td>Total</td>
+	      <td><%= @summary.summary_rows.map(&:in_district_trips).inject(:+) %></td>
+	      <td><%= @summary.summary_rows.map(&:out_of_district_trips).inject(:+) %></td>
+	    </tr>
+	    <% end %>
+
           </tbody>
         </table>
       </li>
