@@ -1,5 +1,11 @@
 <ul class="form">
 <%= f.hidden_field :id %>
+<% if !f.object.new_record? %>
+<li>
+  <%= f.label :adjustment_notes %><br/>
+  <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
+</li>
+<% end %>
 <li><%= f.label :routematch_id, 'Routematch ID' %><%= f.text_field :routematch_id, :disabled => true %></li>
 <li><%= f.label :name %><%= f.text_field :name %></li>
 <li><%= f.label :start_at %> <%= f.text_field :start_at, :disabled => true  %></li>

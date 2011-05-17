@@ -13,6 +13,12 @@
   <%= f.hidden_field :id %>
 
   <fieldset>
+    <% if !f.object.new_record? %>
+    <div>
+      <%= f.label :adjustment_notes %><br/>
+      <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
+    </div>
+    <% end %>
 
     <ol class="section summary-form-part-one">
       <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>

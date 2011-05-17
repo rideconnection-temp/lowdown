@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110517163202) do
+ActiveRecord::Schema.define(:version => 20110517182344) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -104,8 +104,8 @@ ActiveRecord::Schema.define(:version => 20110517163202) do
   end
 
   create_table "runs", :id => false, :force => true do |t|
-    t.string   "id",             :limit => 36,                    :null => false
-    t.string   "base_id",        :limit => 36
+    t.string   "id",               :limit => 36,                    :null => false
+    t.string   "base_id",          :limit => 36
     t.datetime "valid_start"
     t.datetime "valid_end"
     t.date     "date"
@@ -118,10 +118,11 @@ ActiveRecord::Schema.define(:version => 20110517163202) do
     t.integer  "escort_count"
     t.integer  "trip_import_id"
     t.integer  "updated_by"
-    t.boolean  "complete",                     :default => false
+    t.boolean  "complete",                       :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "imported_at"
+    t.text     "adjustment_notes"
   end
 
   create_table "summaries", :id => false, :force => true do |t|
@@ -147,6 +148,7 @@ ActiveRecord::Schema.define(:version => 20110517163202) do
     t.integer  "administrative"
     t.integer  "operations"
     t.integer  "vehicle_maint"
+    t.text     "adjustment_notes"
   end
 
   create_table "summary_rows", :force => true do |t|
@@ -208,6 +210,7 @@ ActiveRecord::Schema.define(:version => 20110517163202) do
     t.decimal  "apportioned_fare",                               :precision => 10, :scale => 2
     t.integer  "updated_by"
     t.datetime "imported_at"
+    t.text     "adjustment_notes"
   end
 
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
