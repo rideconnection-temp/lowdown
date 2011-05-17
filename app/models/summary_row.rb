@@ -1,5 +1,4 @@
 class SummaryRow < ActiveRecord::Base
-  point_in_time
   belongs_to :summary, :primary_key=>"base_id"
   stampable :updater_attribute  => :updated_by,
             :creator_attribute  => :updated_by

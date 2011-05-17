@@ -30,7 +30,7 @@ class Summary < ActiveRecord::Base
   end
 
   def create_new_version?
-    self.versioned_columns.detect {|a| __send__ "#{a}_changed?"} || self.summary_rows.detect {|a| a.create_new_version? }
+    self.versioned_columns.detect {|a| __send__ "#{a}_changed?"} || self.summary_rows.detect {|a| a.changed? }
   end
 
 end
