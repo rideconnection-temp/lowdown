@@ -662,9 +662,10 @@ table tr.sub-header th {
 table tr.report-item td {
     border-top: 1px solid #2e6399;
 }
-div.report-wrapper td {
-    text-align: right;
-}
+
+div.report-wrapper td { text-align: right; }
+body.trips div.report-wrapper td { text-align: left; }
+
 div.report-wrapper td.report-item {
     background: #E5F2FF;
     border-right: 1px solid #E5F2FF;
