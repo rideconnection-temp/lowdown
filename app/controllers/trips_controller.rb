@@ -148,7 +148,8 @@ class TripsController < ApplicationController
   end
   
   def update
-    @trip = Trip.current_versions.find(params[:trip][:id])
+    old_trip = Trip.find(params[:trip][:id])
+    @trip = old_trip.current_version
     # clean_new_row # needed for Trips?
     @trip.update_attributes(params[:trip]) ?
       redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
