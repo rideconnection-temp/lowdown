@@ -5,33 +5,20 @@
          <table id="summary-results">
            <thead>
              <tr>
-               <th rowspan="2">Provider</th>
-               <th rowspan="2">Start</th>
-               <th rowspan="2">End</th>
-               <% POSSIBLE_TRIP_PURPOSES.each do |purpose| %>
-                 <th colspan="2"><%= purpose %></th>
-               <% end %>
-               <th rowspan="2">Complete</th>
-               <th rowspan="2"></th>
-             </tr>
-             <tr>
-               <% POSSIBLE_TRIP_PURPOSES.each do |purpose| %>
-                 <th>In</th>
-                 <th>Out</th>
-               <% end %>
+               <th>Allocation</th>
+               <th>Start</th>
+               <th>Complete</th>
+               <th>Last updated</th>
+               <th>&nbsp;</th>
              </tr>
            </thead>
            <tbody>
              <% @summaries.each do |summary| %>
              <tr>
-               <td><%= summary.provider.name %></td>
-               <td><%= summary.period_start %></td>
-               <td><%= summary.period_end %></td>
-               <% summary.summary_rows.each do |row_form| %>
-               <td><%= row_form.in_district_trips %></td>
-               <td><%= row_form.out_of_district_trips %></td>
-               <% end %>
+               <td><%= summary.allocation.name %></td>
+               <td><%= summary.period_start.month %> / <%= summary.period_start.year %></td>
                <td><span class="status-<%= (summary.complete) ? "" : "in" %>complete"><%= summary.complete %></span></td>
+               <td><%= summary.valid_start.to_s(:pretty) %></td>
                <td><%= link_to 'Details', :action=>:show_update, :id=>summary.id %></td>
              </tr>
              <% end %>
