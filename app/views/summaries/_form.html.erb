@@ -13,12 +13,6 @@
   <%= f.hidden_field :id %>
 
   <fieldset>
-    <% if !f.object.new_record? %>
-    <div>
-      <%= f.label :adjustment_notes %><br/>
-      <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
-    </div>
-    <% end %>
 
     <ol class="section summary-form-part-one">
       <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
@@ -26,6 +20,13 @@
     </ol>
 
     <ol class="section summary-form-part-two">
+      <% if !f.object.new_record? %>
+      <%= f.label :adjustment_notes, "Adjustment Notes:" %><br/>
+      <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
+      <% end %>
+    </ol>
+
+    <ol class="section summary-form-part-three">
       <li><%= f.label :total_miles, "Total Miles:" %> <%= f.text_field :total_miles %></li>
       <li><%= f.label :unduplicated_riders, "Unduplicated Riders:" %> <%= f.text_field :unduplicated_riders %></li>
       <li><%= f.label :driver_hours_paid, "Driver Hours Paid" %> <%= f.text_field :driver_hours_paid %></li>
@@ -41,7 +42,7 @@
       <li><%= f.label :complete, "Complete:" %><%= f.check_box :complete %></li>
     </ol>
 
-    <ol class="section summary-form-part-three">
+    <ol class="section summary-form-part-four">
       <li>
         <table id="summary-row-info">
           <thead>

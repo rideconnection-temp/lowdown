@@ -498,13 +498,26 @@ fieldset ol.fourth {
 }
 fieldset ol.summary-form-part-one {
     float: left;
-    width: 40%;
+    width: 35%;
 }
+    body fieldset ol.summary-form-part-one li label { width: 90%;
+    }
+
 fieldset ol.summary-form-part-two {
+    float: left;
+    width: 30%;
+}
+    fieldset ol.summary-form-part-two textarea {
+        width: 85%;
+        height: 4.5em;
+        overflow: auto;
+        margin-bottom: 10px;
+    }
+fieldset ol.summary-form-part-three {
     float: right;
     width: 32%;
 }
-fieldset ol.summary-form-part-three {
+fieldset ol.summary-form-part-four {
     float: left;
     width: 65%;
     clear: left;
@@ -997,4 +1010,11 @@ div.predefined-report form.run-report input[type="submit"] {
 }
 div.predefined-report form.run-report input[type="submit"]:hover {
     background: #009FFB;
+}
+
+#history {
+    margin-bottom: 10px;
+}
+#history h2 {
+    margin-bottom: 0;
 }

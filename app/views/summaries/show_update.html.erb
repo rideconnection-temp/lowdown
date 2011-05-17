@@ -5,27 +5,29 @@
 
      <div class="wrap selfclear">
 <div id="history">
-         <h2>Versions</h2>
-         <ul>
-<% for version in @versions %>
-           <li>
-             <% if version == @summary %>
-               <%= time_ago_in_words version.valid_start %> ago
-             <% else %>
-               <%= link_to time_ago_in_words(version.valid_start), :action=>:show_update, :id=>version.id %> ago
-             <% end %>
-             by <span class="update-user"><%= version.updater.email %></span>
 
-           </li>
-<% end %>
-         </ul>
-       </div><!-- /#history -->
+  <h2>Versions</h2>
 
-<% if ! @summary.latest? %>
+  <ul>
+    <% for version in @versions %>
+    <li>
+        <% if version == @summary %>
+        <%= time_ago_in_words version.valid_start %> ago
+        <% else %>
+        <%= link_to time_ago_in_words(version.valid_start), :action=>:show_update, :id=>version.id %> ago
+        <% end %>
+        by <span class="update-user"><%= version.updater.email %></span>
+    </li>
+  <% end %>
+  </ul>
 
-<div><b>You are viewing an old version created on <%= @summary.valid_start.to_s(:pretty) %></b></div>
+  <% if ! @summary.latest? %>
+  <br />
+  <div class="notice">You are viewing an old version created on <%= @summary.valid_start.to_s(:pretty) %></div>
+  <% end %>
 
-<% end %>
+</div><!-- /#history -->
+
 <%= form_for @summary, :url=>{:action=>:update} do |f| %>
   <%= render :partial => "form", :locals=>{:f=>f} %>
 

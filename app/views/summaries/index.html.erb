@@ -4,13 +4,16 @@
 
 <%= form_for @query, :html=>{:id=>"summary-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
   <fieldset>
-    <h2>Summary Period</h2>
-    <ol class="section fourth">
+
+    <ol class="section first">
       <li><label>Start Date:</label> <%= f.date_select( :period_start, :end_year => Date.today.year, :order => [:month, :year] ) %></li>
       <li><label>End Date:</label> <%= f.date_select( :period_end, :end_year => Date.today.year, :order => [:month, :year] ) %></li>
 
+    </ol>
+
+    <ol class="section fourth">
       <li>
-        <h2>Allocations</h2>
+        <label>Allocations:</label>
         <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
       </li>
     </ol>
