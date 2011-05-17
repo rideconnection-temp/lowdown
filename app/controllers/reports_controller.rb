@@ -179,19 +179,15 @@ class ReportsController < ApplicationController
     end
 
     def collect_adjustment_by_summary(sql, allocation, start_date, end_date)
-      subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? and 
-summary_rows.valid_start < ? and summary_rows.valid_end > ? and summary_rows.valid_end <= ? "
+      subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? "
 
       subtract_results = ActiveRecord::Base.connection.select_one(bind([subtract_sql, allocation['id'], 
-start_date, start_date, 
-start_date, start_date, end_date]))
+start_date, start_date]))
 
-      add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? and 
-summary_rows.valid_start < ? and summary_rows.valid_end > ? and summary_rows.valid_end <= ? "
+      add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? "
 
       add_results = ActiveRecord::Base.connection.select_one(bind([add_sql, allocation['id'], 
-end_date, end_date, 
-start_date, end_date, end_date]))
+end_date, end_date]))
 
       return add_results, subtract_results
     end
@@ -277,10 +273,9 @@ allocation_id=? "
 
       else
         sql += "and period_start >= ? and period_end < ? and 
-summaries.valid_end = ? and 
-summary_rows.valid_end = ? "
+summaries.valid_end = ? "
 
-        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
         subtract_results = {}
       end
       apply_results(add_results, subtract_results)
@@ -332,10 +327,9 @@ allocation_id=? "
         add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
       else
         sql += "and period_start >= ? and period_end < ? and 
-summaries.valid_end = ? and 
-summary_rows.valid_end = ? "
+summaries.valid_end = ? "
 
-        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
         subtract_results = {}
       end
       apply_results(add_results, subtract_results)
@@ -409,13 +403,13 @@ allocation_id=? "
       else
         period_sql = "and summaries.period_start >= ? and 
 summaries.period_end < ? and 
-summaries.valid_end = ? and summary_rows.valid_end = ? "
+summaries.valid_end = ? "
         sql += period_sql
         last_year_sql += period_sql
-        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time, SummaryRow.end_of_time]))
+        add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
         apply_results(add_results)
 
-        add_results = ActiveRecord::Base.connection.select_one(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Summary.end_of_time, SummaryRow.end_of_time]))
+        add_results = ActiveRecord::Base.connection.select_one(bind([last_year_sql, allocation['id'], start_date.prev_year, end_date.prev_year, Summary.end_of_time]))
         apply_results(add_results)
       end
     end
@@ -615,10 +609,10 @@ group by purpose_type; "
 purpose, in_district_trips + out_of_district_trips as trips from
 summary_rows, summaries
 where summary_rows.summary_id = summaries.base_id and 
-allocation_id=? and period_start >= ? and period_end <= ? and summary_rows.valid_end = ? and summaries.valid_end = ?
+allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_end = ?
 "
 
-      rows = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, SummaryRow.end_of_time, Summary.end_of_time]))
+      rows = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
 
       total = 0
       for row in rows
