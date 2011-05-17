@@ -79,9 +79,11 @@ class SummariesController < ApplicationController
 
   def create
     @summary = Summary.new(params[:summary])
-    @summary.period_end = @summary.period_start.next_month
-    @summary.save!
-    if @summary
+    if ! @summary.summary_rows.size == POSSIBLE_TRIP_PURPOSES.size * 2
+      flash.now[:alert] = "You must fill in all summary rows (even if just with zeros)"
+      render(:action => :show_create)
+    end
+    if @summary.save
       redirect_to(:action=>:show_update, :id=>@summary.id)
     else
       @allocations = Allocation.all
@@ -131,21 +133,40 @@ class SummariesController < ApplicationController
     @summary = old_version.current_version
 
     @allocations = Allocation.all
+    @versions = @summary.versions.reverse
 
     #gather up the old row objects
     old_rows = @summary.summary_rows.map &:clone
 
-    @summary.update_attributes(params[:summary]) ?
-      redirect_to(:action=>:show_update, :id=>@summary) : render(:action => :show_update)
-    #this created a new prior version, to which we want to reassign the
-    #newly-created old-valued summary rows
-    prev = @summary.previous
-    for row in old_rows
-      row.summary_id=prev.id
-      row.save!
+    @summary.attributes = params[:summary]
+    if @summary.save
+      #this created a new prior version, to which we want to reassign the
+      #newly-created old-valued summary rows
+      prev = @summary.previous
+      for row in old_rows
+        row.summary_id=prev.id
+        row.save!
+      end
+
+      rows = @summary.summary_rows
+      #and ensure that there are all rows for the current summary
+      for purpose in POSSIBLE_TRIP_PURPOSES
+        found = false
+        for row in rows
+          if row.purpose == purpose
+            found = true
+            break
+          end
+        end
+        if not found
+          SummaryRow.create(:summary_id=>@summary.id, :purpose=>purpose,:in_district_trips => 0, :out_of_district_trips=>0)
+        end
+      end
+      redirect_to(:action=>:show_update, :id=>@summary)
+    else
+      render(:action => :show_update)
     end
 
-    @summary.period_end = @summary.period_start.next_month
   end
 
 

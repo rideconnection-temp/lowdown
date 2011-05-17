@@ -11,6 +11,12 @@ class Summary < ActiveRecord::Base
 
   attr_accessor :force_update
 
+  before_validation :fix_period_end
+
+  def fix_period_end
+    self.period_end = self.period_start.next_month
+  end
+
   def created_by
     return first_version.updater
   end
