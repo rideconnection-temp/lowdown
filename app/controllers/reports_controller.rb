@@ -113,7 +113,7 @@ class ReportsController < ApplicationController
         quarter += 2
       end
 
-      return '%sQ%s' % [year, quarter]
+      return 'FY %s-%s Q%s' % [year-1, year.to_s[-2,2], quarter]
     end
 
     def year
