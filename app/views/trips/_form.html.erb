@@ -1,11 +1,3 @@
-<fieldset>
-  <% if !f.object.new_record? %>
-  <div>
-    <%= f.label :adjustment_notes %><br/>
-    <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
-  </div>
-  <% end %>
-
   <ol class="section first">
 
     <%= f.hidden_field :id %>
@@ -103,10 +95,6 @@
       </p>
     </li>
 
-  </ol>
-
-  <ol class="section second">
-
     <li>
       <%= f.label :start_at, "Start At:" %>
       <p class="disabled-input">
@@ -128,6 +116,10 @@
         <% end %>
       </p>
     </li>
+
+  </ol>
+
+  <ol class="section second">
 
     <li><%= f.label :odometer_start, "Odometer Start:" %> <%= f.text_field :odometer_start %></li>
 
@@ -165,11 +157,11 @@
       </p>
     </li>
 
+    <li><%= f.label :bpa_driver_name, "BPA Driver Name:" %> <%= f.text_field :bpa_driver_name %></li>
+
   </ol>
 
   <ol class="section third">
-
-    <li><%= f.label :bpa_driver_name, "BPA Driver Name:" %> <%= f.text_field :bpa_driver_name %></li>
 
     <li>
       <%= f.label :override, "Override:" %>
@@ -267,4 +259,15 @@
 
   </ol>
 
-</fieldset>
+  <ol class="section fourth">
+
+  <% if !f.object.new_record? %>
+    <li>
+      <%= f.label :adjustment_notes, "Adjustment Notes:" %>
+      <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
+    </li>
+  <% end %>
+
+  </ol>
+
+
