@@ -472,7 +472,7 @@ summaries.valid_end = ? "
 
   def show_create_report
     @report = Report.new(params[:report])
-    @allocations = Allocation.all
+    @allocations = Allocation.order(:name).all
   end
 
   def show_create_quarterly

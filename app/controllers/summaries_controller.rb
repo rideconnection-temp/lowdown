@@ -62,7 +62,7 @@ class SummariesController < ApplicationController
       flash.now[:notice] = 'No search criteria set - showing default (past month)'
     end
 
-    @allocations = Allocation.find :all
+    @allocations = Allocation.order(:name).all
     @summaries = Summary.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
 
   end
