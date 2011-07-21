@@ -2,6 +2,7 @@ rm_export.csv
 *.swp
 .bundle
 config/database.yml
+config/app_config.yml
 db/*.sqlite3
 log/*.log
 tmp/**/*

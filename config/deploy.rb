@@ -36,6 +36,8 @@ end
 task :link_database_yml do
   puts "    (Link in database.yml file)"
   run  "ln -nfs #{deploy_to}/shared/config/database.yml #{deploy_to}/current/config/database.yml"
+  puts "    Link in app_config.yml file"
+  run  "ln -nfs #{deploy_to}/shared/config/app_config.yml #{deploy_to}/current/config/app_config.yml"
 end
 
 after "deploy:symlink", :link_database_yml

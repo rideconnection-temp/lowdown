@@ -12,5 +12,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-
+  def test_exception_notification
+      raise 'Testing, 1 2 3.'
+  end
 end
