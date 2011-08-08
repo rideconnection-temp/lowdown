@@ -22,7 +22,7 @@
   <tbody>
   <% @trips.each do |trip| %>
     <tr>
-      <td><a href="#"> <%= trip.customer.name %> </a></td>
+      <td><%= link_to trip.customer.name, customer_path(trip.customer) %></td>
       <td><% trip.result_code %></td>
       <td> <%= trip.allocation.provider.name %></td>
       <td> <%= trip.allocation.project.funding_source %></td>

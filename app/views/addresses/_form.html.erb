@@ -1,0 +1,41 @@
+<li class="selfclear">
+  <%= form.label :common_name, "Address Name:" %>
+  <%= form.text_field :common_name %>
+</li>
+
+<li class="selfclear">
+  <%= form.label :building_name, "Building Name:" %>
+  <%= form.text_field :building_name %>
+</li>
+
+<li class="selfclear">
+  <%= form.label :address_1, "Address 1:" %>
+  <%= form.text_field :address_1 %>
+</li>
+
+<li class="selfclear">
+  <%= form.label :address_2, "Address 2:" %>
+  <%= form.text_field :address_2 %>
+</li>
+
+<li class="selfclear">
+  <%= form.label :city, "City:" %>
+  <%= form.text_field :city %>
+</li>
+
+<li class="selfclear">
+  <%= form.label :state, "State:" %>
+  <%= form.text_field :state, :size=>2 %>
+</li>
+
+<li class="selfclear">
+  <%= form.label :postal_code, "ZIP:" %>
+  <%= form.text_field :postal_code %>
+</li>
+
+<%= form.hidden_field :routematch_address_id %>
+
+<li class="selfclear">
+  <%= form.label :in_trimet_district, "In TriMet District:" %>
+  <%= form.select :in_trimet_district, options_for_select([["Yes", true], ["No", false]]) %>
+</li>

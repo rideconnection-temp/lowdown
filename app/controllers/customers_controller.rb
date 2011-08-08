@@ -1,4 +1,18 @@
 class CustomersController < ApplicationController
+  def show
+    @customer = Customer.find params[:id]
+  end
+  
+  def update
+    @customer = Customer.find params[:id]
+    
+    if @customer.update_attributes params[:customer]
+      redirect_to @customer, :notice => 'Customer was successfully updated.'
+    else
+      render :action => :show
+    end
+  end
+  
   def show_create_report
 
   end

@@ -1,7 +1,8 @@
 class Customer < ActiveRecord::Base
   belongs_to :primary_address, :class_name => "Address", :foreign_key => "address_id"
-  #has_one :primary_address, :class_name => "Address", :foreign_key => "address_id"
   has_many :trips
+  
+  accepts_nested_attributes_for :primary_address
   
   # validations
   validates_presence_of :routematch_customer_id

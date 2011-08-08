@@ -1,0 +1,92 @@
+<%= form_for(@customer) do |f| %>
+  <% if @customer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@customer.errors.count, "error") %> prohibited this customer from being saved:</h2>
+
+      <ul>
+      <% @customer.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @dup %>
+    <label for="ignore_dups">Ignore duplicates</label>
+    <%= check_box_tag :ignore_dups %><br/>
+  <% end %>
+
+  <fieldset class="new-customer">
+
+    <!-- <div class="group">
+      <%#= f.check_box :group %>
+      <%#= f.label :group, "Group" %>
+    </div> -->
+
+    <ol class="section first">
+      <li class="selfclear firstname">
+        <%= f.label :first_name, "First Name:" %>
+        <%= f.text_field :first_name %>
+      </li>
+
+      <li class="selfclear middlename">
+        <%= f.label :middle_initial, "Middle Initial:" %>
+        <%= f.text_field :middle_initial %>
+      </li>
+
+      <li class="selfclear lastname">
+        <%= f.label :last_name, "Last Name:" %>
+        <%= f.text_field :last_name %>
+      </li>
+
+      <li class="selfclear">
+        <%= f.label :telephone_primary, "Phone:" %>
+        <%= f.text_field :telephone_primary %>
+      </li>
+
+      <li class="selfclear">
+        <%= f.label :telephone_secondary, "Alt Phone:" %>
+        <%= f.text_field :telephone_secondary %>
+      </li>
+
+      <li class="selfclear">
+        <%= f.label :email, "Email:" %>
+        <%= f.text_field :email %>
+      </li>
+
+      <li class="selfclear">
+        <%= f.label :birthdate, "Date Of Birth:" %>
+        <%= f.date_select :birthdate, :start_year => 1896, :include_blank => true %>
+      </li>
+
+      <li class="selfclear">
+        <%= f.label :race, "Race:" %>
+	      <%= f.text_field :race %>
+      </li>
+    </ol>
+
+    <ol class="section second">
+      <%= f.fields_for :primary_address_attributes, @customer.primary_address do |address_form| %>
+      <%= render 'addresses/form', :form=>address_form, :editing_address => false %>
+      <% end %>
+
+      <li class="selfclear">
+        <%#= f.label :mobility_id, "Mobility:" %>
+        <%#= f.collection_select :mobility_id, @mobilities, :id, :name %>
+      </li>
+
+      <li class="selfclear">
+        <%#= f.label :mobility_notes, "Mobility Notes:" %>
+        <%#= f.text_area :mobility_notes %>
+      </li>
+    </ol>
+
+    <ol class="section third">
+    </ol>
+
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+  </fieldset>
+
+<% end %>
