@@ -12,7 +12,8 @@ $(document).ready(function() {
   $('.datepicker').datepicker({
       showOn: "button",
       buttonText: "Select",
-      dateFormat: 'yy-mm-dd' 
+      dateFormat: 'yy-mm-dd', 
+      changeYear : true
   });
 
   // format report headers

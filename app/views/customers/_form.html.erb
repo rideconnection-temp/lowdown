@@ -11,19 +11,13 @@
     </div>
   <% end %>
 
-  <% if @dup %>
-    <label for="ignore_dups">Ignore duplicates</label>
-    <%= check_box_tag :ignore_dups %><br/>
-  <% end %>
-
-  <fieldset class="new-customer">
-
-    <!-- <div class="group">
-      <%#= f.check_box :group %>
-      <%#= f.label :group, "Group" %>
-    </div> -->
-
+  <fieldset>
     <ol class="section first">
+      <li class="selfclear lastname">
+        <%= f.label :last_name, "Last Name:" %>
+        <%= f.text_field :last_name %>
+      </li>
+      
       <li class="selfclear firstname">
         <%= f.label :first_name, "First Name:" %>
         <%= f.text_field :first_name %>
@@ -33,55 +27,116 @@
         <%= f.label :middle_initial, "Middle Initial:" %>
         <%= f.text_field :middle_initial %>
       </li>
-
-      <li class="selfclear lastname">
-        <%= f.label :last_name, "Last Name:" %>
-        <%= f.text_field :last_name %>
-      </li>
-
+      
       <li class="selfclear">
-        <%= f.label :telephone_primary, "Phone:" %>
-        <%= f.text_field :telephone_primary %>
+        <%= f.label :birthdate, "Date Of Birth:" %>
+        <%= f.text_field :birthdate, :class => "datepicker" %>
       </li>
-
+      
       <li class="selfclear">
-        <%= f.label :telephone_secondary, "Alt Phone:" %>
-        <%= f.text_field :telephone_secondary %>
+        <%= f.label :sex, "Gender:" %>
+        <%= f.select :sex, options_for_select([%w{Male M}, %w{Female F}, %w{N/A A}], @customer.sex) %>
       </li>
+      
+      <li class="selfclear">
+        <%= f.label :race, "Race:" %>
+	      <%= f.select :race, options_from_collection_for_select(Race.all, :name, :name, @customer.race), :include_blank => true %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :customer_type, "Customer Type:" %>
+	      <%= f.select :customer_type, options_for_select(%w{Honored Adult Child}, @customer.customer_type), :include_blank => true %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :mobility, "Mobility:" %>
+	      <%= f.select :mobility, options_from_collection_for_select(Mobility.all, :name, :name, @customer.mobility), :include_blank => true %>
+      </li>
+      
+    </ol>
 
+    <ol class="section second">
+      
+      <li class="selfclear">
+        <%= f.label :primary_address, "Address:" %>
+        <p class="disabled-input">
+          <% %w{common_name building_name address_1 address_2 city state postal_code}.each do |attribute| %>
+            <%= raw "#{@customer.primary_address[attribute]}<br/>" if @customer.primary_address[attribute].present? %>
+          <% end %>
+        </address>
+      </li>
+      
       <li class="selfclear">
         <%= f.label :email, "Email:" %>
         <%= f.text_field :email %>
       </li>
 
       <li class="selfclear">
-        <%= f.label :birthdate, "Date Of Birth:" %>
-        <%= f.date_select :birthdate, :start_year => 1896, :include_blank => true %>
+        <%= f.label :telephone_primary, "Phone:" %>
+        <%= f.text_field :telephone_primary %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :telephone_primary_extension, "Phone Ext:" %>
+        <%= f.text_field :telephone_primary_extension %>
       </li>
 
       <li class="selfclear">
-        <%= f.label :race, "Race:" %>
-	      <%= f.text_field :race %>
+        <%= f.label :telephone_secondary, "Alt Phone:" %>
+        <%= f.text_field :telephone_secondary %>
       </li>
-    </ol>
-
-    <ol class="section second">
-      <%= f.fields_for :primary_address_attributes, @customer.primary_address do |address_form| %>
-      <%= render 'addresses/form', :form=>address_form, :editing_address => false %>
-      <% end %>
-
+      
       <li class="selfclear">
-        <%#= f.label :mobility_id, "Mobility:" %>
-        <%#= f.collection_select :mobility_id, @mobilities, :id, :name %>
+        <%= f.label :telephone_secondary_extension, "Alt Phone Ext:" %>
+        <%= f.text_field :telephone_secondary_extension %>
       </li>
 
       <li class="selfclear">
-        <%#= f.label :mobility_notes, "Mobility Notes:" %>
-        <%#= f.text_area :mobility_notes %>
+        <%= f.label :language_preference, "Language Pref:" %>
+        <%= f.text_field :language_preference %>
       </li>
     </ol>
 
     <ol class="section third">
+      <li class="selfclear">
+        <%= f.label :prime_number, "Prime Number:" %>
+        <%= f.text_field :prime_number %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :case_manager, "Case Manager:" %>
+        <%= f.text_field :case_manager %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :spd_office, "SPD Office:" %>
+        <%= f.text_field :spd_office %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :date_enrolled, "Date Enrolled:" %>
+        <%= f.text_field :date_enrolled, :class => "datepicker"  %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :service_end, "Service End:" %>
+        <%= f.text_field :service_end, :class => "datepicker" %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :approved_rides, "Approved Rides:" %>
+        <%= f.text_field :approved_rides, :type => "number" %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :created_at, "Created At:" %>
+        <%= content_tag :span, @customer.created_at %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :updated_at, "Updated At:" %>
+        <%= content_tag :span, @customer.updated_at %>
+      </li>
     </ol>
 
     <div class="actions">
