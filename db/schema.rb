@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110517182344) do
+ActiveRecord::Schema.define(:version => 20110810173604) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -72,6 +72,12 @@ ActiveRecord::Schema.define(:version => 20110517182344) do
     t.string   "spd_office",                    :limit => 25
   end
 
+  create_table "mobilities", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "projects", :force => true do |t|
     t.string   "name"
     t.string   "funding_source"
@@ -88,6 +94,12 @@ ActiveRecord::Schema.define(:version => 20110517182344) do
     t.string   "branch",        :limit => 50
     t.string   "subcontractor", :limit => 50
     t.string   "routematch_id", :limit => 10
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "races", :force => true do |t|
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
