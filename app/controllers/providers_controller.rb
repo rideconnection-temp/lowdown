@@ -5,13 +5,8 @@ class ProvidersController < ApplicationController
   end
 
   def edit
-    @provider = Provider.find params[:id]
-    
+    @provider       = Provider.find params[:id]
     @provider_types = Provider.all.map(&:provider_type).uniq
-    # @run_collection_methods    = Provider.all.map(&:run_collection_method).uniq
-    # @cost_collection_methods   = Provider.all.map(&:cost_collection_method).uniq
-    # @routematch_overrides      = Provider.all.map(&:routematch_override).uniq
-    # @routematch_provider_codes = Provider.all.map(&:routematch_provider_code).uniq
   end
 
   def update

@@ -320,6 +320,7 @@ body.reports #primary-nav li.reports a:link, body.reports #primary-nav li.report
 body.summaries #primary-nav li.summaries a:link, body.summaries #primary-nav li.summaries a:visited,
 body.trips #primary-nav li.trips a:link, body.trips #primary-nav li.trips a:visited,
 body.runs #primary-nav li.runs a:link, body.runs #primary-nav li.runs a:visited,
+body.admin #primary-nav li.admin a:link, body.admin #primary-nav li.admin a:visited,
 body.users #secondary-nav li.users a:link, body.users #secondary-nav li.users a:visited {
     background: #fff;
     color: #009FFB;
