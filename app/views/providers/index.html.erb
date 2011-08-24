@@ -1,0 +1,14 @@
+<div id="page-header">
+  <h1>Listing providers</h1>
+</div>
+
+<table>
+
+<% @providers.each do |provider| %>
+  <tr>
+    <td><%= link_to provider.name, edit_provider_path(provider) %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @providers %>

@@ -54,7 +54,7 @@ Lowdown::Application.routes.draw do
   
   resources :customers, :only => [:show, :update]
   resources :allocations, :only => [:index, :edit, :update]
-  resources :providers
+  resources :providers, :only => [:index, :edit, :update]
   resources :funding_sources
   
   resource :admin, :only => [:index]
