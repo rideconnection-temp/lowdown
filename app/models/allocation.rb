@@ -2,6 +2,8 @@ class Allocation < ActiveRecord::Base
   has_many :trips
   belongs_to :provider
   belongs_to :project
+  
+  self.per_page = 30
 
   def to_s
     name

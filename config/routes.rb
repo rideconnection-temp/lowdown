@@ -53,6 +53,11 @@ Lowdown::Application.routes.draw do
   # See how all your routes lay out with "rake routes"
   
   resources :customers, :only => [:show, :update]
+  resources :allocations, :only => [:index, :edit, :update]
+  resources :providers
+  resources :funding_sources
+  
+  resource :admin, :only => [:index]
 
   devise_for :users, :controllers=>{:sessions=>"users"} do
     get "new_user" => "users#new_user"

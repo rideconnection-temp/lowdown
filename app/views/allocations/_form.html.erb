@@ -1,0 +1,80 @@
+<%= form_for(@allocation) do |form| %>
+  <% if @allocation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@allocation.errors.count, "error") %> prohibited this allocation from being saved:</h2>
+
+      <ul>
+      <% @allocation.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <fieldset>
+    <ol class="section ">
+      <li class="selfclear">
+        <%= form.label :name %>
+        <%= form.text_field :name %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :group_trip %>
+        <%= form.check_box :group_trip %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :project_id %>
+        <%= form.collection_select :project_id, Project.all, :id, :name %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :provider_id %>
+        <%= form.collection_select :provider_id, Provider.all, :id, :name %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :county %>
+        <%= form.text_field :county %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :trip_collection_method %>
+        <%= form.select :trip_collection_method, 
+          options_for_select(@trip_collection_methods.map {|tcm| [tcm, tcm]}, @allocation.trip_collection_method) %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :run_collection_method %>
+        <%= form.select :run_collection_method, 
+          options_for_select(@run_collection_methods.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>      </li>
+      
+      <li class="selfclear">
+        <%= form.label :cost_collection_method %>
+        <%= form.select :cost_collection_method, 
+          options_for_select(@cost_collection_methods.map {|ccm| [ccm, ccm]}, @allocation.cost_collection_method) %>      </li>
+      
+      <li class="selfclear">
+        <%= form.label :routematch_override %>
+        <%= form.select :routematch_override, 
+          options_for_select(@routematch_overrides.map {|ro| [ro, ro]}, @allocation.routematch_override) %>      </li>
+      
+      <li class="selfclear">
+        <%= form.label :routematch_provider_code %>
+        <%= form.select :routematch_provider_code, 
+          options_for_select(@routematch_provider_codes.map {|rpc| [rpc, rpc]}, @allocation.routematch_provider_code) %>      </li>
+      
+      <li class="selfclear">
+        <%= form.label :contract %>
+        <%= form.text_field :contract %>
+      </li>
+    </ol>
+    
+    <div class="actions">
+      <%= form.submit %>
+    </div>
+
+  </fieldset>
+
+
+<% end %>
