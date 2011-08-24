@@ -1,0 +1,44 @@
+<%= form_for(@project) do |form| %>
+  <% if @project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+      <% @project.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <fieldset>
+    <ol class="section ">
+      <li class="selfclear">
+        <%= form.label :name %>
+        <%= form.text_field :name %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :funding_source %>
+        <%= form.select :funding_source, options_for_select(@funding_sources.map {|fs| [fs,fs]}, @project.funding_source) %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :funding_subsource %>
+        <%= form.select :funding_subsource, options_for_select(@funding_subsources.map {|fs| [fs,fs]}, @project.funding_subsource) %>
+      </li>
+      
+      <li class="selfclear">
+        <%= form.label :project_number %>
+        <%= form.text_field :project_number %>
+      </li>
+    </ol>
+    
+    <div class="actions">
+      <%= form.submit %>
+    </div>
+
+  </fieldset>
+
+
+<% end %>

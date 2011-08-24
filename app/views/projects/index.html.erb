@@ -1,0 +1,14 @@
+<div id="page-header">
+  <h1>Listing projects</h1>
+</div>
+
+<table>
+
+<% @projects.each do |project| %>
+  <tr>
+    <td><%= link_to project.name, edit_project_path(project) %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= will_paginate @projects %>
