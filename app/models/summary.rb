@@ -9,7 +9,7 @@ class Summary < ActiveRecord::Base
 
   accepts_nested_attributes_for :summary_rows, :reject_if => :all_blank
 
-  attr_accessor :force_update
+  attr_accessor :force_update, :do_not_version
 
   before_validation :fix_period_end
 
@@ -30,7 +30,12 @@ class Summary < ActiveRecord::Base
   end
 
   def create_new_version?
+    return false if do_not_version?
+    
     self.versioned_columns.detect {|a| __send__ "#{a}_changed?"} || self.summary_rows.detect {|a| a.changed? }
   end
-
+  
+  def do_not_version?
+    do_not_version.to_i == 1
+  end
 end

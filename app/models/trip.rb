@@ -28,8 +28,7 @@ class Trip < ActiveRecord::Base
   attr_protected :apportioned_fare, :apportioned_mileage, :apportioned_duration
   attr_protected :mileage, :duration
 
-  attr_accessor :bulk_import
-  attr_accessor :secondary_update
+  attr_accessor :bulk_import, :secondary_update, :do_not_version
 
   scope :completed, where(:result_code => 'COMP')
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
@@ -82,6 +81,14 @@ class Trip < ActiveRecord::Base
   memoize :customers_served
 
 private
+
+  def create_new_version?
+    !do_not_version?
+  end
+  
+  def do_not_version?
+    do_not_version.to_i == 1
+  end
 
   def set_duration_and_mileage
     unless secondary_update 

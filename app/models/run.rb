@@ -6,7 +6,7 @@ class Run < ActiveRecord::Base
 
   after_save :apportion_run_based_trips
 
-  attr_accessor :bulk_import
+  attr_accessor :bulk_import, :do_not_version
 
   scope :has_odometer_log, where('odometer_start IS NOT NULL and odometer_end IS NOT NULL')
   scope :has_time_log, where('start_at IS NOT NULL and end_at IS NOT NULL')
@@ -31,6 +31,14 @@ class Run < ActiveRecord::Base
   end
 
   private
+  
+  def create_new_version?
+    !do_not_version?
+  end
+  
+  def do_not_version?
+    do_not_version.to_i == 1
+  end
 
   def apportion_run_based_trips
     unless bulk_import
