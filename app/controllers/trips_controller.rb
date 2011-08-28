@@ -4,42 +4,18 @@ class Query
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date
-  attr_accessor :end_date
+  attr_accessor :start_date, :end_date, :provider, :allocation, :format, :dest_allocation, :commit
 
-  attr_accessor :provider
-  attr_accessor :allocation
+  def initialize(params, commit = nil)
+    params ||= {}
 
-  attr_accessor :format
-
-  def convert_date(obj, base)
-    return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
-  end
-
-  def initialize(params)
-    if params
-      if params["start_date(1i)"]
-        @start_date = convert_date(params, :start_date)
-      end
-      if params["end_date(1i)"]
-        @end_date = convert_date(params, :end_date)
-      end
-      if params["start_date"]
-        @start_date = Date.parse(params["start_date"])
-      end
-      if params["end_date"]
-        @end_date = Date.parse(params["end_date"])
-      end
-      if params[:provider]
-        @provider = params[:provider].to_i
-      end
-      if params[:allocation]
-        @allocation = params[:allocation].to_i
-      end
-      if params[:allocation]
-        @format = params[:format]
-      end
-    end
+    @commit          = commit
+    @end_date        = params["end_date"] ? Date.parse(params["end_date"]) : Date.today
+    @start_date      = params["start_date"] ? Date.parse(params["start_date"]) : @end_date - 5
+    @provider        = params[:provider]          
+    @allocation      = params[:allocation]
+    @dest_allocation = params[:dest_allocation]
+    @format          = params[:format] if params[:format]
   end
 
   def persisted?
@@ -48,16 +24,14 @@ class Query
 
   def conditions
     d = {}
-    if start_date
-      d[:date] = start_date..end_date
-    end
-    if provider && provider != 0
-      d["allocations.provider_id"] = provider
-    end
-    if allocation && allocation != 0
-      d[:allocation_id] = allocation
-    end
+    d[:date]                     = start_date..end_date if start_date
+    d["allocations.provider_id"] = provider if provider.present?
+    d[:allocation_id]            = allocation if allocation.present?
     d
+  end
+  
+  def update_allocation?
+    @commit.try(:downcase) == "transfer trips" && @dest_allocation.present? && @dest_allocation != @allocation
   end
 end
 
@@ -69,16 +43,9 @@ class TripsController < ApplicationController
   end
 
   def list
-    @query = Query.new(params[:query])
-    if @query.conditions.empty?
-      @query.end_date = Date.today
-      @query.start_date = @query.end_date - 5 
-      flash[:notice] = 'No search criteria set - showing default (past 5 days)'
-    end
-
-    @providers = Provider.find :all
+    @query       = Query.new(params[:query])
+    @providers   = Provider.find :all
     @allocations = Allocation.find :all
-
 
     @trips = Trip.current_versions.find(:all, :include=>[:pickup_address, :dropoff_address, :run, :customer, :allocation], :conditions=>@query.conditions)
 
@@ -100,6 +67,23 @@ class TripsController < ApplicationController
       @trips = @trips.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
       
     end
+  end
+  
+  def update_allocation
+    @query       = Query.new params[:query], params[:commit]
+    @allocations = Allocation.all
+    
+    if @query.update_allocation?
+      @transfer_count = params[:transfer_count] || 0
+
+      # postgres doesn't support update & limit, we can't use limit option of update_all
+      trip_ids = Trip.current_versions.where( @query.conditions ).limit(@transfer_count).map &:id      
+      
+      @transfer_count = Trip.update_all ["allocation_id = ?, updated_at = ?, updated_by = ?", @query.dest_allocation, Time.now, current_user.id], ["id in (?)", trip_ids]  
+      @allocation     = Allocation.find @query.dest_allocation
+    end
+    
+    @trips_count = Trip.current_versions.where( @query.conditions ).count
   end
 
   def share
@@ -171,6 +155,8 @@ class TripsController < ApplicationController
    flash[:notice] = "Updated #{updated} records"
    redirect_to :action=>:show_bulk_update
   end
+
+  private
 
   def address_fields(address)
     [address.common_name, address.building_name, address.address_1, address.address_2, address.city, address.state, address.postal_code]
