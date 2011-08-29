@@ -300,6 +300,7 @@ private
     for trip in trips
       if trip.routematch_share_id != this_share_id 
         this_share_id = trip.routematch_share_id 
+        trip.do_not_version = true
         trip.save!
         trip_count += 1
       end
@@ -312,6 +313,7 @@ private
     runs = Run.current_versions.where(:imported_at => self.import_start_time).has_odometer_log.has_time_log
     run_count = 0
     for run in runs
+      run.do_not_version = true
       run.save!
       run_count += 1
     end

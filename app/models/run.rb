@@ -37,7 +37,7 @@ class Run < ActiveRecord::Base
   end
   
   def do_not_version?
-    do_not_version.to_i == 1
+    do_not_version == true || do_not_version.to_i == 1
   end
 
   def apportion_run_based_trips

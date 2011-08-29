@@ -95,7 +95,7 @@ private
   end
   
   def do_not_version?
-    do_not_version.to_i == 1
+    do_not_version == true || do_not_version.to_i == 1
   end
 
   def set_duration_and_mileage
