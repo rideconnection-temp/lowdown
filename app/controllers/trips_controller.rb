@@ -77,10 +77,20 @@ class TripsController < ApplicationController
       @transfer_count = params[:transfer_count] || 0
 
       # postgres doesn't support update & limit, we can't use limit option of update_all
-      trip_ids = Trip.current_versions.where( @query.conditions ).limit(@transfer_count).map &:id      
+      trips    = Trip.current_versions.where( @query.conditions ).limit(@transfer_count)
       
-      @transfer_count = Trip.update_all ["allocation_id = ?, updated_at = ?, updated_by = ?", @query.dest_allocation, Time.now, current_user.id], ["id in (?)", trip_ids]  
-      @allocation     = Allocation.find @query.dest_allocation
+      if trips.present?
+        now      = trips.first.now_rounded
+        trip_ids = trips.map &:id      
+      
+        @transfer_count = Trip.update_all ["allocation_id = ?, updated_at = ?, updated_by = ?, valid_start = ?", @query.dest_allocation, Time.now, current_user.id, now], ["id in (?)", trip_ids]
+      
+        for trip in trips
+          trip.create_revision_with_known_attributes_without_callbacks :allocation_id => @query.allocation
+        end
+      end
+      
+      @allocation = Allocation.find @query.dest_allocation
     end
     
     @trips_count = Trip.current_versions.where( @query.conditions ).count

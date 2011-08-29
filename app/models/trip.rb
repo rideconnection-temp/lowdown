@@ -80,6 +80,14 @@ class Trip < ActiveRecord::Base
 
   memoize :customers_served
 
+  def create_revision_with_known_attributes_without_callbacks(attrs)
+    old_version = versions.build self.attributes.merge( attrs )
+
+    old_version.valid_end = now_rounded
+    old_version.should_run_callbacks = false
+    old_version.save!(:validate=>false)
+  end
+
 private
 
   def create_new_version?
