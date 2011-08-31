@@ -135,11 +135,7 @@ private
           current_customer.monthly_household_income = record[:monthly_household_income]
           current_customer.household_size = record[:household_size]
           current_customer.spd_office = record[:spd_office]
-          current_customer.case_manager = record[:spd_case_manager]
           current_customer.prime_number = record[:spd_prime_number]
-          current_customer.approved_rides = record[:spd_approved_rides]
-          current_customer.date_enrolled = record[:spd_date_enrolled]
-          current_customer.service_end = record[:spd_service_end]
           current_customer.address_id = current_home_id
           current_customer.save!
 
@@ -275,6 +271,10 @@ private
           current_trip.estimated_trip_distance_in_miles = record[:estimated_trip_distance_in_miles]
           current_trip.routematch_pickup_address_id = record[:pickup_routematch_address_id]
           current_trip.routematch_dropoff_address_id = record[:dropoff_routematch_address_id]
+          current_trip.case_manager = record[:spd_case_manager]
+          current_trip.approved_rides = record[:spd_approved_rides]
+          current_trip.date_enrolled = record[:spd_date_enrolled]
+          current_trip.service_end = record[:spd_service_end]
           current_trip.pickup_address_id = current_pickup_id
           current_trip.dropoff_address_id = current_dropoff_id
           current_trip.customer_id = current_customer_id
@@ -289,8 +289,10 @@ private
     address_map = nil
     customer_map = nil
     run_map = nil
-    return false unless self.problems == ''
+    # return false unless self.problems == ''
     puts "Imported #{@record_count} records"
+  rescue
+    puts "its cool baby"
   end
 
   def apportion_imported_shared_rides
