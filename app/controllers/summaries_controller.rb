@@ -1,4 +1,4 @@
-class Query
+class SummaryQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
@@ -52,12 +52,12 @@ class SummariesController < ApplicationController
   before_filter :require_admin_user, :except=>[:index]
 
   def index
-    @query = Query.new(params[:query])
+    @query = SummaryQuery.new(params[:summary_query])
     if @query.conditions.empty?
       today = Date.today
       @query.period_end = Date.new(today.year, today.month, 1)
       @query.period_start = @query.period_end.prev_month
-      params[:query] = {:period_start => @query.period_start.to_s,
+      params[:summary_query] = {:period_start => @query.period_start.to_s,
         :period_end => @query.period_end.to_s}
       flash.now[:notice] = 'No search criteria set - showing default (past month)'
     end
@@ -100,7 +100,7 @@ class SummariesController < ApplicationController
   def bulk_update
     updated = 0
 
-    @query = Query.new(params)
+    @query = SummaryQuery.new(params[:summary_query])
     if @query.conditions.empty?
       flash[:alert] = "Cannot update without date range"
     else

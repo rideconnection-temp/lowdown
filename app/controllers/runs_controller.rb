@@ -1,4 +1,4 @@
-class Query
+class RunQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
@@ -58,7 +58,7 @@ class RunsController < ApplicationController
   before_filter :require_admin_user, :except=>[:index, :show]
   
   def index
-    @query = Query.new(params[:query])
+    @query = RunQuery.new(params[:run_query])
     if @query.conditions.empty?
       @query.end_date = Date.today
       @query.start_date = @query.end_date - 30
@@ -86,7 +86,7 @@ class RunsController < ApplicationController
   def bulk_update
     updated = 0
 
-    @query = Query.new(params[:query])
+    @query = RunQuery.new(params[:run_query])
     if @query.conditions.empty?
       flash[:alert] = "Cannot update without date range"
     else

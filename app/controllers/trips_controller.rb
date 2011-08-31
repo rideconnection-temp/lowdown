@@ -1,6 +1,6 @@
 require 'csv'
 
-class Query
+class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
@@ -43,7 +43,7 @@ class TripsController < ApplicationController
   end
 
   def list
-    @query       = Query.new(params[:query])
+    @query       = TripQuery.new(params[:trip_query])
     @providers   = Provider.find :all
     @allocations = Allocation.find :all
 
@@ -70,7 +70,7 @@ class TripsController < ApplicationController
   end
   
   def update_allocation
-    @query       = Query.new params[:query], params[:commit]
+    @query       = TripQuery.new params[:trip_query], params[:commit]
     @allocations = Allocation.all
     
     if @query.update_allocation?
