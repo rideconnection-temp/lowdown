@@ -44,6 +44,10 @@ form.edit_report,
   border-top: 1pt solid #000;
 }
 
+#logo {
+  display : none;
+}
+
 /* tables */
 table {
     border-collapse: collapse;
