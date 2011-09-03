@@ -3,6 +3,8 @@ class Allocation < ActiveRecord::Base
   belongs_to :provider
   belongs_to :project
   
+  validates :name, :presence => true
+  
   self.per_page = 30
 
   def to_s

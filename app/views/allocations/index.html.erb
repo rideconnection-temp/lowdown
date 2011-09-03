@@ -12,3 +12,5 @@
 </table>
 
 <%= will_paginate @allocations %>
+
+<%= link_to 'New Allocation', new_allocation_path, :class => "action-bttn" if current_user.is_admin %>

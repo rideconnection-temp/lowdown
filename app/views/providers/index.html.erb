@@ -12,3 +12,5 @@
 </table>
 
 <%= will_paginate @providers %>
+
+<%= link_to 'New Provider', new_provider_path, :class => "action-bttn" if current_user.is_admin %>

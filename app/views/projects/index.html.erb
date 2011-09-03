@@ -12,3 +12,5 @@
 </table>
 
 <%= will_paginate @projects %>
+
+<%= link_to 'New Project', new_project_path, :class => "action-bttn" if current_user.is_admin %>

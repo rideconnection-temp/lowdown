@@ -926,6 +926,15 @@ a.action-bttn:hover,
 a.action-bttn:active {
     color: #009FFB;
 }
+
+.projects.index a.action-bttn:link,
+.projects.index a.action-bttn:visited,
+.providers.index a.action-bttn:link,
+.providers.index a.action-bttn:visited,
+.allocations.index a.action-bttn:link,
+.allocations.index a.action-bttn:visited {
+  background: #eee url(images/plus.png) 0.8em center no-repeat scroll;
+}
 /* trip */
 body.reports a.action-bttn {
     background: #eee url(images/report--plus.png) 0.8em center no-repeat scroll;
