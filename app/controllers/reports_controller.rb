@@ -717,9 +717,11 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
     group_fields = group_fields.split(",")
 
     groups = group_fields.map { |f| @@group_mappings[f] }
-
+    
     do_report(groups, group_fields, report.start_date, report.query_end_date, report.allocations, report.fields, report.pending, report.adjustment)
-    @report = report
+
+    @groups_size = groups.size
+    @report      = report
   end
 
   def save_report
@@ -1053,7 +1055,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
     @results = allocations
     @start_date = start_date
     @end_date = end_date
-    @tr_open = false
     @fields = {}
     if fields.nil? or fields.empty?
       ReportRow.fields.each do |field| 

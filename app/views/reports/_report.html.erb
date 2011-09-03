@@ -2,7 +2,9 @@
 <table>
   <thead>
     <tr>
-      <th colspan="<%= @group_fields.size - 1 %>"></th>
+      <% @groups_size.times do %>
+        <th class="indent">&nbsp;</th>
+      <% end %>
       <th class="wrap"><%= @group_fields[-1].sub("_id","").sub("_"," ").capitalize %></th>
       <% if @fields.member? 'funds' %><th class="wrap">Funds</th><% end %>
       <% if @fields.member? 'agency_other' %><th class="wrap">Agency Other</th><% end %>
@@ -34,7 +36,7 @@
     </tr>
   </thead>
   <tbody>
-<%= render :partial=> "nested_rows", :locals=>{:rows=>results, :group_fields=>group_fields} %>
+<%= render :partial=> "nested_rows", :locals=>{:rows=>results, :group_fields => @group_fields} %>
   </tbody>
 </table>
 </div>

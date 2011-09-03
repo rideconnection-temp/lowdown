@@ -686,8 +686,30 @@ div.report-wrapper td.report-item {
     font-weight: bold;
     font-size: 11px;
     padding: 5px 5px 10px;
-    text-align: center;
+    text-align: left;
 }
+
+div.report-wrapper .indent {
+  border-right: 0;
+}
+
+div.report-wrapper td.indent {
+  background: #E5F2FF;
+  width: 10px;
+  padding: 0;
+} 
+
+div.report-wrapper tr.data td.indent,
+div.report-wrapper tr.totals td.indent,
+div.report-wrapper tr.sum-totals td.indent   {
+  background: transparent;
+}
+
+div.report-wrapper tr.data .inner-most-field {
+  text-align: left;
+  padding-right : 0px;
+}
+
 div.report-wrapper {
     width: 100%;
     overflow: auto;
