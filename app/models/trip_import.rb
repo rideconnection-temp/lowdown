@@ -134,7 +134,6 @@ private
           current_customer.customer_type = record[:customer_type]
           current_customer.monthly_household_income = record[:monthly_household_income]
           current_customer.household_size = record[:household_size]
-          current_customer.spd_office = record[:spd_office]
           current_customer.prime_number = record[:spd_prime_number]
           current_customer.address_id = current_home_id
           current_customer.save!
@@ -275,6 +274,7 @@ private
           current_trip.approved_rides = record[:spd_approved_rides]
           current_trip.date_enrolled = record[:spd_date_enrolled]
           current_trip.service_end = record[:spd_service_end]
+          current_trip.spd_office = record[:spd_office]
           current_trip.pickup_address_id = current_pickup_id
           current_trip.dropoff_address_id = current_dropoff_id
           current_trip.customer_id = current_customer_id
@@ -289,10 +289,7 @@ private
     address_map = nil
     customer_map = nil
     run_map = nil
-    # return false unless self.problems == ''
-    puts "Imported #{@record_count} records"
-  rescue
-    puts "its cool baby"
+    return false unless self.problems == ''
   end
 
   def apportion_imported_shared_rides

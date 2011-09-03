@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110831202137) do
+ActiveRecord::Schema.define(:version => 20110903161842) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -65,7 +65,6 @@ ActiveRecord::Schema.define(:version => 20110831202137) do
     t.datetime "updated_at"
     t.string   "prime_number"
     t.boolean  "disabled"
-    t.string   "spd_office",                    :limit => 25
   end
 
   create_table "mobilities", :force => true do |t|
@@ -223,6 +222,7 @@ ActiveRecord::Schema.define(:version => 20110831202137) do
     t.date     "date_enrolled"
     t.date     "service_end"
     t.integer  "approved_rides"
+    t.string   "spd_office",                       :limit => 25
   end
 
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
