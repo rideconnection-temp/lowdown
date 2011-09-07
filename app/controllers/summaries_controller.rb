@@ -5,7 +5,7 @@ class SummaryQuery
   attr_accessor :period_start
   attr_accessor :period_end
 
-  attr_accessor :allocation
+  attr_accessor :provider
 
   def convert_date(obj, base)
     return Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i,obj["#{base}(3i)"].to_i)
@@ -25,8 +25,8 @@ class SummaryQuery
       if params[:period_end]
         @period_end = Date.parse(params[:period_end])
       end
-      if params[:allocation]
-        @allocation = params[:allocation].to_i
+      if params[:provider]
+        @provider = params[:provider].to_i
       end
     end
   end
@@ -36,15 +36,15 @@ class SummaryQuery
   end
 
   def conditions
-    d = {}
+    arr = [""]
     if @period_start
-      d[:period_start] = @period_start..@period_end
-      d[:period_end] = @period_start..@period_end
+      arr[0] = arr[0] << "period_start between ? and ? and period_end between ? and ?"
+      arr += [@period_start, @period_end, @period_start, @period_end]
     end
-    if allocation && allocation != 0
-      d[:allocation_id] = allocation
+    if provider && provider != 0
+      arr[0] = arr[0] << "and allocation_id in (#{Allocation.where(:provider_id => provider).map(&:id).join(",")})"
     end
-    d
+    arr
   end
 end
 
@@ -53,7 +53,7 @@ class SummariesController < ApplicationController
 
   def index
     @query = SummaryQuery.new(params[:summary_query])
-    if @query.conditions.empty?
+    if @query.conditions.first.empty?
       today = Date.today
       @query.period_end = Date.new(today.year, today.month, 1)
       @query.period_start = @query.period_end.prev_month
@@ -62,7 +62,7 @@ class SummariesController < ApplicationController
       flash.now[:notice] = 'No search criteria set - showing default (past month)'
     end
 
-    @allocations = Allocation.order(:name).all
+    @providers = Provider.order(:name).all
     @summaries = Summary.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
 
   end
@@ -101,7 +101,7 @@ class SummariesController < ApplicationController
     updated = 0
 
     @query = SummaryQuery.new(params[:summary_query])
-    if @query.conditions.empty?
+    if @query.conditions.first.empty?
       flash[:alert] = "Cannot update without date range"
     else
       for summary in Summary.current_versions.find(:all, :conditions=>@query.conditions)
