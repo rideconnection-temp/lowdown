@@ -1,6 +1,6 @@
 <% if group_fields.size > 1 %>
   <!-- an outer layer, print group headers with proper level of indentation -->
-  <% rows.each do |group_name, row| %>
+  <% rows.sort_by { |k,v| k.to_s }.each do |group_name, row| %>
     <tr> 
       <% (@groups_size - group_fields.length).times do %>
         <td class="indent">&nbsp;</td>
