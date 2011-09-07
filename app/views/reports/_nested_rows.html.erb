@@ -25,7 +25,6 @@
       <% if @fields.member? 'operations' %><td>$<%= '%0.2f' % row.operations %></td><%end%>
       <% if @fields.member? 'administrative' %><td>$<%= '%0.2f' % row.administrative %></td><%end%>
       <% if @fields.member? 'donations' %><td>$<%= '%0.2f' % row.donations %></td><%end%>
-      <% if @fields.member? 'fares' %><td>$<%= '%0.2f' % row.fares %></td><%end%>
       <% if @fields.member? 'total' %><td>$<%= '%0.2f' % row.total %></td><%end%>
       <% if @fields.member? 'in_district_trips' %><td><%= row.in_district_trips.to_i %></td><%end%>
       <% if @fields.member? 'out_of_district_trips' %><td><%= row.out_of_district_trips.to_i %></td><%end%>

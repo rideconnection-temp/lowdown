@@ -9,11 +9,11 @@ class ReportsController < ApplicationController
   before_filter :require_admin_user, :except=>[:csv, :show_create_report, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly, :show_create_active_rider]
 
   class ReportRow
-    @@attrs = [:allocation, :county, :provider_id, :funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
+    @@attrs = [:allocation, :county, :provider_id, :funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
     attr_accessor *@@attrs
 
     def numeric_fields
-      return [:funds, :fares, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations]
+      return [:funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations]
     end
 
     @@selector_fields = ['allocation', 'county', 'provider_id', 'project_name']
@@ -60,7 +60,7 @@ class ReportsController < ApplicationController
 
     def total
       total = 0
-      cost_fields = [:funds, :fares, :agency_other, :vehicle_maint, :donations, :administrative, :operations]
+      cost_fields = [:funds, :agency_other, :vehicle_maint, :donations, :administrative, :operations]
       for field in cost_fields
         if @fields_to_show.nil? or @fields_to_show.member? field.to_sym
           total += instance_variable_get("@#{field}")
@@ -146,7 +146,6 @@ class ReportsController < ApplicationController
 
     def include_row(row)
       @funds += row.funds
-      @fares += row.fares
 
       @total_last_year += row.total_last_year
 
@@ -340,7 +339,6 @@ summaries.valid_end = ? "
       sql = "
 select 
 sum(fare) as funds, 
-sum(customer_pay) as fares, 
 0 as agency_other,
 0 as donations
 from trips
