@@ -3,9 +3,7 @@
 </div>
 
 <p>
-  Start: <%= @start_date %> 
-  <span class="separator">|</span> 
-  End: <%= @end_date %> 
+  <%= @start_date.strftime("%B %Y") %> through <%= @end_date.strftime("%B %Y") %> 
   <span class="separator csv">|</span> 
   <%= link_to "CSV", @params.merge({:action=>:csv}), :class=>"csv" %>
 </p>
