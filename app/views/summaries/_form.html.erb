@@ -15,8 +15,14 @@
   <fieldset>
 
     <ol class="section summary-form-part-one">
-      <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
-      <li><label>Summary Month:</label> <%= f.date_select( :period_start, :end_year => Time.now.year, :order => [:month, :year], :default => Date.today.prev_month ) %></li>
+      <li>
+        <%= f.label :allocation, "Allocation:" %> 
+        <%= f.grouped_collection_select :allocation_id, @providers, :allocations, :name, :id, :name %>
+      </li>
+      <li>
+        <label>Summary Month:</label> 
+        <%= f.date_select( :period_start, :end_year => Time.now.year, :order => [:month, :year], :default => Date.today.prev_month ) %>
+      </li>
     </ol>
 
     <ol class="section summary-form-part-two">
