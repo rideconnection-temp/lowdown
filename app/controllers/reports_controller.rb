@@ -749,7 +749,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
 
     do_report(groups, group_fields, @report.start_date, @report.query_end_date, nil, nil, false, false)
 
-    @quarter = @report.start_date.month / 3 + 1
+    @quarter     = @report.start_date.month / 3 + 1
+    @groups_size = group_fields.size #this might not be necessary
     @allocations = @results
   end
 

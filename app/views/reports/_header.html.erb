@@ -1,0 +1,34 @@
+<thead>
+  <tr>
+    <% @groups_size.times do %>
+      <th class="indent">&nbsp;</th>
+    <% end %>
+    <th class="wrap"><%= @group_fields[-1].sub("_id","").sub("_"," ").capitalize %></th>
+    <% if @fields.member? 'funds' %><th class="wrap">Funds</th><% end %>
+    <% if @fields.member? 'agency_other' %><th class="wrap">Agency Other</th><% end %>
+    <% if @fields.member? 'vehicle_maint' %><th class="wrap">Vehicle Maint.</th><% end %>
+    <% if @fields.member? 'administrative' %><th class="wrap">Administrative</th><% end %>
+    <% if @fields.member? 'operations' %><th class="wrap">Operations</th><% end %>
+    <% if @fields.member? 'donations' %><th class="wrap">Donations</th><% end %>
+    <% if @fields.member? 'total' %><th class="wrap">Total</th><% end %>
+    <% if @fields.member? 'in_district_trips' %><th class="wrap">In District Rides</th><% end %>
+    <% if @fields.member? 'out_of_district_trips' %><th class="wrap">Out of District Rides</th><% end %>
+    <% if @fields.member? 'total_trips' %><th class="wrap">Total This Period</th><% end %>
+    <% if @fields.member? 'total_last_year' %><th class="wrap">Last Year's Total This Period</th><% end %>
+    <% if @fields.member? 'mileage' %><th class="wrap">Mileage</th><% end %>
+
+    <% if @fields.member? 'driver_volunteer_hours' %><th class="wrap">Volunteer Driver Hours</th><% end %>
+    <% if @fields.member? 'driver_paid_hours' %><th class="wrap">Paid Driver Hours</th><% end %>
+    <% if @fields.member? 'driver_total_hours' %><th class="wrap">Total Driver Hours</th><% end %>
+
+    <% if @fields.member? 'cost_per_trip' %><th class="wrap">Cost/Trip</th><% end %>
+    <% if @fields.member? 'cost_per_mile' %><th class="wrap">Cost/Mile</th><% end %>
+    <% if @fields.member? 'cost_per_hour' %><th class="wrap">Cost/Hour</th><% end %>
+    <% if @fields.member? 'miles_per_ride' %><th class="wrap">Miles/Ride</th><% end %>
+    <% if @fields.member? 'turn_downs' %><th class="wrap">Turn Downs</th><% end %>
+    <% if @fields.member? 'undup_riders' %><th class="wrap">Undup Riders</th><% end %>
+    <% if @fields.member? 'escort_volunteer_hours' %><th class="wrap">Escort</th><% end %>
+    <% if @fields.member? 'admin_volunteer_hours' %><th class="wrap">Admin</th><% end %>
+    <% if @fields.member? 'total_volunteer_hours' %><th class="wrap">Total</th><% end %>
+  </tr>
+</thead>

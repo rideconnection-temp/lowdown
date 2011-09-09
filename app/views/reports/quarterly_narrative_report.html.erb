@@ -16,7 +16,17 @@ ride numbers, please indicate your corrections in terms of "in" and
 "out" of district rides and which Ride Purpose categories this change
 effects.</div>
 
-<%= render :partial=> "report", :locals=>{:results=>rows, :group_fields=>@group_fields[1..-1]} %>
+<div class="report-wrapper">
+<table>
+  <%= render "header" %>
+  <% for month, row in rows do %>
+    <%= render "row", :row => row, :label => month %>
+  <% end %>
+  
+  <%= render 'totals', :row=>rows, :group_fields=>@group_fields %>
+  
+</table>
+</div>
 
 <br/>
 Signature: _______________________ </br>
