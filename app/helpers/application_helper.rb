@@ -19,6 +19,14 @@ module ApplicationHelper
   def flash_messages
     return flash_type(:notice) + flash_type(:alert)
   end
+  
+  def report_month_range(start_date, end_date)
+    if start_date.year == end_date.year && start_date.month == end_date.month
+      start_date.strftime("%B %Y")
+    else
+      "#{start_date.strftime("%B %Y")} through #{end_date.strftime("%B %Y")}"
+    end
+  end
 
   def get_row(e)
       if e.instance_of? Hash

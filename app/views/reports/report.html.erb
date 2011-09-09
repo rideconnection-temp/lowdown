@@ -2,8 +2,8 @@
   <h1><% if @report.name %><%= @report.name %><% else %>Network Service Summary<% end %></h1>
 </div>
 
-<p>
-  <%= @start_date.strftime("%B %Y") %> through <%= @end_date.strftime("%B %Y") %> 
+<p>   
+  <%= report_month_range @start_date, @end_date %>
   <span class="separator csv">|</span> 
   <%= link_to "CSV", @params.merge({:action=>:csv}), :class=>"csv" %>
 </p>
