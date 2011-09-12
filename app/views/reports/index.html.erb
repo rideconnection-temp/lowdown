@@ -18,7 +18,7 @@
   <form action="<%= url_for :action=>:report %>" class="run-report">
     <fieldset>
       <h2 class="report-header"><%= report.name %></h2>
-
+      <%= content_tag :p, report.description if report.description.present? %>
       <p>
         <strong>Allocations:</strong>
         <% if report.allocations.empty? %>

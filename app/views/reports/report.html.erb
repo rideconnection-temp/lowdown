@@ -8,6 +8,8 @@
   <%= link_to "CSV", @params.merge({:action=>:csv}), :class=>"csv" %>
 </p>
 
+<%= content_tag :p, @report.description if @report.description.present? %>
+
 <%= form_for @report, :url=>{:action=>:save_report} do |f| %>
 
   <!-- save report link -->

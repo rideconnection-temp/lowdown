@@ -97,6 +97,11 @@
       <div class="selfclear">
         <%= f.check_box :adjustment %> <%= f.label :adjustment, "Use adjusted values?", :class => "checkbox" %>
       </div><!-- end #selfclear -->
+      
+      <div class="selfclear">
+        <h2 class="section-header">Description</h2>
+        <%= f.text_area :description, :cols => nil, :rows => nil %>
+      </div>
     </div>
 
     <div class="actions">
