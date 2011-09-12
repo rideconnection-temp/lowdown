@@ -19,31 +19,6 @@
     <fieldset>
       <h2 class="report-header"><%= report.name %></h2>
       <%= content_tag :p, report.description if report.description.present? %>
-      <p>
-        <strong>Allocations:</strong>
-        <% if report.allocations.empty? %>
-          All
-        <% else %>
-          <% for allocation in report.allocations %>
-          <%= allocation.name %>
-          <%= ", " unless allocation == report.allocations.last %>
-          <% end %>
-        <% end %>
-
-        <span class="separator">|</span>
-
-        <strong>Fields:</strong>
-        <% if report.fields.empty? %>
-        All
-        <% else %> 
-        <%= report.fields.sort.join(", ") %>
-        <% end %>
-
-        <span class="separator">|</span>
-
-        <strong>Group By:</strong>
-        <%= report.group_by %>
-      </p>
 
       <input type="hidden" name="report[id]" value="<%= report.id %>" />
       <input type="hidden" name="report[adjustment]" value="0" />
