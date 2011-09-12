@@ -734,7 +734,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
     else
       report.fields = params[:report][:fields]
     end
-    report.allocations = params[:report][:allocations]
     report.save!
     flash[:notice] = "Saved #{report.name}"
     redirect_to :action=>:report, :report=>{:id=>report.id}
