@@ -28,6 +28,24 @@ module ApplicationHelper
       "#{start_date.strftime("%B %Y")} through #{end_date.strftime("%B %Y")}"
     end
   end
+  
+  def group_by_option_tag(value)
+    mappings = {
+      "funding_subsource" => "Funding Sub-source", 
+      "project_number"    => "Project Code",
+      "agency"            => "Provider"
+    }
+    
+    fields     = value.split( "," ).map { |field| mappings[field] || field.titlecase }.join(", ")
+    attributes = { :value => value }
+    attributes[:selected] = "selected" if @report.group_by == value
+    
+    content_tag :option, fields, attributes
+  end
+  
+  def checked?(field)
+    "checked" if @report.new_record? || @report.field_list.split(",").include?(field)
+  end
 
   def get_row(e)
       if e.instance_of? Hash

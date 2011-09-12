@@ -7,6 +7,8 @@ Lowdown::Application.routes.draw do
   resources :providers, :only => [:index, :edit, :update, :new, :create]
   resources :projects, :only => [:index, :edit, :update, :new, :create]
   
+  resources :reports, :only => [:edit, :update]
+  
   resource :admin, :only => [:index]
 
   devise_for :users, :controllers=>{:sessions=>"users"} do

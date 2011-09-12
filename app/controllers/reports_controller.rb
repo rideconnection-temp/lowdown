@@ -721,6 +721,23 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
     @groups_size = groups.size
     @report      = report
   end
+  
+  def edit
+    @report      = Report.find params[:id]
+    @allocations = Allocation.order(:name).all
+  end
+  
+  def update
+    @report      = Report.find params[:id]
+    
+    if @report.update_attributes params[:report]
+      flash[:notice] = "Saved #{report.name}"
+      redirect_to edit_report_path(@report.id)
+    else
+      @allocations = Allocation.order(:name).all
+      render :action => :edit
+    end
+  end
 
   def save_report
     if params[:report][:id].empty?

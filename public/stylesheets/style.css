@@ -1006,7 +1006,17 @@ div.predefined-report form.run-report {
   clear: none;
 }
 div.predefined-report form.edit_report {
+  display : block;
+  float : right;
+  margin : 0 10px -30px 0;
 }
+
+div.predefined-report a.edit {
+  font-size: 11px;
+  line-height: 21px;
+  margin-right : 5px;
+}
+
 input.delete-report {
     background: url(images/cross-button.png) left center no-repeat scroll;
     color: #e5004d;
@@ -1015,10 +1025,6 @@ input.delete-report {
     line-height: 16px;
     border: 0;
     padding: 5px 0 5px 17px;
-    float: right;
-    position: absolute;
-    top: 5px;
-    right: 10px;
 }
 input.delete-report:hover,
 input.delete-report:active {

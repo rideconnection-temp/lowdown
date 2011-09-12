@@ -1,30 +1,164 @@
+  <fieldset>
 
-          <h2 id="select-allocations">Select Allocations for this tag</h2>
+    <ol class="section first">
+      <li>
+        <h2>Allocations to Include</h2>
+        <%= f.collection_select :allocations, @allocations, :id, :name, { :selected => @report.allocation_list.try(:split, ",") }, { :class => "multi full", :multiple => true } %>
+      </li>
 
-<% for provider in @providers %>
-  <% if provider.allocations.size > 0 %>
-          <h3 id="tag-checkbox1-toggle" class="toggler collapse"><%= provider.name %> <a class="select-all" href="#">select all</a></h3>
-          <div id="tag-checkbox-area" class="togglee">
-            <fieldset class="selfclear">
-              <!-- PLEASE NOTE: Allocations for each provider should be in alphabetical order -->
-    <% i = 0 %>
-    <% for allocation in provider.allocations %>
-      <% if i % 4 == 0 %>
-              <div class="fourcol">
-      <% end %>
-                <input type="checkbox" name="a[]" id="cb_<%= allocation.id %>" value="<%= allocation.id %>" 
-      <% if @allocations_with_tag.member?(allocation.id) %> 
-         checked
-      <% end %>
-/>
-<label for="cb_<%= allocation.id %>"><%= allocation.name %></label><br />
-<% if i % 4 == 0 %>
-              </div>
-      <% end %>
-      <% i += 1 %>
-    <% end %>
-              <a href="#" class="unselect-all">unselect all</a>
-            </fieldset>
-          </div>
-  <% end %>
-<% end %> 
+      <li>
+        <h2 class="section-header">Date Range</h2>
+        <p><label>Service Beginning:</label> <%= f.date_select :start_date, :discard_day=>true %></p>
+        <p><label>Ending Before:</label> <%= f.date_select :end_date, :discard_day=>true %></p>
+      </li>
+
+      <li>
+        <h2 class="section-header">Grouping</h2>
+        <p><strong>Group by:</strong></p>
+        <select id="group-by" name="report[group_by]">
+          <% Report::GroupBys.each do |fields| %>
+            <%= group_by_option_tag fields %>
+          <% end %>
+      	  <option value="">Define Custom Grouping...</option>
+        </select>
+
+      	<div style="display:none;" id="group-by-custom-section">
+	        <p><strong>Select fields to group by:</strong></p>
+      		<span id="group-by-custom-wrapper">
+	        	<span class="template">
+      			  <select>
+  	            <option value="county">County</option>
+        		    <option value="funding_source">Funding Source</option>
+  	            <option value="project_name">Project Name</option>
+        		    <option value="agency">Provider</option>
+          	  </select>
+      			</span>
+      		</span>
+      		<p><a href="#" class="add">Add New Group Field</a></p>
+      	</div>
+
+      </li>
+    </ol>
+
+    <div id="report-fields-to-include" class="selfclear">
+      <h2 class="section-header">Fields to include</h2>
+
+      <div id="report-checkbox-area">
+        <ol>
+          <li>
+            <input type="checkbox" <%= checked?("funds") %> name="report[fields[funds]]" id="funds" value="1" /> 
+            <label for="funds">Funds</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("agency_other") %> name="report[fields[agency_other]]" id="agency_other" value="1" /> 
+            <label for="agency_other">Agency Other</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("vehicle_maint") %> name="report[fields[vehicle_maint]]" id="vehicle_maint" value="1" /> 
+            <label for="vehicle_maint">Vehicle Maint.</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("operations") %> name="report[fields[operations]]" id="operations" value="1" /> 
+            <label for="operations">Operations</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("administrative") %> name="report[fields[administrative]]" id="administrative" value="1" /> 
+            <label for="administrative">Administrative</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("donations") %> name="report[fields[donations]]" id="donations" value="1" /> 
+            <label for="donations">Donations</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("total") %> name="report[fields[total]]" id="total" value="1" /> 
+            <label for="total">Total</label>
+          </li>
+        </ol>
+        <ol>
+          <li>
+            <input type="checkbox" <%= checked?("in_district_trips") %> name="report[fields[in_district_trips]]" id="in_district_trips" value="1" /> 
+            <label for="in_district_trips">In District Rides</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("out_of_district_trips") %> name="report[fields[out_of_district_trips]]" id="out_of_district_trips" value="1" /> 
+            <label for="out_of_district_trips">Out of District Rides</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("total_last_year") %> name="report[fields[total_last_year]]" id="total_last_year" value="1" /> 
+            <label for="total_last_year">Total this Period Last Year</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("mileage") %> name="report[fields[mileage]]" id="mileage" value="1" /> 
+            <label for="mileage">Mileage</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("driver_volunteer_hours") %> name="report[fields[driver_volunteer_hours]]" id="driver_volunteer_hours" value="1" /> 
+            <label for="driver_volunteer_hours">Volunteer Hours</label>
+          </li>
+        </ol>
+        <ol>
+          <li>
+            <input type="checkbox" <%= checked?("driver_paid_hours") %> name="report[fields[driver_paid_hours]]" id="driver_paid_hours" value="1" /> 
+            <label for="driver_paid_hours">Paid Hours</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("driver_total_hours") %> name="report[fields[driver_total_hours]]" id="driver_total_hours" value="1" /> 
+            <label for="driver_total_hours">Total Hours</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("cost_per_trip") %> name="report[fields[cost_per_trip]]" id="cost_per_trip" value="1" /> 
+            <label for="cost_per_trip">Cost/Trip</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("cost_per_mile") %> name="report[fields[cost_per_mile]]" id="cost_per_mile" value="1" /> 
+            <label for="cost_per_mile">Cost/Mile</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("cost_per_hour") %> name="report[fields[cost_per_hour]]" id="cost_per_hour" value="1" /> 
+            <label for="cost_per_hour">Cost/Hour</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("miles_per_ride") %> name="report[fields[miles_per_ride]]" id="miles_per_ride" value="1" /> 
+            <label for="miles_per_ride">Miles/Ride</label>
+          </li>
+        </ol>
+        <ol>
+          <li>
+            <input type="checkbox" <%= checked?("turn_downs") %> name="report[fields[turn_downs]]" id="turn_downs" value="1" /> 
+            <label for="turn_downs">Turn Downs</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("undup_riders") %> name="report[fields[undup_riders]]" id="undup_riders" value="1" /> 
+            <label for="undup_riders">Undup Riders</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("escort_volunteer_hours") %> name="report[fields[escort_volunteer_hours]]" id="escort_volunteer_hours" value="1" /> 
+            <label for="escort_volunteer_hours">Escort Hours</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("admin_volunteer_hours") %> name="report[fields[admin_volunteer_hours]]" id="admin_volunteer_hours" value="1" /> 
+            <label for="admin_volunteer_hours">Admin Hours</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("total_volunteer_hours") %> name="report[fields[total_volunteer_hours]]" id="total_volunteer_hours" value="1" /> 
+            <label for="total_volunteer_hours">Total Hours</label>
+          </li>
+        </ol>
+      </div>
+
+      <div class="selfclear">
+        <%= f.check_box :adjustment %> <%= f.label :adjustment, "Use adjusted values?", :class => "checkbox" %>
+      </div>
+      
+      <div class="selfclear">
+        <h2 class="section-header">Description</h2>
+        <%= f.text_area :description, :cols => nil, :rows => nil %>
+      </div>
+    </div>
+
+    <div class="actions">
+      <%= f.submit :id => "report-create" %>
+      <!-- <input id="report-create" type="submit" value="Create Report" /> -->
+    </div>
+
+  </fieldset>
