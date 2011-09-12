@@ -21,6 +21,7 @@ module ApplicationHelper
   end
   
   def report_month_range(start_date, end_date)
+    end_date = end_date - 1.month
     if start_date.year == end_date.year && start_date.month == end_date.month
       start_date.strftime("%B %Y")
     else

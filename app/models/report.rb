@@ -43,7 +43,7 @@ class Report < ActiveRecord::Base
   end
 
   def query_end_date
-    return end_date.next_day
+    Date.new end_date.year, end_date.month + 1, 1
   end
 
 end
