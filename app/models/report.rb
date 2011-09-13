@@ -41,7 +41,7 @@ class Report < ActiveRecord::Base
   end
 
   def query_end_date
-    Date.new end_date.year, end_date.month + 1, 1
+    Date.new(end_date.year, end_date.month, 1) + 1.months
   end
 
 end
