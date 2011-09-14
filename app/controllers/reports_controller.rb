@@ -141,7 +141,7 @@ class ReportsController < ApplicationController
     end
 
     def project_name
-      allocation.project.name
+      allocation.project.try :name
     end
 
     def include_row(row)
