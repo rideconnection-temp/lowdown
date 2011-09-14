@@ -29,6 +29,10 @@ module ApplicationHelper
     end
   end
   
+  def row_sort(k,v)
+      k.blank? ? [2, ""] : [1, k.to_s]
+  end
+
   def group_by_option_tag(value)
     mappings = {
       "funding_subsource" => "Funding Sub-source", 

@@ -14,7 +14,7 @@ class Allocation < ActiveRecord::Base
   end
 
   def agency
-    return provider.agency
+    provider.try :agency
   end
 
   def funding_source
@@ -30,7 +30,7 @@ class Allocation < ActiveRecord::Base
   end
 
   def project_name
-    project.name
+    project.try :name
   end
 
   scope :spd, includes(:project).where(:projects => {:funding_source => 'SPD'})
