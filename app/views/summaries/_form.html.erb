@@ -17,35 +17,35 @@
     <ol class="section summary-form-part-one">
       <li>
         <%= f.label :allocation, "Allocation:" %> 
-        <%= f.grouped_collection_select :allocation_id, @providers, :allocations, :name, :id, :name %>
+        <%= f.grouped_collection_select :allocation_id, @providers, :allocations, :name, :id, :name, {}, {:tabindex=>1} %>
       </li>
       <li>
         <label>Summary Month:</label> 
-        <%= f.date_select( :period_start, :end_year => Time.now.year, :order => [:month, :year], :default => Date.today.prev_month ) %>
+        <%= f.date_select( :period_start, {:end_year => Time.now.year, :order => [:month, :year], :default => Date.today.prev_month}, {:tabindex=>1} ) %>
       </li>
     </ol>
 
     <ol class="section summary-form-part-two">
       <% if !f.object.new_record? %>
       <%= f.label :adjustment_notes, "Adjustment Notes:" %><br/>
-      <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
+      <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60, :tabindex=>1} %>
       <% end %>
     </ol>
 
     <ol class="section summary-form-part-three">
-      <li><%= f.label :total_miles, "Total Miles:" %> <%= f.text_field :total_miles %></li>
-      <li><%= f.label :unduplicated_riders, "Unduplicated Riders:" %> <%= f.text_field :unduplicated_riders %></li>
-      <li><%= f.label :driver_hours_paid, "Paid Driver Hours" %> <%= f.text_field :driver_hours_paid %></li>
-      <li><%= f.label :driver_hours_volunteer, "Volunteer Driver Hours" %> <%= f.text_field :driver_hours_volunteer %></li>
-      <li><%= f.label :escort_hours_volunteer, "Escort Volunteer Hours" %> <%= f.text_field :escort_hours_volunteer %></li>
-      <li><%= f.label :administrative_hours_volunteer, "Admin Volunteer Hours:" %> <%= f.text_field :administrative_hours_volunteer %></li>
-      <li><%= f.label :administrative, "Administrative:" %> <%= f.text_field :administrative %></li>
-      <li><%= f.label :operations, "Operations:" %> <%= f.text_field :operations %></li>
-      <li><%= f.label :vehicle_maint, "Vehicle Maintenance:" %> <%= f.text_field :vehicle_maint %></li>
-      <li><%= f.label :administrative, "Funds:" %> <%= f.text_field :funds %></li>
-      <li><%= f.label :operations, "Donations:" %> <%= f.text_field :donations %></li>
-      <li><%= f.label :vehicle_maint, "Agency Other:" %> <%= f.text_field :agency_other %></li>
-      <li><%= f.label :complete, "Complete:" %><%= f.check_box :complete %></li>
+      <li><%= f.label :total_miles, "Total Miles:" %> <%= f.text_field :total_miles, :tabindex=>3 %></li>
+      <li><%= f.label :unduplicated_riders, "Unduplicated Riders:" %> <%= f.text_field :unduplicated_riders, :tabindex=>3 %></li>
+      <li><%= f.label :driver_hours_paid, "Paid Driver Hours" %> <%= f.text_field :driver_hours_paid, :tabindex=>3 %></li>
+      <li><%= f.label :driver_hours_volunteer, "Volunteer Driver Hours" %> <%= f.text_field :driver_hours_volunteer, :tabindex=>3 %></li>
+      <li><%= f.label :escort_hours_volunteer, "Escort Volunteer Hours" %> <%= f.text_field :escort_hours_volunteer ,:tabindex=>3 %></li>
+      <li><%= f.label :administrative_hours_volunteer, "Admin Volunteer Hours:" %> <%= f.text_field :administrative_hours_volunteer, :tabindex=>3 %></li>
+      <li><%= f.label :administrative, "Administrative:" %> <%= f.text_field :administrative, :tabindex=>3 %></li>
+      <li><%= f.label :operations, "Operations:" %> <%= f.text_field :operations, :tabindex=>3 %></li>
+      <li><%= f.label :vehicle_maint, "Vehicle Maintenance:" %> <%= f.text_field :vehicle_maint, :tabindex=>3 %></li>
+      <li><%= f.label :administrative, "Funds:" %> <%= f.text_field :funds, :tabindex=>3 %></li>
+      <li><%= f.label :operations, "Donations:" %> <%= f.text_field :donations, :tabindex=>3 %></li>
+      <li><%= f.label :vehicle_maint, "Agency Other:" %> <%= f.text_field :agency_other, :tabindex=>3 %></li>
+      <li><%= f.label :complete, "Complete:" %><%= f.check_box :complete, :tabindex=>3 %></li>
     </ol>
 
     <ol class="section summary-form-part-four">
@@ -63,8 +63,8 @@
             <%= row_form.hidden_field :purpose %>
             <tr>
               <td><%= row_form.label row_form.object.purpose %></td>
-              <td><%= row_form.text_field :in_district_trips %></td>
-              <td><%= row_form.text_field :out_of_district_trips %></td>
+              <td><%= row_form.text_field :in_district_trips, :tabindex=>2 %></td>
+              <td><%= row_form.text_field :out_of_district_trips, :tabindex=>2 %></td>
             </tr>
             <% end %>
 
