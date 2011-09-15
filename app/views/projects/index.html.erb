@@ -3,10 +3,19 @@
 </div>
 
 <table>
+  <tr>
+    <th>Project Name</th>
+    <th>Funding Source</th>
+    <th>Funding Sub-Source</th>
+    <th>Project Number</th>
+  </tr>
 
 <% @projects.each do |project| %>
   <tr>
     <td><%= link_to project.name, edit_project_path(project) %></td>
+    <td><%= project.funding_source %></td>
+    <td><%= project.funding_subsource %></td>
+    <td><%= project.project_number %></td>
   </tr>
 <% end %>
 </table>
