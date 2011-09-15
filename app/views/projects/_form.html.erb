@@ -20,12 +20,12 @@
       
       <li class="selfclear">
         <%= form.label :funding_source %>
-        <%= form.select :funding_source, options_for_select(@funding_sources.map {|fs| [fs,fs]}, @project.funding_source) %>
+        <%= form.text_field :funding_source %>
       </li>
       
       <li class="selfclear">
         <%= form.label :funding_subsource %>
-        <%= form.select :funding_subsource, options_for_select(@funding_subsources.map {|fs| [fs,fs]}, @project.funding_subsource) %>
+        <%= form.text_field :funding_subsource %>
       </li>
       
       <li class="selfclear">
