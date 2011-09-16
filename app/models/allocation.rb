@@ -18,7 +18,7 @@ class Allocation < ActiveRecord::Base
   end
 
   def funding_source
-    return project.funding_source
+    project.try :funding_source
   end
 
   def funding_subsource

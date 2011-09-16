@@ -5,10 +5,11 @@
       <% (@groups_size - group_fields.length).times do %>
         <td class="indent">&nbsp;</td>
       <% end %>
-    <td class="report-item" colspan="<%= @fields.size + @group_fields.size %>"><%=  get_row(row).send(group_fields[0])%></td>
+      <% group = get_row(row).send(group_fields[0]) %>
+    <td class="report-item" colspan="<%= @fields.size + @group_fields.size %>"><%= group %></td>
   
     <%= render "nested_rows", :rows => row, :group_fields => group_fields[1..-1] %>
-    <%= render :partial=>'totals', :locals=>{:row=>row, :group_fields=>group_fields[1..-1]} %>
+    <%= render 'totals', :row=>row, :group_fields=>group_fields[1..-1], :name => group %>
   <% end %>
 <% else %>  
   <!-- innermost layer, render the data -->
@@ -18,5 +19,5 @@
 <% end %>
 
 <% if group_fields.size == @levels %>
-<%= render :partial=>'totals', :locals=>{:row=>rows, :group_fields=>group_fields} %>
+<%= render 'totals', :row=>rows, :group_fields=>group_fields, :name => "All" %>
 <% end %>

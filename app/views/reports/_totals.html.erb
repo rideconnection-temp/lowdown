@@ -3,7 +3,7 @@
   <% @groups_size.times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
-  <td>Totals</td>
+  <td>Total<%= " for #{name}" if name.present? %></td>
   <% if @fields.member? 'funds' %><td>$<%= '%0.2f' % row.funds %></td><%end%>
   <% if @fields.member? 'agency_other' %><td>$<%= '%0.2f' % row.agency_other %></td><%end%>
   <% if @fields.member? 'vehicle_maint' %><td>$<%= '%0.2f' % row.vehicle_maint %></td><%end%>
