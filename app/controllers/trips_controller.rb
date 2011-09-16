@@ -4,7 +4,7 @@ class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :provider, :allocation, :format, :dest_allocation, :commit
+  attr_accessor :start_date, :end_date, :provider, :allocation, :dest_allocation, :commit
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -15,7 +15,6 @@ class TripQuery
     @provider        = params[:provider]          
     @allocation      = params[:allocation]
     @dest_allocation = params[:dest_allocation]
-    @format          = params[:format] if params[:format]
   end
 
   def persisted?
@@ -33,6 +32,10 @@ class TripQuery
   def update_allocation?
     @commit.try(:downcase) == "transfer trips" && @dest_allocation.present? && @dest_allocation != @allocation
   end
+
+  def csv?
+    @commit.present? && @commit.downcase.include?( "csv" )
+  end
 end
 
 class TripsController < ApplicationController
@@ -43,13 +46,13 @@ class TripsController < ApplicationController
   end
 
   def list
-    @query       = TripQuery.new(params[:trip_query])
+    @query       = TripQuery.new params[:trip_query], params[:commit]
     @providers   = Provider.find :all
     @allocations = Allocation.find :all
 
     @trips = Trip.current_versions.find(:all, :include=>[:pickup_address, :dropoff_address, :run, :customer, :allocation], :conditions=>@query.conditions)
 
-    if @query.format == 'csv'
+    if @query.csv?
       unused_columns = ["id", "base_id", "trip_import_id", "allocation_id", 
                         "home_address_id", "pickup_address_id", 
                         "dropoff_address_id", "customer_id", "run_id"] 

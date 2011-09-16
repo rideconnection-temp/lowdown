@@ -15,19 +15,11 @@
     </ol>
 
     <div class="actions">
-      <input id="trip-search" type="submit" value="Search" />
+      <%= f.submit "Search", :id => "trip-search" %>
+      <%= f.submit "Download As CSV" %>
     </div>
 
   </fieldset>
-<% end %>
-
-<%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
-    <%= f.hidden_field :format, {:value=>"csv"} %>
-    <%= f.hidden_field :start_date %>
-    <%= f.hidden_field :end_date %>
-    <%= f.hidden_field :provider %>
-    <%= f.hidden_field :allocation %>
-    <input id="csv" type="submit" value="CSV" />
 <% end %>
 
 <%= render "trips" %>
