@@ -62,7 +62,8 @@ class TripsController < ApplicationController
           csv << good_columns.map {|x| trip.send(x)} + [trip.customer.name, trip.allocation.name, trip.run.name] + address_fields(trip.home_address) + address_fields(trip.pickup_address) + address_fields(trip.dropoff_address)
         end
       end
-      return render :text=>csv
+      return send_data csv, :type => "text/plain", :filename => "trips.csv", :disposition => 'attachment'
+
     else
       @trips = @trips.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
       

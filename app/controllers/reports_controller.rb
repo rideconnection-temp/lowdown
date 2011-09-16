@@ -553,8 +553,7 @@ summaries.valid_end = ? "
       end
     end
 
-
-    return render :text=> csv_string, :content_type=>"text/plain"
+    send_data csv_string, :type => "text/plain", :filename => "report.csv", :disposition => 'attachment'
   end
 
 
