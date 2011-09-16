@@ -47,23 +47,23 @@
       <li class="selfclear">
         <%= form.label :run_collection_method %>
         <%= form.select :run_collection_method, 
-          options_for_select(@run_collection_methods.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>      </li>
+          options_for_select(@run_collection_methods.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>      
+      </li>
       
       <li class="selfclear">
         <%= form.label :cost_collection_method %>
         <%= form.select :cost_collection_method, 
-          options_for_select(@cost_collection_methods.map {|ccm| [ccm, ccm]}, @allocation.cost_collection_method) %>      </li>
+          options_for_select(@cost_collection_methods.map {|ccm| [ccm, ccm]}, @allocation.cost_collection_method) %>      
+      </li>
       
       <li class="selfclear">
         <%= form.label :routematch_override %>
-        <%= form.select :routematch_override, 
-          options_for_select(@routematch_overrides.map {|ro| [ro, ro]}, @allocation.routematch_override), :include_blank => true %>      
+        <%= form.text_field :routematch_override %>      
       </li>
       
       <li class="selfclear">
         <%= form.label :routematch_provider_code %>
-        <%= form.select :routematch_provider_code, 
-          options_for_select(@routematch_provider_codes.map {|rpc| [rpc, rpc]}, @allocation.routematch_provider_code), :include_blank => true %>      
+        <%= form.text_field :routematch_provider_code %>      
       </li>
       
       <li class="selfclear">

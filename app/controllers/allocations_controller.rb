@@ -42,7 +42,5 @@ class AllocationsController < ApplicationController
     @trip_collection_methods   = Allocation.all.map(&:trip_collection_method).uniq
     @run_collection_methods    = Allocation.all.map(&:run_collection_method).uniq
     @cost_collection_methods   = Allocation.all.map(&:cost_collection_method).uniq
-    @routematch_overrides      = Allocation.all.map(&:routematch_override).uniq
-    @routematch_provider_codes = Allocation.all.map(&:routematch_provider_code).uniq
   end
 end
