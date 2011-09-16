@@ -1,6 +1,6 @@
 <% row = controller.sum(row) %>
 <tr class="<% if group_fields.size >= 2 %>sum-<% end %>totals">
-  <% @groups_size.times do %>
+  <% (@groups_size - 1).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
   <td>Total<%= " for #{name}" if name.present? %></td>

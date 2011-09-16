@@ -1,6 +1,6 @@
 <thead>
   <tr>
-    <% @groups_size.times do %>
+    <% (@groups_size - 1).times do %>
       <th class="indent">&nbsp;</th>
     <% end %>
     <th class="wrap"><%= @group_fields[-1].sub("_id","").sub("_"," ").capitalize %></th>
