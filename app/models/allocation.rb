@@ -9,6 +9,8 @@ class Allocation < ActiveRecord::Base
 
   default_scope :order => :name
 
+  scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
+
   def to_s
     name
   end
