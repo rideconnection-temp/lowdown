@@ -79,6 +79,10 @@ tr.sum-totals td {
   padding-top: 1.5em;
 }
 
+td.inner-most-field {
+  text-align : left;
+}
+
 div.report-wrapper td.indent {
   width : 0.2in;
 }
