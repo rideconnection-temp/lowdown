@@ -7,8 +7,6 @@ class Allocation < ActiveRecord::Base
   
   self.per_page = 30
 
-  default_scope :order => :name
-
   scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
 
   def to_s
@@ -33,6 +31,10 @@ class Allocation < ActiveRecord::Base
 
   def project_name
     project.try :name
+  end
+
+  def provider_name
+    provider.try :name
   end
 
   scope :spd, includes(:project).where(:projects => {:funding_source => 'SPD'})

@@ -3,7 +3,8 @@ class AllocationsController < ApplicationController
   before_filter :get_drop_down_data, :only => [:new, :edit]
   
   def index
-    @allocations               = Allocation.paginate :page => params[:page]
+    @allocations = Allocation.includes(:project, :provider).order('providers.name, allocations.name').paginate :page => params[:page]
+    @grouped_allocations = @allocations.group_by(&:provider_name)
   end
   
   def new

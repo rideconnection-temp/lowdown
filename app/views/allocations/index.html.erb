@@ -1,16 +1,25 @@
 <div id="page-header">
-  <h1>Listing allocations</h1>
+  <h1>Listing Allocations</h1>
 </div>
 
 <table>
+  <% @grouped_allocations.each do |provider_name, group| %>
 
-<% @allocations.each do |allocation| %>
-  <tr>
-    <td><%= link_to allocation.name, edit_allocation_path(allocation) %></td>
-  </tr>
-<% end %>
+    <tr>
+      <th><%= provider_name %> Allocations</th>
+      <th>F.E. Project</th>
+      <th>County</th>
+    </tr>
+
+    <% group.each do |allocation| %>
+      <tr>
+        <td><%= link_to allocation.name, edit_allocation_path(allocation) %></td>
+        <td><%= allocation.project_name %></td>
+        <td><%= allocation.county %></td>
+      </tr>
+    <% end %>
+  <% end %>
 </table>
-
 <%= will_paginate @allocations %>
 
 <%= link_to 'New Allocation', new_allocation_path, :class => "action-bttn" if current_user.is_admin %>
