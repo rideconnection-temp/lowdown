@@ -28,6 +28,20 @@ $(document).ready(function() {
     $(this).parents("form").find("ol.adjustments").toggle();
   });
 
+  // live totals on summary show-create
+  $("body.summaries.show-create").find("input[data-district]").change(function(change){
+    var district = $(this).data("district");
+    var total    = 0;
+
+    $.each( $("input[data-district=" + district + "]").map( function( index, input ){
+      return parseInt($(this).val(), 10);
+    }), function() {
+        total += this;
+    });
+
+    $("#" + district + "_district_total").val( total );
+  });
+
   // generates a new group by select value, given each of the custom field values
   var updateCustomOptionValue = function() {
     var realSelect = $("#group-by");
