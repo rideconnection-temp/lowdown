@@ -8,6 +8,7 @@ class Allocation < ActiveRecord::Base
   self.per_page = 30
 
   scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
+  scope :not_recently_inactivated, where( "inactivated_on is null or inactivated_on > current_date - interval '3 months'")
 
   def to_s
     name

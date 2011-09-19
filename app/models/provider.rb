@@ -6,7 +6,7 @@ class Provider < ActiveRecord::Base
 
   default_scope :order => :name
 
-  def non_trip_allocations
-    allocations.non_trip_collection_method
+  def active_non_trip_allocations
+    allocations.non_trip_collection_method.not_recently_inactivated
   end
 end
