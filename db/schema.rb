@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110911233539) do
+ActiveRecord::Schema.define(:version => 20110919202935) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(:version => 20110911233539) do
     t.string  "routematch_override"
     t.string  "routematch_provider_code"
     t.decimal "contract",                 :precision => 10, :scale => 2
+    t.date    "inactivated_on"
   end
 
   create_table "customers", :force => true do |t|
