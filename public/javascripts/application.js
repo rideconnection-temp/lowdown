@@ -23,6 +23,11 @@ $(document).ready(function() {
     th.html(word_array.join('<br />')); // join 'em back together with line breaks
   });
 
+  // toggle adjustment range selects
+  $("input:checkbox[name='report[adjustment]']").change(function(){
+    $(this).parents("form").find("ol.adjustments").toggle();
+  });
+
   // generates a new group by select value, given each of the custom field values
   var updateCustomOptionValue = function() {
     var realSelect = $("#group-by");

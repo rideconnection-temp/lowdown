@@ -8,6 +8,8 @@ class ReportsController < ApplicationController
 
   before_filter :require_admin_user, :except=>[:csv, :show_create_report, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly, :show_create_active_rider]
 
+  before_filter :parse_adjustment_dates, :only => [:report, :csv, :save_report, :quarterly_narrative_report]
+
   class ReportRow
     @@attrs = [:allocation, :county, :provider_id, :funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
     attr_accessor *@@attrs
@@ -925,6 +927,21 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
   end
   private 
 
+  def parse_adjustment_dates
+    return true if params[:report].blank?
+
+    @adjustment_start_date = Date.civil(
+      params[:report].delete("adjustment_start_date(1i)").to_i,
+      params[:report].delete("adjustment_start_date(2i)").to_i,
+      params[:report].delete("adjustment_start_date(3i)").to_i
+    )
+    @adjustment_end_date = Date.civil(
+      params[:report].delete("adjustment_end_date(1i)").to_i,
+      params[:report].delete("adjustment_end_date(2i)").to_i,
+      params[:report].delete("adjustment_end_date(3i)").to_i
+    )
+  end
+
   class PeriodAllocation
     attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date
 
@@ -1037,25 +1054,27 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
           start_date = allocation.period_start_date
           end_date = allocation.period_end_date
         end
+        collection_start_date = adjustment ? @adjustment_start_date : start_date
+        collection_end_date   = adjustment ? @adjustment_end_date : end_date
         if allocation['trip_collection_method'] == 'trips'
-          row.collect_trips_by_trip(allocation, start_date, end_date, pending, adjustment)
+          row.collect_trips_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
         else
-          row.collect_trips_by_summary(allocation, start_date, end_date, pending, adjustment)
+          row.collect_trips_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
         end
 
         if allocation['run_collection_method'] == 'trips' or allocation['run_collection_method'] == 'runs'
-          row.collect_runs_by_trip(allocation, start_date, end_date, pending, adjustment)
+          row.collect_runs_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
         else
-          row.collect_runs_by_summary(allocation, start_date, end_date, pending, adjustment)
+          row.collect_runs_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
         end
 
         if allocation['cost_collection_method'] == 'trips' or allocation['cost_collection_method'] == 'runs'
-          row.collect_costs_by_trip(allocation, start_date, end_date, pending, adjustment)
+          row.collect_costs_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
         else
-          row.collect_costs_by_summary(allocation, start_date, end_date, pending, adjustment)
+          row.collect_costs_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
         end
 
-        row.collect_operation_data_by_summary(allocation, start_date, end_date, pending, adjustment)
+        row.collect_operation_data_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
 
       end
       row.allocation = allocationset[0]

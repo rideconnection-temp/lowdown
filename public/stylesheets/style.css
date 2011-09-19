@@ -731,6 +731,10 @@ table tr.sum-totals td:last-child {
     border-right: 0;
 }
 
+body.reports ol.adjustments {
+  display : none;
+}
+
 /*
  *
  * DatePicker & DateTimePicker 
