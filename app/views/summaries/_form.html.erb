@@ -62,27 +62,32 @@
           </thead>
           <tbody>
             <%= f.fields_for :summary_rows do |row_form| %>
-            <%= row_form.hidden_field :purpose %>
-            <tr>
-              <td><%= row_form.label row_form.object.purpose %></td>
-              <td><%= row_form.text_field :in_district_trips, :tabindex=>2 %></td>
-              <td><%= row_form.text_field :out_of_district_trips, :tabindex=>2 %></td>
-            </tr>
+              <%= row_form.hidden_field :purpose %>
+              <tr>
+                <td><%= row_form.label row_form.object.purpose %></td>
+                <td><%= row_form.text_field :in_district_trips, :tabindex=>2, "data-district" => "in" %></td>
+                <td><%= row_form.text_field :out_of_district_trips, :tabindex=>2, "data-district" => "out" %></td>
+              </tr>
             <% end %>
-
-	    <% if !f.object.new_record? %>
-	    <tr>
-	      <td>Total</td>
-	      <td><%= @summary.summary_rows.map(&:in_district_trips).inject(:+) %></td>
-	      <td><%= @summary.summary_rows.map(&:out_of_district_trips).inject(:+) %></td>
-	    </tr>
-	    <tr>
-	      <td>Grand Total</td>
-	      <td>&nbsp;</td>
-	      <td><%= @summary.summary_rows.map {|x| x.in_district_trips + x.out_of_district_trips} .inject(:+) %></td>
-	    </tr>
-	    <% end %>
-
+            <tr>
+	            <td>Total</td>
+	            <% if f.object.new_record? %>
+	              <td>
+	                <%= text_field_tag "in_district_total", "0", :size => 30, :disabled => true %>
+	              </td>
+                <td>
+                  <%= text_field_tag "out_district_total", "0", :size => 30, :disabled => true %>
+                </td>
+	            <% else %>
+                <td><%= @summary.summary_rows.map(&:in_district_trips).inject(:+) %></td>
+                <td><%= @summary.summary_rows.map(&:out_of_district_trips).inject(:+) %></td>
+              </tr>
+              <tr>
+                <td>Grand Total</td>
+                <td>&nbsp;</td>
+                <td><%= @summary.summary_rows.map {|x| x.in_district_trips + x.out_of_district_trips} .inject(:+) %></td>
+	            <% end %>
+            </tr>
           </tbody>
         </table>
       </li>

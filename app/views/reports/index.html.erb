@@ -33,6 +33,12 @@
         <li><input type="checkbox" name="report[pending]" value="1" /> <label for="report[pending]">Pending</label></li>
       </ol>
 
+      <ol class="adjustments">
+        <li><label>Adjustment Start Date:</label> <%= date_select( :report, "adjustment_start_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
+        <li><label>Adjustment End Date:</label> <%= date_select( :report, "adjustment_end_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
+      </ol>
+
+
       <input type="submit" name="commit" value="View Report"/>
 
     </fieldset>

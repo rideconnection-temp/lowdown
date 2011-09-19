@@ -531,6 +531,12 @@ fieldset ol.section li label {
 fieldset ol.section li input {
     max-width: 60%;
 }
+fieldset ol.summary-form-part-three li label {
+  width : 50%;
+}
+fieldset ol.summary-form-part-three li input {
+  width : 45%;
+}
 fieldset ol.section li textarea {
     max-width: 60%;
     height: 3.5em;
@@ -729,6 +735,10 @@ table tr.sum-totals td {
 }
 table tr.sum-totals td:last-child {
     border-right: 0;
+}
+
+body.reports ol.adjustments {
+  display : none;
 }
 
 /*
