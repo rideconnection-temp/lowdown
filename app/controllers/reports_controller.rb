@@ -6,9 +6,7 @@ end
 
 class ReportsController < ApplicationController
 
-  before_filter :require_admin_user, :except=>[:csv, :show_create_report, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly, :show_create_active_rider]
-
-  before_filter :parse_adjustment_dates, :only => [:report, :csv, :save_report, :quarterly_narrative_report]
+  before_filter :require_admin_user, :except=>[:csv, :new, :create, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly, :show_create_active_rider]
 
   class ReportRow
     @@attrs = [:allocation, :county, :provider_id, :funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
@@ -470,9 +468,72 @@ summaries.valid_end = ? "
     @reports = Report.all
   end
 
-  def show_create_report
-    @report = Report.new(params[:report])
+  def new
+    @report      = Report.new(params[:report])
     @allocations = Allocation.order(:name).all
+  end
+
+  def create
+    @report = Report.new_from_params params
+
+    if @report.save
+      flash[:notice] = "Saved #{@report.name}"
+      redirect_to edit_report_path(@report)
+    else
+      @allocations = Allocation.order(:name).all
+      render :action => :new
+    end
+  end
+
+  # the results of the report
+  def show
+    @report       = Report.find params[:id]
+    @group_fields = @report.group_by.split(",")
+    groups        = @group_fields.map { |f| @@group_mappings[f] }
+    @groups_size  = groups.size
+
+    do_report(groups, @group_fields, @report.start_date, @report.query_end_date, @report.allocations, @report.fields, @report.pending, @report.adjustment, @report.adjustment_start_date, @report.adjustment_end_date)
+  end
+
+  def csv
+    show
+
+    csv_string = CSV.generate do |csv|
+      csv << ReportRow.fields(@report.fields)
+      apply_to_leaves! @results, @group_fields.size,  do | row |
+        csv << row.csv(@report.fields)
+        nil
+      end
+    end
+
+    send_data csv_string, :type => "text/plain", :filename => "report.csv", :disposition => 'attachment'
+  end
+
+  def edit
+    @report      = Report.find params[:id]
+    @allocations = Allocation.order(:name).all
+  end
+
+  def update
+    @report      = Report.find params[:id]
+
+    if @report.update_from_params params[:report]
+      if params[:commit].downcase.match /view/
+        redirect_to report_path(@report)
+      else
+        flash[:notice] = "Saved #{@report.name}"
+        redirect_to edit_report_path(@report.id)
+      end
+    else
+      @allocations = Allocation.order(:name).all
+      render :action => :edit
+    end
+  end
+
+  def destroy
+    report = Report.destroy params[:id]
+    flash[:notice] = "Deleted #{report.name}"
+    redirect_to :action => :index
   end
 
   def show_create_quarterly
@@ -520,44 +581,6 @@ summaries.valid_end = ? "
       end
     end
   end
-
-  def csv
-    if params[:report][:id]
-      report = Report.find(params[:report][:id])
-    else
-      report = Report.new(params[:report])
-      if params[:report].member? :field_list
-        report.field_list = params[:report][:field_list]
-      else
-        report.fields = params[:report][:fields]
-      end
-      if params[:report][:allocations]
-        report.allocations = params[:report][:allocations ]
-      end
-    end
-    group_fields = report.group_by
-
-    if group_fields.nil?
-      show_create_report
-      return render 'show_create_report'
-    end
-
-    group_fields = group_fields.split(",")
-
-    groups = group_fields.map { |f| @@group_mappings[f] }
-
-    do_report(groups, group_fields, report.start_date, report.query_end_date, report.allocations, report.fields, report.pending, report.adjustment)
-    csv_string = CSV.generate do |csv|
-      csv << ReportRow.fields(report.fields)
-      apply_to_leaves! @results, group_fields.size,  do | row |
-        csv << row.csv(report.fields)
-        nil
-      end
-    end
-
-    send_data csv_string, :type => "text/plain", :filename => "report.csv", :disposition => 'attachment'
-  end
-
 
   def sum(rows, out=nil)
     if out.nil?
@@ -681,80 +704,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
       end
     end
     @trip_purposes = RidePurposeRow.trip_purposes
-  end
-
-  def delete_report
-    report = Report.destroy(params[:report][:id])
-    redirect_to :action=>:index
-  end
-
-  def report
-    if params[:report] and params[:report][:id]
-      report = Report.find(params[:report][:id])
-      if ! report.update_attributes params[:report] 
-        return redirect_to(:action=>:index, :id=>report.id)
-      end
-    else
-      report = Report.new(params[:report])
-      if params[:report]
-        if params[:report].member? :field_list
-          report.field_list = params[:report][:field_list]
-        else
-          report.fields = params[:report][:fields]
-        end
-        report.allocations = params[:report][:allocations]
-      end
-    end
-    @params = params
-    group_fields = report.group_by
-
-    if group_fields.nil?
-      show_create_report
-      return render 'show_create_report'
-    end
-
-    group_fields = group_fields.split(",")
-
-    groups = group_fields.map { |f| @@group_mappings[f] }
-    
-    do_report(groups, group_fields, report.start_date, report.query_end_date, report.allocations, report.fields, report.pending, report.adjustment)
-
-    @groups_size = groups.size
-    @report      = report
-  end
-  
-  def edit
-    @report      = Report.find params[:id]
-    @allocations = Allocation.order(:name).all
-  end
-  
-  def update
-    @report      = Report.find params[:id]
-    
-    if @report.update_attributes params[:report]
-      flash[:notice] = "Saved #{report.name}"
-      redirect_to edit_report_path(@report.id)
-    else
-      @allocations = Allocation.order(:name).all
-      render :action => :edit
-    end
-  end
-
-  def save_report
-    if params[:report][:id].empty?
-      report = Report.new(params[:report])
-    else
-      report = Report.find(params[:report][:id])
-      report.update_attributes(params[:report])
-    end
-    if params[:report].member? :field_list
-      report.field_list = params[:report][:field_list]
-    else
-      report.fields = params[:report][:fields]
-    end
-    report.save!
-    flash[:notice] = "Saved #{report.name}"
-    redirect_to :action=>:report, :report=>{:id=>report.id}
   end
 
   def quarterly_narrative_report
@@ -925,22 +874,8 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
       end
     end
   end
-  private 
 
-  def parse_adjustment_dates
-    return true if params[:report].blank?
-
-    @adjustment_start_date = Date.civil(
-      params[:report].delete("adjustment_start_date(1i)").to_i,
-      params[:report].delete("adjustment_start_date(2i)").to_i,
-      params[:report].delete("adjustment_start_date(3i)").to_i
-    )
-    @adjustment_end_date = Date.civil(
-      params[:report].delete("adjustment_end_date(1i)").to_i,
-      params[:report].delete("adjustment_end_date(2i)").to_i,
-      params[:report].delete("adjustment_end_date(3i)").to_i
-    )
-  end
+  private
 
   class PeriodAllocation
     attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date
@@ -1016,7 +951,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
   # allocation: an list of allocations to restrict the report to
   # fields: a list of fields to display
 
-  def do_report(groups, group_fields, start_date, end_date, allocations, fields, pending, adjustment)
+  def do_report(groups, group_fields, start_date, end_date, allocations, fields, pending, adjustment, adjustment_start_date=nil, adjustment_end_date=nil)
     group_select = []
 
     for group,field in groups.split(",").zip group_fields
@@ -1051,11 +986,11 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
         row.agency = allocation.agency
         if allocation.respond_to? :period_start_date 
           #this is not working for some reason?
-          start_date = allocation.period_start_date
-          end_date = allocation.period_end_date
+          collection_start_date = allocation.period_start_date
+          collection_end_date = allocation.period_end_date
         end
-        collection_start_date = adjustment ? @adjustment_start_date : start_date
-        collection_end_date   = adjustment ? @adjustment_end_date : end_date
+        collection_start_date = adjustment ? adjustment_start_date : start_date
+        collection_end_date   = adjustment ? adjustment_end_date : end_date
         if allocation['trip_collection_method'] == 'trips'
           row.collect_trips_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
         else

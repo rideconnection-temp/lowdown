@@ -23,11 +23,11 @@ class Allocation < ActiveRecord::Base
   end
 
   def funding_subsource
-    return project.funding_subsource
+    project.try :funding_subsource
   end
 
   def project_number
-    return project.project_number
+    project.try :project_number
   end
 
   def project_name

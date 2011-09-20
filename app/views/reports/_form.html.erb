@@ -2,14 +2,12 @@
 
     <ol class="section first">
       <li>
+        <%= f.label :name, "Name:" %>
+        <%= f.text_field :name %>
+      </li>
+      <li>
         <h2>Allocations to Include</h2>
         <%= f.collection_select :allocations, @allocations, :id, :name, { :selected => @report.allocation_list.try(:split, ",") }, { :class => "multi full", :multiple => true } %>
-      </li>
-
-      <li>
-        <h2 class="section-header">Date Range</h2>
-        <p><label>Service Beginning:</label> <%= f.date_select :start_date, :discard_day=>true %></p>
-        <p><label>Ending Before:</label> <%= f.date_select :end_date, :discard_day=>true %></p>
       </li>
 
       <li>
@@ -144,10 +142,6 @@
             <label for="total_volunteer_hours">Total Hours</label>
           </li>
         </ol>
-      </div>
-
-      <div class="selfclear">
-        <%= f.check_box :adjustment %> <%= f.label :adjustment, "Use adjusted values?", :class => "checkbox" %>
       </div>
       
       <div class="selfclear">

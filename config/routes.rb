@@ -7,7 +7,17 @@ Lowdown::Application.routes.draw do
   resources :providers, :only => [:index, :edit, :update, :new, :create]
   resources :projects, :only => [:index, :edit, :update, :new, :create]
   
-  resources :reports, :only => [:edit, :update]
+  resources :reports do
+    collection do
+      get :show_create_quarterly
+      get :quarterly_narrative_report
+      get :show_ride_purpose_report
+      get :ride_purpose_report
+      get :show_create_age_and_ethnicity
+      get :age_and_ethnicity
+      get :show_create_active_rider
+    end
+  end
   
   resource :admin, :only => [:index]
 

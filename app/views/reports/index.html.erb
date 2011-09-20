@@ -11,38 +11,19 @@
 <div class="predefined-report">
   
 
-  <%= form_for report, :url=>{:action=>:delete_report} do |f| %>
+  <%= form_for report, :html => { :method => 'delete' } do |f| %>
     <%= link_to "Edit Report", edit_report_path(report), :class => "edit" %>
     <input type="hidden" name="report[id]" value="<%= report.id %>" />
     <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
   <% end %>
 
-  <form action="<%= url_for :action=>:report %>" class="run-report">
+  <%= form_for report, :html => { :class => "run-report" } do |f| %>
     <fieldset>
       <h2 class="report-header"><%= report.name %></h2>
       <%= content_tag :p, report.description if report.description.present? %>
-
-      <input type="hidden" name="report[id]" value="<%= report.id %>" />
-      <input type="hidden" name="report[adjustment]" value="0" />
-      <input type="hidden" name="report[pending]" value="0" />
-
-      <ol>
-        <li><label>Start Date:</label> <%= date_select( :report, "start_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
-        <li><label>End Date:</label> <%= date_select( :report, "end_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
-        <li><input type="checkbox" name="report[adjustment]" value="1" /> <label for="report[adjustment]">Adjustments</label></li>
-        <li><input type="checkbox" name="report[pending]" value="1" /> <label for="report[pending]">Pending</label></li>
-      </ol>
-
-      <ol class="adjustments">
-        <li><label>Adjustment Start Date:</label> <%= date_select( :report, "adjustment_start_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
-        <li><label>Adjustment End Date:</label> <%= date_select( :report, "adjustment_end_date", :end_year => Time.now.year, :order => [:month, :year] ) %></li>
-      </ol>
-
-
-      <input type="submit" name="commit" value="View Report"/>
-
+      <%= render "run_form", :f => f, :report => report, :ol_class => "" %>
     </fieldset>
-  </form>
+  <% end %>
 
 </div>
 
@@ -50,4 +31,4 @@
 
 <hr />
 
-<%= link_to 'Define New Report', { :action=>:show_create_report }, :class=>'action-bttn' %>
+<%= link_to 'Define New Report', new_report_path, :class=>'action-bttn' %>

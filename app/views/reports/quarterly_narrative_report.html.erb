@@ -4,10 +4,10 @@
 
 <% for field, rows in @allocations %>
 <% allocation = get_row(rows).allocation %>
-<h2><%= allocation.provider.name %> (<%= @report.start_date %> - <%= @report.end_date.prev_day %>)</h2>
+<h2><%= allocation.provider_name %> (<%= @report.start_date %> - <%= @report.end_date.prev_day %>)</h2>
 <h3>Program: <%= allocation.name %></h3>
 <h3>County: <%= allocation.county %></h3>
-<h3>Funding Source: <%= allocation.project.funding_source %></h3>
+<h3>Funding Source: <%= allocation.funding_source %></h3>
 
 <div>Instructions: Please review the numbers provided for this funding
 source. If any discrepancies are found, they should be reported on the

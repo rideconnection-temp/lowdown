@@ -25,7 +25,7 @@ $(document).ready(function() {
 
   // toggle adjustment range selects
   $("input:checkbox[name='report[adjustment]']").change(function(){
-    $(this).parents("form").find("ol.adjustments").toggle();
+    $(this).parents("form").find("ol.adjustments").toggleClass("hidden");
   });
 
   // live totals on summary show-create

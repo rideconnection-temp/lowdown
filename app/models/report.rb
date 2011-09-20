@@ -9,6 +9,22 @@ class Report < ActiveRecord::Base
   
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter county,agency funding_source,county,agency,project_name funding_source,county,agency funding_source,agency project_name,agency agency,county,project_name}
 
+  def self.new_from_params(params)
+    report = self.new(params[:report])
+
+    report.fields      ||= ''
+    report.allocations ||= ''
+
+    report
+  end
+
+  def update_from_params(params)
+    params[:allocations] ||= ''
+    params[:fields] ||= ''
+
+    update_attributes params
+  end
+
   def allocations
     if allocation_list.nil? or allocation_list.empty?
       return []

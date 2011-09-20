@@ -17,7 +17,7 @@
   
         <% for provider, row in providers %>
          <tr>
-           <th scope="row"><%= provider.name %></th>
+           <th scope="row"><%= provider.try :name %></th>
            <% for purpose in @trip_purposes %>
              <td><%= row.by_purpose[purpose] %></td>
            <% end %>
