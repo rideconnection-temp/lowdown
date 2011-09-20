@@ -24,6 +24,11 @@
       </li>
       
       <li class="selfclear">
+        <%= form.label :program %>
+        <%= form.text_field :program %>
+      </li>
+      
+      <li class="selfclear">
         <%= form.label :project_id %>
         <%= form.collection_select :project_id, Project.all, :id, :name, :include_blank => true %>
       </li>
