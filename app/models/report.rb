@@ -1,7 +1,10 @@
 class Report < ActiveRecord::Base
-  validates_presence_of :name
-  validates_date :start_date
-  validates_date :end_date
+  validates :name, :presence => true
+  validates :adjustment_start_date, :presence => true, :if => :adjustment?
+  validates :adjustment_end_date, :presence => true, :if => :adjustment?
+
+  validates_date :start_date, :end_date, :adjustment_start_date, :adjustment_end_date, :allow_blank => true
+
   attr_accessor :is_new
   
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter county,agency funding_source,county,agency,project_name funding_source,county,agency funding_source,agency project_name,agency agency,county,project_name}

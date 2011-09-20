@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110919202935) do
+ActiveRecord::Schema.define(:version => 20110920143917) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -110,6 +110,8 @@ ActiveRecord::Schema.define(:version => 20110919202935) do
     t.boolean "pending"
     t.boolean "adjustment"
     t.text    "description"
+    t.date    "adjustment_start_date"
+    t.date    "adjustment_end_date"
   end
 
   create_table "runs", :id => false, :force => true do |t|
