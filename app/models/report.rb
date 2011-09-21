@@ -12,17 +12,10 @@ class Report < ActiveRecord::Base
   def self.new_from_params(params)
     report = self.new(params[:report])
 
-    report.fields      ||= ''
-    report.allocations ||= ''
+    report.field_list      ||= ''
+    report.allocation_list ||= ''
 
     report
-  end
-
-  def update_from_params(params)
-    params[:allocations] ||= ''
-    params[:fields] ||= ''
-
-    update_attributes params
   end
 
   def allocations

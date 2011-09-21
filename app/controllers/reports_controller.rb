@@ -517,7 +517,7 @@ summaries.valid_end = ? "
   def update
     @report      = Report.find params[:id]
 
-    if @report.update_from_params params[:report]
+    if @report.update_attributes params[:report]
       if params[:commit].downcase.match /view/
         redirect_to report_path(@report)
       else
