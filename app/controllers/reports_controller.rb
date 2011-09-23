@@ -62,7 +62,7 @@ class ReportsController < ApplicationController
       total = 0
       cost_fields = [:funds, :agency_other, :vehicle_maint, :donations, :administrative, :operations]
       for field in cost_fields
-        if @fields_to_show.nil? or @fields_to_show.member? field.to_sym
+        if @fields_to_show.nil? || @fields_to_show.map(&:to_sym).member?( field.to_sym )
           total += instance_variable_get("@#{field}")
         end
       end
@@ -145,27 +145,25 @@ class ReportsController < ApplicationController
     end
 
     def include_row(row)
-      @funds += row.funds
+      @funds                  += row.funds
+      @agency_other           += row.agency_other
+      @vehicle_maint          += row.vehicle_maint
+      @administrative         += row.administrative
+      @operations             += row.operations
+      @donations              += row.donations
+      
+      @in_district_trips      += row.in_district_trips
+      @out_of_district_trips  += row.out_of_district_trips
+      @total_last_year        += row.total_last_year
+      @mileage                += row.mileage
 
-      @total_last_year += row.total_last_year
+      @driver_volunteer_hours += row.driver_volunteer_hours
+      @driver_paid_hours      += row.driver_paid_hours
 
-      @in_district_trips += row.in_district_trips
-      @out_of_district_trips += row.out_of_district_trips
-
-      @mileage += row.mileage
-
-      @driver_paid_hours += row.driver_paid_hours
-
-      @turn_downs += row.turn_downs
-      @undup_riders += row.undup_riders
-
+      @turn_downs             += row.turn_downs
+      @undup_riders           += row.undup_riders
       @escort_volunteer_hours += row.escort_volunteer_hours
-
-      @vehicle_maint += row.vehicle_maint
-
-      @administrative += row.administrative
-      @operations += row.operations
-
+      @admin_volunteer_hours  += row.admin_volunteer_hours
     end
 
     def apply_results(add_result, subtract_result={})
@@ -316,6 +314,7 @@ and trips.valid_end = ? and runs.valid_end=? "
 sum(total_miles) as mileage,
 sum(driver_hours_paid) as driver_paid_hours,
 sum(driver_hours_volunteer) as driver_volunteer_hours,
+sum(administrative_hours_volunteer) as admin_volunteer_hours,
 sum(escort_hours_volunteer) as escort_volunteer_hours
 from summaries 
 where 
@@ -582,9 +581,8 @@ summaries.valid_end = ? "
   end
 
   def sum(rows, out=nil)
-    if out.nil?
-      out = ReportRow.new
-    end
+    out ||= ReportRow.new
+
     if rows.instance_of? Hash
       rows.each do |key, row|
         sum(row, out)
@@ -592,6 +590,7 @@ summaries.valid_end = ? "
     else
       out.include_row(rows)
     end
+    
     return out
   end
 
