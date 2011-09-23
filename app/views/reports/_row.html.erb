@@ -7,8 +7,8 @@
   <% if @fields.member? 'funds' %><td>$<%= '%0.2f' % row.funds %></td><%end%>
   <% if @fields.member? 'agency_other' %><td>$<%= '%0.2f' % row.agency_other %></td><%end%>
   <% if @fields.member? 'vehicle_maint' %><td>$<%= '%0.2f' % row.vehicle_maint %></td><%end%>
-  <% if @fields.member? 'operations' %><td>$<%= '%0.2f' % row.operations %></td><%end%>
   <% if @fields.member? 'administrative' %><td>$<%= '%0.2f' % row.administrative %></td><%end%>
+  <% if @fields.member? 'operations' %><td>$<%= '%0.2f' % row.operations %></td><%end%>
   <% if @fields.member? 'donations' %><td>$<%= '%0.2f' % row.donations %></td><%end%>
   <% if @fields.member? 'total' %><td>$<%= '%0.2f' % row.total %></td><%end%>
   <% if @fields.member? 'in_district_trips' %><td><%= row.in_district_trips.to_i %></td><%end%>

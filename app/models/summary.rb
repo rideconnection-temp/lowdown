@@ -14,7 +14,7 @@ class Summary < ActiveRecord::Base
   before_validation :fix_period_end
 
   def fix_period_end
-    self.period_end = self.period_start.next_month
+    self.period_end = self.period_start.next_month - 1.day
   end
 
   def created_by

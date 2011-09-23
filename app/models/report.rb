@@ -55,5 +55,9 @@ class Report < ActiveRecord::Base
   def query_end_date
     Date.new(end_date.year, end_date.month, 1) + 1.months
   end
+  
+  def query_adjustment_end_date
+    Date.new(adjustment_end_date.year, adjustment_end_date.month, 1) + 1.months if adjustment_end_date.present?
+  end
 
 end
