@@ -15,7 +15,7 @@
   <% if @fields.member? 'out_of_district_trips' %><td><%= row.out_of_district_trips.to_i %></td><%end%>
   <% if @fields.member? 'total_trips' %><td><%= row.total_trips.to_i %></td><%end%>
   <% if @fields.member? 'total_last_year' %><td><%= row.total_last_year.to_i %></td><%end%>
-  <% if @fields.member? 'mileage' %><td><%= row.mileage %></td><%end%>
+  <% if @fields.member? 'mileage' %><td><%= row.mileage.round %></td><%end%>
   <% if @fields.member? 'driver_volunteer_hours' %><td><%= '%0.2f' % row.driver_volunteer_hours %></td><%end%>
   <% if @fields.member? 'driver_paid_hours' %><td><%= '%0.2f' % row.driver_paid_hours %></td><%end%>
   <% if @fields.member? 'driver_total_hours' %><td><%= '%0.2f' % row.driver_total_hours %></td><%end%>
