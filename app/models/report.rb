@@ -12,17 +12,10 @@ class Report < ActiveRecord::Base
   def self.new_from_params(params)
     report = self.new(params[:report])
 
-    report.fields      ||= ''
-    report.allocations ||= ''
+    report.field_list      ||= ''
+    report.allocation_list ||= ''
 
     report
-  end
-
-  def update_from_params(params)
-    params[:allocations] ||= ''
-    params[:fields] ||= ''
-
-    update_attributes params
   end
 
   def allocations
@@ -61,6 +54,10 @@ class Report < ActiveRecord::Base
 
   def query_end_date
     Date.new(end_date.year, end_date.month, 1) + 1.months
+  end
+  
+  def query_adjustment_end_date
+    Date.new(adjustment_end_date.year, adjustment_end_date.month, 1) + 1.months if adjustment_end_date.present?
   end
 
 end

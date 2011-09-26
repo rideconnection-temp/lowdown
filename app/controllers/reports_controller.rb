@@ -62,7 +62,7 @@ class ReportsController < ApplicationController
       total = 0
       cost_fields = [:funds, :agency_other, :vehicle_maint, :donations, :administrative, :operations]
       for field in cost_fields
-        if @fields_to_show.nil? or @fields_to_show.member? field.to_sym
+        if @fields_to_show.nil? || @fields_to_show.map(&:to_sym).member?( field.to_sym )
           total += instance_variable_get("@#{field}")
         end
       end
@@ -145,27 +145,25 @@ class ReportsController < ApplicationController
     end
 
     def include_row(row)
-      @funds += row.funds
+      @funds                  += row.funds
+      @agency_other           += row.agency_other
+      @vehicle_maint          += row.vehicle_maint
+      @administrative         += row.administrative
+      @operations             += row.operations
+      @donations              += row.donations
+      
+      @in_district_trips      += row.in_district_trips
+      @out_of_district_trips  += row.out_of_district_trips
+      @total_last_year        += row.total_last_year
+      @mileage                += row.mileage
 
-      @total_last_year += row.total_last_year
+      @driver_volunteer_hours += row.driver_volunteer_hours
+      @driver_paid_hours      += row.driver_paid_hours
 
-      @in_district_trips += row.in_district_trips
-      @out_of_district_trips += row.out_of_district_trips
-
-      @mileage += row.mileage
-
-      @driver_paid_hours += row.driver_paid_hours
-
-      @turn_downs += row.turn_downs
-      @undup_riders += row.undup_riders
-
+      @turn_downs             += row.turn_downs
+      @undup_riders           += row.undup_riders
       @escort_volunteer_hours += row.escort_volunteer_hours
-
-      @vehicle_maint += row.vehicle_maint
-
-      @administrative += row.administrative
-      @operations += row.operations
-
+      @admin_volunteer_hours  += row.admin_volunteer_hours
     end
 
     def apply_results(add_result, subtract_result={})
@@ -259,20 +257,20 @@ and trips.date between ? and ? "
       sql = "select 
 sum(in_district_trips) as in_district_trips,
 sum(out_of_district_trips) as out_of_district_trips,
-sum(turn_downs) as turn_downs,
-sum(unduplicated_riders) as undup_riders
+turn_downs,
+unduplicated_riders as undup_riders
 from summaries 
 inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where 
 #{pending_where}
 allocation_id=? "
-
+      group_by = "group by turn_downs, summaries.unduplicated_riders"
       if adjustment
-        add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
+        add_results, subtract_results = collect_adjustment_by_summary(sql + group_by, allocation, start_date, end_date)
 
       else
         sql += "and period_start >= ? and period_end < ? and 
-summaries.valid_end = ? "
+summaries.valid_end = ? " + group_by
 
         add_results = ActiveRecord::Base.connection.select_one(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
         subtract_results = {}
@@ -316,8 +314,9 @@ and trips.valid_end = ? and runs.valid_end=? "
 sum(total_miles) as mileage,
 sum(driver_hours_paid) as driver_paid_hours,
 sum(driver_hours_volunteer) as driver_volunteer_hours,
+sum(administrative_hours_volunteer) as admin_volunteer_hours,
 sum(escort_hours_volunteer) as escort_volunteer_hours
-from summaries inner join summary_rows on summary_rows.summary_id=summaries.base_id
+from summaries 
 where 
 #{pending_where}
 allocation_id=? "
@@ -380,7 +379,6 @@ sum(funds) as funds,
 sum(agency_other) as agency_other,
 sum(donations) as donations
 from summaries 
-inner join summary_rows on summary_rows.summary_id = summaries.base_id
 where 
 #{pending_where}
 allocation_id=?  
@@ -492,7 +490,7 @@ summaries.valid_end = ? "
     groups        = @group_fields.map { |f| @@group_mappings[f] }
     @groups_size  = groups.size
 
-    do_report(groups, @group_fields, @report.start_date, @report.query_end_date, @report.allocations, @report.fields, @report.pending, @report.adjustment, @report.adjustment_start_date, @report.adjustment_end_date)
+    do_report(groups, @group_fields, @report.start_date, @report.query_end_date, @report.allocations, @report.fields, @report.pending, @report.adjustment, @report.adjustment_start_date, @report.query_adjustment_end_date)
   end
 
   def csv
@@ -517,7 +515,7 @@ summaries.valid_end = ? "
   def update
     @report      = Report.find params[:id]
 
-    if @report.update_from_params params[:report]
+    if @report.update_attributes params[:report]
       if params[:commit].downcase.match /view/
         redirect_to report_path(@report)
       else
@@ -583,9 +581,8 @@ summaries.valid_end = ? "
   end
 
   def sum(rows, out=nil)
-    if out.nil?
-      out = ReportRow.new
-    end
+    out ||= ReportRow.new
+
     if rows.instance_of? Hash
       rows.each do |key, row|
         sum(row, out)
@@ -593,6 +590,7 @@ summaries.valid_end = ? "
     else
       out.include_row(rows)
     end
+    
     return out
   end
 
@@ -969,7 +967,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
         results = Allocation.find(allocations).all
       end
     end
-
+    
     for period in @@time_periods
       if group_fields.member? period
         results = apply_periods(results, start_date, end_date, period)
@@ -977,9 +975,9 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
     end
 
     allocations = group(group_fields, results)
+    
 
-    apply_to_leaves! allocations, group_fields.size, do | allocationset |
-
+    apply_to_leaves! allocations, group_fields.size do | allocationset |
       row = ReportRow.new fields
 
       for allocation in allocationset
