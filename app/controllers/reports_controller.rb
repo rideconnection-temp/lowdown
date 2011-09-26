@@ -29,7 +29,7 @@ class ReportsController < ApplicationController
 
     def self.fields(requested_fields=nil)
       if requested_fields.nil? || requested_fields.empty?
-        fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip"]
+        fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip", "miles_per_ride"]
       else
         fields = @@selector_fields + requested_fields
       end
