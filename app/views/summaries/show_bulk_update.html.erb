@@ -8,8 +8,8 @@
     <p>Mark all summaries complete for the following period:</p>
 
     <ol class="section first">
-      <li><%= label_tag :start_date, "Start Date:" %> <%= text_field_tag :period_start, nil, :class=>"datepicker" %></li>
-      <li><%= label_tag :end_date, "End Date:" %> <%= text_field_tag :period_end, nil, :class=>"datepicker" %></li>
+      <li><%= label_tag :start_date, "Start Date:" %> <%= text_field_tag "summary_query[period_start]", nil, :class=>"datepicker" %></li>
+      <li><%= label_tag :end_date, "End Date:" %> <%= text_field_tag "summary_query[period_end]", nil, :class=>"datepicker" %></li>
     </ol>
     
     <div class="actions">

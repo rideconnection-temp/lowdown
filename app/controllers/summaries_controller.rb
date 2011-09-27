@@ -13,8 +13,8 @@ class SummaryQuery
 
   def initialize(params)
     if params
-      @period_start = convert_date(params, "period_start") if params["period_start(1i)"]
-      @period_end   = convert_date(params, "period_end") if params["period_end(1i)"]
+      @period_start = params["period_start(1i)"] ? convert_date(params, "period_start") : Date.parse(params["period_start"])
+      @period_end   = params["period_end(1i)"] ? convert_date(params, "period_end") : Date.parse(params["period_end"])
       @provider     = params[:provider].to_i if params[:provider]
     end
   end
