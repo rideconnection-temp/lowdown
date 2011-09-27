@@ -153,7 +153,17 @@ class SummariesController < ApplicationController
     else
       render(:action => :show_update)
     end
-
+  end
+  
+  def delete_version
+    @summary = Summary.find params[:id]
+    
+    unless @summary.latest?    
+      @summary.summary_rows.each &:delete
+      @summary.delete # avoid callbacks or else delete will be halted
+    end
+    
+    redirect_to :action => :show_update, :id => @summary.base_id
   end
 
 

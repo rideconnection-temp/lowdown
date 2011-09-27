@@ -34,7 +34,9 @@ Lowdown::Application.routes.draw do
     post "users/update" => "users#update"
   end
   root :to => 'dashboard#index'
-
+  
+  match "summaries/delete_version/:id" => "summaries#delete_version", :as => :delete_summary_version, :via => :post
+  
   get "dashboard/index"
 
   match "test_exception_notification" => "application#test_exception_notification"

@@ -16,7 +16,8 @@
         <% else %>
         <%= link_to time_ago_in_words(version.valid_start), :action=>:show_update, :id=>version.id %> ago
         <% end %>
-        by <span class="update-user"><%= version.updater.email %></span>
+        by <span class="update-user"><%= version.updater.email %></span> 
+        <%= link_to "", delete_summary_version_path(version), :class => "delete", :method => :post, :confirm => "Are you sure you want to delete this version?" unless version.latest? %>
     </li>
   <% end %>
   </ul>
