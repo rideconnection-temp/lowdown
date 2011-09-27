@@ -172,7 +172,7 @@ class ReportsController < ApplicationController
         old = instance_variable_get var
         new = old + add_result[field].to_i - subtract_result[field].to_i
         instance_variable_set var, new
-      end
+      end if add_result.present?
     end
 
     def collect_adjustment_by_summary(sql, allocation, start_date, end_date)
