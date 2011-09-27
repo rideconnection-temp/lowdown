@@ -25,9 +25,7 @@ gem 'userstamp'
 
 gem 'validates_timeliness'
 
-gem 'rails-ujs'
-
-gem 'jquery-rails', '>= 0.2.6'
+gem 'jquery-rails', '>= 1.0.12'
 
 gem 'exception_notification',
     :git => "git://github.com/rails/exception_notification.git",
