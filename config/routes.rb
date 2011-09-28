@@ -4,8 +4,8 @@ Lowdown::Application.routes.draw do
   
   resources :customers, :only => [:show, :update]
   resources :allocations, :only => [:index, :edit, :update, :new, :create]
-  resources :providers, :only => [:index, :edit, :update, :new, :create]
-  resources :projects, :only => [:index, :edit, :update, :new, :create]
+  resources :providers
+  resources :projects
   
   resources :reports do
     collection do

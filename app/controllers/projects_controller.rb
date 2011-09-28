@@ -36,6 +36,13 @@ class ProjectsController < ApplicationController
     end
   end
   
+  def destroy
+    @project = Project.find params[:id]
+    @project.destroy
+    
+    redirect_to projects_url
+  end
+  
   private
   
   def get_drop_down_data

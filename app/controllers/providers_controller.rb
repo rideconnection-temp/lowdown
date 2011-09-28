@@ -36,6 +36,13 @@ class ProvidersController < ApplicationController
     end
   end
   
+  def destroy
+    @provider = Provider.find params[:id]
+    @provider.destroy
+    
+    redirect_to providers_url
+  end
+  
   private
   
   def get_drop_down_data
