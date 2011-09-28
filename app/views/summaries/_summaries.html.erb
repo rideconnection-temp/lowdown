@@ -17,7 +17,7 @@
              <tr>
                <td><%= summary.allocation.name %></td>
                <td><%= summary.period_start.month %> / <%= summary.period_start.year %></td>
-               <td><span class="status-<%= (summary.complete) ? "" : "in" %>complete"><%= summary.complete %></span></td>
+               <td><span class="status-<%= (summary.complete) ? "" : "in" %>complete"><%= summary.complete? ? "Yes" : "No" %></span></td>
                <td><%= summary.valid_start.to_s(:pretty) %></td>
                <td><%= link_to 'Details', :action=>:show_update, :id=>summary.id %></td>
              </tr>
