@@ -41,6 +41,19 @@ $(document).ready(function() {
 
     $("#" + district + "_district_total").val( total );
   });
+  
+  $("#all-reports").sortable({
+    handle : ".handle",
+    stop : function(event, ui) {
+      var order = {};
+
+      ui.item.closest('ul').children('li').each(function(index) {
+        order[ $(this).data("id") ] = index;
+      });
+      
+      $.post("reports/sort", {reports : order});
+    }
+  });
 
   // generates a new group by select value, given each of the custom field values
   var updateCustomOptionValue = function() {

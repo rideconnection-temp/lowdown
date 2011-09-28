@@ -533,6 +533,13 @@ summaries.valid_end = ? "
     flash[:notice] = "Deleted #{report.name}"
     redirect_to :action => :index
   end
+  
+  def sort
+    params[:reports].each do |id, index|
+      Report.update_all(['position=?', index], ['id=?', id])
+    end
+    render :nothing => true
+  end
 
   def show_create_quarterly
     @report = Report.new(params[:report])

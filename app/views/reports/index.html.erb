@@ -6,12 +6,13 @@
 <p>No reports.</p>
 <% end %>
 
+<ul id="all-reports">
 <% for report in @reports %>
 
-<div class="predefined-report">
-  
-
+<li class="predefined-report" data-id="<%= report.id %>">
   <%= form_for report, :html => { :method => 'delete' } do |f| %>
+  <span class="handle">[Reorder]</span>
+  
     <%= link_to "Edit Report", edit_report_path(report), :class => "edit" %>
     <input type="hidden" name="report[id]" value="<%= report.id %>" />
     <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
@@ -25,9 +26,10 @@
     </fieldset>
   <% end %>
 
-</div>
+</li>
 
 <% end %>
+</ul>
 
 <hr />
 

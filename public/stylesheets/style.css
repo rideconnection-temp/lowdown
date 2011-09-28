@@ -1006,19 +1006,19 @@ textarea#report_description {
     padding-bottom: 5px;
     margin-bottom: 5px;
 }
-div.predefined-report {
+li.predefined-report {
     position: relative;
 }
-div.predefined-report form.run-report {
+li.predefined-report form.run-report {
   clear: none;
 }
-div.predefined-report form.edit_report {
+li.predefined-report form.edit_report {
   display : block;
   float : right;
   margin : 0 10px -30px 0;
 }
 
-div.predefined-report a.edit {
+li.predefined-report a.edit {
   font-size: 11px;
   line-height: 21px;
   margin-right : 5px;
@@ -1038,17 +1038,32 @@ input.delete-report:active {
     color: #ff4d88;
     text-decoration: underline;
 }
-div.predefined-report ol {
+ul#all-reports {
+	padding : 0;
+	margin : 0;
+}
+li.predefined-report {
+	list-style : none;
+}
+
+li.predefined-report span.handle {
+  font-size : 11px;
+  color : #0081CC;
+  cursor: move;
+  margin-right : 10px;
+}
+
+li.predefined-report ol {
     list-style: none;
     margin: 0 0 10px;
     float: left;
 }
-div.predefined-report ol li {
+li.predefined-report ol li {
     float: left;
     margin-right: 20px;
 }
 
-div.predefined-report form.run-report input[type="submit"] {
+li.predefined-report form.run-report input[type="submit"] {
     background: #0081CC;
     color: #fff;
     font-size: 15px;
@@ -1060,7 +1075,7 @@ div.predefined-report form.run-report input[type="submit"] {
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
-div.predefined-report form.run-report input[type="submit"]:hover {
+li.predefined-report form.run-report input[type="submit"]:hover {
     background: #009FFB;
 }
 

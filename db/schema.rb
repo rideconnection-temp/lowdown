@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110920202254) do
+ActiveRecord::Schema.define(:version => 20110927214642) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -113,6 +113,7 @@ ActiveRecord::Schema.define(:version => 20110920202254) do
     t.text    "description"
     t.date    "adjustment_start_date"
     t.date    "adjustment_end_date"
+    t.integer "position"
   end
 
   create_table "runs", :id => false, :force => true do |t|
@@ -259,7 +260,7 @@ ActiveRecord::Schema.define(:version => 20110920202254) do
 
   add_foreign_key "summary_rows", ["summary_id"], "summaries", ["id"], :name => "summary_rows_summary_id_fkey"
 
-  add_foreign_key "trips", ["pickup_address_id"], "addresses", ["id"], :name => "trips_pickup_address_id_fkey"
   add_foreign_key "trips", ["dropoff_address_id"], "addresses", ["id"], :name => "trips_dropoff_address_id_fkey"
+  add_foreign_key "trips", ["pickup_address_id"], "addresses", ["id"], :name => "trips_pickup_address_id_fkey"
 
 end
