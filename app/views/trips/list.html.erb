@@ -10,8 +10,14 @@
     </ol>
 
     <ol class="section fourth">
-      <li><%= f.label :provider, "Provider:" %> <%= f.collection_select :provider, @providers, :id, :name, :include_blank => true %></li>
-      <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %></li>
+      <li>
+        <%= f.label :provider, "Provider:" %> 
+        <%= f.collection_select :provider, @providers, :id, :name, :include_blank => true %>
+      </li>
+      <li>
+        <%= f.label :allocation, "Allocation:" %> 
+        <%= f.select :allocation, options_for_select( @allocations.map { |a| [a.name, a.id, {'data-provider-id' => a.provider_id } ] }), :include_blank => true %>
+      </li>
     </ol>
 
     <div class="actions">
