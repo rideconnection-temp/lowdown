@@ -1,6 +1,6 @@
          <h2 id="result-count"><%= @summaries.total_entries %> summaries found.</h2>
       <% if @summaries.total_entries > 0 %>
-         <%= link_to 'Mark All Complete', { :action=>:bulk_update, "summary_query[period_start]" => params[:summary_query][:period_start], "summary_query[period_end]" => params[:summary_query][:period_end], "summary_query[allocation]" => params[:summary_query][:allocation] }, :class=>'mark-complete' %>
+         <%= link_to 'Mark All Complete', { :action => :bulk_update, :summary_query => params[:summary_query] }, :class=>'mark-complete' %>
  <div class="report-wrapper">
          <table id="summary-results">
            <thead>

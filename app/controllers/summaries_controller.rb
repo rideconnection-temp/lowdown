@@ -78,12 +78,6 @@ class SummariesController < ApplicationController
     end
   end
 
-  def show_bulk_update
-    if !flash.now[:notice]
-      flash.now[:notice] = "This will mark all summaries within the selected range as complete. There is no 'undo'."
-    end
-  end
-
   def bulk_update
     updated = 0
 
@@ -103,10 +97,10 @@ class SummariesController < ApplicationController
           row.save!
         end
       end
-      flash[:notice] = "Updated #{updated} records"
+      flash[:alert] = "Updated #{updated} records"
 
     end
-    redirect_to :action=>:show_bulk_update
+    redirect_to :action => :index, :summary_query => params[:summary_query]
   end
 
   def show_update
