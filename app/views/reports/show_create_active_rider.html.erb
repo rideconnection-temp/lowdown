@@ -4,7 +4,7 @@
 
 <form>
   <p>
-    <label>Choose Month:</label> <%= date_select :start_selector, :discard_day=>true %>
+    <label>Choose Month:</label> <%= date_select :active_rider_query, :start_date, :discard_day => true, :default => @start_date %>
   	<input id="summary-search" type="submit" value="Search" />
   </p>
 </form>

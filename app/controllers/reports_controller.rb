@@ -546,9 +546,11 @@ summaries.valid_end = ? "
   end
   
   def show_create_active_rider
-    @start_date = Date.parse(params[:date] || '2010-12-1')
+    @start_date = params[:active_rider_query].present? ? 
+      Date.new( params[:active_rider_query]["start_date(1i)"].to_i, params[:active_rider_query]["start_date(2i)"].to_i, 1 ) : 
+      Date.today.at_beginning_of_month - 1.month
     @after_end_date = @start_date.next_month
-
+        
     trips = Trip.current_versions.completed.spd.date_range(@start_date,@after_end_date).includes(:customer)
 
     @spd_offices = {}
