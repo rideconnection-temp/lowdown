@@ -546,9 +546,7 @@ summaries.valid_end = ? "
   end
   
   def show_create_active_rider
-    @start_date = params[:active_rider_query].present? ? 
-      Date.new( params[:active_rider_query]["start_date(1i)"].to_i, params[:active_rider_query]["start_date(2i)"].to_i, 1 ) : 
-      Date.today.at_beginning_of_month - 1.month
+    @start_date = start_month_from_params params[:active_rider_query]
     @after_end_date = @start_date.next_month
         
     trips = Trip.current_versions.completed.spd.date_range(@start_date,@after_end_date).includes(:customer)
@@ -670,9 +668,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
       return @@trip_purposes
     end
   end
-  
-  def show_ride_purpose_result
-  end
 
   def sum_ride_purposes(rows, out=nil)
     if out.nil?
@@ -688,9 +683,13 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
     return out
   end
 
+  def show_ride_purpose_report
+    @start_date = start_month_from_params params[:ride_purpose_query]
+  end
+
   def ride_purpose_report
-    start_date = Date.parse(params["start_date"])
-    end_date = start_date.next_month
+    @start_date = start_month_from_params params[:ride_purpose_query]
+    @end_date   = @start_date.next_month
 
     results = Allocation.all
     group_fields = ["county", "provider"]
@@ -702,9 +701,9 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
         row = @counties[county][provider] = RidePurposeRow.new
         for allocation in allocations
           if allocation['trip_collection_method'] == 'trips'
-            row.collect_by_trip(allocation, start_date, end_date)
+            row.collect_by_trip(allocation, @start_date, @end_date)
           else
-            row.collect_by_summary(allocation, start_date, end_date)
+            row.collect_by_summary(allocation, @start_date, @end_date)
           end
 
         end
@@ -919,6 +918,12 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
     end
   end
 
+  def start_month_from_params(date_params)
+    date_params.present? ? 
+      Date.new( date_params["start_date(1i)"].to_i, date_params["start_date(2i)"].to_i, 1 ) : 
+      Date.today.at_beginning_of_month - 1.month
+  end
+  
   def apply_periods(allocations, start_date, end_date, period)
     #enumerate periods between start_date and end_date
     year = start_date.year
