@@ -13,7 +13,7 @@
   <% end %>
 <% else %>  
   <!-- innermost layer, render the data -->
-  <% rows.each do |group_name, row| %>
+  <% rows.sort_by {|k,v| row_sort(k,v)}.each do |group_name, row| %>
     <%= render "row", :row => row, :label => row.send(group_fields[0]) %>
   <% end %>
 <% end %>
