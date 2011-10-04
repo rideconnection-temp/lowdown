@@ -16,10 +16,11 @@ class Report < ActiveRecord::Base
     "county"            => "allocations.county",
     "funding_source"    => "projects.funding_source",
     "funding_subsource" => "projects.funding_subsource",
-    "name"              => "allocations.name",
+    "allocation_name"   => "allocations.name",
     "program"           => "allocations.program",
     "project_name"      => "projects.name",
     "project_number"    => "projects.project_number",
+    "provider_name"     => "providers.name",
     "quarter"           => "quarter",
     "month"             => "month",
     "year"              => "year"

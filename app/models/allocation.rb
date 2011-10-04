@@ -14,6 +14,10 @@ class Allocation < ActiveRecord::Base
     name
   end
 
+  def allocation_name
+    name
+  end
+
   def agency
     provider.try :agency
   end
