@@ -445,19 +445,6 @@ summaries.valid_end = ? "
 
   end
 
-
-  @@group_mappings = {
-    "agency" => "providers.agency",
-    "county" => "allocations.county",
-    "name" => "allocations.name",
-    "funding_source" => "projects.funding_source",
-    "funding_subsource" => "projects.funding_subsource",
-    "project_name" => "projects.name",
-    "project_number" => "projects.project_number",
-    "quarter" => "quarter",
-    "month" => "month"
-  }
-
   @@time_periods = [
     "year", "quarter", "month"
   ]
@@ -487,7 +474,7 @@ summaries.valid_end = ? "
   def show
     @report       = Report.find params[:id]
     @group_fields = @report.group_by.split(",")
-    groups        = @group_fields.map { |f| @@group_mappings[f] }
+    groups        = @group_fields.map { |f| Report::GroupMappings[f] }
     @groups_size  = groups.size
 
     do_report(groups, @group_fields, @report.start_date, @report.query_end_date, @report.allocations, @report.fields, @report.pending, @report.adjustment, @report.adjustment_start_date, @report.query_adjustment_end_date)

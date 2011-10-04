@@ -21,18 +21,17 @@
         </select>
 
       	<div style="display:none;" id="group-by-custom-section">
-	        <p><strong>Select fields to group by:</strong></p>
-      		<span id="group-by-custom-wrapper">
-	        	<span class="template">
-      			  <select>
-  	            <option value="county">County</option>
-        		    <option value="funding_source">Funding Source</option>
-  	            <option value="project_name">Project Name</option>
-        		    <option value="agency">Provider</option>
-          	  </select>
-      			</span>
-      		</span>
-      		<p><a href="#" class="add">Add New Group Field</a></p>
+          <p><strong>Select fields to group by:</strong></p>
+          <span id="group-by-custom-wrapper">
+            <span class="template">
+              <select>
+                <% Report::GroupMappings.each do |key,value| %>
+                  <%= content_tag :option, key.humanize.titleize, :value => value %>
+                <% end %>
+              </select>
+            </span>
+          </span>
+          <p><a href="#" class="add">Add New Group Field</a></p>
       	</div>
 
       </li>

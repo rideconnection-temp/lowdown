@@ -11,6 +11,21 @@ class Report < ActiveRecord::Base
   
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter county,agency funding_source,county,agency,project_name funding_source,county,agency funding_source,agency project_name,agency agency,county,project_name}
 
+  GroupMappings = {
+    "agency"            => "providers.agency",
+    "county"            => "allocations.county",
+    "funding_source"    => "projects.funding_source",
+    "funding_subsource" => "projects.funding_subsource",
+    "name"              => "allocations.name",
+    "program"           => "allocations.program",
+    "project_name"      => "projects.name",
+    "project_number"    => "projects.project_number",
+    "quarter"           => "quarter",
+    "month"             => "month",
+    "year"              => "year"
+  }
+
+
   def self.new_from_params(params)
     report = self.new(params[:report])
 
