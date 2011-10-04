@@ -8,17 +8,16 @@
     <th>Funding Source</th>
     <th>Funding Sub-Source</th>
     <th>Project Number</th>
+    <th/>
   </tr>
 
 <% @projects.each do |project| %>
   <tr>
-    <td>
-      <%= link_to project.name, edit_project_path(project) %>
-      <%= link_to "", project_url(project), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this project?" if current_user.is_admin && project.allocations.empty? %>
-    </td>
+    <td><%= link_to project.name, edit_project_path(project) %></td>
     <td><%= project.funding_source %></td>
     <td><%= project.funding_subsource %></td>
     <td><%= project.project_number %></td>
+    <td><%= link_to "Delete", project_url(project), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this project?" if current_user.is_admin && project.allocations.empty? %></td>
   </tr>
 <% end %>
 </table>
