@@ -35,9 +35,9 @@ module ApplicationHelper
 
   def group_by_option_tag(value)
     mappings = {
-      "funding_subsource" => "Funding Sub-source", 
-      "project_number"    => "Project Code",
-      "agency"            => "Provider"
+      #"funding_subsource" => "Funding Sub-source", 
+      #"project_number"    => "Project Code",
+      #"agency"            => "Provider"
     }
     
     fields     = value.split( "," ).map { |field| mappings[field] || field.titlecase }.join(", ")
