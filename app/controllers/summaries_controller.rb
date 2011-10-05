@@ -149,6 +149,21 @@ class SummariesController < ApplicationController
     end
   end
   
+  def delete
+    @summary = Summary.find params[:id]
+    
+    if @summary.versions.size == 1
+      if @summary.latest?    
+        @summary.summary_rows.each &:delete
+        @summary.delete # avoid callbacks or else delete will be halted
+      end
+    
+      redirect_to :action => :index, :notice => "Summary successfully deleted"
+    else
+      render :action => :show_update, :notice => "All previous versions must be deleted first"
+    end 
+  end
+
   def delete_version
     @summary = Summary.find params[:id]
     

@@ -37,6 +37,7 @@ Lowdown::Application.routes.draw do
   root :to => 'dashboard#index'
   
   match "summaries/delete_version/:id" => "summaries#delete_version", :as => :delete_summary_version, :via => :post
+  match "summaries/delete/:id" => "summaries#delete", :as => :delete_summary, :via => :delete
   
   get "dashboard/index"
 
