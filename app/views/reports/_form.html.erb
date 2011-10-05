@@ -14,7 +14,7 @@
         <h2 class="section-header">Grouping</h2>
         <p><strong>Group by:</strong></p>
         <select id="group-by" name="report[group_by]">
-          <% Report::GroupBys.each do |fields| %>
+          <% @group_bys.each do |fields| %>
             <%= group_by_option_tag fields %>
           <% end %>
       	  <option value="">Define Custom Grouping...</option>

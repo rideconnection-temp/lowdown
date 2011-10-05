@@ -455,7 +455,7 @@ summaries.valid_end = ? "
 
   def new
     @report      = Report.new(params[:report])
-    @allocations = Allocation.order(:name).all
+    prep_edit
   end
 
   def create
@@ -465,7 +465,7 @@ summaries.valid_end = ? "
       flash[:notice] = "Saved #{@report.name}"
       redirect_to edit_report_path(@report)
     else
-      @allocations = Allocation.order(:name).all
+      prep_edit
       render :action => :new
     end
   end
@@ -496,7 +496,7 @@ summaries.valid_end = ? "
 
   def edit
     @report      = Report.find params[:id]
-    @allocations = Allocation.order(:name).all
+    prep_edit
   end
 
   def update
@@ -510,7 +510,7 @@ summaries.valid_end = ? "
         redirect_to edit_report_path(@report.id)
       end
     else
-      @allocations = Allocation.order(:name).all
+      prep_edit
       render :action => :edit
     end
   end
@@ -869,6 +869,14 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
   end
 
   private
+
+  def prep_edit
+    @allocations = Allocation.order(:name).all
+    @group_bys = Report::GroupBys
+    if @report.group_by.present?
+      @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
+    end
+  end
 
   class PeriodAllocation
     attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date

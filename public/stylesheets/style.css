@@ -794,6 +794,7 @@ input.datepicker {
  */
 a.edit,
 a.new-trip,
+a.details,
 a.delete,
 a.mark-complete,
 a.add,
@@ -805,6 +806,9 @@ a.change-password {
 }
 a.edit {
     background: url(images/card--pencil.png) left center no-repeat scroll;
+}
+a.details {
+    background: url(images/document-search-result.png) left center no-repeat scroll;
 }
 a.new-trip {
     background: url(images/plus-button.png) left center no-repeat scroll;
