@@ -31,13 +31,13 @@
       <li class="selfclear">
         <%= form.label :project_id %>
         <%= form.collection_select :project_id, Project.all, :id, :name, :include_blank => true %>
-        <%= link_to "Details", [:edit, @allocation.project], :class => :details %>
+        <%= link_to "Details", [:edit, @allocation.project], :class => :details if @allocation.project %>
       </li>
       
       <li class="selfclear">
         <%= form.label :provider_id %>
         <%= form.collection_select :provider_id, Provider.all, :id, :name, :include_blank => true %>
-        <%= link_to "Details", [:edit, @allocation.provider], :class => :details %>
+        <%= link_to "Details", [:edit, @allocation.provider], :class => :details if @allocation.provider %>
       </li>
       
       <li class="selfclear">
