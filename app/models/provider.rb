@@ -3,6 +3,7 @@ class Provider < ActiveRecord::Base
   has_many :summaries
   
   validates :name, :presence => true
+  validates :short_name, :length => { :maximum => 10 }
 
   default_scope :order => :name
 

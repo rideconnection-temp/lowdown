@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110927214642) do
+ActiveRecord::Schema.define(:version => 20111007231636) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(:version => 20110927214642) do
     t.string   "routematch_id", :limit => 10
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "short_name",    :limit => 10
   end
 
   create_table "races", :force => true do |t|

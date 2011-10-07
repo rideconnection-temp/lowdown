@@ -19,6 +19,11 @@
       </li>
       
       <li class="selfclear">
+        <%= form.label :short_name %>
+        <%= form.text_field :short_name %>
+      </li>
+      
+      <li class="selfclear">
         <%= form.label :provider_type %>
         <%= form.select :provider_type, options_for_select(@provider_types.map {|pt| [pt,pt]}, @provider.provider_type) %>
       </li>

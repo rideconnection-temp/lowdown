@@ -5,6 +5,7 @@
 <table>
   <tr>
     <th>Name</th>
+    <th>Short Name</th>
     <th>Type</th>
     <th>Agency</th>
     <th>Branch</th>
@@ -14,6 +15,7 @@
   <% @providers.each do |provider| %>
     <tr>
       <td><%= link_to provider.name, edit_provider_path(provider) %></td>
+      <td><%= provider.short_name %></td>
       <td><%= provider.provider_type %></td>
       <td><%= provider.agency %></td>
       <td><%= provider.branch %></td>
