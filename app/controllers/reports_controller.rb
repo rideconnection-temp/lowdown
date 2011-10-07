@@ -716,10 +716,12 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
   def quarterly_narrative_report
     @report = Report.new(params[:report])
     @report.end_date = @report.end_date + 1.month - 1.day
+    allocations = Allocation.find_all_by_provider_id(params[:provider_id]) if params[:provider_id].present?
+
     groups = "allocations.name,month"
     group_fields = ['allocation_name', 'month']
 
-    do_report(groups, group_fields, @report.start_date, @report.end_date + 1.day, nil, nil, false, false)
+    do_report(groups, group_fields, @report.start_date, @report.end_date + 1.day, allocations, nil, false, false)
 
     @quarter     = @report.start_date.month / 3 + 1
     @groups_size = group_fields.size #this might not be necessary
