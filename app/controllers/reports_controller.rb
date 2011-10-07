@@ -887,7 +887,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
 
   def prep_edit
     @allocations = Allocation.order(:name).all
-    @group_bys = Report::GroupBys
+    @group_bys = Report::GroupBys.sort
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
     end
