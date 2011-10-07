@@ -1,35 +1,21 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.0.3'
-
 gem 'pg'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
-
 gem "devise"
-
 gem 'uuidtools'
-
 gem 'dynamic_form', :git => 'git://github.com/rails/dynamic_form.git'
-
 gem 'will_paginate', '3.0.pre2'
-
 gem 'capybara'
-
 gem 'automatic_foreign_key'
-
 gem 'userstamp'
-
 gem 'validates_timeliness'
-
 gem 'jquery-rails', '>= 1.0.12'
-
-gem 'exception_notification',
-    :git => "git://github.com/rails/exception_notification.git",
-    :require => "exception_notifier"
 
 # Use unicorn as the web server
 # gem 'unicorn'
@@ -37,10 +23,14 @@ gem 'exception_notification',
 # Deploy with Capistrano
 gem 'capistrano'
 
-# To use debugger
-gem 'ruby-debug19'
+group :production do
+  gem 'exception_notification',
+      :git => "git://github.com/rails/exception_notification.git",
+      :require => "exception_notifier"
+end
 
 group :test, :development do
+  gem 'ruby-debug19'
   gem "rspec-rails"
   gem "capybara"
   gem "fixjour"
