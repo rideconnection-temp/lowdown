@@ -668,9 +668,12 @@ table th {
     text-align: left;
     background: #2e6399;
     color: #ddd;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: -0.2px;
     border-right: 1px solid #3674b3;
+}
+div.report-wrapper table th {
+    font-size: 10px;
 }
 table th:last-child {
     border-right: 0;
