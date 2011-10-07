@@ -1,10 +1,10 @@
 <div id="page-header">
-  <h1>Quarterly Narrative Report - Quarter <%=@quarter%></h1>
+  <h1>Quarterly Narrative Report</h1>
 </div>
 
 <% for field, rows in @allocations %>
 <% allocation = get_row(rows).allocation %>
-<h2><%= allocation.provider_name %> (<%= @report.start_date %> - <%= @report.end_date.prev_day %>)</h2>
+<h2><%= allocation.provider_name %> &mdash; <%= describe_date_range(@report.start_date, @report.end_date) %></h2>
 <h3>Program: <%= allocation.name %></h3>
 <h3>County: <%= allocation.county %></h3>
 <h3>Funding Source: <%= allocation.funding_source %></h3>

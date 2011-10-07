@@ -6,8 +6,10 @@
   <fieldset>
 
     <p>
-      <%= f.label :start_date, "Service for Quarter Beginning:" %>
-      <%= f.date_select :start_date, :discard_day=>true %>
+      <%= f.label :start_date, "Start Month:" %>
+      <%= f.date_select :start_date, :order=>[:month,:year] %>
+      <%= f.label :end_month, "End Month:" %>
+      <%= f.date_select :end_date, :order=>[:month,:year] %>
     </p>
 
     <div class="actions">

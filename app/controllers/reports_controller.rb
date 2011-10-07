@@ -537,6 +537,12 @@ summaries.valid_end = ? "
   end
 
   def show_create_quarterly
+    if params[:report].blank? || params[:report][:start_date].blank? || params[:report][:end_date].blank?
+      quarter_start = Date.new(Date.today.year, (Date.today.month-1)/3*3+1,1)
+      params[:report] = {}
+      params[:report][:start_date] = quarter_start - 3.months
+      params[:report][:end_date] = quarter_start - 1.months
+    end
     @report = Report.new(params[:report])
   end
   
@@ -709,12 +715,11 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
 
   def quarterly_narrative_report
     @report = Report.new(params[:report])
-    @report.end_date = @report.start_date.next_month.next_month.next_month.prev_day
-
+    @report.end_date = @report.end_date + 1.month - 1.day
     groups = "allocations.name,month"
-    group_fields = ['name', 'month']
+    group_fields = ['allocation_name', 'month']
 
-    do_report(groups, group_fields, @report.start_date, @report.query_end_date, nil, nil, false, false)
+    do_report(groups, group_fields, @report.start_date, @report.end_date + 1.day, nil, nil, false, false)
 
     @quarter     = @report.start_date.month / 3 + 1
     @groups_size = group_fields.size #this might not be necessary
