@@ -9,7 +9,7 @@ class ReportsController < ApplicationController
   before_filter :require_admin_user, :except=>[:csv, :new, :create, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly, :show_create_active_rider]
 
   class ReportRow
-    @@attrs = [:allocation, :county, :provider_id, :funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
+    @@attrs = [:allocation, :funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
     attr_accessor *@@attrs
 
     def numeric_fields
@@ -50,14 +50,6 @@ class ReportsController < ApplicationController
 
     end
 
-    def agency
-      return @agency
-    end
-
-    def agency=(agency)
-      @agency = agency
-    end
-
     def total
       total = 0
       cost_fields = [:funds, :agency_other, :vehicle_maint, :donations, :administrative, :operations]
@@ -66,27 +58,27 @@ class ReportsController < ApplicationController
           total += instance_variable_get("@#{field}")
         end
       end
-      return total
+      total
     end
 
     def driver_total_hours
-      return driver_paid_hours + driver_volunteer_hours
+      driver_paid_hours + driver_volunteer_hours
     end
 
     def total_volunteer_hours
-      return escort_volunteer_hours + admin_volunteer_hours
+      escort_volunteer_hours + admin_volunteer_hours
     end
 
     def total_trips
-      return @in_district_trips + @out_of_district_trips
+      @in_district_trips + @out_of_district_trips
     end
 
     def cost_per_hour
-      return total / driver_total_hours
+      total / driver_total_hours
     end
 
     def cost_per_trip
-      return total / total_trips
+      total / total_trips
     end
 
     def cost_per_mile
@@ -94,11 +86,11 @@ class ReportsController < ApplicationController
       if @mileage == 0
         return -1
       end
-      return cpm
+      cpm
     end
 
     def miles_per_ride
-      return @mileage / total_trips
+      @mileage / total_trips
     end
 
     def quarter
@@ -113,35 +105,51 @@ class ReportsController < ApplicationController
         quarter += 2
       end
 
-      return 'FY %s-%s Q%s' % [year-1, year.to_s[-2,2], quarter]
+      'FY %s-%s Q%s' % [year-1, year.to_s[-2,2], quarter]
     end
 
     def year
-      return allocation.year.to_s
+      allocation.year.to_s
     end
 
     def month
-      return Date.new(allocation.year, allocation.month, 1).strftime "%Y %b"
+      Date.new(allocation.year, allocation.month, 1).strftime "%Y %b"
     end
 
-    def name
-      return allocation.name
+    def allocation_name
+      allocation.name
     end
 
     def project_number
-      return allocation.project_number
+      allocation.project_number
     end
 
     def funding_source
-      return allocation.funding_source
+      allocation.funding_source
     end
 
     def funding_subsource
-      return allocation.funding_subsource
+      allocation.funding_subsource
     end
 
     def project_name
       allocation.project.try :name
+    end
+
+    def agency
+      allocation.provider.try :agency
+    end
+
+    def county
+      allocation.county
+    end
+
+    def provider_id
+      allocation.provider_id
+    end
+
+    def provider_name
+      allocation.provider.try :name
     end
 
     def include_row(row)
@@ -990,7 +998,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
       row = ReportRow.new fields
 
       for allocation in allocationset
-        row.agency = allocation.agency
         if allocation.respond_to? :period_start_date 
           #this is not working for some reason?
           collection_start_date = allocation.period_start_date
@@ -1020,8 +1027,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
 
       end
       row.allocation = allocationset[0]
-      row.county = allocationset[0].county
-      row.provider_id = allocationset[0].provider_id
       row
     end
 
