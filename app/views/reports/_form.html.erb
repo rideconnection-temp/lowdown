@@ -38,7 +38,7 @@
     </ol>
 
     <div id="report-fields-to-include" class="selfclear">
-      <h2 class="section-header">Fields to include</h2>
+      <h2 class="section-header">Fields to Include</h2>
 
       <div id="report-checkbox-area">
         <ol>
@@ -88,19 +88,19 @@
             <input type="checkbox" <%= checked?("mileage") %> name="report[fields[mileage]]" id="mileage" value="1" /> 
             <label for="mileage">Mileage</label>
           </li>
+        </ol>
+        <ol>
           <li>
             <input type="checkbox" <%= checked?("driver_volunteer_hours") %> name="report[fields[driver_volunteer_hours]]" id="driver_volunteer_hours" value="1" /> 
             <label for="driver_volunteer_hours">Volunteer Driver Hours</label>
           </li>
-        </ol>
-        <ol>
           <li>
             <input type="checkbox" <%= checked?("driver_paid_hours") %> name="report[fields[driver_paid_hours]]" id="driver_paid_hours" value="1" /> 
             <label for="driver_paid_hours">Paid Driver Hours</label>
           </li>
           <li>
             <input type="checkbox" <%= checked?("driver_total_hours") %> name="report[fields[driver_total_hours]]" id="driver_total_hours" value="1" /> 
-            <label for="driver_total_hours">Total Hours</label>
+            <label for="driver_total_hours">Total Driver Hours</label>
           </li>
           <li>
             <input type="checkbox" <%= checked?("cost_per_trip") %> name="report[fields[cost_per_trip]]" id="cost_per_trip" value="1" /> 
@@ -130,15 +130,15 @@
           </li>
           <li>
             <input type="checkbox" <%= checked?("escort_volunteer_hours") %> name="report[fields[escort_volunteer_hours]]" id="escort_volunteer_hours" value="1" /> 
-            <label for="escort_volunteer_hours">Escort Hours</label>
+            <label for="escort_volunteer_hours">Volunteer Escort Hours</label>
           </li>
           <li>
             <input type="checkbox" <%= checked?("admin_volunteer_hours") %> name="report[fields[admin_volunteer_hours]]" id="admin_volunteer_hours" value="1" /> 
-            <label for="admin_volunteer_hours">Admin Hours</label>
+            <label for="admin_volunteer_hours">Volunteer Admin Hours</label>
           </li>
           <li>
             <input type="checkbox" <%= checked?("total_volunteer_hours") %> name="report[fields[total_volunteer_hours]]" id="total_volunteer_hours" value="1" /> 
-            <label for="total_volunteer_hours">Total Hours</label>
+            <label for="total_volunteer_hours">Total Non-Driver Volunteer Hours</label>
           </li>
         </ol>
       </div>
