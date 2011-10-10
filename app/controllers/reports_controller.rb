@@ -124,6 +124,10 @@ class ReportsController < ApplicationController
       allocation.project_number
     end
 
+    def program
+      allocation.program
+    end
+
     def funding_source
       allocation.funding_source
     end
