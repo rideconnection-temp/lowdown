@@ -3,7 +3,7 @@
   <% (@groups_size - 1).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
-  <td>Total<%= " for #{name}" if defined?(name) && name.present? %></td>
+  <td><%= "#{short_name} " if defined?(short_name) && short_name.present? %>Total</td>
   <% if @fields.member? 'funds' %><td>$<%= '%0.2f' % row.funds %></td><%end%>
   <% if @fields.member? 'agency_other' %><td>$<%= '%0.2f' % row.agency_other %></td><%end%>
   <% if @fields.member? 'vehicle_maint' %><td>$<%= '%0.2f' % row.vehicle_maint %></td><%end%>
@@ -20,9 +20,7 @@
   <% if @fields.member? 'driver_paid_hours' %><td><%= '%0.2f' % row.driver_paid_hours %></td><%end%>
   <% if @fields.member? 'driver_total_hours' %><td><%= '%0.2f' % row.driver_total_hours %></td><%end%>
   <% if @fields.member? 'cost_per_trip' %><td><%= '%0.2f' % row.cost_per_trip %></td><%end%>
-  <% if @fields.member? 'cost_per_mile' %><td>$<%= row.cost_per_mile == -1 ? 
-  'N/A' :
-  ('%0.2f' % row.cost_per_mile) %></td><%end%>
+  <% if @fields.member? 'cost_per_mile' %><td>$<%= row.cost_per_mile == -1 ? 'N/A' : ('%0.2f' % row.cost_per_mile) %></td><%end%>
   <% if @fields.member? 'cost_per_hour' %><td>$<%= '%0.2f' % row.cost_per_hour %></td><%end%>
   <% if @fields.member? 'miles_per_ride' %><td><%= '%0.2f' % row.miles_per_ride %></td><%end%>
   <% if @fields.member? 'turn_downs' %><td><%= row.turn_downs.to_i %></td><%end%>

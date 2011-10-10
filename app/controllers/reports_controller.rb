@@ -143,13 +143,21 @@ class ReportsController < ApplicationController
     def county
       allocation.county
     end
-
+    
+    def short_county
+      allocation.short_county
+    end
+    
     def provider_id
       allocation.provider_id
     end
 
     def provider_name
       allocation.provider.try :name
+    end
+
+    def short_provider_name
+      allocation.provider.try :short_name
     end
 
     def include_row(row)

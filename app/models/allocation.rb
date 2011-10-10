@@ -7,6 +7,8 @@ class Allocation < ActiveRecord::Base
   
   self.per_page = 30
 
+  ShortCountyNames = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
+
   scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
   scope :not_recently_inactivated, where( "inactivated_on is null or inactivated_on > current_date - interval '3 months'")
 
@@ -16,6 +18,10 @@ class Allocation < ActiveRecord::Base
 
   def allocation_name
     name
+  end
+
+  def short_county
+    ShortCountyNames.key?(county) ? ShortCountyNames[county] : county
   end
 
   def agency
