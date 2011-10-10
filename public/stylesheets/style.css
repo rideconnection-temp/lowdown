@@ -435,6 +435,10 @@ div#error_explanation h2 {
     font-size: 16px;
     margin: 0;
 }
+body.admin div#main li {
+  font-size: 16px;
+  padding-bottom: 15px;
+}
 
 /* forms */
 form input[type="text"],
