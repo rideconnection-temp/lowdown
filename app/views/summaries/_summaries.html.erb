@@ -1,29 +1,43 @@
-         <h2 id="result-count"><%= @summaries.total_entries %> summaries found.</h2>
-      <% if @summaries.total_entries > 0 %>
-         <%= link_to 'Mark All Complete', { :action => :bulk_update, :summary_query => params[:summary_query] }, :class=>'mark-complete' %>
- <div class="report-wrapper">
-         <table id="summary-results">
-           <thead>
-             <tr>
-               <th>Allocation</th>
-               <th>Start</th>
-               <th>Complete</th>
-               <th>Last updated</th>
-               <th>&nbsp;</th>
-             </tr>
-           </thead>
-           <tbody>
-             <% @summaries.each do |summary| %>
-             <tr>
-               <td><%= summary.allocation.name %></td>
-               <td><%= summary.period_start.month %> / <%= summary.period_start.year %></td>
-               <td><span class="status-<%= (summary.complete) ? "" : "in" %>complete"><%= summary.complete? ? "Yes" : "No" %></span></td>
-               <td><%= summary.valid_start.to_s(:pretty) %></td>
-               <td><%= link_to 'Details', :action=>:show_update, :id=>summary.id %></td>
-             </tr>
-             <% end %>
-           </tbody>
-         </table>
-</div>
+<h2 id="result-count"><%= @summaries.total_entries %> summaries found.</h2>
+<% if @summaries.total_entries > 0 %>
+  <%= link_to 'Mark All Complete', { :action => :bulk_update, :summary_query => params[:summary_query] }, :class=>'mark-complete' %>
+  <div class="list-wrapper">
+    <table id="summary-results">
+     <thead>
+       <tr>
+         <th>Allocation</th>
+         <th>Month</th>
+         <th>Complete</th>
+         <th class="number">In</th>
+         <th class="number">Out</th>
+         <th class="number">Total Trips</th>
+         <th class="number">Miles</th>
+         <th class="number">Pd Hours</th>
+         <th class="number">Vol Hours</th>
+         <th class="number">Total Driver Hours</th>
+         <th class="number">Undup</th>
+         <th>&nbsp;</th>
+       </tr>
+     </thead>
+     <tbody>
+       <% @summaries.each do |summary| %>
+       <tr>
+         <td><%= summary.allocation.name %></td>
+         <td><%= summary.period_start.strftime("%b %Y") %></td>
+         <td><span class="status-<%= (summary.complete) ? "" : "in" %>complete"><%= summary.complete? ? "Yes" : "No" %></span></td>
+         <td class="number"><%= summary.in_district_trips %></td>
+         <td class="number"><%= summary.out_of_district_trips %></td>
+         <td class="number"><%= summary.trips %></td>
+         <td class="number"><%= summary.total_miles %></td>
+         <td class="number"><%= summary.driver_hours_paid %></td>
+         <td class="number"><%= summary.driver_hours_volunteer %></td>
+         <td class="number"><%= (summary.driver_hours_volunteer || 0 ) + (summary.driver_hours_paid || 0) %></td>
+         <td class="number"><%= summary.unduplicated_riders %></td>
+         <td><%= link_to 'Details', :action=>:show_update, :id=>summary.id %></td>
+       </tr>
        <% end %>
+     </tbody>
+    </table>
+  </div>
+<% end %>
 <%= will_paginate @summaries %>

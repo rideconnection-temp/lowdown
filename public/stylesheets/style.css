@@ -694,6 +694,10 @@ div.report-wrapper td {
   text-align: right; 
 }
 
+td.number, th.number {
+  text-align: right;
+}
+
 body.trips div.report-wrapper td,
 body.summaries.index div.report-wrapper td { 
   text-align : left; 
@@ -730,7 +734,7 @@ div.report-wrapper tr.data .inner-most-field {
   padding-left  : 5px;
 }
 
-div.report-wrapper {
+div.report-wrapper, div.list-wrapper {
     width: 100%;
     overflow: auto;
     padding-bottom: -20px;

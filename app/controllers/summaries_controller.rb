@@ -51,7 +51,7 @@ class SummariesController < ApplicationController
     end
 
     @providers = Provider.order(:name).all
-    @summaries = Summary.current_versions.where(@query.conditions).includes(:allocation).joins(:allocation).order('allocations.name,summaries.period_start').paginate :page => params[:page]
+    @summaries = Summary.current_versions.where(@query.conditions).includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start').paginate :page => params[:page]
   end
 
   def show_create

@@ -34,6 +34,20 @@ class Summary < ActiveRecord::Base
     
     self.versioned_columns.detect {|a| __send__ "#{a}_changed?"} || self.summary_rows.detect {|a| a.changed? }
   end
+
+  def in_district_trips
+    summary_rows.inject(0) {|sum,r| sum + r.in_district_trips}
+  end
+
+  def out_of_district_trips
+    summary_rows.inject(0) {|sum,r| sum + r.out_of_district_trips}
+  end
+
+  def trips
+    self.summary_rows.inject(0) {|sum,r| sum + r.out_of_district_trips + r.in_district_trips }
+  end
+
+
   
   def do_not_version?
     do_not_version == true || do_not_version.to_i == 1
