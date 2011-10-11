@@ -13,6 +13,8 @@ class Summary < ActiveRecord::Base
 
   before_validation :fix_period_end
 
+  validates :allocation_id, :presence => true
+
   def fix_period_end
     self.period_end = self.period_start.next_month - 1.day
   end
@@ -47,8 +49,6 @@ class Summary < ActiveRecord::Base
     self.summary_rows.inject(0) {|sum,r| sum + r.out_of_district_trips + r.in_district_trips }
   end
 
-
-  
   def do_not_version?
     do_not_version == true || do_not_version.to_i == 1
   end

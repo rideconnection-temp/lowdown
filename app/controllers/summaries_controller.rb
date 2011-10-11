@@ -61,7 +61,7 @@ class SummariesController < ApplicationController
       @summary.summary_rows.build(:purpose => purpose, :in_district_trips=>0, :out_of_district_trips=>0)
     end
     
-    @providers = Provider.order(:name).all
+    @providers = Provider.with_summary_data.order(:name).all
   end
 
   def create
@@ -73,7 +73,7 @@ class SummariesController < ApplicationController
     if @summary.save
       redirect_to(:action=>:show_update, :id=>@summary.id)
     else
-      @providers = Provider.order(:name).all
+      @providers = Provider.with_summary_data.order(:name).all
       render(:action => :show_create)
     end
   end
@@ -105,7 +105,7 @@ class SummariesController < ApplicationController
 
   def show_update
     @summary = Summary.find params[:id]
-    @providers = Provider.order(:name).all
+    @providers = Provider.with_summary_data.order(:name).all
     @versions = @summary.versions.reverse
   end
 
@@ -113,7 +113,7 @@ class SummariesController < ApplicationController
     old_version = Summary.find(params[:summary][:id])
     @summary = old_version.current_version
 
-    @providers = Provider.order(:name).all
+    @providers = Provider.with_summary_data.order(:name).all
     @versions = @summary.versions.reverse
 
     #gather up the old row objects
