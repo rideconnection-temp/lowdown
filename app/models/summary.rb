@@ -13,7 +13,45 @@ class Summary < ActiveRecord::Base
 
   before_validation :fix_period_end
 
+  TripAttrs = [:total_miles,:turn_downs,:unduplicated_riders,:driver_hours_paid,:driver_hours_volunteer]
+  
   validates :allocation_id, :presence => true
+
+  validate do |record|
+    if record.allocation
+      record.summary_rows.each do |row|
+        if record.allocation.trip_collection_method == 'summary_rows' 
+          if row.in_district_trips.blank?
+            row.errors.add :in_district_trips, "cannot be blank." 
+            record.errors.add_to_base "\"#{row.purpose}\" in district trips cannot be blank" 
+          end
+          if row.out_of_district_trips.blank?
+            row.errors.add :out_of_district_trips, "cannot be blank." 
+            record.errors.add_to_base "\"#{row.purpose}\" out of district trips cannot be blank" 
+          end
+        else
+          unless row.in_district_trips.blank?
+            row.errors.add :in_district_trips, "must be blank." 
+            record.errors.add_to_base "\"#{row.purpose}\" in district trips must be blank" 
+          end
+          unless row.out_of_district_trips.blank?
+            row.errors.add :out_of_district_trips, "must be blank." 
+            record.errors.add_to_base "\"#{row.purpose}\" out of district trips must be blank" 
+          end
+        end
+      end
+    end
+  end
+
+  validates_each *TripAttrs do |record, attr, value|
+    if record.allocation
+      if record.allocation.trip_collection_method == 'summary_rows' 
+        record.errors.add attr, "cannot be blank." if value.blank?
+      else
+        record.errors.add attr, "must be left blank." unless value.blank?
+      end
+    end
+  end
 
   def fix_period_end
     self.period_end = self.period_start.next_month - 1.day

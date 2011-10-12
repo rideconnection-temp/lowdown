@@ -425,6 +425,12 @@ fieldset ol.section li div.field_with_errors {
     color: #e5004d;
     float: none;
 }
+
+fieldset ol.section li div.field_with_errors input {
+  background-color: #ffffc6;
+  border: 2px solid #e5004d;
+}
+
 div#error_explanation {
     color: #e5004d;
     background-color: #ffffc6;
