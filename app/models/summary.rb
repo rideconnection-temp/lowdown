@@ -13,7 +13,7 @@ class Summary < ActiveRecord::Base
 
   before_validation :fix_period_end
 
-  TripAttrs = [:total_miles,:turn_downs,:unduplicated_riders,:driver_hours_paid,:driver_hours_volunteer]
+  TripAttrs = [:total_miles,:turn_downs,:unduplicated_riders,:driver_hours_paid,:driver_hours_volunteer,:escort_hours_volunteer]
   
   validates :allocation_id, :presence => true
 
