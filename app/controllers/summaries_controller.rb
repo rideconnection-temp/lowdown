@@ -58,7 +58,7 @@ class SummariesController < ApplicationController
     @summary = Summary.new
     
     POSSIBLE_TRIP_PURPOSES.each do |purpose|
-      @summary.summary_rows.build(:purpose => purpose, :in_district_trips=>0, :out_of_district_trips=>0)
+      @summary.summary_rows.build(:purpose => purpose)
     end
     
     @providers = Provider.with_summary_data.order(:name).all
@@ -140,7 +140,7 @@ class SummariesController < ApplicationController
           end
         end
         if not found
-          SummaryRow.create(:summary_id=>@summary.id, :purpose=>purpose,:in_district_trips => 0, :out_of_district_trips=>0)
+          SummaryRow.create(:summary_id=>@summary.id)
         end
       end
       redirect_to(:action=>:show_update, :id=>@summary)
