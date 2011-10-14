@@ -426,7 +426,7 @@ fieldset ol.section li div.field_with_errors {
     float: none;
 }
 
-fieldset ol.section li div.field_with_errors input {
+fieldset ol.section li div.field_with_errors input, div.field_with_errors select {
   background-color: #ffffc6;
   border: 2px solid #e5004d;
 }
