@@ -3,11 +3,14 @@ class Allocation < ActiveRecord::Base
   belongs_to :provider
   belongs_to :project
   
+  DATA_OPTIONS = %w( Required Prohibited )
+  SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
+
   validates :name, :presence => true
+  validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
+  validates :vehicle_maint_data, :inclusion => { :in => DATA_OPTIONS }
   
   self.per_page = 30
-
-  ShortCountyNames = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
 
   scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
   scope :not_recently_inactivated, where( "inactivated_on is null or inactivated_on > current_date - interval '3 months'")
@@ -21,7 +24,7 @@ class Allocation < ActiveRecord::Base
   end
 
   def short_county
-    ShortCountyNames.key?(county) ? ShortCountyNames[county] : county
+    SHORT_COUNTY_NAMES.key?(county) ? SHORT_COUNTY_NAMES[county] : county
   end
 
   def agency

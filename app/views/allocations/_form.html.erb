@@ -79,6 +79,16 @@
       </li>
 
       <li class="selfclear">
+        <%= form.label :admin_ops_data, "Admin/ops data" %>
+        <%= form.select :admin_ops_data, Allocation::DATA_OPTIONS, {:prompt => "<Select Option>"} %>
+      </li>
+
+      <li class="selfclear">
+        <%= form.label :vehicle_maint_data, "Vehicle maintenance data" %>
+        <%= form.select :vehicle_maint_data, Allocation::DATA_OPTIONS, {:prompt => "<Select Option>"} %>
+      </li>
+
+      <li class="selfclear">
         <%= form.label :inactivated_on %>
         <%= form.text_field :inactivated_on, :class => "datepicker" %>
       </li>

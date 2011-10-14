@@ -20,26 +20,32 @@ class Summary < ActiveRecord::Base
   validates :funds, :numericality => true
   validates :donations, :numericality => true
   validates :agency_other, :numericality => true
+  validates_numericality_of :administrative, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'} 
+  validates_numericality_of :operations, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'} 
+  validates_numericality_of :vehicle_maint, :if => Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Required'} 
+  validates_size_of :administrative, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Prohibited'}, :wrong_length => "should be blank"
+  validates_size_of :operations, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Prohibited'}, :wrong_length => "should be blank"
+  validates_size_of :vehicle_maint, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Prohibited'}, :wrong_length => "should be blank"
 
   validate do |record|
     record.summary_rows.each do |row|
       if record.allocation.try(:trip_collection_method) == 'summary_rows' 
-        if row.in_district_trips.blank?
-          row.errors.add :in_district_trips, "cannot be blank." 
-          record.errors.add_to_base "\"#{row.purpose}\" in district trips cannot be blank" 
+        unless row.in_district_trips.is_a? Numeric
+          row.errors.add :in_district_trips, "is not a number" 
+          record.errors.add_to_base "#{row.purpose} in district trips is not a number" 
         end
-        if row.out_of_district_trips.blank?
-          row.errors.add :out_of_district_trips, "cannot be blank." 
-          record.errors.add_to_base "\"#{row.purpose}\" out of district trips cannot be blank" 
+        unless row.out_of_district_trips.is_a? Numeric
+          row.errors.add :out_of_district_trips, "is not a number" 
+          record.errors.add_to_base "#{row.purpose} out of district trips is not a number" 
         end
       else
         unless row.in_district_trips.blank?
-          row.errors.add :in_district_trips, "must be blank." 
-          record.errors.add_to_base "\"#{row.purpose}\" in district trips must be blank" 
+          row.errors.add :in_district_trips, "should be blank" 
+          record.errors.add_to_base "#{row.purpose} in district trips should be blank" 
         end
         unless row.out_of_district_trips.blank?
-          row.errors.add :out_of_district_trips, "must be blank." 
-          record.errors.add_to_base "\"#{row.purpose}\" out of district trips must be blank" 
+          row.errors.add :out_of_district_trips, "should be blank" 
+          record.errors.add_to_base "#{row.purpose} out of district trips should be blank" 
         end
       end
     end
@@ -47,9 +53,9 @@ class Summary < ActiveRecord::Base
 
   validates_each *TripAttrs do |record, attr, value|
     if record.allocation.try(:trip_collection_method) == 'summary_rows' 
-      record.errors.add attr, "cannot be blank." if value.blank?
+      record.errors.add attr, "is not a number" unless value.is_a? Numeric
     else
-      record.errors.add attr, "must be left blank." unless value.blank?
+      record.errors.add attr, "should be blank." unless value.blank?
     end
   end
 
