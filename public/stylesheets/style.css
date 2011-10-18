@@ -895,6 +895,9 @@ div.pagination {
     text-align: center;
     padding: 20px 0;
 }
+div.pagination a {
+    padding: 0 7px 0 7px
+}
 a.previous_page {
     float: left;
 }
@@ -903,7 +906,7 @@ a.next_page {
 }
 a.previous_page,
 a.next_page {
-    padding: 0.5em 0.8em;
+    padding: 0.5em 0.8em !important;
     background: #009FFB;
     color: #fff !important;
     text-decoration: none;
