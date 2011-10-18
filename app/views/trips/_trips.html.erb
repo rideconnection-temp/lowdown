@@ -24,8 +24,8 @@
     <tr>
       <td><%= link_to trip.customer.name, customer_path(trip.customer) %></td>
       <td><% trip.result_code %></td>
-      <td> <%= trip.allocation.provider.name %></td>
-      <td> <%= trip.allocation.project.funding_source %></td>
+      <td> <%= trip.allocation.provider.name if trip.allocation.provider %></td>
+      <td> <%= trip.allocation.project.funding_source if trip.allocation.project %></td>
       <td>
       <%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
       <td>

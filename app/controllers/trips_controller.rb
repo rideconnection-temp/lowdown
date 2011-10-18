@@ -50,7 +50,7 @@ class TripsController < ApplicationController
     @providers   = Provider.find :all
     @allocations = Allocation.find :all
 
-    @trips = Trip.current_versions.find(:all, :include=>[:pickup_address, :dropoff_address, :run, :customer, :allocation], :conditions=>@query.conditions)
+    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project]).joins(:allocation).where(@query.conditions).order(:date,:trip_import_id)
 
     if @query.csv?
       unused_columns = ["id", "base_id", "trip_import_id", "allocation_id", 
@@ -66,14 +66,14 @@ class TripsController < ApplicationController
           Pickup\ Name Pickup\ Building Pickup\ Address\ 1 Pickup\ Address\ 2 Pickup\ City Pickup\ State Pickup\ Postal\ Code
           Dropoff\ Name Dropoff\ Building Dropoff\ Address\ 1 Dropoff\ Address\ 2 Dropoff\ City Dropoff\ State Dropoff\ Postal\ Code}
 
-        for trip in @trips
+        for trip in @trips.includes(:home_address)
           csv << good_columns.map {|x| trip.send(x)} + [trip.customer.name, trip.allocation.name, trip.run.name] + address_fields(trip.home_address) + address_fields(trip.pickup_address) + address_fields(trip.dropoff_address)
         end
       end
-      return send_data csv, :type => "text/plain", :filename => "trips.csv", :disposition => 'attachment'
+      return send_data csv, :type => "text/csv", :filename => "trips.csv", :disposition => 'attachment'
 
     else
-      @trips = @trips.paginate :page => params[:page], :per_page => 30, :conditions => @query.conditions, :joins=>:allocation
+      @trips = @trips.paginate :page => params[:page], :per_page => 30
       
     end
   end
