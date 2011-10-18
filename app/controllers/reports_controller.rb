@@ -97,15 +97,15 @@ class ReportsController < ApplicationController
       q = allocation.quarter.to_s
       #adjust for fiscal year
       year = q[0...4].to_i
-      quarter = q[4].to_i
-      if quarter >= 3
-        quarter -= 2
+      qtr = q[4].to_i
+      if qtr >= 3
+        qtr -= 2
         year += 1
       else
-        quarter += 2
+        qtr += 2
       end
 
-      'FY %s-%s Q%s' % [year-1, year.to_s[-2,2], quarter]
+      'FY %s-%s Q%s' % [year-1, year.to_s[-2,2], qtr]
     end
 
     def year
@@ -918,7 +918,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
       @allocation = allocation
       @period_start_date = period_start_date
       @period_end_date = period_end_date
-      @quarter = period_start_date.year * 10 + period_start_date.month / 3 + 1
+      @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
       @year = period_start_date.year
       @month = period_start_date.month
     end
