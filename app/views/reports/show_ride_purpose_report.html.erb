@@ -2,7 +2,7 @@
   <h1>Ride Purpose Report</h1>
 </div>
 
-<form action="/reports/ride_purpose_report" method="GET">
+<%= form_for @report, :as => :q, :html=>{:id=>"create-report", :method=>:get}, :url=>{:action=>"ride_purpose_report"} do |f| %>
   <fieldset>
 
   <p>
@@ -15,4 +15,4 @@
   </div>
 
   </fieldset>
-</form>
+<% end %>
