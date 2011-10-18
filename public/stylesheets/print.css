@@ -48,12 +48,20 @@ form.edit_report,
   display : none;
 }
 
+h1 {
+  margin-bottom: 0;
+}
+h2 {
+  margin: 0;
+}
+
 /* tables */
 table {
     border-collapse: collapse;
 }
 thead {
   border-bottom: 2pt solid #000;
+  vertical-align: bottom;
 }
 tr {
 }
@@ -65,6 +73,8 @@ tr.sub-header th {
 td {
   padding: 0.7em;
   border-top: 1pt solid #ddd;
+}
+td.number, th.number {
   text-align: right;
 }
 tr.report-item td {

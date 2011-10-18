@@ -696,10 +696,6 @@ table tr.report-item td {
     border-top: 1px solid #2e6399;
 }
 
-div.report-wrapper td { 
-  text-align: right; 
-}
-
 td.number, th.number {
   text-align: right;
 }
@@ -709,11 +705,11 @@ body.summaries.index div.report-wrapper td {
   text-align : left; 
 }
 
-div.report-wrapper td.report-item {
+td.report-item {
     background: #E5F2FF;
     border-right: 1px solid #E5F2FF;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 13px;
     padding: 5px 5px 10px;
     text-align: left;
 }
