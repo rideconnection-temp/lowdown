@@ -43,7 +43,7 @@ class TripImport < ActiveRecord::Base
   has_many :trips
   has_many :runs
 
-  before_create :import_file, :apportion_imported_shared_rides, :apportion_imported_runs 
+  before_create :import_file, :apportion_imported_shared_rides 
   after_create :associate_records_with_trip_import
 private
 
@@ -60,6 +60,7 @@ private
         :routematch_trip_id, :date, 
         :provider_code, :provider_name, :provider_type, 
         :result_code, :start_at, :end_at, :odometer_start, :odometer_end,
+        :trip_duration, :trip_mileage,
         :fare, :customer_pay, :trip_purpose_type, :guest_count, :attendant_count, :trip_mobility, 
         :calculated_bpa_fare, :bpa_driver_name, :volunteer_trip, :in_trimet_district, 
         :bpa_billing_distance, :routematch_share_id, :override, 
@@ -80,216 +81,226 @@ private
     self.import_start_time = Time.xmlschema(Time.now.xmlschema)
     @record_count = 0
 
-    ActiveRecord::Base.transaction do
-      CSV.foreach(file_path, headers: headers, converters: :all) do |record|
-        
-        @record_count += 1
-
-        next if record[:routematch_customer_id].nil?
-
-        # For each address in the import, make it overwrite the previous version in this database
-        # Do this only with the first occurance of the address.  Cache in memory the mapping between
-        # the routematch address_id and the local id, so we don't need to touch the address record again.
-        if address_map.has_key?(record[:home_routematch_address_id])
-          current_home_id = address_map[record[:home_routematch_address_id]]
-        else
-          current_home = Address.find_or_initialize_by_routematch_address_id(record[:home_routematch_address_id])
-          current_home.routematch_address_id = record[:home_routematch_address_id]
-          current_home.common_name = record[:home_common_name]
-          current_home.building_name = record[:home_building_name]
-          current_home.address_1 = record[:home_address_1]
-          current_home.address_2 = record[:home_address_2]
-          current_home.city = record[:home_city]
-          current_home.state = record[:home_state]
-          current_home.postal_code = record[:home_postal_code]
-          current_home.x_coordinate = record[:home_x_coordinate]
-          current_home.y_coordinate = record[:home_y_coordinate]
-          current_home.in_trimet_district = record[:home_in_trimet_district]
-          current_home.save!
-          
-          # Add this new address to the map cache
-          current_home_id = current_home.id
-          address_map[record[:home_routematch_address_id]] = current_home_id
-        end
-
-        # Same as in addresses
-        if customer_map.has_key?(record[:routematch_customer_id])
-          current_customer_id = customer_map[record[:routematch_customer_id]]
-        else
-          current_customer = Customer.find_or_initialize_by_routematch_customer_id(record[:routematch_customer_id])
-          current_customer.routematch_customer_id = record[:routematch_customer_id]
-          current_customer.last_name = record[:last_name]
-          current_customer.first_name = record[:first_name]
-          current_customer.middle_initial = record[:middle_initial]
-          current_customer.sex = record[:sex]
-          current_customer.race = record[:race]
-          current_customer.mobility = record[:mobility]
-          current_customer.telephone_primary = record[:telephone_1]
-          current_customer.telephone_primary_extension = record[:telephone_1_ext]
-          current_customer.telephone_secondary = record[:telephone_2]
-          current_customer.telephone_secondary_extension = record[:telephone_2_ext]
-          current_customer.language_preference = record[:language_preference]
-          current_customer.birthdate = record[:birthdate]
-          current_customer.email = record[:email]
-          current_customer.customer_type = record[:customer_type]
-          current_customer.monthly_household_income = record[:monthly_household_income]
-          current_customer.household_size = record[:household_size]
-          current_customer.prime_number = record[:spd_prime_number]
-          current_customer.address_id = current_home_id
-          current_customer.save!
-
-          current_customer_id = current_customer.id
-          customer_map[record[:routematch_customer_id]] = current_customer_id
-        end
-
-        if address_map.has_key?(record[:pickup_routematch_address_id])
-          current_pickup_id = address_map[record[:pickup_routematch_address_id]]
-        else
-          current_pickup = Address.find_or_initialize_by_routematch_address_id(record[:pickup_routematch_address_id])
-          current_pickup.routematch_address_id = record[:pickup_routematch_address_id]
-          current_pickup.common_name = record[:pickup_common_name]
-          current_pickup.building_name = record[:pickup_building_name]
-          current_pickup.address_1 = record[:pickup_address_1]
-          current_pickup.address_2 = record[:pickup_address_2]
-          current_pickup.city = record[:pickup_city]
-          current_pickup.state = record[:pickup_state]
-          current_pickup.postal_code = record[:pickup_postal_code]
-          current_pickup.x_coordinate = record[:pickup_x_coordinate]
-          current_pickup.y_coordinate = record[:pickup_y_coordinate]
-          current_pickup.in_trimet_district = record[:pickup_in_trimet_district]
-          current_pickup.save!
-
-          current_pickup_id = current_pickup.id
-          address_map[record[:pickup_routematch_address_id]] = current_pickup_id
-        end
-
-        if address_map.has_key?(record[:dropoff_routematch_address_id])
-          current_dropoff_id = address_map[record[:dropoff_routematch_address_id]]
-        else
-          current_dropoff = Address.find_or_initialize_by_routematch_address_id(record[:dropoff_routematch_address_id])
-          current_dropoff.routematch_address_id = record[:dropoff_routematch_address_id]
-          current_dropoff.common_name = record[:dropoff_common_name]
-          current_dropoff.building_name = record[:dropoff_building_name]
-          current_dropoff.address_1 = record[:dropoff_address_1]
-          current_dropoff.address_2 = record[:dropoff_address_2]
-          current_dropoff.city = record[:dropoff_city]
-          current_dropoff.state = record[:dropoff_state]
-          current_dropoff.postal_code = record[:dropoff_postal_code]
-          current_dropoff.x_coordinate = record[:dropoff_x_coordinate]
-          current_dropoff.y_coordinate = record[:dropoff_y_coordinate]
-          current_dropoff.in_trimet_district = record[:dropoff_in_trimet_district]
-          current_dropoff.save!
-
-          current_dropoff_id = current_dropoff.id
-          address_map[record[:dropoff_routematch_address_id]] = current_dropoff_id
-        end
-
-        allocation_map_key = "#{record[:override]},#{record[:provider_code]}"
-        if allocation_map.has_key?(allocation_map_key)
-          current_allocation_id = allocation_map[allocation_map_key][:id]
-        else
-          current_allocation = Allocation.where(:routematch_override => record[:override].to_s, 
-              :routematch_provider_code => record[:provider_code]).first
-          if current_allocation.nil?
-            import_errors_key = "#{record[:override]}|#{record[:provider_code]}"
-            unless import_errors.include?(import_errors_key) 
-              import_errors << import_errors_key
-              self.problems << "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'.<br/>" 
-            end
-          else
-            current_allocation_id = current_allocation.id
-#           Store the entire allocation object for later use
-            allocation_map[allocation_map_key] = current_allocation
+    # Check for bad allocation mappings before anything else.
+    CSV.foreach(file_path, headers: headers, converters: :all) do |record|
+      allocation_map_key = "#{record[:override]},#{record[:provider_code]}"
+      if allocation_map.has_key?(allocation_map_key)
+        current_allocation_id = allocation_map[allocation_map_key][:id]
+      else
+        current_allocation = Allocation.where(:routematch_override => record[:override].to_s, 
+            :routematch_provider_code => record[:provider_code]).first
+        if current_allocation.nil?
+          import_errors_key = "#{record[:override]}|#{record[:provider_code]}"
+          unless import_errors.include?(import_errors_key) 
+            import_errors << import_errors_key
+            self.problems << "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'.<br/>" 
           end
+        else
+          current_allocation_id = current_allocation.id
+#           Store the entire allocation object for later use
+          allocation_map[allocation_map_key] = current_allocation
         end
+      end
+    end
+    return false unless self.problems == ''
 
-        if current_allocation_id.present?
-          if record[:routematch_run_id].present?
-            if run_map.has_key?(record[:routematch_run_id])
-              current_run_id = run_map[record[:routematch_run_id]]
-            else
-              current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
-              current_run.name = record[:run_name]
-              current_run.date = record[:date]
+    if import_errors.blank?
+      ActiveRecord::Base.transaction do
+        CSV.foreach(file_path, headers: headers, converters: :all) do |record|
+          
+          @record_count += 1
+
+          next if record[:routematch_customer_id].nil?
+
+          # For each address in the import, make it overwrite the previous version in this database
+          # Do this only with the first occurance of the address.  Cache in memory the mapping between
+          # the routematch address_id and the local id, so we don't need to touch the address record again.
+          if address_map.has_key?(record[:home_routematch_address_id])
+            current_home_id = address_map[record[:home_routematch_address_id]]
+          else
+            current_home = Address.find_or_initialize_by_routematch_address_id(record[:home_routematch_address_id])
+            current_home.routematch_address_id = record[:home_routematch_address_id]
+            current_home.common_name = record[:home_common_name]
+            current_home.building_name = record[:home_building_name]
+            current_home.address_1 = record[:home_address_1]
+            current_home.address_2 = record[:home_address_2]
+            current_home.city = record[:home_city]
+            current_home.state = record[:home_state]
+            current_home.postal_code = record[:home_postal_code]
+            current_home.x_coordinate = record[:home_x_coordinate]
+            current_home.y_coordinate = record[:home_y_coordinate]
+            current_home.in_trimet_district = record[:home_in_trimet_district]
+            current_home.save!
+            
+            # Add this new address to the map cache
+            current_home_id = current_home.id
+            address_map[record[:home_routematch_address_id]] = current_home_id
+          end
+
+          # Same as in addresses
+          if customer_map.has_key?(record[:routematch_customer_id])
+            current_customer_id = customer_map[record[:routematch_customer_id]]
+          else
+            current_customer = Customer.find_or_initialize_by_routematch_customer_id(record[:routematch_customer_id])
+            current_customer.routematch_customer_id = record[:routematch_customer_id]
+            current_customer.last_name = record[:last_name]
+            current_customer.first_name = record[:first_name]
+            current_customer.middle_initial = record[:middle_initial]
+            current_customer.sex = record[:sex]
+            current_customer.race = record[:race]
+            current_customer.mobility = record[:mobility]
+            current_customer.telephone_primary = record[:telephone_1]
+            current_customer.telephone_primary_extension = record[:telephone_1_ext]
+            current_customer.telephone_secondary = record[:telephone_2]
+            current_customer.telephone_secondary_extension = record[:telephone_2_ext]
+            current_customer.language_preference = record[:language_preference]
+            current_customer.birthdate = record[:birthdate]
+            current_customer.email = record[:email]
+            current_customer.customer_type = record[:customer_type]
+            current_customer.monthly_household_income = record[:monthly_household_income]
+            current_customer.household_size = record[:household_size]
+            current_customer.prime_number = record[:spd_prime_number]
+            current_customer.address_id = current_home_id
+            current_customer.save!
+
+            current_customer_id = current_customer.id
+            customer_map[record[:routematch_customer_id]] = current_customer_id
+          end
+
+          if address_map.has_key?(record[:pickup_routematch_address_id])
+            current_pickup_id = address_map[record[:pickup_routematch_address_id]]
+          else
+            current_pickup = Address.find_or_initialize_by_routematch_address_id(record[:pickup_routematch_address_id])
+            current_pickup.routematch_address_id = record[:pickup_routematch_address_id]
+            current_pickup.common_name = record[:pickup_common_name]
+            current_pickup.building_name = record[:pickup_building_name]
+            current_pickup.address_1 = record[:pickup_address_1]
+            current_pickup.address_2 = record[:pickup_address_2]
+            current_pickup.city = record[:pickup_city]
+            current_pickup.state = record[:pickup_state]
+            current_pickup.postal_code = record[:pickup_postal_code]
+            current_pickup.x_coordinate = record[:pickup_x_coordinate]
+            current_pickup.y_coordinate = record[:pickup_y_coordinate]
+            current_pickup.in_trimet_district = record[:pickup_in_trimet_district]
+            current_pickup.save!
+
+            current_pickup_id = current_pickup.id
+            address_map[record[:pickup_routematch_address_id]] = current_pickup_id
+          end
+
+          if address_map.has_key?(record[:dropoff_routematch_address_id])
+            current_dropoff_id = address_map[record[:dropoff_routematch_address_id]]
+          else
+            current_dropoff = Address.find_or_initialize_by_routematch_address_id(record[:dropoff_routematch_address_id])
+            current_dropoff.routematch_address_id = record[:dropoff_routematch_address_id]
+            current_dropoff.common_name = record[:dropoff_common_name]
+            current_dropoff.building_name = record[:dropoff_building_name]
+            current_dropoff.address_1 = record[:dropoff_address_1]
+            current_dropoff.address_2 = record[:dropoff_address_2]
+            current_dropoff.city = record[:dropoff_city]
+            current_dropoff.state = record[:dropoff_state]
+            current_dropoff.postal_code = record[:dropoff_postal_code]
+            current_dropoff.x_coordinate = record[:dropoff_x_coordinate]
+            current_dropoff.y_coordinate = record[:dropoff_y_coordinate]
+            current_dropoff.in_trimet_district = record[:dropoff_in_trimet_district]
+            current_dropoff.save!
+
+            current_dropoff_id = current_dropoff.id
+            address_map[record[:dropoff_routematch_address_id]] = current_dropoff_id
+          end
+
+          allocation_map_key = "#{record[:override]},#{record[:provider_code]}"
+          current_allocation_id = allocation_map[allocation_map_key][:id]
+
+          if current_allocation_id.present?
+            if record[:routematch_run_id].present?
+              if run_map.has_key?(record[:routematch_run_id])
+                current_run_id = run_map[record[:routematch_run_id]]
+              else
+                current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
+                current_run.name = record[:run_name]
+                current_run.date = record[:date]
 #             Though it may be in the import file, don't store run start and end information 
 #             for BPA providers, for whom that data is tracked by-trip.
 #             By-run information is inaccurate for those providers.
-              if allocation_map[allocation_map_key][:run_collection_method] == 'runs' 
-                current_run.start_at = record[:run_start_at]
-                current_run.end_at = record[:run_end_at]
-                current_run.odometer_start = record[:run_odometer_start]
-                current_run.odometer_end = record[:run_odometer_end]
+                if allocation_map[allocation_map_key][:run_collection_method] == 'runs' 
+                  current_run.start_at = record[:run_start_at]
+                  current_run.end_at = record[:run_end_at]
+                  current_run.odometer_start = record[:run_odometer_start]
+                  current_run.odometer_end = record[:run_odometer_end]
+                end
+                current_run.trip_import_id = self.id
+                current_run.bulk_import = true
+                current_run.imported_at = import_start_time 
+                current_run.save!
+
+                current_run_id = current_run.id
+                run_map[record[:routematch_run_id]] = current_run_id
               end
-              current_run.trip_import_id = self.id
-              current_run.bulk_import = true
-              current_run.imported_at = import_start_time 
-              current_run.save!
-
-              current_run_id = current_run.id
-              run_map[record[:routematch_run_id]] = current_run_id
-            end
-          else
-            runless_trips_run_key = record[:date].to_s + record[:override]
-            if run_map.has_key?(runless_trips_run_key)
-              current_run_id = run_map[runless_trips_run_key]
             else
-              current_run = Run.new
-              current_run.name = 'Not completed ' + record[:date].to_time.strftime("%m-%d-%y")
-              current_run.date = record[:date]
-              current_run.imported_at = import_start_time 
-              current_run.save!
+              runless_trips_run_key = record[:date].to_s + record[:override]
+              if run_map.has_key?(runless_trips_run_key)
+                current_run_id = run_map[runless_trips_run_key]
+              else
+                current_run = Run.new
+                current_run.name = 'Not completed ' + record[:date].to_time.strftime("%m-%d-%y")
+                current_run.date = record[:date]
+                current_run.imported_at = import_start_time 
+                current_run.save!
 
-              current_run_id = current_run.id
-              run_map[runless_trips_run_key] = current_run_id
+                current_run_id = current_run.id
+                run_map[runless_trips_run_key] = current_run_id
+              end
             end
-          end
 
-          current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
-          current_trip.routematch_trip_id = record[:routematch_trip_id]
-          current_trip.date = record[:date]
-          current_trip.result_code = record[:result_code]
-          current_trip.allocation_id = current_allocation_id
-          current_trip.provider_code = record[:provider_code]
-          current_trip.start_at = record[:start_at]
-          current_trip.end_at = record[:end_at]
-          current_trip.odometer_start = record[:odometer_start]
-          current_trip.odometer_end = record[:odometer_end]
-          current_trip.fare = record[:fare]
-          current_trip.customer_pay = record[:customer_pay]
-          current_trip.purpose_type = record[:trip_purpose_type]
-          current_trip.guest_count = record[:guest_count]
-          current_trip.attendant_count = record[:attendant_count]
-          current_trip.mobility = record[:trip_mobility]
-          current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
-          current_trip.bpa_driver_name = record[:bpa_driver_name]
-          current_trip.volunteer_trip = record[:volunteer_trip]
-          current_trip.in_trimet_district = record[:in_trimet_district]
-          current_trip.bpa_billing_distance = record[:bpa_billing_distance]
-          current_trip.routematch_share_id = record[:routematch_share_id]
-          current_trip.override = record[:override]
-          current_trip.estimated_trip_distance_in_miles = record[:estimated_trip_distance_in_miles]
-          current_trip.routematch_pickup_address_id = record[:pickup_routematch_address_id]
-          current_trip.routematch_dropoff_address_id = record[:dropoff_routematch_address_id]
-          current_trip.case_manager = record[:spd_case_manager]
-          current_trip.approved_rides = record[:spd_approved_rides]
-          current_trip.date_enrolled = record[:spd_date_enrolled]
-          current_trip.service_end = record[:spd_service_end]
-          current_trip.spd_office = record[:spd_office]
-          current_trip.pickup_address_id = current_pickup_id
-          current_trip.dropoff_address_id = current_dropoff_id
-          current_trip.customer_id = current_customer_id
-          current_trip.home_address_id = current_home_id
-          current_trip.run_id = current_run_id
-          current_trip.bulk_import = true
-          current_trip.imported_at = import_start_time 
-          current_trip.save!
-        end # current_allocation.present?
-      end # CSV.foreach
-    end # Transaction
+            current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
+            current_trip.routematch_trip_id = record[:routematch_trip_id]
+            current_trip.date = record[:date]
+            current_trip.result_code = record[:result_code]
+            current_trip.allocation_id = current_allocation_id
+            current_trip.provider_code = record[:provider_code]
+            current_trip.start_at = record[:start_at]
+            current_trip.end_at = record[:end_at]
+            current_trip.odometer_start = record[:odometer_start]
+            current_trip.odometer_end = record[:odometer_end]
+            current_trip.fare = record[:fare]
+            current_trip.customer_pay = record[:customer_pay]
+            current_trip.purpose_type = record[:trip_purpose_type]
+            current_trip.guest_count = record[:guest_count]
+            current_trip.attendant_count = record[:attendant_count]
+            current_trip.mobility = record[:trip_mobility]
+            current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
+            current_trip.bpa_driver_name = record[:bpa_driver_name]
+            current_trip.volunteer_trip = record[:volunteer_trip]
+            current_trip.in_trimet_district = record[:in_trimet_district]
+            current_trip.bpa_billing_distance = record[:bpa_billing_distance]
+            current_trip.routematch_share_id = record[:routematch_share_id]
+            current_trip.override = record[:override]
+            current_trip.estimated_trip_distance_in_miles = record[:estimated_trip_distance_in_miles]
+            current_trip.routematch_pickup_address_id = record[:pickup_routematch_address_id]
+            current_trip.routematch_dropoff_address_id = record[:dropoff_routematch_address_id]
+            current_trip.case_manager = record[:spd_case_manager]
+            current_trip.approved_rides = record[:spd_approved_rides]
+            current_trip.date_enrolled = record[:spd_date_enrolled]
+            current_trip.service_end = record[:spd_service_end]
+            current_trip.spd_office = record[:spd_office]
+            current_trip.apportioned_duration = record[:trip_duration]
+            current_trip.apportioned_mileage = record[:trip_mileage]
+            current_trip.pickup_address_id = current_pickup_id
+            current_trip.dropoff_address_id = current_dropoff_id
+            current_trip.customer_id = current_customer_id
+            current_trip.home_address_id = current_home_id
+            current_trip.run_id = current_run_id
+            current_trip.bulk_import = true
+            current_trip.imported_at = import_start_time 
+            current_trip.save!
+          end # current_allocation.present?
+        end # CSV.foreach
+      end # Transaction
+    end
     address_map = nil
     customer_map = nil
     run_map = nil
-    return false unless self.problems == ''
   end
 
   def apportion_imported_shared_rides
@@ -308,6 +319,7 @@ private
     puts "Apportioned #{trip_count} shared rides"
   end
 
+  # Not needed, as apportioning is handled prior to import.
   def apportion_imported_runs
     runs = Run.current_versions.where(:imported_at => self.import_start_time).has_odometer_log.has_time_log
     run_count = 0

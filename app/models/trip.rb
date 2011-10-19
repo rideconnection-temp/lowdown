@@ -103,11 +103,11 @@ private
       if completed?
         self.duration = ((end_at - start_at) / 60 ).to_i unless end_at.nil? || start_at.nil?
         self.mileage = odometer_end - odometer_start unless odometer_end.nil? || odometer_start.nil?
-        if routematch_share_id.blank?
-          self.apportioned_fare = fare unless fare.nil?
-          self.apportioned_duration = duration unless duration.nil?
-          self.apportioned_mileage = mileage unless mileage.nil?
-        end
+        #if routematch_share_id.blank?
+        #  self.apportioned_fare = fare unless fare.nil?
+        #  self.apportioned_duration = duration unless duration.nil?
+        #  self.apportioned_mileage = mileage unless mileage.nil?
+        #end
       end
     end
   end
