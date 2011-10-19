@@ -1,3 +1,6 @@
+<ul id="subnav" class="selfclear">
+  <li><%= link_to 'New Provider', new_provider_path, :class => :add if current_user.is_admin %></li>
+</ul>
 <div id="page-header">
   <h1>Listing Providers</h1>
 </div>
@@ -27,4 +30,3 @@
 
 <%= will_paginate @providers %>
 
-<%= link_to 'New Provider', new_provider_path, :class => "action-bttn" if current_user.is_admin %>

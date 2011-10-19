@@ -1,3 +1,6 @@
+<ul id="subnav" class="selfclear">
+  <li><%= link_to 'New Allocation', new_allocation_path, :class => :add if current_user.is_admin %></li>
+</ul>
 <div id="page-header">
   <h1>Listing Allocations</h1>
 </div>
@@ -22,4 +25,3 @@
 </table>
 <%= will_paginate @allocations %>
 
-<%= link_to 'New Allocation', new_allocation_path, :class => "action-bttn" if current_user.is_admin %>
