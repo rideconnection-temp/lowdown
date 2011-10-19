@@ -1,12 +1,9 @@
-require 'uuidtools'
-
 module UUIDHelper
   def after_validation()
-    self.id ||= UUIDTools::UUID.timestamp_create().to_s
+    self.id ||= self.class.next_val
   end
-
   def before_create()
-    self.id ||= UUIDTools::UUID.timestamp_create().to_s
+    self.id ||= self.class.next_val
     true
   end
 end
@@ -40,6 +37,10 @@ module VersionFu
         scope :old_versions, :conditions => {:valid_end => @@end_of_time}
 
         scope :current_versions, :conditions => {:valid_end => @@end_of_time}
+
+        def self.next_val
+          ActiveRecord::Base.connection.select_value("SELECT nextval('#{self.name.tableize}_id_seq')").to_i
+        end
 
         before_save :check_for_new_version
         before_destroy :mark_inactive
@@ -111,21 +112,21 @@ module VersionFu
 
     def check_for_new_version
       #three possible cases:
-      if !id && !base_id
+      if !self.id && !self.base_id
           #a totally new object
-          self.id = UUIDTools::UUID.timestamp_create().to_s
+          self.id = self.class.next_val
           self.base_id = id          
           self.valid_start = now_rounded
           self.valid_end = @@end_of_time
           self.should_run_callbacks=true
-      elsif id && base_id
+      elsif self.id && self.base_id
           #an edit to an existing object; may need to create a new
           #version
           instantiate_revision if create_new_version?
           self.should_run_callbacks=true
-      elsif !id && base_id
+      elsif !self.id && self.base_id
           #a new version automatically created; no need to make a new version
-          self.id = UUIDTools::UUID.timestamp_create().to_s
+          self.id = self.class.next_val
           self.should_run_callbacks=false
       end
       true # Never halt save
