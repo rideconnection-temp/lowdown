@@ -3,11 +3,13 @@
     <ol class="section first">
       <li>
         <%= f.label :name, "Name:" %>
-        <%= f.text_field :name %>
+        <%= f.text_field :name, :size => 40 %>
       </li>
       <li>
         <h2>Allocations to Include</h2>
-        <%= f.collection_select :allocations, @allocations, :id, :name, { :selected => @report.allocation_list.try(:split, ",") }, { :class => "multi full", :multiple => true } %>
+        <select class="multi full" id="report_allocations" multiple="multiple" name="report[allocations][]">
+          <%= option_groups_from_collection_for_select Provider.all, :allocations, :name, :id, :name, @report.allocation_list.try(:split, ",").try(:map){|x| x.to_i } %>
+        </select>
       </li>
 
       <li>
