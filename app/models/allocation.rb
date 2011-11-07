@@ -1,5 +1,6 @@
 class Allocation < ActiveRecord::Base
   has_many :trips
+  has_many :summaries
   belongs_to :provider
   belongs_to :project
   

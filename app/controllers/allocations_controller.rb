@@ -37,6 +37,13 @@ class AllocationsController < ApplicationController
     end
   end
   
+  def destroy
+    @allocation = Allocation.find params[:id]
+    @allocation.destroy if current_user.is_admin && !(@allocation.trips.exists? || @allocation.summaries.exists?)
+    
+    redirect_to allocations_url
+  end
+
   private
   
   def get_drop_down_data

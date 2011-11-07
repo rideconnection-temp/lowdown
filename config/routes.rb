@@ -3,7 +3,7 @@ Lowdown::Application.routes.draw do
   # first created -> highest priority.
   
   resources :customers, :only => [:show, :update]
-  resources :allocations, :only => [:index, :edit, :update, :new, :create]
+  resources :allocations
   resources :providers
   resources :projects
   
