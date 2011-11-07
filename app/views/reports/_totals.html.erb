@@ -4,13 +4,13 @@
     <td class="indent">&nbsp;</td>
   <% end %>
   <td><%= "#{short_name} " if defined?(short_name) && short_name.present? %>Total</td>
-  <% if @fields.member? 'funds' %><td class="number">$<%= '%0.2f' % row.funds %></td><%end%>
-  <% if @fields.member? 'agency_other' %><td class="number">$<%= '%0.2f' % row.agency_other %></td><%end%>
-  <% if @fields.member? 'vehicle_maint' %><td class="number">$<%= '%0.2f' % row.vehicle_maint %></td><%end%>
-  <% if @fields.member? 'administrative' %><td class="number">$<%= '%0.2f' % row.administrative %></td><%end%>
-  <% if @fields.member? 'operations' %><td class="number">$<%= '%0.2f' % row.operations %></td><%end%>
-  <% if @fields.member? 'donations' %><td class="number">$<%= '%0.2f' % row.donations %></td><%end%>
-  <% if @fields.member? 'total' %><td class="number">$<%= '%0.2f' % row.total %></td><%end%>
+  <% if @fields.member? 'funds' %><td class="number">$<%= '%0.0f' % row.funds %></td><%end%>
+  <% if @fields.member? 'agency_other' %><td class="number">$<%= '%0.0f' % row.agency_other %></td><%end%>
+  <% if @fields.member? 'vehicle_maint' %><td class="number">$<%= '%0.0f' % row.vehicle_maint %></td><%end%>
+  <% if @fields.member? 'administrative' %><td class="number">$<%= '%0.0f' % row.administrative %></td><%end%>
+  <% if @fields.member? 'operations' %><td class="number">$<%= '%0.0f' % row.operations %></td><%end%>
+  <% if @fields.member? 'donations' %><td class="number">$<%= '%0.0f' % row.donations %></td><%end%>
+  <% if @fields.member? 'total' %><td class="number">$<%= '%0.0f' % row.total %></td><%end%>
   <% if @fields.member? 'in_district_trips' %><td class="number"><%= row.in_district_trips.to_i %></td><%end%>
   <% if @fields.member? 'out_of_district_trips' %><td class="number"><%= row.out_of_district_trips.to_i %></td><%end%>
   <% if @fields.member? 'total_trips' %><td class="number"><%= row.total_trips.to_i %></td><%end%>
@@ -19,12 +19,12 @@
   <% if @fields.member? 'driver_volunteer_hours' %><td class="number"><%= '%0.2f' % row.driver_volunteer_hours %></td><%end%>
   <% if @fields.member? 'driver_paid_hours' %><td class="number"><%= '%0.2f' % row.driver_paid_hours %></td><%end%>
   <% if @fields.member? 'driver_total_hours' %><td class="number"><%= '%0.2f' % row.driver_total_hours %></td><%end%>
-  <% if @fields.member? 'cost_per_trip' %><td class="number"><%= '%0.2f' % row.cost_per_trip %></td><%end%>
-  <% if @fields.member? 'cost_per_mile' %><td class="number">$<%= row.cost_per_mile == -1 ? 'N/A' : ('%0.2f' % row.cost_per_mile) %></td><%end%>
-  <% if @fields.member? 'cost_per_hour' %><td class="number">$<%= '%0.2f' % row.cost_per_hour %></td><%end%>
-  <% if @fields.member? 'miles_per_ride' %><td class="number"><%= '%0.2f' % row.miles_per_ride %></td><%end%>
-  <% if @fields.member? 'turn_downs' %><td class="number"><%= row.turn_downs.to_i %></td><%end%>
-  <% if @fields.member? 'undup_riders' %><td class="number"><%= row.undup_riders.to_i %></td><%end%>
+  <% if @fields.member? 'cost_per_trip' %><td class="number"><%= row.cost_per_trip.nan? ? "" : "$%0.2f" % row.cost_per_trip.round(2) %></td><%end%>
+  <% if @fields.member? 'cost_per_mile' %><td class="number"><%= row.cost_per_mile == -1 ? "" : "$%0.2f" % row.cost_per_mile.round(2) %></td><%end%>
+  <% if @fields.member? 'cost_per_hour' %><td class="number"><%= row.cost_per_hour.nan? ? "" : "$%0.2f" % row.cost_per_hour.round(2) %></td><%end%>
+  <% if @fields.member? 'miles_per_ride' %><td class="number"><%= row.miles_per_ride.nan? ? "" : row.miles_per_ride.round(1) %></td><%end%>
+  <% if @fields.member? 'turn_downs' %><td class="number"><%= "%0.0f" % row.turn_downs %></td><%end%>
+  <% if @fields.member? 'undup_riders' %><td class="number"><%= "%0.0f" % row.undup_riders %></td><%end%>
   <% if @fields.member? 'escort_volunteer_hours' %><td class="number"><%= '%0.2f' % row.escort_volunteer_hours %></td><%end%>
   <% if @fields.member? 'admin_volunteer_hours' %><td class="number"><%= '%0.2f' % row.admin_volunteer_hours %></td><%end%>
   <% if @fields.member? 'total_volunteer_hours' %><td class="number"><%= '%0.2f' % row.total_volunteer_hours %></td><%end%>
