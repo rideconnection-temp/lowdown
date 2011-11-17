@@ -8,7 +8,6 @@ gem 'pg'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
 gem "devise"
-gem 'uuidtools'
 gem 'dynamic_form', :git => 'git://github.com/rails/dynamic_form.git'
 gem 'will_paginate', '~> 3.0'
 gem 'userstamp'

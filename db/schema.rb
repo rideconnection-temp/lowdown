@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111013224412) do
+ActiveRecord::Schema.define(:version => 20111019061507) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -119,11 +119,10 @@ ActiveRecord::Schema.define(:version => 20111013224412) do
     t.integer "position"
   end
 
-  create_table "runs", :id => false, :force => true do |t|
-    t.string   "id",               :limit => 36,                    :null => false
-    t.string   "base_id",          :limit => 36
-    t.datetime "valid_start"
-    t.datetime "valid_end"
+  create_table "runs", :force => true do |t|
+    t.integer  "base_id",                             :null => false
+    t.datetime "valid_start",                         :null => false
+    t.datetime "valid_end",                           :null => false
     t.date     "date"
     t.string   "name"
     t.integer  "routematch_id"
@@ -134,18 +133,17 @@ ActiveRecord::Schema.define(:version => 20111013224412) do
     t.integer  "escort_count"
     t.integer  "trip_import_id"
     t.integer  "updated_by"
-    t.boolean  "complete",                       :default => false
+    t.boolean  "complete",         :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "imported_at"
     t.text     "adjustment_notes"
   end
 
-  create_table "summaries", :id => false, :force => true do |t|
-    t.string   "id",                             :limit => 36,                                                   :null => false
-    t.string   "base_id",                        :limit => 36
-    t.datetime "valid_start"
-    t.datetime "valid_end"
+  create_table "summaries", :force => true do |t|
+    t.integer  "base_id",                                                                          :null => false
+    t.datetime "valid_start",                                                                      :null => false
+    t.datetime "valid_end",                                                                        :null => false
     t.date     "period_start"
     t.date     "period_end"
     t.integer  "total_miles"
@@ -155,12 +153,12 @@ ActiveRecord::Schema.define(:version => 20111013224412) do
     t.integer  "administrative_hours_volunteer"
     t.integer  "unduplicated_riders"
     t.integer  "turn_downs"
-    t.decimal  "agency_other",                                 :precision => 10, :scale => 2
-    t.decimal  "donations",                                    :precision => 10, :scale => 2
-    t.decimal  "funds",                                        :precision => 10, :scale => 2
+    t.decimal  "agency_other",                   :precision => 10, :scale => 2
+    t.decimal  "donations",                      :precision => 10, :scale => 2
+    t.decimal  "funds",                          :precision => 10, :scale => 2
     t.integer  "allocation_id"
     t.integer  "updated_by"
-    t.boolean  "complete",                                                                    :default => false
+    t.boolean  "complete",                                                      :default => false
     t.integer  "administrative"
     t.integer  "operations"
     t.integer  "vehicle_maint"
@@ -168,11 +166,11 @@ ActiveRecord::Schema.define(:version => 20111013224412) do
   end
 
   create_table "summary_rows", :force => true do |t|
-    t.string  "summary_id"
+    t.integer "summary_id"
     t.string  "purpose"
     t.integer "in_district_trips"
-    t.integer "updated_by"
     t.integer "out_of_district_trips"
+    t.integer "updated_by"
   end
 
   create_table "trip_imports", :force => true do |t|
@@ -181,11 +179,10 @@ ActiveRecord::Schema.define(:version => 20111013224412) do
     t.datetime "updated_at"
   end
 
-  create_table "trips", :id => false, :force => true do |t|
-    t.string   "id",                               :limit => 36,                                :null => false
-    t.string   "base_id",                          :limit => 36
-    t.datetime "valid_start"
-    t.datetime "valid_end"
+  create_table "trips", :force => true do |t|
+    t.integer  "base_id",                                                                       :null => false
+    t.datetime "valid_start",                                                                   :null => false
+    t.datetime "valid_end",                                                                     :null => false
     t.date     "date"
     t.datetime "start_at"
     t.datetime "end_at"
@@ -211,7 +208,7 @@ ActiveRecord::Schema.define(:version => 20111013224412) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "customer_id"
-    t.string   "run_id",                           :limit => 36
+    t.integer  "run_id"
     t.integer  "trip_import_id"
     t.integer  "routematch_trip_id"
     t.string   "result_code",                      :limit => 5
@@ -259,11 +256,15 @@ ActiveRecord::Schema.define(:version => 20111013224412) do
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 
-  add_foreign_key "runs", ["trip_import_id"], "trip_imports", ["id"], :name => "runs_trip_import_id_fkey"
+  add_foreign_key "summaries", ["allocation_id"], "allocations", ["id"], :name => "summaries_allocation_id_fkey"
 
   add_foreign_key "summary_rows", ["summary_id"], "summaries", ["id"], :name => "summary_rows_summary_id_fkey"
 
+  add_foreign_key "trips", ["allocation_id"], "allocations", ["id"], :name => "trips_allocation_id_fkey"
+  add_foreign_key "trips", ["customer_id"], "customers", ["id"], :name => "trips_customer_id_fkey"
   add_foreign_key "trips", ["dropoff_address_id"], "addresses", ["id"], :name => "trips_dropoff_address_id_fkey"
+  add_foreign_key "trips", ["home_address_id"], "addresses", ["id"], :name => "trips_home_address_id_fkey"
   add_foreign_key "trips", ["pickup_address_id"], "addresses", ["id"], :name => "trips_pickup_address_id_fkey"
+  add_foreign_key "trips", ["trip_import_id"], "trip_imports", ["id"], :name => "trips_trip_import_id_fkey"
 
 end

@@ -165,7 +165,6 @@ GEM
       polyglot (>= 0.3.1)
     tzinfo (0.3.30)
     userstamp (2.0.1)
-    uuidtools (2.1.2)
     validates_timeliness (3.0.7)
       timeliness (~> 0.3.3)
     warden (1.0.6)
@@ -193,6 +192,5 @@ DEPENDENCIES
   ruby-debug19
   sqlite3-ruby
   userstamp
-  uuidtools
   validates_timeliness
   will_paginate (~> 3.0)
