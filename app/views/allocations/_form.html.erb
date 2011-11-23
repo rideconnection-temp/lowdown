@@ -36,7 +36,7 @@
       
       <li class="selfclear">
         <%= form.label :provider_id %>
-        <%= form.collection_select :provider_id, Provider.all, :id, :name, :include_blank => true %>
+        <%= form.collection_select :provider_id, Provider.all, :id, :to_s, :include_blank => true %>
         <%= link_to "Details", [:edit, @allocation.provider], :class => :details if @allocation.provider %>
       </li>
       

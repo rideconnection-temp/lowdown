@@ -17,7 +17,7 @@
   </tr>
   <% @providers.each do |provider| %>
     <tr>
-      <td><%= link_to provider.name, edit_provider_path(provider) %></td>
+      <td><%= link_to provider.to_s, edit_provider_path(provider) %></td>
       <td><%= provider.short_name %></td>
       <td><%= provider.provider_type %></td>
       <td><%= provider.agency %></td>
