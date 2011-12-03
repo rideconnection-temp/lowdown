@@ -82,15 +82,15 @@ class Summary < ActiveRecord::Base
   end
 
   def in_district_trips
-    summary_rows.inject(0) {|sum,r| sum + r.in_district_trips}
+    summary_rows.inject(0) {|sum,r| sum + (r.in_district_trips || 0)}
   end
 
   def out_of_district_trips
-    summary_rows.inject(0) {|sum,r| sum + r.out_of_district_trips}
+    summary_rows.inject(0) {|sum,r| sum + (r.out_of_district_trips || 0)}
   end
 
   def trips
-    self.summary_rows.inject(0) {|sum,r| sum + r.out_of_district_trips + r.in_district_trips }
+    self.summary_rows.inject(0) {|sum,r| sum + (r.out_of_district_trips || 0) + (r.in_district_trips || 0)}
   end
 
   def do_not_version?
