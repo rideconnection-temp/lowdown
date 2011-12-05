@@ -79,13 +79,13 @@
                   <%= text_field_tag "out_district_total", "0", :size => 30, :disabled => true %>
                 </td>
 	            <% else %>
-                <td><%= @summary.summary_rows.map(&:in_district_trips).inject(:+) %></td>
-                <td><%= @summary.summary_rows.map(&:out_of_district_trips).inject(:+) %></td>
+                <td><%= @summary.summary_rows.map {|x| x.in_district_trips || 0 } .inject(:+) %></td>
+                <td><%= @summary.summary_rows.map {|x| x.out_of_district_trips || 0 } .inject(:+) %></td>
               </tr>
               <tr>
                 <td>Grand Total</td>
                 <td>&nbsp;</td>
-                <td><%= @summary.summary_rows.map {|x| x.in_district_trips + x.out_of_district_trips} .inject(:+) %></td>
+                <td><%= @summary.summary_rows.map {|x| (x.in_district_trips || 0) + (x.out_of_district_trips || 0)} .inject(:+) %></td>
 	            <% end %>
             </tr>
           </tbody>

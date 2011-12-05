@@ -74,23 +74,35 @@ class ReportsController < ApplicationController
     end
 
     def cost_per_hour
-      total / driver_total_hours
+      if driver_total_hours == 0
+        nil
+      else
+        total / driver_total_hours
+      end
     end
 
     def cost_per_trip
-      total / total_trips
+      if total_trips == 0
+        nil
+      else
+        total / total_trips
+      end
     end
 
     def cost_per_mile
-      cpm = total / @mileage
       if @mileage == 0
-        return -1
+        nil
+      else
+        total / @mileage
       end
-      cpm
     end
 
     def miles_per_ride
-      @mileage / total_trips
+      if total_trips == 0
+        nil
+      else
+        @mileage / total_trips
+      end
     end
 
     def quarter
