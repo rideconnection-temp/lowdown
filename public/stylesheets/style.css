@@ -633,6 +633,13 @@ form div.actions input[type="submit"]:hover {
     background: #009FFB;
 }
 
+/* Report Form */
+
+body.reports fieldset ol.section li input {
+  max-width: 100%;
+}
+
+
 /* tables */
 table {
     font-size: 12px;
