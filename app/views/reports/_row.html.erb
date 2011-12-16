@@ -19,10 +19,10 @@
   <% if @fields.member? 'driver_volunteer_hours' %><td class="number"><%= '%0.2f' % row.driver_volunteer_hours %></td><%end%>
   <% if @fields.member? 'driver_paid_hours' %><td class="number"><%= '%0.2f' % row.driver_paid_hours %></td><%end%>
   <% if @fields.member? 'driver_total_hours' %><td class="number"><%= '%0.2f' % row.driver_total_hours %></td><%end%>
-  <% if @fields.member? 'cost_per_trip' %><td class="number"><%= row.cost_per_trip.nan? ? "" : "$%0.2f" % row.cost_per_trip.round(2) %></td><%end%>
-  <% if @fields.member? 'cost_per_mile' %><td class="number"><%= row.cost_per_mile.nan? ? "" : "$%0.2f" % row.cost_per_mile.round(2) %></td><%end%>
-  <% if @fields.member? 'cost_per_hour' %><td class="number"><%= row.cost_per_hour.nan? ? "" : "$%0.2f" % row.cost_per_hour.round(2) %></td><%end%>
-  <% if @fields.member? 'miles_per_ride' %><td class="number"><%= row.miles_per_ride.nan? ? "" : row.miles_per_ride.round(1) %></td><%end%>
+  <% if @fields.member? 'cost_per_trip' %><td class="number"><%= row.cost_per_trip.nil? || row.cost_per_trip.nan? ?   "" : "$%0.2f" % row.cost_per_trip.round(2) %></td><%end%>
+  <% if @fields.member? 'cost_per_mile' %><td class="number"><%= row.cost_per_mile.nil? || row.cost_per_mile.nan? ?   "" : "$%0.2f" % row.cost_per_mile.round(2) %></td><%end%>
+  <% if @fields.member? 'cost_per_hour' %><td class="number"><%= row.cost_per_hour.nil? || row.cost_per_hour.nan? ?   "" : "$%0.2f" % row.cost_per_hour.round(2) %></td><%end%>
+  <% if @fields.member? 'miles_per_ride'%><td class="number"><%= row.miles_per_ride.nil? || row.miles_per_ride.nan? ? "" : row.miles_per_ride.round(1) %></td><%end%>
   <% if @fields.member? 'turn_downs' %><td class="number"><%= "%0.0f" % row.turn_downs %></td><%end%>
   <% if @fields.member? 'undup_riders' %><td class="number"><%= "%0.0f" % row.undup_riders %></td><%end%>
   <% if @fields.member? 'escort_volunteer_hours' %><td class="number"><%= '%0.2f' % row.escort_volunteer_hours %></td><%end%>
