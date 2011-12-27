@@ -702,6 +702,9 @@ table tr.sub-header th {
 table tr.report-item td {
     border-top: 1px solid #2e6399;
 }
+table tr.totals td {
+    font-weight: bold;
+}
 
 td.number, th.number {
   text-align: right;

@@ -88,6 +88,9 @@ tr.sum-totals td {
   border-top: 2pt solid #000;
   padding-top: 1.5em;
 }
+table tr.totals td {
+    font-weight: bold;
+}
 
 td.inner-most-field {
   text-align : left;
