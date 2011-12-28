@@ -15,7 +15,7 @@
       </li>
       <li>
         <%= f.label :allocation, "Source Allocation" %>
-        <%= f.collection_select :allocation, @allocations, :id, :name, :include_blank => true %>
+        <%= f.grouped_collection_select :allocation, @providers, :active_trip_allocations, :name, :id, :name, {:prompt => '<Select Allocation>'} %>
       </li>
       <li>
         <input id="get-count" type="submit" value="Get Trip Count" name="commit"/>
@@ -26,7 +26,7 @@
       
       <li>
         <%= f.label :dest_allocation, "Destination Allocation" %>
-        <%= f.collection_select :dest_allocation, @allocations, :id, :name, :include_blank => true %>
+        <%= f.grouped_collection_select :dest_allocation, @providers, :active_trip_allocations, :name, :id, :name, {:prompt => '<Select Allocation>'} %>
       </li>
       
       <li>
@@ -37,7 +37,7 @@
       <li>
         <input id="transfer-trips" type="submit" value="Transfer Trips" name="commit"/>
         <% if @query.update_allocation? %>
-        <span id="updated-count"><%= pluralize(@transfer_count, "Trip") %> Updated to Allocation <%= @allocation.name %></span>
+        <span id="updated-count"><%= pluralize(@trips_transferred, "Trip") %> Updated to Allocation <%= @allocation.name %></span>
         <% end %>
       </li>
     </ol>

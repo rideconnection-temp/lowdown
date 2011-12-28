@@ -90,7 +90,7 @@ module VersionFu
   module InstanceMethods
     @@end_of_time = Time.utc(9999, 1, 1, 1, 1)
 
-    attr_accessor :should_run_callbacks
+    attr_accessor :should_run_callbacks, :version_switchover_time
 
     # find first version ever
     def first_version
@@ -116,7 +116,7 @@ module VersionFu
           #a totally new object
           self.id = self.class.next_val
           self.base_id = id          
-          self.valid_start = now_rounded
+          self.valid_start = (version_switchover_time || now_rounded)
           self.valid_end = @@end_of_time
           self.should_run_callbacks=true
       elsif self.id && self.base_id
@@ -145,7 +145,7 @@ module VersionFu
       end
 
       new_version.valid_start = valid_start
-      new_version.valid_end = now_rounded
+      new_version.valid_end = (version_switchover_time || now_rounded)
       new_version.base_id = base_id
 
       self.valid_start = new_version.valid_end
@@ -157,7 +157,7 @@ module VersionFu
     #This is called before destroy; instead of destroying the record, it simply sets
     #its valid_end to now
     def mark_inactive
-      self.valid_end = now_rounded
+      self.valid_end = (version_switchover_time || now_rounded)
       false
     end
 

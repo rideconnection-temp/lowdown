@@ -80,29 +80,35 @@ class TripsController < ApplicationController
   
   def update_allocation
     @query       = TripQuery.new params[:trip_query], params[:commit]
-    @allocations = Allocation.all
+    @providers   = Provider.with_trip_data
     
     if @query.update_allocation?
-      @transfer_count = params[:transfer_count] || 0
+      @transfer_count = params[:transfer_count].try(:to_i) || 0
+      trips_remaining = @transfer_count
+      @trips_transferred = 0
 
-      # postgres doesn't support update & limit, we can't use limit option of update_all
-      trips    = Trip.current_versions.where( @query.conditions ).limit(@transfer_count)
+      # This is the maximum number of trips we'll need. counted below 
+      # It may be fewer when guests & attendants are counted below
+      trips = Trip.completed.current_versions.where( @query.conditions ).limit(@transfer_count)
       
       if trips.present?
-        now      = trips.first.now_rounded
-        trip_ids = trips.map &:id      
-      
-        @transfer_count = Trip.update_all ["allocation_id = ?, updated_at = ?, updated_by = ?, valid_start = ?", @query.dest_allocation, Time.now, current_user.id, now], ["id in (?)", trip_ids]
-      
+        now = trips.first.now_rounded
         for trip in trips
-          trip.create_revision_with_known_attributes_without_callbacks :allocation_id => @query.allocation
+          passengers = (trip.guest_count || 0) + (trip.attendant_count || 0) + 1
+          if trips_remaining > 0 && passengers <= trips_remaining
+            trip.allocation_id = @query.dest_allocation 
+            trip.version_switchover_time = now
+            trip.save!
+            trips_remaining -= passengers
+            @trips_transferred += passengers
+          end
         end
       end
       
       @allocation = Allocation.find @query.dest_allocation
     end
     
-    @trips_count = Trip.current_versions.where( @query.conditions ).count
+    @trips_count = Trip.completed.current_versions.where( @query.conditions ).count + Trip.completed.current_versions.where( @query.conditions ).sum(:guest_count) + Trip.completed.current_versions.where( @query.conditions ).sum(:attendant_count)
   end
 
   def share
