@@ -10,6 +10,7 @@
 
     <tr>
       <th><%= provider_name %> Allocations</th>
+      <th>Program</th>
       <th>F.E. Project</th>
       <th>County</th>
       <th></th>
@@ -18,6 +19,7 @@
     <% group.each do |allocation| %>
       <tr>
         <td><%= link_to allocation.name, edit_allocation_path(allocation) %></td>
+        <td><%= allocation.program %></td>
         <td><%= allocation.project_name %></td>
         <td><%= allocation.county %></td>
         <td><%= link_to "Delete", allocation_url(allocation), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this allocation?" if current_user.is_admin && !(allocation.trips.exists? || allocation.summaries.exists?) %></td>
