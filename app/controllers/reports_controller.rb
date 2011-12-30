@@ -921,7 +921,6 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
   private
 
   def prep_edit
-    @allocations = Allocation.order(:name).all
     @funding_subsource_names = [['<Select All>','']] + Project.funding_subsource_names
     @providers = [['<Select All>','']] + Provider.all.map {|x| [x.name, x.id]}
     @program_names = [['<Select All>','']] + Allocation.program_names
@@ -1024,7 +1023,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
     results = Allocation
     where_strings = []
     where_params = []
-    if filters
+    if filters.present?
       if filters.key? :funding_subsource_names
         results = results.joins(:project)
         where_strings << "COALESCE(projects.funding_source,'') || ': ' || COALESCE(projects.funding_subsource) IN (?)"
@@ -1042,13 +1041,17 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
         where_strings << "county IN (?)"
         where_params << filters[:county_names]
       end
+      where_string = where_strings.join(" AND ")
+      if allocations.present?
+        where_string = "(#{where_string}) OR allocations.id IN (?)"
+        where_params << allocations
+      end
+    else
+      if allocations.present?
+        where_string = "allocations.id IN (?)"
+        where_params << allocations
+      end
     end
-    where_string = where_strings.join(" AND ")
-    if allocations.present?
-      where_string = "(#{where_string}) OR allocations.id IN (?)"
-      where_params << allocations
-    end
-
     results = results.where(where_string, *where_params)
      
     for period in @@time_periods

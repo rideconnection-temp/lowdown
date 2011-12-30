@@ -101,7 +101,7 @@ class Report < ActiveRecord::Base
   end
 
   def allocations
-    allocation_list.blank? ? [] : Allocation.find(allocation_list.split(",").map(&:to_i))
+    allocation_list.blank? ? [] : Allocation.find_all_by_id(allocation_list.split(",").map(&:to_i))
   end
 
   def allocation_ids

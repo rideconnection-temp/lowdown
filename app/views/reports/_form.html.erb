@@ -32,6 +32,7 @@
       <li>
         <h2>Individual Allocations to Include</h2>
         <select class="multi full" id="report_allocations" multiple="multiple" name="report[allocations][]">
+          <%= options_for_select([['<Select None>','']],(@report.allocation_ids.blank? ? [''] : [])) %> 
           <%= option_groups_from_collection_for_select Provider.all, :allocations, :name, :id, :name, @report.allocation_ids %>
         </select>
       </li>
