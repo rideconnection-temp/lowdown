@@ -6,9 +6,33 @@
         <%= f.text_field :name, :size => 100 %>
       </li>
       <li>
-        <h2>Allocations to Include</h2>
+        <h2>Funding Sources to Include</h2>
+        <select class="multi full" id="report_allocations" multiple="multiple" name="report[funding_subsource_names][]">
+          <%= options_for_select(@funding_subsource_names, @report.funding_subsource_names) %>
+        </select>
+      </li>
+      <li>
+        <h2>Providers to Include</h2>
+        <select class="multi full" id="report_allocations" multiple="multiple" name="report[providers][]">
+          <%= options_for_select(@providers, @report.provider_ids) %>
+        </select>
+      </li>
+      <li>
+        <h2>Programs to Include</h2>
+        <select class="multi full" id="report_allocations" multiple="multiple" name="report[program_names][]">
+          <%= options_for_select(@program_names, @report.program_names) %>
+        </select>
+      </li>
+      <li>
+        <h2>Counties to Include</h2>
+        <select class="multi full" id="report_allocations" multiple="multiple" name="report[county_names][]">
+          <%= options_for_select(@county_names, @report.county_names) %>
+        </select>
+      </li>
+      <li>
+        <h2>Individual Allocations to Include</h2>
         <select class="multi full" id="report_allocations" multiple="multiple" name="report[allocations][]">
-          <%= option_groups_from_collection_for_select Provider.all, :allocations, :name, :id, :name, @report.allocation_list.try(:split, ",").try(:map){|x| x.to_i } %>
+          <%= option_groups_from_collection_for_select Provider.all, :allocations, :name, :id, :name, @report.allocation_ids %>
         </select>
       </li>
 

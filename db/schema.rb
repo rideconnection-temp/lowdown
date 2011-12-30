@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111019061507) do
+ActiveRecord::Schema.define(:version => 20111229214615) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -118,6 +118,10 @@ ActiveRecord::Schema.define(:version => 20111019061507) do
     t.date    "adjustment_start_date"
     t.date    "adjustment_end_date"
     t.integer "position"
+    t.text    "funding_subsource_name_list"
+    t.text    "provider_list"
+    t.text    "program_name_list"
+    t.text    "county_name_list"
   end
 
   create_table "runs", :force => true do |t|
@@ -256,16 +260,5 @@ ActiveRecord::Schema.define(:version => 20111019061507) do
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
-
-  add_foreign_key "summaries", ["allocation_id"], "allocations", ["id"], :name => "summaries_allocation_id_fkey"
-
-  add_foreign_key "summary_rows", ["summary_id"], "summaries", ["id"], :name => "summary_rows_summary_id_fkey"
-
-  add_foreign_key "trips", ["allocation_id"], "allocations", ["id"], :name => "trips_allocation_id_fkey"
-  add_foreign_key "trips", ["customer_id"], "customers", ["id"], :name => "trips_customer_id_fkey"
-  add_foreign_key "trips", ["dropoff_address_id"], "addresses", ["id"], :name => "trips_dropoff_address_id_fkey"
-  add_foreign_key "trips", ["home_address_id"], "addresses", ["id"], :name => "trips_home_address_id_fkey"
-  add_foreign_key "trips", ["pickup_address_id"], "addresses", ["id"], :name => "trips_pickup_address_id_fkey"
-  add_foreign_key "trips", ["trip_import_id"], "trip_imports", ["id"], :name => "trips_trip_import_id_fkey"
 
 end

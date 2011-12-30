@@ -508,8 +508,13 @@ summaries.valid_end = ? "
     @group_fields = @report.group_by.split(",")
     groups        = @group_fields.map { |f| Report::GroupMappings[f] }
     @groups_size  = groups.size
+    filters       = {}
+    filters[:funding_subsource_names] = @report.funding_subsource_names if @report.funding_subsource_name_list.present?
+    filters[:provider_ids]            = @report.provider_ids            if @report.provider_list.present?
+    filters[:program_names]           = @report.program_names           if @report.program_name_list.present?
+    filters[:county_names]            = @report.county_names            if @report.county_name_list.present?
 
-    do_report(groups, @group_fields, @report.start_date, @report.query_end_date, @report.allocations, @report.fields, @report.pending, @report.adjustment, @report.adjustment_start_date, @report.query_adjustment_end_date)
+    do_report(groups, @group_fields, @report.start_date, @report.query_end_date, @report.allocations, @report.fields, @report.pending, @report.adjustment, @report.adjustment_start_date, @report.query_adjustment_end_date,filters)
   end
 
   def csv
@@ -917,6 +922,10 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
 
   def prep_edit
     @allocations = Allocation.order(:name).all
+    @funding_subsource_names = [['<Select All>','']] + Project.funding_subsource_names
+    @providers = [['<Select All>','']] + Provider.all.map {|x| [x.name, x.id]}
+    @program_names = [['<Select All>','']] + Allocation.program_names
+    @county_names = [['<Select All>','']] + Allocation.county_names
     @group_bys = Report::GroupBys.sort
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
@@ -1003,7 +1012,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
   # allocation: an list of allocations to restrict the report to
   # fields: a list of fields to display
 
-  def do_report(groups, group_fields, start_date, end_date, allocations, fields, pending, adjustment, adjustment_start_date=nil, adjustment_end_date=nil)
+  def do_report(groups, group_fields, start_date, end_date, allocations, fields, pending, adjustment, adjustment_start_date=nil, adjustment_end_date=nil, filters=nil)
     group_select = []
 
     for group,field in groups.split(",").zip group_fields
@@ -1012,16 +1021,36 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
 
     group_select = group_select.join(",")
 
-    if allocations.nil? or allocations.size == 0
-      results = Allocation.all
-    else
-      if allocations[0].instance_of? Allocation
-        results = allocations
-      else
-        results = Allocation.find(allocations).all
+    results = Allocation
+    where_strings = []
+    where_params = []
+    if filters
+      if filters.key? :funding_subsource_names
+        results = results.joins(:project)
+        where_strings << "COALESCE(projects.funding_source,'') || ': ' || COALESCE(projects.funding_subsource) IN (?)"
+        where_params << filters[:funding_subsource_names]
+      end
+      if filters.key?(:provider_ids) 
+        where_strings << "provider_id IN (?)"
+        where_params << filters[:provider_ids]
+      end
+      if filters.key? :program_names
+        where_strings << "program IN (?)"
+        where_params << filters[:program_names]
+      end
+      if filters.key? :county_names
+        where_strings << "county IN (?)"
+        where_params << filters[:county_names]
       end
     end
-    
+    where_string = where_strings.join(" AND ")
+    if allocations.present?
+      where_string = "(#{where_string}) OR allocations.id IN (?)"
+      where_params << allocations
+    end
+
+    results = results.where(where_string, *where_params)
+     
     for period in @@time_periods
       if group_fields.member? period
         results = apply_periods(results, start_date, end_date, period)

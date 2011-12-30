@@ -17,6 +17,14 @@ class Allocation < ActiveRecord::Base
   scope :trip_collection_method, where( "trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips'" )
   scope :not_recently_inactivated, where( "inactivated_on is null or inactivated_on > current_date - interval '3 months'")
 
+  def self.program_names
+    select('DISTINCT program').where("COALESCE(program,'') <> ''").map {|x| x.program}.sort 
+  end
+
+  def self.county_names
+    select('DISTINCT county').where("COALESCE(county,'') <> ''").map {|x| x.county}.sort 
+  end
+
   def to_s
     name
   end

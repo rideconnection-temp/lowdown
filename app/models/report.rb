@@ -36,23 +36,84 @@ class Report < ActiveRecord::Base
     report
   end
 
-  def allocations
-    if allocation_list.nil? or allocation_list.empty?
-      return []
+  def funding_subsource_names
+    if funding_subsource_name_list.blank?
+      [""]
     else
-      return Allocation.find(allocation_list.split(",").map(&:to_i))
+      funding_subsource_name_list.split("|")
     end
   end
 
+  def funding_subsource_names=(list)
+    if list.blank? 
+      self.funding_subsource_name_list = nil
+    else
+      self.funding_subsource_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
+    end
+  end
+
+  def program_names
+    if program_name_list.blank?
+      [""]
+    else
+      program_name_list.split("|")
+    end
+  end
+
+  def program_names=(list)
+    if list.blank? 
+      self.program_name_list = nil
+    else
+      self.program_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
+    end
+  end
+
+  def county_names
+    if county_name_list.blank?
+      [""]
+    else
+      county_name_list.split("|")
+    end
+  end
+
+  def county_names=(list)
+    if list.blank? 
+      self.county_name_list = nil
+    else
+      self.county_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
+    end
+  end
+
+  def providers
+    provider_list.blank? ? [] : Provider.find(provider_list.split(",").map(&:to_i))
+  end
+
+  def provider_ids
+    provider_list.blank? ? [""] : provider_list.split(",").map(&:to_i)
+  end
+
+  def providers=(list)
+    if list.blank?
+      self.provider_list = nil
+    else
+      self.provider_list = list.sort.map(&:to_s).join(",")
+    end
+  end
+
+  def allocations
+    allocation_list.blank? ? [] : Allocation.find(allocation_list.split(",").map(&:to_i))
+  end
+
+  def allocation_ids
+    allocation_list.blank? ? [] : allocation_list.split(",").map(&:to_i)
+  end
+
   def allocations=(list)
-    if list.to_s.empty?
+    if list.blank?
       self.allocation_list = ''
-      return
+    else
+      self.allocation_list = list.sort.map(&:to_s).join(",")
     end
-    if list.respond_to? :keys
-      list = list.keys
-    end
-    self.allocation_list = list.sort.map(&:to_s).join(",")
   end
 
   def fields
