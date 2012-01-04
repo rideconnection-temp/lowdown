@@ -247,9 +247,9 @@ start_date, end_date, end_date ]))
       pending_where = pending ? "runs.complete=true and " : ""
 
       sql = "select 
-sum(case when in_trimet_district=true then 1 + guest_count + attendant_count else 0 end) as in_district_trips,
-sum(case when in_trimet_district=false then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips,
-sum(case when result_code='TD' then 1 else 0 end) as turn_downs
+sum(case when in_trimet_district=true and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as in_district_trips,
+sum(case when in_trimet_district=false and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips,
+sum(case when result_code='TD' then 1 + guest_count + attendant_count else 0 end) as turn_downs
 from trips
 inner join runs on trips.run_id=runs.base_id 
 where
