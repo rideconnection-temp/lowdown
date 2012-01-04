@@ -1046,11 +1046,9 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
         where_string = "(#{where_string}) OR allocations.id IN (?)"
         where_params << allocations
       end
-    else
-      if allocations.present?
-        where_string = "allocations.id IN (?)"
-        where_params << allocations
-      end
+    elsif allocations.present?
+      where_string = "allocations.id IN (?)"
+      where_params << allocations
     end
     results = results.where(where_string, *where_params)
      
