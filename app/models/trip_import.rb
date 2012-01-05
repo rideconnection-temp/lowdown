@@ -129,7 +129,7 @@ private
             current_home.postal_code = record[:home_postal_code]
             current_home.x_coordinate = record[:home_x_coordinate]
             current_home.y_coordinate = record[:home_y_coordinate]
-            current_home.in_trimet_district = record[:home_in_trimet_district]
+            current_home.in_trimet_district = make_boolean(record[:home_in_trimet_district])
             current_home.save!
             
             # Add this new address to the map cache
@@ -181,7 +181,7 @@ private
             current_pickup.postal_code = record[:pickup_postal_code]
             current_pickup.x_coordinate = record[:pickup_x_coordinate]
             current_pickup.y_coordinate = record[:pickup_y_coordinate]
-            current_pickup.in_trimet_district = record[:pickup_in_trimet_district]
+            current_pickup.in_trimet_district = make_boolean(record[:pickup_in_trimet_district])
             current_pickup.save!
 
             current_pickup_id = current_pickup.id
@@ -202,7 +202,7 @@ private
             current_dropoff.postal_code = record[:dropoff_postal_code]
             current_dropoff.x_coordinate = record[:dropoff_x_coordinate]
             current_dropoff.y_coordinate = record[:dropoff_y_coordinate]
-            current_dropoff.in_trimet_district = record[:dropoff_in_trimet_district]
+            current_dropoff.in_trimet_district = make_boolean(record[:dropoff_in_trimet_district])
             current_dropoff.save!
 
             current_dropoff_id = current_dropoff.id
@@ -271,8 +271,8 @@ private
             current_trip.mobility = record[:trip_mobility]
             current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
             current_trip.bpa_driver_name = record[:bpa_driver_name]
-            current_trip.volunteer_trip = record[:volunteer_trip]
-            current_trip.in_trimet_district = record[:in_trimet_district]
+            current_trip.volunteer_trip = make_boolean(record[:volunteer_trip])
+            current_trip.in_trimet_district = make_boolean(record[:in_trimet_district])
             current_trip.bpa_billing_distance = record[:bpa_billing_distance]
             current_trip.routematch_share_id = record[:routematch_share_id]
             current_trip.override = record[:override]
@@ -334,5 +334,15 @@ private
   def associate_records_with_trip_import
     Run.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
     Trip.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
+  end
+
+  def make_boolean(value)
+    if value.blank?
+      nil
+    elsif value == 0
+      false
+    else
+      true
+    end
   end
 end
