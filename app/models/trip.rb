@@ -100,14 +100,14 @@ private
 
   def set_duration_and_mileage
     unless secondary_update 
-      if completed?
+      if completed? && (allocation.run_collection_method == 'trips')
         self.duration = ((end_at - start_at) / 60 ).to_i unless end_at.nil? || start_at.nil?
         self.mileage = odometer_end - odometer_start unless odometer_end.nil? || odometer_start.nil?
-        #if routematch_share_id.blank?
-        #  self.apportioned_fare = fare unless fare.nil?
-        #  self.apportioned_duration = duration unless duration.nil?
-        #  self.apportioned_mileage = mileage unless mileage.nil?
-        #end
+        if routematch_share_id.blank?
+          self.apportioned_fare = fare unless fare.nil?
+          self.apportioned_duration = duration unless duration.nil?
+          self.apportioned_mileage = mileage unless mileage.nil?
+        end
       end
     end
   end
@@ -116,9 +116,10 @@ private
     unless secondary_update || bulk_import
       return if should_run_callbacks == false
 
+      # currently shared, update new routematch_share rides
+      reapportion_trips_for_routematch_share_id( routematch_share_id ) if shared? 
+
       if routematch_share_id_changed?
-        # currently shared, update new routematch_share rides
-        reapportion_trips_for_routematch_share_id( routematch_share_id ) if shared? 
         # previously shared, update old routematch_share rides
         reapportion_trips_for_routematch_share_id( routematch_share_id_change.first ) if routematch_share_id_change.first.present?
       end
@@ -161,6 +162,7 @@ private
       this_trip_cost = ((ride_cost * this_ratio) * 100).floor.to_f / 100
       ride_cost_remaining = (ride_cost_remaining - this_trip_cost).round(2)
       t.apportioned_fare = this_trip_cost + ( trip_position == trip_count ? ride_cost_remaining : 0 )
+      t.do_not_version = true
       t.save!
     end
   end

@@ -213,43 +213,41 @@ private
           current_allocation_id = allocation_map[allocation_map_key][:id]
 
           if current_allocation_id.present?
-            if record[:routematch_run_id].present?
-              if run_map.has_key?(record[:routematch_run_id])
-                current_run_id = run_map[record[:routematch_run_id]]
-              else
-                current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
-                current_run.name = record[:run_name]
-                current_run.date = record[:date]
-#             Though it may be in the import file, don't store run start and end information 
-#             for BPA providers, for whom that data is tracked by-trip.
-#             By-run information is inaccurate for those providers.
-                if allocation_map[allocation_map_key][:run_collection_method] == 'runs' 
+            # Don't collect runs when we don't collect anything about them.
+            if allocation_map[allocation_map_key][:run_collection_method] == 'runs' 
+              if record[:routematch_run_id].present?
+                if run_map.has_key?(record[:routematch_run_id])
+                  current_run_id = run_map[record[:routematch_run_id]]
+                else
+                  current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
+                  current_run.name = record[:run_name]
+                  current_run.date = record[:date]
                   current_run.start_at = record[:run_start_at]
                   current_run.end_at = record[:run_end_at]
                   current_run.odometer_start = record[:run_odometer_start]
                   current_run.odometer_end = record[:run_odometer_end]
+                  current_run.trip_import_id = self.id
+                  current_run.bulk_import = true
+                  current_run.imported_at = import_start_time 
+                  current_run.save! if current_run.new_record? || (current_run.changed != ['imported_at'])
+
+                  current_run_id = current_run.id
+                  run_map[record[:routematch_run_id]] = current_run_id
                 end
-                current_run.trip_import_id = self.id
-                current_run.bulk_import = true
-                current_run.imported_at = import_start_time 
-                current_run.save!
+              else # Trips that didn't happen are brought together in one 'Not completed' for a day run
+                runless_trips_run_key = record[:date].to_s + record[:override]
+                if run_map.has_key?(runless_trips_run_key)
+                  current_run_id = run_map[runless_trips_run_key]
+                else
+                  current_run = Run.new
+                  current_run.name = 'Not completed ' + record[:date].to_time.strftime("%m-%d-%y")
+                  current_run.date = record[:date]
+                  current_run.imported_at = import_start_time 
+                  current_run.save! if current_run.new_record? || (current_run.changed != ['imported_at'])
 
-                current_run_id = current_run.id
-                run_map[record[:routematch_run_id]] = current_run_id
-              end
-            else
-              runless_trips_run_key = record[:date].to_s + record[:override]
-              if run_map.has_key?(runless_trips_run_key)
-                current_run_id = run_map[runless_trips_run_key]
-              else
-                current_run = Run.new
-                current_run.name = 'Not completed ' + record[:date].to_time.strftime("%m-%d-%y")
-                current_run.date = record[:date]
-                current_run.imported_at = import_start_time 
-                current_run.save!
-
-                current_run_id = current_run.id
-                run_map[runless_trips_run_key] = current_run_id
+                  current_run_id = current_run.id
+                  run_map[runless_trips_run_key] = current_run_id
+                end
               end
             end
 
@@ -284,8 +282,6 @@ private
             current_trip.date_enrolled = record[:spd_date_enrolled]
             current_trip.service_end = record[:spd_service_end]
             current_trip.spd_office = record[:spd_office]
-            current_trip.apportioned_duration = record[:trip_duration]
-            current_trip.apportioned_mileage = record[:trip_mileage]
             current_trip.pickup_address_id = current_pickup_id
             current_trip.dropoff_address_id = current_dropoff_id
             current_trip.customer_id = current_customer_id
@@ -293,7 +289,13 @@ private
             current_trip.run_id = current_run_id
             current_trip.bulk_import = true
             current_trip.imported_at = import_start_time 
-            current_trip.save!
+            # apportionment for run-based trips is done before import.  This helps assure that the
+            # Reporting Services reports and the Service DB reports match exactly.
+            if allocation_map[allocation_map_key][:run_collection_method] == 'runs'
+              current_trip.apportioned_duration = record[:trip_duration]
+              current_trip.apportioned_mileage = record[:trip_mileage]
+            end
+            current_trip.save! if current_trip.new_record? || (current_trip.changed != ['imported_at'])
           end # current_allocation.present?
         end # CSV.foreach
       end # Transaction
@@ -303,6 +305,7 @@ private
     run_map = nil
   end
 
+  #This should trigger the apportion_shared_rides callback in the trips model.  
   def apportion_imported_shared_rides
     trips = Trip.current_versions.where(:imported_at => self.import_start_time).completed.shared.order(:date,:routematch_share_id)
     trip_count = 0
