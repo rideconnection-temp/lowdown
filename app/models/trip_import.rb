@@ -226,10 +226,11 @@ private
                   current_run.end_at = record[:run_end_at]
                   current_run.odometer_start = record[:run_odometer_start]
                   current_run.odometer_end = record[:run_odometer_end]
-                  current_run.trip_import_id = self.id
                   current_run.bulk_import = true
-                  current_run.imported_at = import_start_time 
-                  current_run.save! if current_run.new_record? || (current_run.changed != ['imported_at'])
+                  if current_run.changed?
+                    current_run.imported_at = import_start_time 
+                    current_run.save! 
+                  end
 
                   current_run_id = current_run.id
                   run_map[record[:routematch_run_id]] = current_run_id
@@ -242,8 +243,10 @@ private
                   current_run = Run.new
                   current_run.name = 'Not completed ' + record[:date].to_time.strftime("%m-%d-%y")
                   current_run.date = record[:date]
-                  current_run.imported_at = import_start_time 
-                  current_run.save! if current_run.new_record? || (current_run.changed != ['imported_at'])
+                  if current_run.changed?
+                    current_run.imported_at = import_start_time 
+                    current_run.save! 
+                  end
 
                   current_run_id = current_run.id
                   run_map[runless_trips_run_key] = current_run_id
@@ -334,11 +337,13 @@ private
     puts "Apportioned #{run_count} runs"
   end
 
+  # Add the trip import id after the import is complete, once the id has been generated
   def associate_records_with_trip_import
     Run.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
     Trip.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
   end
 
+  # Source data can have 1 or -1 as true.  0 is false, nil is nil
   def make_boolean(value)
     if value.blank?
       nil
