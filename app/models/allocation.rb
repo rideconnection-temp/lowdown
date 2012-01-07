@@ -7,7 +7,7 @@ class Allocation < ActiveRecord::Base
   DATA_OPTIONS = %w( Required Prohibited )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
 
-  validates :name, :presence => true
+  validates :name, :presence => true, :uniqueness => true
   validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
   validates :vehicle_maint_data, :inclusion => { :in => DATA_OPTIONS }
   

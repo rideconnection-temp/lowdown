@@ -1,5 +1,5 @@
 class Report < ActiveRecord::Base
-  validates :name, :presence => true
+  validates :name, :presence => true, :uniqueness => true
   validates :adjustment_start_date, :presence => true, :if => :adjustment?
   validates :adjustment_end_date, :presence => true, :if => :adjustment?
 

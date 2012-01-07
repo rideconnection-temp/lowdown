@@ -1,7 +1,7 @@
 class Project < ActiveRecord::Base
   has_many :allocations
   
-  validates :name, :presence => true
+  validates :name, :presence => true, :uniqueness => true
 
   default_scope :order => :name
 
