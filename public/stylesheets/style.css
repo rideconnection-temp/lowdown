@@ -683,6 +683,7 @@ table td:last-child {
 table th {
     padding: 5px 5px 5px 10px;
     text-align: left;
+    vertical-align: bottom;
     background: #2e6399;
     color: #ddd;
     font-size: 12px;
