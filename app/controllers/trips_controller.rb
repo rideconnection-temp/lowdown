@@ -47,8 +47,8 @@ class TripsController < ApplicationController
 
   def list
     @query       = TripQuery.new params[:trip_query], params[:commit]
-    @providers   = Provider.find :all
-    @allocations = Allocation.find :all
+    @providers   = Provider.all
+    @allocations = Allocation.order(:name)
 
     @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project]).joins(:allocation).where(@query.conditions).order(:date,:trip_import_id)
 
