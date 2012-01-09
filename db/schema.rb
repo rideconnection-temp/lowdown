@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111229214615) do
+ActiveRecord::Schema.define(:version => 20120108202031) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -185,9 +185,9 @@ ActiveRecord::Schema.define(:version => 20111229214615) do
   end
 
   create_table "trips", :force => true do |t|
-    t.integer  "base_id",                                                                       :null => false
-    t.datetime "valid_start",                                                                   :null => false
-    t.datetime "valid_end",                                                                     :null => false
+    t.integer  "base_id",                                                                                          :null => false
+    t.datetime "valid_start",                                                                                      :null => false
+    t.datetime "valid_end",                                                                                        :null => false
     t.date     "date"
     t.datetime "start_at"
     t.datetime "end_at"
@@ -234,6 +234,7 @@ ActiveRecord::Schema.define(:version => 20111229214615) do
     t.date     "service_end"
     t.integer  "approved_rides"
     t.string   "spd_office",                       :limit => 25
+    t.boolean  "complete",                                                                      :default => false
   end
 
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"

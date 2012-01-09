@@ -271,6 +271,10 @@
     </li>
 
     <li>
+      <%= f.label :complete, "Complete:" %> <%= f.check_box :complete, :tabindex=>3 %>
+    </li>
+    
+    <li>
       <%= f.label :updated_by, "Updated By:" %>
       <p class="disabled-input">
         <% if @updated_by_user.email %>

@@ -1,5 +1,13 @@
 class Summary < ActiveRecord::Base
 #  update_user_on_save
+  class << self
+    def date_range(start_date, after_end_date)
+      start_date = start_date.to_date
+      after_end_date = after_end_date.to_date
+      where("period_start >= ? and period_end < ?",start_date,after_end_date)
+    end
+  end
+
   point_in_time :save_updater=>true
   stampable :updater_attribute  => :updated_by,
             :creator_attribute  => :updated_by
@@ -59,9 +67,8 @@ class Summary < ActiveRecord::Base
     end
   end
 
-  def fix_period_end
-    self.period_end = self.period_start.next_month - 1.day
-  end
+  scope :valid_range, lambda{|start_date, end_date| where("summaries.valid_start <= ? and summaries.valid_end > ?",start_date,end_date) } 
+  scope :data_entry_complete, where(:complete => true)
 
   def created_by
     return first_version.updater
@@ -95,6 +102,11 @@ class Summary < ActiveRecord::Base
 
   def do_not_version?
     do_not_version == true || do_not_version.to_i == 1 || !complete || !complete_was
+  end
+
+private
+  def fix_period_end
+    self.period_end = self.period_start.next_month - 1.day
   end
 
 end

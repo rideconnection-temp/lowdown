@@ -31,6 +31,7 @@ class Trip < ActiveRecord::Base
   attr_accessor :bulk_import, :secondary_update, :do_not_version
 
   scope :completed, where(:result_code => 'COMP')
+  scope :data_entry_complete, where(:complete => true)
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
   scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
 
@@ -95,7 +96,7 @@ private
   end
   
   def do_not_version?
-    do_not_version == true || do_not_version.to_i == 1
+    do_not_version == true || do_not_version.to_i == 1 || !complete || !complete_was
   end
 
   def set_duration_and_mileage

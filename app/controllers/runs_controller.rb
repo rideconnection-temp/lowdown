@@ -90,13 +90,9 @@ class RunsController < ApplicationController
     if @query.conditions.empty?
       flash[:alert] = "Cannot update without date range"
     else
-      for run in Run.current_versions :conditions => @query.conditions
-        updated += 1
-        run.complete = true
-        run.save!
-      end
-      flash[:notice] = "Updated #{updated} records"
-
+      updated_runs = Run.current_versions(:conditions => @query.conditions).update_all(:complete => true)
+      updated_trips = Trip.current_versions(:conditions => @query.conditions).update_all(:complete => true)
+      flash[:notice] = "Updated #{updated_trips} trips records and #{updated_runs} run records"
     end
     redirect_to :action=>:index
   end
