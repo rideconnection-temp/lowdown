@@ -87,7 +87,7 @@ class TripsController < ApplicationController
       trips_remaining = @transfer_count
       @trips_transferred = 0
 
-      # This is the maximum number of trips we'll need. counted below 
+      # This is the maximum number of trips we'll need. 
       # It may be fewer when guests & attendants are counted below
       trips = Trip.completed.current_versions.where( @query.conditions ).limit(@transfer_count)
       
