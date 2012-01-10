@@ -9,7 +9,7 @@ class Report < ActiveRecord::Base
   
   default_scope :order => 'position ASC'
   
-  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter county,agency funding_source,county,agency,project_name funding_source,county,agency funding_source,agency project_name,agency agency,county,project_name}
+  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter county,agency funding_source,county,provider_name,program funding_source,county,agency,project_name funding_source,county,agency funding_source,agency project_name,agency agency,county,project_name}
 
   GroupMappings = {
     "agency"            => "providers.agency",
