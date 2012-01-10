@@ -83,32 +83,46 @@ class TripsController < ApplicationController
     @providers   = Provider.with_trip_data
     
     if @query.update_allocation?
-      @transfer_count = params[:transfer_count].try(:to_i) || 0
-      trips_remaining = @transfer_count
-      @trips_transferred = 0
-
-      # This is the maximum number of trips we'll need. 
-      # It may be fewer when guests & attendants are counted below
-      trips = Trip.completed.current_versions.where( @query.conditions ).limit(@transfer_count)
+      @completed_trips_count = Trip.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where( @query.conditions ).completed.first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
+      @completed_transfer_count = params[:transfer_count].try(:to_i) || 0
+      ratio = @completed_transfer_count/@completed_trips_count.to_f
+      @trips_transferred = {}
+      now = Trip.new.now_rounded
       
-      if trips.present?
-        now = trips.first.now_rounded
-        for trip in trips
-          passengers = (trip.guest_count || 0) + (trip.attendant_count || 0) + 1
-          if trips_remaining > 0 && passengers <= trips_remaining
-            trip.allocation_id = @query.dest_allocation 
-            trip.version_switchover_time = now
-            trip.save!
-            trips_remaining -= passengers
-            @trips_transferred += passengers
+      Trip.transaction do
+        Trip::RESULT_CODES.keys.each do |rc|
+          if rc == 'COMP'
+            this_transfer_count = @completed_transfer_count
+          else
+            this_transfer_count = ((Trip.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(@query.conditions).where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
+          end
+
+          trips_remaining = this_transfer_count
+          @trips_transferred[rc] = 0
+          # This is the maximum number of trips we'll need, if there are no guest or attendants. 
+          # It may be fewer when guests & attendants are counted below
+          trips = Trip.where(:result_code => rc).current_versions.where( @query.conditions ).limit(this_transfer_count)
+          if trips.present?
+            for trip in trips
+              passengers = (trip.guest_count || 0) + (trip.attendant_count || 0) + 1
+              if trips_remaining > 0 && passengers <= trips_remaining
+                trip.allocation_id = @query.dest_allocation 
+                trip.version_switchover_time = now
+                trip.save!
+                trips_remaining -= passengers
+                @trips_transferred[rc] += passengers
+              end
+            end
           end
         end
       end
       
       @allocation = Allocation.find @query.dest_allocation
     end
-    
-    @trips_count = Trip.completed.current_versions.where( @query.conditions ).count + Trip.completed.current_versions.where( @query.conditions ).sum(:guest_count) + Trip.completed.current_versions.where( @query.conditions ).sum(:attendant_count)
+    @trip_count = {}
+    Trip::RESULT_CODES.keys.each do |rc|
+      @trip_count[rc] = Trip.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(@query.conditions).where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
+    end
   end
 
   def share
