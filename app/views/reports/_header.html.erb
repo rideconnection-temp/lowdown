@@ -3,7 +3,7 @@
     <% (@groups_size - 1).times do %>
       <th class="indent">&nbsp;</th>
     <% end %>
-    <th rowspan="2" class="wrap"><%= @group_fields[-1].sub("_id","").sub("_"," ").titleize %></th>
+    <th rowspan="2" class="wrap text"><%= @group_fields[-1].sub("_id","").sub("_"," ").titleize %></th>
     <% column_count = (@fields.keys & ['funds','agency_other','vehicle_maint','administrative','operations','donations','total']).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Costs</th>

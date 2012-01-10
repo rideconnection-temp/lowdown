@@ -72,6 +72,9 @@ th {
 th.indent {
   border: none;
 }
+th.text {
+  text-align: left;
+}
 tr.sub-header th {
 }
 td {
