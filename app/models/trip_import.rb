@@ -56,7 +56,7 @@ private
         :home_x_coordinate, :home_y_coordinate, :home_in_trimet_district, 
         :language_preference, :birthdate, :email, :customer_type, :monthly_household_income, :household_size,
         :spd_prime_number, :spd_case_manager, :spd_office, :spd_date_enrolled, :spd_service_end, :spd_approved_rides,
-        :routematch_run_id, :run_name, :run_start_at, :run_end_at, :run_odometer_start, :run_odometer_end,
+        :routematch_run_id, :run_name, :run_start_at, :run_end_at, :run_odometer_start, :run_odometer_end, :escort_count,
         :routematch_trip_id, :date, 
         :provider_code, :provider_name, :provider_type, 
         :result_code, :start_at, :end_at, :odometer_start, :odometer_end,
@@ -226,6 +226,7 @@ private
                   current_run.end_at = record[:run_end_at]
                   current_run.odometer_start = record[:run_odometer_start]
                   current_run.odometer_end = record[:run_odometer_end]
+                  current_run.escort_count = record[:escort_count]
                   current_run.bulk_import = true
                   if current_run.changed?
                     current_run.imported_at = import_start_time 

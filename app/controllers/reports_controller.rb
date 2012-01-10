@@ -280,7 +280,21 @@ start_date, end_date, end_date ]))
     end
 
     def collect_runs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
-      results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/60 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/60 as driver_volunteer_hours, 0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
+      results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/60.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/60.0 as driver_volunteer_hours, 0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
+      results = results.where(:allocation_id => allocation['id'])
+      results = results.data_entry_complete unless pending
+
+      if adjustment && false # turn off adjustments option for now
+        add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
+      else
+        add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+        subtract_results = {}
+      end
+      apply_results(add_results, subtract_results)
+    end
+
+    def collect_runs_by_run(allocation, start_date, end_date, pending=false, adjustment=false)
+      results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/60.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/60.0 as driver_volunteer_hours, sum(COALESCE((SELECT escort_count FROM runs where id = trips.run_id),0) * apportioned_duration)/60.0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
       results = results.where(:allocation_id => allocation['id'])
       results = results.data_entry_complete unless pending
 
@@ -960,7 +974,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
         if allocation['run_collection_method'] == 'trips' 
           row.collect_runs_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
         elsif allocation['run_collection_method'] == 'runs'
-          row.collect_runs_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
+          row.collect_runs_by_run(allocation, collection_start_date, collection_end_date, pending, adjustment)
         else
           row.collect_runs_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
         end
