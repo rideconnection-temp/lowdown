@@ -689,9 +689,16 @@ table th {
     font-size: 12px;
     letter-spacing: -0.2px;
     border-right: 1px solid #3674b3;
+    border-bottom: 1px solid #3674b3;
 }
 div.report-wrapper table th {
     font-size: 10px;
+}
+div.report-wrapper table th.column-group {
+    font-size: 12px;
+    letter-spacing: 0;
+    text-align: center;
+    font-weight: bold;
 }
 table th:last-child {
     border-right: 0;
@@ -727,6 +734,7 @@ td.report-item {
 
 div.report-wrapper .indent {
   border-right: 0;
+  border-bottom: 0;
 }
 
 div.report-wrapper td.indent {
