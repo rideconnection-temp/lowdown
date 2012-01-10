@@ -983,6 +983,7 @@ allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_en
           row.collect_costs_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
         else
           row.collect_costs_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
+          row.collect_costs_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
         end
 
         row.collect_operation_data_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
