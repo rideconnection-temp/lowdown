@@ -35,7 +35,7 @@ class Trip < ActiveRecord::Base
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
   scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
 
-  RESULT_CODES = {'COMP' => 'Completed','TD' => 'Turned Down','NS' => 'No Show','UNMET' => 'Unmet Need','CANC' => 'Cancelled'}
+  RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 
   def created_by
     return first_version.updated_by

@@ -90,7 +90,7 @@ class TripsController < ApplicationController
       now = Trip.new.now_rounded
       
       Trip.transaction do
-        Trip::RESULT_CODES.keys.each do |rc|
+        Trip::RESULT_CODES.values.each do |rc|
           if rc == 'COMP'
             this_transfer_count = @completed_transfer_count
           else
@@ -120,7 +120,7 @@ class TripsController < ApplicationController
       @allocation = Allocation.find @query.dest_allocation
     end
     @trip_count = {}
-    Trip::RESULT_CODES.keys.each do |rc|
+    Trip::RESULT_CODES.values.each do |rc|
       @trip_count[rc] = Trip.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(@query.conditions).where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
     end
   end
@@ -167,7 +167,7 @@ class TripsController < ApplicationController
     @pickup_address = @trip.pickup_address
     @dropoff_address = @trip.dropoff_address
     @updated_by_user = @trip.updated_by_user
-    @allocations = Allocation.find(:all)
+    @allocations = Allocation.order(:name)
   end
   
   def update

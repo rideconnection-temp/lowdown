@@ -220,7 +220,7 @@
       </p>
     </li>
 
-    <li><%= f.label :result_code, "Result Code:" %> <%= f.text_field :result_code %></li>
+    <li><%= f.label :result_code, "Result Code:" %> <%= f.select :result_code, Trip::RESULT_CODES %></li>
 
     <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
 
