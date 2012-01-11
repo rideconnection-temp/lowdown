@@ -66,17 +66,17 @@
   <% end %>
   <% if @fields.member? 'driver_volunteer_hours' %>
     <td class="number">
-      <%= number_with_precision(row.driver_volunteer_hours, :precision => 2, :delimiter => ",") %>
+      <%= number_with_delimiter(row.driver_volunteer_hours.to_i) %>
     </td>
   <% end %>
   <% if @fields.member? 'driver_paid_hours' %>
     <td class="number">
-      <%= number_with_precision(row.driver_paid_hours, :precision => 2, :delimiter => ",") %>
+      <%= number_with_delimiter(row.driver_paid_hours.to_i) %>
     </td>
   <% end %>
   <% if @fields.member? 'driver_total_hours' %>
     <td class="number">
-      <%= number_with_precision(row.driver_total_hours, :precision => 2, :delimiter => ",") %>
+      <%= number_with_delimiter(row.driver_total_hours.to_i) %>
     </td>
   <% end %>
   <% if @fields.member? 'cost_per_trip' %>
@@ -101,27 +101,27 @@
   <% end %>
   <% if @fields.member? 'turn_downs' %>
     <td class="number">
-      <%= row.turn_downs.to_i %>
+      <%= number_with_delimiter(row.turn_downs.to_i) %>
     </td>
   <% end %>
   <% if @fields.member? 'undup_riders' %>
     <td class="number">
-      <%= row.undup_riders.to_i %>
+      <%= number_with_delimiter(row.undup_riders.to_i) %>
     </td>
   <% end %>
   <% if @fields.member? 'escort_volunteer_hours' %>
     <td class="number">
-      <%= number_with_precision(row.escort_volunteer_hours, :precision => 1, :delimiter => ",") %>
+      <%= number_with_delimiter(row.escort_volunteer_hours.to_i) %>
     </td>
   <% end %>
   <% if @fields.member? 'admin_volunteer_hours' %>
     <td class="number">
-      <%= number_with_precision(row.admin_volunteer_hours, :precision => 1, :delimiter => ",") %>
+      <%= number_with_delimiter(row.admin_volunteer_hours.to_i) %>
     </td>
   <% end %>
   <% if @fields.member? 'total_volunteer_hours' %>
     <td class="number">
-      <%= number_with_precision(row.total_volunteer_hours, :precision => 1, :delimiter => ",") %>
+      <%= number_with_delimiter(row.total_volunteer_hours.to_i) %>
     </td>
   <% end %>
 </tr>
