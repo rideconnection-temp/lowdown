@@ -1051,6 +1051,9 @@ textarea#report_description {
     padding-bottom: 5px;
     margin-bottom: 5px;
 }
+span.month-range {
+  font-size: 23px;
+}
 li.predefined-report {
     position: relative;
 }
