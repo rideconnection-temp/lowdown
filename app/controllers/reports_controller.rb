@@ -37,17 +37,13 @@ class ReportsController < ApplicationController
       fields.delete 'volunteer_hours'
 
       fields.sort!
-
     end
 
     def initialize(fields_to_show = nil)
-
-      for k in numeric_fields
-        self.instance_variable_set("@#{k}", 0.0)
+      for field in numeric_fields
+        self.instance_variable_set("@#{field}", BigDecimal("0"))
       end
-
       @fields_to_show = fields_to_show
-
     end
 
     def total
@@ -201,8 +197,9 @@ class ReportsController < ApplicationController
     def apply_results(add_result, subtract_result={})
       for field in add_result.keys
         var = "@#{field}"
-        old = instance_variable_get var
-        new = old + add_result[field].to_i - subtract_result[field].to_i
+        new = instance_variable_get var
+        new += BigDecimal(add_result[field].to_s) if add_result[field].present?
+        new -= BigDecimal(subtract_result[field].to_s) if subtract_result[field].present?
         instance_variable_set var, new
       end if add_result.present?
     end
