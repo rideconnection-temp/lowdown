@@ -8,7 +8,6 @@ class TripQuery
 
   def initialize(params, commit = nil)
     params ||= {}
-
     @commit          = commit
     @end_date        = params["end_date"] ? Date.parse(params["end_date"]) : Date.today
     @start_date      = params["start_date"] ? Date.parse(params["start_date"]) : @end_date - 5
@@ -33,8 +32,13 @@ class TripQuery
     @commit.try(:downcase) == "transfer trips" && @dest_allocation.present? && @dest_allocation != @allocation
   end
 
-  def csv?
-    @commit.present? && @commit.downcase.include?( "csv" )
+  def format
+    return if @commit.blank?
+    if @commit.downcase.include?("bpa")
+      "bpa"
+    elsif @commit.downcase.include?("csv")
+      "general"
+    end
   end
 end
 
@@ -52,7 +56,7 @@ class TripsController < ApplicationController
 
     @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project]).joins(:allocation).where(@query.conditions).order(:date,:trip_import_id)
 
-    if @query.csv?
+    if @query.format == 'general'
       unused_columns = ["id", "base_id", "trip_import_id", "allocation_id", 
                         "home_address_id", "pickup_address_id", 
                         "dropoff_address_id", "customer_id", "run_id"] 
@@ -67,14 +71,53 @@ class TripsController < ApplicationController
           Dropoff\ Name Dropoff\ Building Dropoff\ Address\ 1 Dropoff\ Address\ 2 Dropoff\ City Dropoff\ State Dropoff\ Postal\ Code}
 
         for trip in @trips.includes(:home_address)
-          csv << good_columns.map {|x| trip.send(x)} + [trip.customer.name, trip.allocation.name, trip.run.name] + address_fields(trip.home_address) + address_fields(trip.pickup_address) + address_fields(trip.dropoff_address)
+          csv << good_columns.map {|x| trip.send(x)} + [trip.customer.name, trip.allocation.name, trip.run.try(:name)] + address_fields(trip.home_address) + address_fields(trip.pickup_address) + address_fields(trip.dropoff_address)
         end
       end
       return send_data csv, :type => "text/csv", :filename => "trips.csv", :disposition => 'attachment'
-
+    elsif @query.format == 'bpa'
+      csv = ""
+      CSV.generate(csv) do |csv|
+        csv << %w{Trip\ Date First\ Name Last\ Name StartTime EndTime Minutes Share\ ID Ride\ Type Miles Cust\ Type Billed\ Amount Invoice\ Amount Apportioned\ Amount Difference Funding\ Source Fare In/Out Guest Attendant Mobility\ Type Completed Customer\ ID Project\ # Override Trip\ Purpose Program SPD\ Billing\ Miles Customer Total\ Trips Provider Service\ End\ Date}
+        for trip in @trips
+          csv << [
+            trip.date, 
+            trip.customer.first_name,
+            trip.customer.last_name,
+            trip.start_at.strftime("%I:%M %p"),
+            trip.end_at.strftime("%I:%M %p"),
+            trip.apportioned_duration,
+            trip.routematch_share_id,
+            trip.shared? ? 'Shared' : 'Indiv',
+            trip.apportioned_mileage,
+            trip.customer.customer_type,
+            trip.fare,
+            trip.calculated_bpa_fare,
+            trip.apportioned_fare,
+            (trip.calculated_bpa_fare - trip.fare),
+            trip.allocation.routematch_override.try(:split,'::').try(:slice,0),
+            trip.customer_pay,
+            trip.in_trimet_district ? 'TRUE' : 'FALSE',
+            trip.guest_count,
+            trip.attendant_count,
+            trip.mobility,
+            trip.result_code,
+            trip.customer.routematch_customer_id,
+            trip.allocation.project.project_number,
+            trip.allocation.routematch_override,
+            trip.purpose_type,
+            trip.allocation.program,
+            trip.estimated_trip_distance_in_miles,
+            1,
+            trip.guest_count + trip.attendant_count + 1,
+            trip.allocation.provider.name,
+            service_end_date(trip.date)
+          ]
+        end
+      end
+      return send_data csv, :type => "text/csv", :filename => "bpa_data.csv", :disposition => 'attachment'
     else
       @trips = @trips.paginate :page => params[:page], :per_page => 30
-      
     end
   end
   
@@ -200,5 +243,15 @@ class TripsController < ApplicationController
 
   def address_fields(address)
     [address.common_name, address.building_name, address.address_1, address.address_2, address.city, address.state, address.postal_code]
+  end
+
+  def service_end_date(date)
+    return date if date.blank? || !date.acts_like?(:date)
+    if date.day < 16
+      Date.new(date.year, date.month, 15)
+    else
+      d = date + 1.month
+      Date.new(d.year, d.month, 1) - 1.day   
+    end
   end
 end
