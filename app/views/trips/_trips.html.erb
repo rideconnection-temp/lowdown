@@ -12,6 +12,7 @@
       <th>Funding Source</th>
       <th>Pickup</th>
       <th>Dropoff</th>
+      <th>Google Route</th>
       <th>Customers Served</th>
       <th>Shared</th>
       <th>Run Name</th>
@@ -28,6 +29,7 @@
         <td><%= trip.allocation.project.funding_source if trip.allocation.project %></td>
         <td><%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
         <td><%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
+        <td><%= raw gmaps_route_link trip.pickup_address, trip.dropoff_address, "" %></td>
         <td><%= trip.customers_served %></td>
         <td>
           <% if trip.shared? %>

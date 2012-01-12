@@ -5,6 +5,13 @@ module ApplicationHelper
     
     "<a class=\"#{klass}\" href=\"http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=#{escaped_address}&sll=#{address.y_coordinate},#{address.x_coordinate}&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=#{escaped_address}&t=h&z=16\" title=\"#{address.full_address}\">#{address.display_name}</a>"
   end
+
+  def gmaps_route_link(start_address,end_address, klass)
+    escaped_start_address = URI.escape start_address.full_address 
+    escaped_end_address = URI.escape end_address.full_address 
+    "<a class=\"#{klass}\" href=\"http://maps.google.com/maps?saddr=#{escaped_start_address}&daddr=#{escaped_end_address}\">Route</a>"
+  end
+
   def flash_type(type)
    if flash[type]
       "<div id=\"flash\">
