@@ -27,7 +27,7 @@
         <!-- totals -->
         <tr>
           <th class="contrast" scope="row">County Totals</th>
-           <% total = controller.sum_ride_purposes(providers) %>
+           <% total = RidePurposeRow.sum(providers) %>
            <% for purpose in @trip_purposes %>
              <td><%= total.by_purpose[purpose] %></td>
            <% end %>
@@ -48,7 +48,7 @@
       <!-- grand totals -->
       <tr>
         <th class="contrast" scope="row">Grand  Totals</th>
-         <% total = controller.sum_ride_purposes(@counties) %>
+         <% total = RidePurposeRow.sum(@counties) %>
          <% for purpose in @trip_purposes %>
            <td><%= total.by_purpose[purpose] %></td>
          <% end %>
