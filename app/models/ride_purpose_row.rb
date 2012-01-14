@@ -26,37 +26,19 @@ class RidePurposeRow
   end
 
   def collect_by_trip(allocation, start_date, end_date)
-    sql = "select
-purpose_type as purpose, count(*) as trips from trips where result_code='COMP' 
-and allocation_id=? and date between ? and ? and valid_end = ?
-group by purpose_type; "
-
-    rows = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Trip.end_of_time]))
-
-    total = 0
+    rows = Trip.select("purpose_type as purpose, COUNT(*) as trips").group("purpose_type").completed.for_allocation(allocation).for_date_range(start_date, end_date).current_versions
     for row in rows
-      total += row['trips'].to_i
-      @by_purpose[TRIP_PURPOSE_TO_SUMMARY_PURPOSE[row['purpose']]] += row['trips'].to_i
+      @by_purpose['Total'] += row.trips.to_i
+      @by_purpose[TRIP_PURPOSE_TO_SUMMARY_PURPOSE[row['purpose']]] += row.trips.to_i
     end
-    @by_purpose["Total"] = total
   end
 
   def collect_by_summary(allocation, start_date, end_date)
-    sql = "select
-purpose, in_district_trips + out_of_district_trips as trips from
-summary_rows, summaries
-where summary_rows.summary_id = summaries.base_id and 
-allocation_id=? and period_start >= ? and period_end <= ? and summaries.valid_end = ?
-"
-
-    rows = ActiveRecord::Base.connection.select_all(bind([sql, allocation['id'], start_date, end_date, Summary.end_of_time]))
-
-    total = 0
+    rows = Summary.select("purpose, in_district_trips, out_of_district_trips").joins(:summary_rows).for_allocation(allocation).for_date_range(start_date, end_date).current_versions
     for row in rows
-      total += row['trips'].to_i
-      @by_purpose[row['purpose']] += row['trips'].to_i
+      @by_purpose["Total"] += (row['in_district_trips'].to_i + row['.out_of_district_trips'].to_i) 
+      @by_purpose[row['purpose']] += (row['in_district_trips'].to_i + row['out_of_district_trips'].to_i)
     end
-    @by_purpose["Total"] = total
   end
 
   def include_row(row)

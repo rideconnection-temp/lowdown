@@ -69,6 +69,8 @@ class Summary < ActiveRecord::Base
 
   scope :valid_range, lambda{|start_date, end_date| where("summaries.valid_start <= ? and summaries.valid_end > ?",start_date,end_date) } 
   scope :data_entry_complete, where(:complete => true)
+  scope :for_date_range, lambda {|start_date, end_date| where("summaries.period_start >= ? AND summaries.period_start < ?", start_date, end_date) }
+  scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
 
   def created_by
     return first_version.updater

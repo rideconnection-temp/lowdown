@@ -34,6 +34,8 @@ class Trip < ActiveRecord::Base
   scope :data_entry_complete, where(:complete => true)
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
   scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
+  scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
+  scope :for_date_range, lambda {|start_date, end_date| where("date >= ? AND date < ?", start_date, end_date) }
 
   RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 
