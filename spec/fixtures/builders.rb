@@ -7,14 +7,18 @@ Fixjour :verify => false do
       
     })
   end
+
+  define_builder(Allocation) do |klass, overrides|
+    klass.new({
+      :name => 'name',
+      :admin_ops_data => 'Prohibited',
+      :vehicle_maint_data => 'Prohibited'
+    })
+  end
   
   define_builder(Trip) do |klass, overrides|    
-    id = UUIDTools::UUID.timestamp_create().to_s
     klass.new({
-      :run         => new_run,
-      :bulk_import => true,
-      :id => id,
-      :base_id => id
+      :run         => new_run
     })
   end
 end
