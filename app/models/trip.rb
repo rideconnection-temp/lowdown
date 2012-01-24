@@ -36,6 +36,8 @@ class Trip < ActiveRecord::Base
   scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
   scope :for_date_range, lambda {|start_date, end_date| where("date >= ? AND date < ?", start_date, end_date) }
+  scope :without_no_shows, where("trips.result_code <> ?","NS")
+  scope :without_cancels, where("trips.result_code <> ?","CANC")
 
   RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 
@@ -107,7 +109,11 @@ private
     unless secondary_update 
       if completed? && (allocation.run_collection_method == 'trips')
         self.duration = ((end_at - start_at) / 60 ).to_i unless end_at.nil? || start_at.nil?
-        self.mileage = odometer_end - odometer_start unless odometer_end.nil? || odometer_start.nil?
+        if odometer_end.nil? || odometer_start.nil? || odometer_start == 0
+          self.mileage = bpa_billing_distance
+        else
+          self.mileage = odometer_end - odometer_start 
+        end
         if routematch_share_id.blank?
           self.apportioned_fare = fare unless fare.nil?
           self.apportioned_duration = duration unless duration.nil?

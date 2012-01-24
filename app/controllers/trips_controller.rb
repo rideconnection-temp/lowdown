@@ -76,9 +76,10 @@ class TripsController < ApplicationController
       end
       return send_data csv, :type => "text/csv", :filename => "trips.csv", :disposition => 'attachment'
     elsif @query.format == 'bpa'
+      @trips = @trips.without_cancels.without_no_shows 
       csv = ""
       CSV.generate(csv) do |csv|
-        csv << %w{Trip\ Date First\ Name Last\ Name StartTime EndTime Minutes Share\ ID Ride\ Type Miles Cust\ Type Billed\ Amount Invoice\ Amount Apportioned\ Amount Difference Funding\ Source Fare In/Out Guest Attendant Mobility\ Type Completed Customer\ ID Project\ # Override Trip\ Purpose Program SPD\ Billing\ Miles Customer Total\ Trips Provider Service\ End\ Date}
+        csv << %w{Trip\ Date First\ Name Last\ Name StartTime EndTime Minutes Share\ ID Ride\ Type Miles Cust\ Type Billed\ Amount Invoice\ Amount Apportioned\ Amount Difference Funding\ Source Fare In/Out Guest Attendant Mobility\ Type Completed Customer\ ID Project\ # Override Trip\ Purpose Program SPD\ Billing\ Miles Customer Total\ Trips Provider Service\ End\ Date Billing\ Distance}
         for trip in @trips
           csv << [
             trip.date, 
@@ -94,16 +95,16 @@ class TripsController < ApplicationController
             trip.fare,
             trip.calculated_bpa_fare,
             trip.apportioned_fare,
-            (trip.calculated_bpa_fare - trip.fare),
+            ((trip.calculated_bpa_fare || 0) - (trip.fare || 0)),
             trip.allocation.routematch_override.try(:split,'::').try(:slice,0),
             trip.customer_pay,
-            trip.in_trimet_district ? 'TRUE' : 'FALSE',
+            trip.in_trimet_district ? 'In' : 'Out',
             trip.guest_count,
             trip.attendant_count,
             trip.mobility,
             trip.result_code,
             trip.customer.routematch_customer_id,
-            trip.allocation.project.project_number,
+            trip.allocation.project.try(:project_number),
             trip.allocation.routematch_override,
             trip.purpose_type,
             trip.allocation.program,
@@ -111,7 +112,8 @@ class TripsController < ApplicationController
             1,
             trip.guest_count + trip.attendant_count + 1,
             trip.allocation.provider.name,
-            service_end_date(trip.date)
+            service_end_date(trip.date),
+            trip.bpa_billing_distance
           ]
         end
       end
