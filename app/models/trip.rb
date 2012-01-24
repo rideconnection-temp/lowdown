@@ -110,7 +110,11 @@ private
       if completed? && (allocation.run_collection_method == 'trips')
         self.duration = ((end_at - start_at) / 60 ).to_i unless end_at.nil? || start_at.nil?
         if odometer_end.nil? || odometer_start.nil? || odometer_start == 0
-          self.mileage = bpa_billing_distance
+          if bpa_billing_distance
+            self.mileage = bpa_billing_distance
+          elsif odometer_start == 0 && (odometer_end || 0) > 0
+            self.mileage = odometer_end - odometer_start 
+          end 
         else
           self.mileage = odometer_end - odometer_start 
         end
