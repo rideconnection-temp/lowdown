@@ -358,7 +358,7 @@ class ReportsController < ApplicationController
 
   def prep_edit
     @funding_subsource_names = [['<Select All>','']] + Project.funding_subsource_names
-    @providers = [['<Select All>','']] + Provider.all.map {|x| [x.name, x.id]}
+    @providers = [['<Select All>','']] + Provider.all.map {|x| [x.to_s, x.id]}
     @program_names = [['<Select All>','']] + Allocation.program_names
     @county_names = [['<Select All>','']] + Allocation.county_names
     @group_bys = Report::GroupBys.sort
