@@ -15,6 +15,9 @@
       <%= f.check_box :adjustment %>
       <%= f.label :adjustment, "Adjustments" %>
     </li>
+    <li>
+      <%= f.submit "View Report" %>
+    </li>
   </ol>
 
   <ol class="<%= ol_class %> adjustments<%= " hidden" unless report.adjustment? %>">
@@ -27,7 +30,3 @@
       <%= f.date_select :adjustment_end_date, :end_year => Time.now.year, :order => [:month, :year] %>
     </li>
   </ol>
-
-  <div class="actions">
-    <%= f.submit "View Report" %>
-  </div>
