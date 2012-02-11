@@ -4,13 +4,17 @@ class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :provider, :allocation, :dest_allocation, :commit
+  attr_accessor :start_date, :end_date, :provider, :allocation, :dest_allocation, :commit, :trip_import_id
 
   def initialize(params, commit = nil)
     params ||= {}
     @commit          = commit
-    @end_date        = params["end_date"] ? Date.parse(params["end_date"]) : Date.today
-    @start_date      = params["start_date"] ? Date.parse(params["start_date"]) : @end_date - 5
+    @trip_import_id  = params[:trip_import_id]
+    @all_dates       = params[:all_dates]
+    unless @all_dates = 1
+      @end_date      = params["end_date"] ? Date.parse(params["end_date"]) : Date.today
+      @start_date    = params["start_date"] ? Date.parse(params["start_date"]) : @end_date - 5
+    end
     @provider        = params[:provider]          
     @allocation      = params[:allocation]
     @dest_allocation = params[:dest_allocation]
@@ -25,6 +29,7 @@ class TripQuery
     d[:date]                     = start_date..end_date if start_date
     d["allocations.provider_id"] = provider if provider.present?
     d[:allocation_id]            = allocation if allocation.present?
+    d[:trip_import_id]           = trip_import_id if trip_import_id.present?
     d
   end
   
@@ -189,6 +194,7 @@ class TripsController < ApplicationController
   end
 
   def show_import
+    @trip_imports = TripImport.order("trip_imports.created_at DESC").paginate :page => params[:page], :per_page => 30
   end
 
   def import
@@ -196,7 +202,7 @@ class TripsController < ApplicationController
       redirect_to :action=>:show_import and return
     end
     file = params['file-import'].tempfile
-    processed = TripImport.new(:file_path=>file)
+    processed = TripImport.new(:file_path=>file,:file_name => params['file-import'].original_filename)
     if processed.save
       flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
       render 'show_import'
@@ -230,7 +236,6 @@ class TripsController < ApplicationController
   end
 
   def bulk_update
-
     start_date = Date.parse(params[:start_date])
     end_date = Date.parse(params[:end_date])
 
