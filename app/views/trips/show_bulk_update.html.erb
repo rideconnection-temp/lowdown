@@ -8,8 +8,9 @@
     <p>Mark all trips and runs complete for the following period:</p>
 
     <ol class="section first">
-      <li><%= label_tag :start_date, "Start Date:" %> <%= text_field_tag :start_date, nil, :class=>"datepicker" %></li>
-      <li><%= label_tag :end_date, "End Date:" %> <%= text_field_tag :end_date, nil, :class=>"datepicker" %></li>
+      <li><%= label_tag :start_date, "Start Date:" %> <%= text_field_tag :start_date, nil, :class=>"datepicker", :required => :required %></li>
+      <li><%= label_tag :end_date, "End Date:" %> <%= text_field_tag :end_date, nil, :class=>"datepicker", :required => :required %></li>
+      <li><%= label_tag :provider, "Provider:" %> <%= select_tag :provider_id, options_for_select(@providers), :required => :required %></li> 
     </ol>
 
     <div class="actions">

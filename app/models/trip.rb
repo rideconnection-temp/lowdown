@@ -32,9 +32,11 @@ class Trip < ActiveRecord::Base
 
   scope :completed, where(:result_code => 'COMP')
   scope :data_entry_complete, where(:complete => true)
+  scope :data_entry_not_complete, where(:complete => false)
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
   scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
+  scope :for_provider, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
   scope :for_date_range, lambda {|start_date, end_date| where("date >= ? AND date < ?", start_date, end_date) }
   scope :without_no_shows, where("trips.result_code <> ?","NS")
   scope :without_cancels, where("trips.result_code <> ?","CANC")

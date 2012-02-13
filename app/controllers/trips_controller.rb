@@ -11,7 +11,7 @@ class TripQuery
     @commit          = commit
     @trip_import_id  = params[:trip_import_id]
     @all_dates       = params[:all_dates]
-    unless @all_dates = 1
+    unless @all_dates == 1
       @end_date      = params["end_date"] ? Date.parse(params["end_date"]) : Date.today
       @start_date    = params["start_date"] ? Date.parse(params["start_date"]) : @end_date - 5
     end
@@ -232,15 +232,16 @@ class TripsController < ApplicationController
   end
 
   def show_bulk_update
-
+    @providers = [['Select a provider','']] + Provider.with_trip_data.map {|p| [p.to_s, p.id]}
   end
 
   def bulk_update
     start_date = Date.parse(params[:start_date])
-    end_date = Date.parse(params[:end_date])
+    end_date = Date.parse(params[:end_date]) + 1.day
+    provider_id = params[:provider_id].to_i
 
-    updated_runs = Run.current_versions.where(:complete => false, :date => start_date..end_date).update_all(:complete => true)
-    updated_trips = Trip.current_versions.where(:complete => false, :date => start_date..end_date).update_all(:complete => true)
+    updated_runs = Run.current_versions.data_entry_not_complete.for_date_range(start_date,end_date).for_provider(provider_id).update_all(:complete => true)
+    updated_trips = Trip.current_versions.data_entry_not_complete.for_date_range(start_date,end_date).for_provider(provider_id).update_all(:complete => true)
     flash[:notice] = "Updated #{updated_trips} trips records and #{updated_runs} run records"
 
     redirect_to :action=>:show_bulk_update
