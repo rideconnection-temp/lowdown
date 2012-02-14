@@ -205,11 +205,11 @@ class TripsController < ApplicationController
     processed = TripImport.new(:file_path=>file,:file_name => params['file-import'].original_filename)
     if processed.save
       flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
-      render 'show_import'
+      redirect_to :action => :show_import
     else
 #     TODO: make into a flash error
       flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
-      render 'show_import'
+      redirect_to :action => :show_import
     end
   end
 
@@ -244,7 +244,7 @@ class TripsController < ApplicationController
     updated_trips = Trip.current_versions.data_entry_not_complete.for_date_range(start_date,end_date).for_provider(provider_id).update_all(:complete => true)
     flash[:notice] = "Updated #{updated_trips} trips records and #{updated_runs} run records"
 
-    redirect_to :action=>:show_bulk_update
+    redirect_to :action => :show_bulk_update
   end
 
   private
