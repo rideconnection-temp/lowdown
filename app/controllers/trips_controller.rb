@@ -11,7 +11,7 @@ class TripQuery
     @commit          = commit
     @trip_import_id  = params[:trip_import_id]
     @all_dates       = params[:all_dates]
-    unless @all_dates == 1
+    unless @all_dates == "1"
       @end_date      = params["end_date"] ? Date.parse(params["end_date"]) : Date.today
       @start_date    = params["start_date"] ? Date.parse(params["start_date"]) : @end_date - 5
     end
