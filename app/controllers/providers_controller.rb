@@ -3,7 +3,7 @@ class ProvidersController < ApplicationController
   before_filter :get_drop_down_data, :only => [:new, :edit]
   
   def index
-    @providers = Provider.paginate :page => params[:page]
+    @providers = Provider.order(:name).paginate :page => params[:page]
   end
   
   def new

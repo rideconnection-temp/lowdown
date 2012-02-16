@@ -5,11 +5,13 @@ class Provider < ActiveRecord::Base
   validates :name, :presence => true
   validates :short_name, :length => { :maximum => 10 }
 
-  default_scope :order => :name
-
   scope :with_summary_data, where("id in (SELECT provider_id FROM allocations WHERE trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips')")
 
   scope :with_trip_data, where("id in (SELECT provider_id FROM allocations WHERE trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips')")
+
+  def self.subcontractor_names
+    self.select("DISTINCT subcontractor").where("COALESCE(subcontractor,'') <> ''").map {|p| p.subcontractor}
+  end
 
   def to_s
     if subcontractor == name

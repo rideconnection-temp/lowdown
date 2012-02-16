@@ -4,7 +4,7 @@ class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :provider, :allocation, :dest_allocation, :commit, :trip_import_id
+  attr_accessor :start_date, :end_date, :provider, :subcontractor, :allocation, :dest_allocation, :commit, :trip_import_id
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -16,6 +16,7 @@ class TripQuery
       @start_date    = params["start_date"] ? Date.parse(params["start_date"]) : @end_date - 5
     end
     @provider        = params[:provider]          
+    @subcontractor   = params[:subcontractor]          
     @allocation      = params[:allocation]
     @dest_allocation = params[:dest_allocation]
   end
@@ -24,13 +25,13 @@ class TripQuery
     false
   end
 
-  def conditions
-    d = {}
-    d[:date]                     = start_date..end_date if start_date
-    d["allocations.provider_id"] = provider if provider.present?
-    d[:allocation_id]            = allocation if allocation.present?
-    d[:trip_import_id]           = trip_import_id if trip_import_id.present?
-    d
+  def apply_conditions(trips)
+    trips = trips.for_date_range(start_date,end_date+1.day) if start_date.present? && end_date.present?
+    trips = trips.for_provider(provider) if provider.present?
+    trips = trips.for_allocation(allocation) if allocation.present?
+    trips = trips.for_import(import_id) if trip_import_id.present?
+    trips = trips.for_subcontractor(subcontractor) if subcontractor.present?
+    trips
   end
   
   def update_allocation?
@@ -55,11 +56,13 @@ class TripsController < ApplicationController
   end
 
   def list
-    @query       = TripQuery.new params[:trip_query], params[:commit]
-    @providers   = Provider.all
-    @allocations = Allocation.order(:name)
+    @query          = TripQuery.new params[:trip_query], params[:commit]
+    @providers      = Provider.order(:name).all
+    @subcontractors = Provider.subcontractor_names
+    @allocations    = Allocation.order(:name)
 
-    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project]).joins(:allocation).where(@query.conditions).order(:date,:trip_import_id)
+    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project]).joins(:allocation).order(:date,:trip_import_id)
+    @trips = @query.apply_conditions(@trips)
 
     if @query.format == 'general'
       unused_columns = ["id", "base_id", "trip_import_id", "allocation_id", 
@@ -81,7 +84,7 @@ class TripsController < ApplicationController
       end
       return send_data csv, :type => "text/csv", :filename => "trips.csv", :disposition => 'attachment'
     elsif @query.format == 'bpa'
-      @trips = @trips.without_cancels.without_no_shows 
+      @trips = @trips.completed
       csv = ""
       CSV.generate(csv) do |csv|
         csv << %w{Trip\ Date First\ Name Last\ Name StartTime EndTime Minutes Share\ ID Ride\ Type Miles Cust\ Type Billed\ Amount Invoice\ Amount Apportioned\ Amount Difference Funding\ Source Fare In/Out Guest Attendant Mobility\ Type Completed Customer\ ID Project\ # Override Trip\ Purpose Program SPD\ Billing\ Miles Customer Total\ Trips Provider Service\ End\ Date Billing\ Distance}
@@ -133,7 +136,7 @@ class TripsController < ApplicationController
     @providers   = Provider.with_trip_data
     
     if @query.update_allocation?
-      @completed_trips_count = Trip.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where( @query.conditions ).completed.first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
+      @completed_trips_count = @query.apply_conditions(Trip).current_versions.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").completed.first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
       if @completed_trips_count > 0
         @completed_transfer_count = params[:transfer_count].try(:to_i) || 0
         ratio = @completed_transfer_count/@completed_trips_count.to_f
@@ -145,14 +148,14 @@ class TripsController < ApplicationController
             if rc == 'COMP'
               this_transfer_count = @completed_transfer_count
             else
-              this_transfer_count = ((Trip.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(@query.conditions).where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
+              this_transfer_count = ((@query.apply_conditions(Trip).select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
             end
 
             trips_remaining = this_transfer_count
             @trips_transferred[rc] = 0
             # This is the maximum number of trips we'll need, if there are no guest or attendants. 
             # It may be fewer when guests & attendants are counted below
-            trips = Trip.where(:result_code => rc).current_versions.where( @query.conditions ).limit(this_transfer_count)
+            trips = @query.apply_conditions(Trip).where(:result_code => rc).current_versions.limit(this_transfer_count)
             if trips.present?
               for trip in trips
                 passengers = (trip.guest_count || 0) + (trip.attendant_count || 0) + 1
@@ -173,7 +176,7 @@ class TripsController < ApplicationController
     end
     @trip_count = {}
     Trip::RESULT_CODES.values.each do |rc|
-      @trip_count[rc] = Trip.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(@query.conditions).where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
+      @trip_count[rc] = @query.apply_conditions(Trip).select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
     end
   end
 
