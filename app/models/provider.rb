@@ -8,6 +8,7 @@ class Provider < ActiveRecord::Base
   scope :with_summary_data, where("id in (SELECT provider_id FROM allocations WHERE trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips')")
 
   scope :with_trip_data, where("id in (SELECT provider_id FROM allocations WHERE trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips')")
+  scope :default_order, order(:name,:subcontractor)
 
   def self.subcontractor_names
     self.select("DISTINCT subcontractor").where("COALESCE(subcontractor,'') <> ''").map {|p| p.subcontractor}

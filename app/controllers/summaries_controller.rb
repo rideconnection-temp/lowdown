@@ -50,7 +50,7 @@ class SummariesController < ApplicationController
       flash.now[:notice] = 'No search criteria set - showing default (past two months)'
     end
 
-    @providers = Provider.order(:name).all
+    @providers = Provider.default_order
     @summaries = Summary.current_versions.where(@query.conditions).includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start').paginate :page => params[:page]
   end
 

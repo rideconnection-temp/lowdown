@@ -14,7 +14,7 @@
     <ol class="section fourth">
       <li>
         <label>Providers:</label>
-        <%= f.collection_select :provider, @providers, :id, :name, :include_blank => true %>
+        <%= f.collection_select :provider, @providers, :id, :to_s, :include_blank => true %>
       </li>
     </ol>
 

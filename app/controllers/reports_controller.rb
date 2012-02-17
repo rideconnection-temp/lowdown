@@ -200,7 +200,7 @@ class ReportsController < ApplicationController
   end
 
   def show_create_age_and_ethnicity
-    @providers = Provider.order(:name).all
+    @providers = Provider.default_order
     @agencies = @providers.map { |x| "%s:%s" % [x.agency, x.branch] }
   end
 
@@ -358,7 +358,7 @@ class ReportsController < ApplicationController
 
   def prep_edit
     @funding_subsource_names = [['<Select All>','']] + Project.funding_subsource_names
-    @providers = [['<Select All>','']] + Provider.order(:name).all.map {|x| [x.to_s, x.id]}
+    @providers = [['<Select All>','']] + Provider.default_order.map {|x| [x.to_s, x.id]}
     @program_names = [['<Select All>','']] + Allocation.program_names
     @county_names = [['<Select All>','']] + Allocation.county_names
     @group_bys = Report::GroupBys.sort

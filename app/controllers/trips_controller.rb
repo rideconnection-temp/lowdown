@@ -59,7 +59,7 @@ class TripsController < ApplicationController
 
   def list
     @query          = TripQuery.new params[:trip_query], params[:commit]
-    @providers      = Provider.order(:name).all
+    @providers      = Provider.default_order
     @subcontractors = Provider.subcontractor_names
     @allocations    = Allocation.order(:name)
 
