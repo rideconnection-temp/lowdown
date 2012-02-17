@@ -8,14 +8,16 @@
       <li>
         <%= f.check_box :all_dates %> <%= f.label :all_dates %>
       </li>
-      <li>
-        <%= f.label :start_date, "Start Date:" %> 
-        <%= f.text_field :start_date, :class=>"datepicker" %>
-      </li>
-      <li>
-        <%= f.label :end_date, "End Date:" %> 
-        <%= f.text_field :end_date, :class=>"datepicker" %>
-      </li>
+      <div id="date_fields" <%= @query.all_dates ? "style='display:none'" : nil %>>
+        <li>
+          <%= f.label :start_date, "Start Date:" %> 
+          <%= f.text_field :start_date, :class=>"datepicker" %>
+        </li>
+        <li>
+          <%= f.label :end_date, "End Date:" %> 
+          <%= f.text_field :end_date, :class=>"datepicker" %>
+        </li>
+      </div>
       <li>
         <%= f.label :customer_first_name, "Customer first name contains:" %> 
         <%= f.text_field :customer_first_name %>
@@ -29,11 +31,11 @@
     <ol class="section fourth">
       <li>
         <%= f.label :provider, "Provider:" %> 
-        <%= f.collection_select :provider, @providers, :id, :name, :include_blank => true %>
+        <%= f.collection_select :provider, @providers, :id, :to_s, :include_blank => true %>
       </li>
       <li>
         <%= f.label :allocation, "Allocation:" %> 
-        <%= f.select :allocation, options_for_select( @allocations.map { |a| [a.name, a.id, {'data-provider-id' => a.provider_id } ] }), :include_blank => true %>
+        <%= f.select :allocation, options_for_select( @allocations.map { |a| [a.name, a.id, {'data-provider-id' => a.provider_id } ] },@query.allocation), :include_blank => true %>
       </li>
       <li>
         <%= f.label :subcontractor, "Subcontractor:" %> 

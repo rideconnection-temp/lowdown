@@ -36,6 +36,7 @@ class Trip < ActiveRecord::Base
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
   scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
+  scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
   scope :for_provider, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
   scope :for_subcontractor, lambda {|subcontractor| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id IN (SELECT id FROM providers where subcontractor = ?))",subcontractor)}
   scope :for_date_range, lambda {|start_date, end_date| where("date >= ? AND date < ?", start_date, end_date) }
