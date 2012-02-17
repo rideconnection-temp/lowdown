@@ -4,21 +4,23 @@ class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :provider, :subcontractor, :allocation, :dest_allocation, :commit, :trip_import_id
+  attr_accessor :all_dates, :start_date, :end_date, :provider, :subcontractor, :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id
 
   def initialize(params, commit = nil)
     params ||= {}
     @commit          = commit
     @trip_import_id  = params[:trip_import_id]
     @all_dates       = params[:all_dates]
-    unless @all_dates == "1"
-      @end_date      = params["end_date"] ? Date.parse(params["end_date"]) : Date.today
-      @start_date    = params["start_date"] ? Date.parse(params["start_date"]) : @end_date - 5
+    unless @all_dates == "1" 
+      @start_date    = params["start_date"] ? Date.parse(params["start_date"]) : (Date.today - 1.month - (Date.today.day - 1).days)
+      @end_date      = params["end_date"] ? Date.parse(params["end_date"]) : @start_date + 1.month - 1.day
     end
     @provider        = params[:provider]          
     @subcontractor   = params[:subcontractor]          
     @allocation      = params[:allocation]
     @dest_allocation = params[:dest_allocation]
+    @customer_first_name = params[:customer_first_name]
+    @customer_last_name  = params[:customer_last_name]
   end
 
   def persisted?
@@ -29,8 +31,10 @@ class TripQuery
     trips = trips.for_date_range(start_date,end_date+1.day) if start_date.present? && end_date.present?
     trips = trips.for_provider(provider) if provider.present?
     trips = trips.for_allocation(allocation) if allocation.present?
-    trips = trips.for_import(import_id) if trip_import_id.present?
+    trips = trips.for_import(trip_import_id) if trip_import_id.present?
     trips = trips.for_subcontractor(subcontractor) if subcontractor.present?
+    trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
+    trips = trips.for_customer_last_name_like(customer_last_name) if customer_last_name.present?
     trips
   end
   
