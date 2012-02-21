@@ -87,47 +87,7 @@ class TripsController < ApplicationController
       return send_data csv, :type => "text/csv", :filename => "trips.csv", :disposition => 'attachment'
     elsif @query.format == 'bpa'
       @trips = @trips.completed
-      csv = ""
-      CSV.generate(csv) do |csv|
-        csv << %w{Trip\ Date First\ Name Last\ Name StartTime EndTime Minutes Share\ ID Ride\ Type Miles Cust\ Type Billed\ Amount Invoice\ Amount Apportioned\ Amount Difference Funding\ Source Fare In/Out Guest Attendant Mobility\ Type Completed Customer\ ID Project\ # Override Trip\ Purpose Program SPD\ Billing\ Miles Customer Total\ Trips Provider Service\ End\ Date Billing\ Distance}
-        for trip in @trips
-          csv << [
-            trip.date, 
-            trip.customer.first_name,
-            trip.customer.last_name,
-            trip.start_at.strftime("%I:%M %p"),
-            trip.end_at.strftime("%I:%M %p"),
-            trip.apportioned_duration,
-            trip.routematch_share_id,
-            trip.shared? ? 'Shared' : 'Indiv',
-            trip.apportioned_mileage,
-            trip.customer.customer_type,
-            trip.fare,
-            trip.calculated_bpa_fare,
-            trip.apportioned_fare,
-            ((trip.calculated_bpa_fare || 0) - (trip.fare || 0)),
-            trip.allocation.routematch_override.try(:split,'::').try(:slice,0),
-            trip.customer_pay,
-            trip.in_trimet_district ? 'In' : 'Out',
-            trip.guest_count,
-            trip.attendant_count,
-            trip.mobility,
-            trip.result_code,
-            trip.customer.routematch_customer_id,
-            trip.allocation.project.try(:project_number),
-            trip.allocation.routematch_override,
-            trip.purpose_type,
-            trip.allocation.program,
-            trip.estimated_trip_distance_in_miles,
-            1,
-            trip.guest_count + trip.attendant_count + 1,
-            trip.allocation.provider.name,
-            service_end_date(trip.date),
-            trip.bpa_billing_distance
-          ]
-        end
-      end
-      return send_data csv, :type => "text/csv", :filename => "bpa_data.csv", :disposition => 'attachment'
+      render_csv "bpa_data", "bpa_index.csv"
     else
       @trips = @trips.paginate :page => params[:page], :per_page => 30
     end
@@ -258,13 +218,4 @@ class TripsController < ApplicationController
     [address.common_name, address.building_name, address.address_1, address.address_2, address.city, address.state, address.postal_code]
   end
 
-  def service_end_date(date)
-    return date if date.blank? || !date.acts_like?(:date)
-    if date.day < 16
-      Date.new(date.year, date.month, 15)
-    else
-      d = date + 1.month
-      Date.new(d.year, d.month, 1) - 1.day   
-    end
-  end
 end

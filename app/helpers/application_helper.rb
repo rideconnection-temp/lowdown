@@ -98,4 +98,21 @@ module ApplicationHelper
     date += 1.year if date.month > 6 
     "#{date.year-1}-#{date.strftime('%y')}"
   end
+
+  def service_end_date(date)
+    return date if date.blank? || !date.acts_like?(:date)
+    if date.day < 16
+      Date.new(date.year, date.month, 15)
+    else
+      d = date + 1.month
+      Date.new(d.year, d.month, 1) - 1.day   
+    end
+  end
+
+  def minutes_to_hours_colon_minutes(minutes_in)
+    return nil if minutes_in.nil?
+    hours_out = (minutes_in/60).to_i
+    minutes_out = minutes_in.modulo(60)
+    "%d:%02.2f" % [hours_out,minutes_out]
+  end
 end

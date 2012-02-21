@@ -15,4 +15,16 @@ class ApplicationController < ActionController::Base
   def test_exception_notification
       raise 'Testing, 1 2 3.'
   end
+
+  private 
+
+  def render_csv(file_name, template_name = nil)
+    headers["Content-Type"] ||= 'text/csv'
+    headers["Content-Disposition"] = "attachment; filename=\"#{file_name}.csv\"" 
+    if template_name.nil?
+      render :layout => false
+    else
+      render template_name, :layout => false
+    end
+  end
 end
