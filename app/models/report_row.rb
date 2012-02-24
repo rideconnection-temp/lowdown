@@ -327,7 +327,7 @@ start_date, end_date, end_date ]))
     end
 
     def collect_costs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
-      results = Trip.select("sum(fare) as funds, 0 as agency_other, 0 as donations")
+      results = Trip.select("sum(apportioned_fare) as funds, 0 as agency_other, 0 as donations")
       results = results.where(:allocation_id => allocation['id'])
       results = results.data_entry_complete unless pending
 

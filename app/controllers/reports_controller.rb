@@ -45,7 +45,7 @@ class ReportsController < ApplicationController
     filters[:provider_ids]            = @report.provider_ids            if @report.provider_list.present?
     filters[:program_names]           = @report.program_names           if @report.program_name_list.present?
     filters[:county_names]            = @report.county_names            if @report.county_name_list.present?
-    filters[:subcontractor_names]     = @report.subcontractor_names     if @report.subcontractor_names.present?
+    filters[:subcontractor_names]     = @report.subcontractor_names     if @report.subcontractor_name_list.present?
 
     do_report(groups, @group_fields, @report.start_date, @report.query_end_date, @report.allocations, @report.fields, @report.pending, @report.adjustment, @report.adjustment_start_date, @report.query_adjustment_end_date,filters)
   end
