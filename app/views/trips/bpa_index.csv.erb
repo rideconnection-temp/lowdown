@@ -1,6 +1,6 @@
 <% headers = %w{Trip\ Date First\ Name Last\ Name StartTime EndTime Duration Share\ ID Ride\ Type Miles Cust\ Type Billed\ Amount Invoice\ Amount Apportioned\ Amount Difference Funding\ Source Fare In/Out Guest Attendant Mobility\ Type Completed Customer\ ID Project\ # Override Trip\ Purpose Program SPD\ Billing\ Miles Customer Total\ Trips Provider Service\ End\ Date Billing\ Distance} %>
 <% csv = '' %>
-<% CSV.generate(csv,:row_sep => "\r\n") do |csv| %>
+<% raw(CSV.generate(csv,:row_sep => "\r\n") do |csv| %>
   <% csv << headers %>
   <% @trips.each do |trip| %>
     <% row = [
@@ -9,7 +9,7 @@
       trip.customer.last_name,
       trip.start_at.strftime("%I:%M %p"),
       trip.end_at.strftime("%I:%M %p"),
-      minutes_to_hours_colon_minutes(trip.apportioned_duration),
+      seconds_to_hours_colon_minutes_colon_seconds(trip.apportioned_duration),
       trip.routematch_share_id,
       trip.shared? ? 'Shared' : 'Indiv',
       trip.apportioned_mileage,
@@ -39,5 +39,4 @@
     ] %>
     <% csv << row %>
   <% end %>
-<% end %>
-<%= csv.html_safe %>
+<% end) %>

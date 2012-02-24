@@ -281,7 +281,7 @@ start_date, end_date, end_date ]))
     end
 
     def collect_runs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
-      results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/60.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/60.0 as driver_volunteer_hours, 0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
+      results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, 0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
       results = results.completed.where(:allocation_id => allocation['id'])
       results = results.data_entry_complete unless pending
 
@@ -295,7 +295,7 @@ start_date, end_date, end_date ]))
     end
 
     def collect_runs_by_run(allocation, start_date, end_date, pending=false, adjustment=false)
-      results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/60.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/60.0 as driver_volunteer_hours, sum(COALESCE((SELECT escort_count FROM runs where id = trips.run_id),0) * apportioned_duration)/60.0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
+      results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, sum(COALESCE((SELECT escort_count FROM runs where id = trips.run_id),0) * apportioned_duration)/3600.0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
       results = results.completed.where(:allocation_id => allocation['id'])
       results = results.data_entry_complete unless pending
 

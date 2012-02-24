@@ -109,10 +109,11 @@ module ApplicationHelper
     end
   end
 
-  def minutes_to_hours_colon_minutes(minutes_in)
-    return nil if minutes_in.nil?
-    hours_out = (minutes_in/60).to_i
-    minutes_out = minutes_in.modulo(60)
-    "%d:%02.2f" % [hours_out,minutes_out]
+  def seconds_to_hours_colon_minutes_colon_seconds(seconds_in)
+    return nil if seconds_in.nil?
+    hours_out   = (seconds_in / 3600).to_i
+    minutes_out = ((seconds_in - (hours_out * 3600)) / 60).to_i
+    seconds_out = (seconds_in - (hours_out * 3600) - (minutes_out * 60))
+    "%02d:%02d:%02d" % [hours_out,minutes_out,seconds_out]
   end
 end

@@ -115,7 +115,7 @@ private
   def set_duration_and_mileage
     unless secondary_update 
       if completed? && (allocation.run_collection_method == 'trips')
-        self.duration = ((end_at - start_at) / 60 ).to_i unless end_at.nil? || start_at.nil?
+        self.duration = (end_at - start_at).to_i unless end_at.nil? || start_at.nil?
         if odometer_end.nil? || odometer_start.nil? || odometer_start == 0
           if bpa_billing_distance
             self.mileage = bpa_billing_distance
@@ -153,8 +153,8 @@ private
     r = Trip.current_versions.completed.where(:routematch_share_id => rms_id, :date => date).order(:end_at,:created_at)
     # All these aggregates are run separately.  
     # could be optimized into one query with a custom SELECT statement.
-    trip_count   = r.count
-    ride_duration = ((r.maximum(:end_at) - r.minimum(:start_at)) / 60).to_i
+    trip_count    = r.count
+    ride_duration = (r.maximum(:end_at) - r.minimum(:start_at)).to_i
     ride_mileage  = r.maximum(:odometer_end) - r.minimum(:odometer_start)
     ride_cost     = r.sum(:fare)
     all_est_miles = r.sum(:estimated_trip_distance_in_miles)
@@ -173,8 +173,8 @@ private
 
       this_ratio = t.estimated_trip_distance_in_miles / all_est_miles
 
-      this_trip_duration = ((ride_duration.to_f * this_ratio) * 100).floor.to_f / 100
-      ride_duration_remaining = (ride_duration_remaining - this_trip_duration).round(2)
+      this_trip_duration = (ride_duration.to_f * this_ratio).floor
+      ride_duration_remaining = (ride_duration_remaining - this_trip_duration)
       t.apportioned_duration = this_trip_duration + ( trip_position == trip_count ? ride_duration_remaining : 0 )
 
       this_trip_mileage = ((ride_mileage * this_ratio) * 100).floor.to_f / 100 
