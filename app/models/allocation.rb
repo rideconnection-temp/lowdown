@@ -61,6 +61,10 @@ class Allocation < ActiveRecord::Base
     provider.try :name
   end
 
+  def subcontractor
+    provider.try :subcontractor
+  end
+
   scope :spd, includes(:project).where(:projects => {:funding_source => 'SPD'})
 
 end

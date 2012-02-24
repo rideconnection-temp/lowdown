@@ -140,6 +140,10 @@
       allocation.program
     end
 
+    def subcontractor
+      allocation.subcontractor
+    end
+
     def funding_source
       allocation.funding_source
     end

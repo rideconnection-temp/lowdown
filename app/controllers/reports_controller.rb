@@ -45,6 +45,7 @@ class ReportsController < ApplicationController
     filters[:provider_ids]            = @report.provider_ids            if @report.provider_list.present?
     filters[:program_names]           = @report.program_names           if @report.program_name_list.present?
     filters[:county_names]            = @report.county_names            if @report.county_name_list.present?
+    filters[:subcontractor_names]     = @report.subcontractor_names     if @report.subcontractor_names.present?
 
     do_report(groups, @group_fields, @report.start_date, @report.query_end_date, @report.allocations, @report.fields, @report.pending, @report.adjustment, @report.adjustment_start_date, @report.query_adjustment_end_date,filters)
   end
@@ -357,10 +358,11 @@ class ReportsController < ApplicationController
   private
 
   def prep_edit
-    @funding_subsource_names = [['<Select All>','']] + Project.funding_subsource_names
-    @providers = [['<Select All>','']] + Provider.default_order.map {|x| [x.to_s, x.id]}
-    @program_names = [['<Select All>','']] + Allocation.program_names
-    @county_names = [['<Select All>','']] + Allocation.county_names
+    @funding_subsource_names  = [['<Select All>','']] + Project.funding_subsource_names
+    @providers                = [['<Select All>','']] + Provider.default_order.map {|x| [x.to_s, x.id]}
+    @subcontractor_names      = [['<Select All>','']] + Provider.subcontractor_names
+    @program_names            = [['<Select All>','']] + Allocation.program_names
+    @county_names             = [['<Select All>','']] + Allocation.county_names
     @group_bys = Report::GroupBys.sort
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
@@ -401,6 +403,11 @@ class ReportsController < ApplicationController
       if filters.key?(:provider_ids) 
         where_strings << "provider_id IN (?)"
         where_params << filters[:provider_ids]
+      end
+      if filters.key? :subcontractor_names
+        results = results.joins(:provider)
+        where_strings << "providers.subcontractor IN (?)"
+        where_params << filters[:subcontractor_names]
       end
       if filters.key? :program_names
         where_strings << "program IN (?)"
