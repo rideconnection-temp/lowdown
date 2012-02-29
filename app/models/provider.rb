@@ -18,7 +18,7 @@ class Provider < ActiveRecord::Base
     if subcontractor == name
       name
     else
-      name << (subcontractor.present? ? " (through #{subcontractor})" : "")
+      name << (subcontractor.present? ? " (by #{subcontractor})" : "")
     end
   end
 
