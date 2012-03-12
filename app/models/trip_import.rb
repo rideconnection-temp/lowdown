@@ -63,7 +63,7 @@ private
         :trip_duration, :trip_mileage,
         :fare, :customer_pay, :trip_purpose_type, :guest_count, :attendant_count, :trip_mobility, 
         :calculated_bpa_fare, :bpa_driver_name, :volunteer_trip, :in_trimet_district, 
-        :bpa_billing_distance, :routematch_share_id, :override, 
+        :bpa_billing_distance, :routematch_share_id, :override, :original_override,
         :pickup_routematch_address_id, :pickup_common_name, :pickup_building_name, 
         :pickup_address_1, :pickup_address_2, :pickup_city, :pickup_state, :pickup_postal_code, 
         :pickup_x_coordinate, :pickup_y_coordinate, :pickup_in_trimet_district, 
@@ -278,6 +278,7 @@ private
             current_trip.bpa_billing_distance = record[:bpa_billing_distance]
             current_trip.routematch_share_id = record[:routematch_share_id]
             current_trip.override = record[:override]
+            current_trip.original_override = record[:original_override]
             current_trip.estimated_trip_distance_in_miles = record[:estimated_trip_distance_in_miles]
             current_trip.routematch_pickup_address_id = record[:pickup_routematch_address_id]
             current_trip.routematch_dropoff_address_id = record[:dropoff_routematch_address_id]

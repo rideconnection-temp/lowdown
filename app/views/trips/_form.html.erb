@@ -199,6 +199,17 @@
     </li>
 
     <li>
+      <%= f.label :original_override, "Original override:" %>
+      <p class="disabled-input">
+        <% if @trip.original_override %>
+          <%= @trip.original_override %>
+        <% else %>
+          &hellip;
+        <% end %>
+      </p>
+    </li>
+
+    <li>
       <%= f.label :estimated_trip_distance_in_miles, "Routematch Estimated Trip Distance:"  %>
       <p class="disabled-input">
         <% if @trip.estimated_trip_distance_in_miles %>
