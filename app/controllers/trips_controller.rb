@@ -99,18 +99,24 @@ class TripsController < ApplicationController
     
     if @query.update_allocation?
       @completed_trips_count = @query.apply_conditions(Trip).current_versions.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").completed.first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
-      if @completed_trips_count > 0
-        @completed_transfer_count = params[:transfer_count].try(:to_i) || 0
-        ratio = @completed_transfer_count/@completed_trips_count.to_f
+      @completed_transfer_count = params[:transfer_count].try(:to_i) || 0
+      @transfer_all = (params[:transfer_all] == '1' || params[:transfer_all] == true)
+      if @completed_trips_count > 0 || @transfer_all 
+        if @transfer_all
+          ratio = 1
+        else
+          ratio = @completed_transfer_count/@completed_trips_count.to_f
+        end
+        
         @trips_transferred = {}
         now = Trip.new.now_rounded
         
         Trip.transaction do
           Trip::RESULT_CODES.values.each do |rc|
-            if rc == 'COMP'
+            if rc == 'COMP' && !@transfer_all
               this_transfer_count = @completed_transfer_count
             else
-              this_transfer_count = ((@query.apply_conditions(Trip).select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
+              this_transfer_count = ((@query.apply_conditions(Trip).select("COALESCE(SUM(guest_count),0) AS g, COALESCE(SUM(attendant_count),0) AS a, COUNT(*) AS c").current_versions.where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
             end
 
             trips_remaining = this_transfer_count
@@ -132,7 +138,7 @@ class TripsController < ApplicationController
             end
           end
         end
-        
+
         @allocation = Allocation.find @query.dest_allocation
       end
     end

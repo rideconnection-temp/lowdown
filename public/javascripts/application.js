@@ -139,5 +139,14 @@ $(document).ready(function() {
       $('#date_fields').slideDown();
     }
   });
+  
+  // Hide the transfer count field if the user selects all trips
+  $('#transfer_all').change(function() {
+    if($('#transfer_all').attr("checked")) {
+      $('#transfer_count').slideUp();
+    } else {
+      $('#transfer_count').slideDown();
+    }
+  });
 
 });

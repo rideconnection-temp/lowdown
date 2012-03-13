@@ -1,5 +1,5 @@
 <div id="page-header">
-  <h1>Update Trip Allocations</h1>
+  <h1>Move Trips to a Different Allocation</h1>
 </div>
 
 <%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:update_allocation} do |f| %>
@@ -32,9 +32,13 @@
         <%= f.grouped_collection_select :dest_allocation, @providers, :active_trip_allocations, :name, :id, :name, {:prompt => '<Select Allocation>'} %>
       </li>
       
-      <li>
+      <li id="transfer_count">
         <%= label_tag :transfer_count, "Number of Completed Trips to Transfer" %>
         <%= text_field_tag :transfer_count %>
+      </li>
+      <li>
+        <%= label_tag :transfer_all, "Transfer all trips" %>
+        <%= check_box_tag :transfer_all %>
       </li>
       
       <li>
