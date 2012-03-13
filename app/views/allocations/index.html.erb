@@ -1,4 +1,5 @@
 <ul id="subnav" class="selfclear">
+  <li><%= link_to 'Download full list as CSV', allocations_path(:format => :csv) %></li>
   <li><%= link_to 'New Allocation', new_allocation_path, :class => :add if current_user.is_admin %></li>
 </ul>
 <div id="page-header">
