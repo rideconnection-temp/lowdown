@@ -435,18 +435,20 @@ class ReportsController < ApplicationController
     end
 
     allocations = group(group_fields, results)
-
     apply_to_leaves! allocations, group_fields.size do | allocationset |
       row = ReportRow.new fields
 
       for allocation in allocationset
         if allocation.respond_to? :period_start_date 
-          #this is not working for some reason?
           collection_start_date = allocation.period_start_date
           collection_end_date = allocation.period_end_date
+        else
+          collection_start_date = start_date
+          collection_end_date = end_date
+          # collection_start_date = adjustment ? adjustment_start_date : start_date
+          # collection_end_date   = adjustment ? adjustment_end_date : end_date
         end
-        collection_start_date = adjustment ? adjustment_start_date : start_date
-        collection_end_date   = adjustment ? adjustment_end_date : end_date
+
         if allocation.trip_collection_method == 'trips'
           row.collect_trips_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
         else
