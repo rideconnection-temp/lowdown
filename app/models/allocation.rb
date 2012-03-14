@@ -10,7 +10,7 @@ class Allocation < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true
   validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
   validates :vehicle_maint_data, :inclusion => { :in => DATA_OPTIONS }
-  validates_uniqueness_of :routematch_override, :constraint => :routematch_provider_code, :message => "and provider code have already been taken"
+  validates_uniqueness_of :routematch_override, :scope => :routematch_provider_code, :message => "and provider code have already been taken", :allow_blank => true
   
   self.per_page = 30
 
