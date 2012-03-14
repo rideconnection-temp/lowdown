@@ -37,7 +37,13 @@ module ApplicationHelper
   end
   
   def row_sort(k,v)
-      k.blank? ? [2, ""] : [1, k.to_s]
+    if k.blank?
+      [2, ""]
+    elsif k.class == Fixnum
+      [1, ("%04d" % k)]
+    else
+      [1, k.to_s]
+    end
   end
 
   def group_by_option_tag(value)
