@@ -33,7 +33,7 @@
       trip.estimated_trip_distance_in_miles,
       1,
       trip.guest_count + trip.attendant_count + 1,
-      trip.allocation.provider.name,
+      trip.allocation.provider.try(:subcontractor),
       service_end_date(trip.date),
       trip.bpa_billing_distance
     ] %>
