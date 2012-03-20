@@ -39,7 +39,7 @@ class PeriodAllocation
     @period_end_date = period_end_date
     @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
     @year = period_start_date.year
-    @month = period_start_date.month
+    @month = period_start_date.year * 100 + period_start_date.month
   end
 
   def method_missing(method_name, *args, &block)

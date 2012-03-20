@@ -125,7 +125,11 @@
     end
 
     def month
-      Date.new(allocation.year, allocation.month, 1).strftime "%Y %b"
+      m = allocation.month.to_s
+      this_year = m[0...4].to_i
+      this_month = m[4..5].to_i
+
+      Date.new(this_year, this_month, 1).strftime "%b %Y"
     end
 
     def allocation_name
