@@ -66,7 +66,7 @@
     </li>
 
     <li>
-      <%= f.label :routematch_share_id, "Routematch Share ID:" %>
+      <%= f.label :routematch_share_id, "Share ID:" %>
       <p class="disabled-input">
         <% if @trip.routematch_share_id %>
           <%= @trip.routematch_share_id %>
@@ -81,10 +81,10 @@
     </li>
 
     <li>
-      <%= f.label :run_id, "Run ID:" %>
+      <%= f.label :run_id, "Run:" %>
       <p class="disabled-input">
         <% if @trip.run_id %>
-          <%= @trip.run_id %>
+          <%= link_to @trip.run.display_name, @trip.run %>
           <% if !@trip.run_id.nil? %>
             <br />
             <%= link_to "View All Trips in this Run", url_for(:action=>:run, :id=>@trip.run_id) %>
@@ -139,15 +139,15 @@
     
     <li class="selfclear">
       <%= f.label :approved_rides, "Customer Approved Rides:" %>
-      <%= f.text_field :approved_rides, :type => "number" %>
+      <%= f.text_field :approved_rides, :type => "number", :size => 3 %>
     </li>
   </ol>
 
   <ol class="section second">
 
-    <li><%= f.label :odometer_start, "Odometer Start:" %> <%= f.text_field :odometer_start %></li>
+    <li><%= f.label :odometer_start, "Odometer Start:" %> <%= f.text_field :odometer_start, :size => 4 %></li>
 
-    <li><%= f.label :odometer_end, "Odometer End:" %> <%= f.text_field :odometer_end %></li>
+    <li><%= f.label :odometer_end, "Odometer End:" %> <%= f.text_field :odometer_end, :size => 4 %></li>
 
     <li>
       <%= f.label :mileage, "Mileage:" %>
@@ -160,7 +160,7 @@
       </p>
     </li>
 
-    <li><%= f.label :fare, "Fare:" %> <%= f.text_field :fare %></li>
+    <li><%= f.label :fare, "Fare:" %> <%= f.text_field :fare, :size => 4 %></li>
 
     <li><%= f.label :purpose_type, "Purpose Type:" %> <%= f.text_field :purpose_type %></li>
 
@@ -174,7 +174,7 @@
       <%= f.label :calculated_bpa_fare, "Calculated BPA Fare:" %>
       <p class="disabled-input">
         <% if @trip.calculated_bpa_fare %>
-          <%= @trip.calculated_bpa_fare %>
+          <%= number_to_currency(@trip.calculated_bpa_fare) %>
         <% else %>
           &hellip;
         <% end %>
@@ -210,7 +210,7 @@
     </li>
 
     <li>
-      <%= f.label :estimated_trip_distance_in_miles, "Routematch Estimated Trip Distance:"  %>
+      <%= f.label :estimated_trip_distance_in_miles, "Estimated Trip Distance:"  %>
       <p class="disabled-input">
         <% if @trip.estimated_trip_distance_in_miles %>
           <%= @trip.estimated_trip_distance_in_miles %>
@@ -235,13 +235,13 @@
 
     <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
 
-    <li><%= f.label :customer_pay, "Customer Pay:" %> <%= f.text_field :customer_pay %></li>
+    <li><%= f.label :customer_pay, "Customer Pay:" %> <%= f.text_field :customer_pay, :size => 4 %></li>
 
     <li>
       <%= f.label :duration, "Duration:" %>
       <p class="disabled-input">
         <% if @trip.duration %>
-          <%= @trip.duration %>
+          <%= pluralize(@trip.duration/60,'minute') %>
         <% else %>
           &hellip;
         <% end %>
@@ -252,7 +252,7 @@
       <%= f.label :apportioned_duration, "Apportioned Duration:" %>
       <p class="disabled-input">
         <% if @trip.apportioned_duration %>
-          <%= @trip.apportioned_duration %>
+          <%= pluralize((@trip.apportioned_duration/60).to_i,'minute') %>
         <% else %>
           &hellip;
         <% end %>
@@ -274,7 +274,7 @@
       <%= f.label :apportioned_fare, "Apportioned Fare:" %>
       <p class="disabled-input">
         <% if @trip.apportioned_fare %>
-          <%= @trip.apportioned_fare %>
+          <%= number_to_currency(@trip.apportioned_fare) %>
         <% else %>
           &hellip;
         <% end %>

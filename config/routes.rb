@@ -6,6 +6,7 @@ Lowdown::Application.routes.draw do
   resources :allocations
   resources :providers
   resources :projects
+  resources :runs
   
   resources :reports do
     collection do
