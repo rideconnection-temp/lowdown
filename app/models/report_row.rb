@@ -263,7 +263,7 @@ start_date, end_date, end_date ]))
         add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
 
         pending_where = pending ? "" : "complete=true and " 
-        undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where #{pending_where}allocation_id=? and valid_end=? and result_code = 'COMP' group by customer_id, year) as morx where date (year || '-' || month || '-' || 1)  between ? and ? "
+        undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where #{pending_where}allocation_id=? and valid_end=? and result_code = 'COMP' group by customer_id, year) as morx where date (year || '-' || month || '-' || 1) >= ? and date (year || '-' || month || '-' || 1) < ? "
         row = ActiveRecord::Base.connection.select_one(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.advance(:months=>6), end_date.advance(:months=>6)]))
         add_results['undup_riders'] = row['undup_riders'].to_i
 
