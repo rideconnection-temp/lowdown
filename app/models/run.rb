@@ -51,26 +51,33 @@ class Run < ActiveRecord::Base
       if trip_count > 0 
         ratio = 1 / trip_count.to_f
 
-        run_duration = (end_at - start_at)
-        run_mileage = odometer_end - odometer_start
-        
-        trip_duration = (run_duration * ratio).floor
-        trip_mileage = ((run_mileage * ratio) * 100).floor.to_f / 100
-        
-        run_duration_remaining = run_duration
-        run_mileage_remaining = run_mileage
+        unless end_at.nil? || start_at.nil?
+          run_duration = (end_at - start_at) 
+          trip_duration = (run_duration * ratio).floor
+          run_duration_remaining = run_duration
+        end
 
+        unless odometer_start.nil? || odometer_end.nil?
+          run_mileage = odometer_end - odometer_start 
+          trip_mileage = ((run_mileage * ratio) * 100).floor.to_f / 100
+          run_mileage_remaining = run_mileage
+        end
+        
         trip_position = 0
 
         for t in r
           trip_position += 1
           t.secondary_update = true
 
-          run_duration_remaining = (run_duration_remaining - trip_duration)
-          t.apportioned_duration = (trip_duration + (trip_position == trip_count ? run_duration_remaining : 0))
+          unless trip_duration.nil?
+            run_duration_remaining = (run_duration_remaining - trip_duration)
+            t.apportioned_duration = (trip_duration + (trip_position == trip_count ? run_duration_remaining : 0))
+          end
 
-          run_mileage_remaining = (run_mileage_remaining - trip_mileage).round(2)
-          t.apportioned_mileage = (trip_mileage + (trip_position == trip_count ? run_mileage_remaining : 0)).round(2)
+          unless trip_mileage.nil?
+            run_mileage_remaining = (run_mileage_remaining - trip_mileage).round(2)
+            t.apportioned_mileage = (trip_mileage + (trip_position == trip_count ? run_mileage_remaining : 0)).round(2)
+          end
 
           t.save!
         end
