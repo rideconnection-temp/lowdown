@@ -11,7 +11,7 @@ class Provider < ActiveRecord::Base
   scope :default_order, order(:name,:subcontractor)
 
   def self.subcontractor_names
-    self.select("DISTINCT subcontractor").where("COALESCE(subcontractor,'') <> ''").map {|p| p.subcontractor}
+    self.select("DISTINCT subcontractor").where("COALESCE(subcontractor,'') <> ''").order(:subcontractor).map {|p| p.subcontractor}
   end
 
   def to_s
