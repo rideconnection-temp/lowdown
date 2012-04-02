@@ -9,7 +9,7 @@
   <p>
     <span><strong>Service for the Month:</strong></span> 
     <%= f.date_select :start_date, :discard_day=>true %>
-    <%= f.collection_select :agency_branch, @agencies, :to_s, :to_s %>
+    <%= f.collection_select :provider, @providers, :to_s, :to_s %>
   </p>
 
   <div class="actions">

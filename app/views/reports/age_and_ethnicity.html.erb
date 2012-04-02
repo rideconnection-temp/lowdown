@@ -1,6 +1,8 @@
-<h1>A & E Report for: Month of <%= @start_date.month %> <%= @start_date.year %></h1>
+<div id="page-header">
+  <h1>A & E Report for: Month of <%= @start_date.strftime("%B %Y") %></h1>
+</div>
 
-<h2>Agency Name: <%= @agency %> <%= @branch %></h2>
+<h2>Partner Name: <%= @provider %></h2>
 
 <div>
 The following information about your clients / customers is for
@@ -12,31 +14,26 @@ eligibility for services.
 <tr>
   <th>Age:</th>
   <th>Current Month Unduplicated</th>
-  <th>Disability Disclosed</th>
   <th>YTD</th>
 </tr>
 <tr>
   <th>Unduplicated number of persons 60 years or older</th>
   <td><%= @current_month_unduplicated_old %></td>
-  <td><%= @disability_disclosed_old %></td>
   <td><%= @ytd_age_old %></td>
 </tr>
 <tr>
   <th>Unduplicated number of persons 59 years or younger</th>
   <td><%= @current_month_unduplicated_young %></td>
-  <td><%= @disability_disclosed_young %></td>
   <td><%= @ytd_age_young %></td>
 </tr>
 <tr>
   <th>Unduplicated number of persons age unknown</th>
   <td><%= @current_month_unduplicated_unknown %></td>
-  <td><%= @disability_disclosed_unknown %></td>
   <td><%= @ytd_age_unknown %></td>
 </tr>
 <tr>
   <th>Total unduplicated Individuals Served</th>
   <td><%= @current_month_unduplicated_young + @current_month_unduplicated_old + @current_month_unduplicated_unknown %></td>
-  <td><%= @disability_disclosed_young + @disability_disclosed_old + @disability_disclosed_unknown  %></td>
   <td><%= @ytd_age_young + @ytd_age_old + @ytd_age_unknown %></td>
 </tr>
 </table>

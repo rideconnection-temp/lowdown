@@ -201,16 +201,14 @@ class ReportsController < ApplicationController
   end
 
   def show_create_age_and_ethnicity
-    @providers = Provider.default_order
-    @agencies = @providers.map { |x| "%s:%s" % [x.agency, x.branch] }
+    @providers = Provider.default_order.map {|x| x.name}.uniq
   end
 
   def age_and_ethnicity
     @start_date = Date.new(params[:q]["start_date(1i)"].to_i, params[:q]["start_date(2i)"].to_i, 1)
+    @provider = params[:q][:provider]
 
-    @agency, @branch = params[:q][:agency_branch].split(":")
-
-    allocations = Allocation.joins(:provider).where(["agency = ? and branch = ? and exists(select id from trips where trips.allocation_id=allocations.id)", @agency, @branch])
+    allocations = Allocation.joins(:provider).where(["providers.name = ? and exists(select id from trips where trips.allocation_id=allocations.id)", @provider])
 
     if allocations.empty?
       flash[:notice] = "No allocations for this agency/branch"
@@ -239,24 +237,6 @@ class ReportsController < ApplicationController
       end
     end
 
-    #same, but w/disability
-    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "and month = ? and disabled=true",
-                                                          allocation_ids, Trip.end_of_time, 
-                                                          @start_date.advance(:months=>6).year, 
-                                                          @start_date.advance(:months=>6).month]))
-
-
-    @disability_disclosed_old = @disability_disclosed_young = @disability_disclosed_unknown = 0
-    for row in rows
-      if row['over60'] == 't'
-        @disability_disclosed_old = row['undup_riders'].to_i
-      elsif row['over60'] == 'f'
-        @disability_disclosed_young = row['undup_riders'].to_i
-      else
-        @disability_disclosed_unknown = row['undup_riders'].to_i
-      end
-    end
-
     #unduplicated by age ytd
     rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "",
                                                           allocation_ids, Trip.end_of_time, 
@@ -273,7 +253,6 @@ class ReportsController < ApplicationController
       end
     end
 
-
     #now, by ethnicity
     undup_riders_ethnicity_sql = undup_riders_sql % ["race", "race"]
     rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_ethnicity_sql % "and month = ?",
@@ -283,7 +262,7 @@ class ReportsController < ApplicationController
 
     @ethnicity = {}
     for row in rows
-      @ethnicity[row["race"]] = {"unduplicated" => row["unduplicated"]}
+      @ethnicity[row["race"] || 'Unknown'] = {"unduplicated" => row['undup_riders']}
     end
 
     #ethnicity ytd
@@ -292,13 +271,12 @@ class ReportsController < ApplicationController
                                                           @start_date.advance(:months=>6).year]))
 
     for row in rows
-      race = row["race"]
+      race = row["race"] || 'Unknown'
       if ! @ethnicity.member? race
         @ethnicity[race] = {"unduplicated" => 0}
       end
-      @ethnicity[race]["ytd"] = row["unduplicated"]
+      @ethnicity[race]["ytd"] = row['undup_riders']
     end
-
   end
 
   def show_create_spd_report
