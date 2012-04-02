@@ -11,7 +11,7 @@
       <%= f.label :end_month, "End Month:" %>
       <%= f.date_select :end_date, :order=>[:month,:year] %>
       <%= f.label :provider_id %>
-      <%= select_tag "provider_id", options_for_select([['<All Providers>','']] + Provider.all.map { |p| [p.name, p.id] }) %>
+      <%= select_tag "provider_id", options_for_select([['<All Providers>','']] + Provider.default_order.all.map { |p| [p.name, p.id] }) %>
     </p>
 
     <div class="actions">
