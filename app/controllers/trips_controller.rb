@@ -95,7 +95,7 @@ class TripsController < ApplicationController
   
   def update_allocation
     @query       = TripQuery.new params[:trip_query], params[:commit]
-    @providers   = Provider.with_trip_data
+    @providers   = Provider.order(:name).with_trip_data
     
     if @query.update_allocation?
       @completed_trips_count = @query.apply_conditions(Trip).current_versions.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").completed.first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
