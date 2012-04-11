@@ -8,6 +8,15 @@ $(document).ready(function() {
       return false;
   });
 
+  $('#error_explanation a.shrinker').click(function() {
+    var errDiv = $('#error_explanation');
+    if (errDiv.hasClass('shrinkable')) {
+      errDiv.removeClass('shrinkable').addClass('expandable');
+    } else {
+      errDiv.removeClass('expandable').addClass('shrinkable');
+    }
+  });
+
   // date picker
   $('.datepicker').datepicker({
       showOn: "button",
