@@ -23,6 +23,7 @@ class Summary < ActiveRecord::Base
 
   TripAttrs = [:total_miles,:turn_downs,:unduplicated_riders,:driver_hours_paid,:driver_hours_volunteer,:escort_hours_volunteer]
   
+  validates_uniqueness_of :allocation_id, :scope => :period_start, :message => "already in use in another summary for this month"
   validates :allocation_id, :presence => true
   validates :administrative_hours_volunteer, :numericality => true 
   validates :funds, :numericality => true
