@@ -7,6 +7,8 @@ Lowdown::Application.routes.draw do
   resources :providers
   resources :projects
   resources :runs
+  resources :trimet_providers
+  resources :trimet_programs
   
   resources :reports do
     collection do

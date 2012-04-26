@@ -21,9 +21,12 @@
       'Contract',
       'Admin/Ops Data',
       'Vehicle Maintenance Data',
+      'TriMet Provider',
+      'TriMet Program',
       'Inactivated Date'
 ] %>
 <% csv = '' %>
+<% require 'csv' %>
 <% raw(CSV.generate(csv,:row_sep => "\r\n") do |csv| %>
   <% csv << headers %>
   <% @allocations.each do |a| %>
@@ -50,6 +53,8 @@
       a.contract,
       a.admin_ops_data, 
       a.vehicle_maint_data,
+      a.trimet_provider.try(:name),
+      a.trimet_program.try(:name),
       a.inactivated_on
     ] %>
     <% csv << row %>

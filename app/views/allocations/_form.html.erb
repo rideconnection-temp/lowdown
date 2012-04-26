@@ -89,6 +89,16 @@
       </li>
 
       <li class="selfclear">
+        <%= form.label :trimet_provider_id, "TriMet Provider" %>
+        <%= form.collection_select :trimet_provider_id, @trimet_providers, :id, :name, {:include_blank => true} %>
+      </li>
+
+      <li class="selfclear">
+        <%= form.label :trimet_program_id, "TriMet Program" %>
+        <%= form.collection_select :trimet_program_id, @trimet_programs, :id, :name, {:include_blank => true} %>
+      </li>
+
+      <li class="selfclear">
         <%= form.label :inactivated_on %>
         <%= form.text_field :inactivated_on, :class => "datepicker" %>
       </li>

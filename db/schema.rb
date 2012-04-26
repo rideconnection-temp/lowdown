@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120312190028) do
+ActiveRecord::Schema.define(:version => 20120424191734) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -45,6 +45,8 @@ ActiveRecord::Schema.define(:version => 20120312190028) do
     t.string  "program"
     t.string  "admin_ops_data",           :limit => 15
     t.string  "vehicle_maint_data",       :limit => 15
+    t.integer "trimet_program_id"
+    t.integer "trimet_provider_id"
   end
 
   create_table "customers", :force => true do |t|
@@ -177,6 +179,20 @@ ActiveRecord::Schema.define(:version => 20120312190028) do
     t.integer "in_district_trips"
     t.integer "out_of_district_trips"
     t.integer "updated_by"
+  end
+
+  create_table "trimet_programs", :force => true do |t|
+    t.integer  "trimet_identifier"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "trimet_providers", :force => true do |t|
+    t.integer  "trimet_identifier"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "trip_imports", :force => true do |t|

@@ -10,7 +10,6 @@ class AllocationsController < ApplicationController
         @grouped_allocations = @allocations.group_by(&:provider_name)
       end
       format.csv
-
     end
   end
   
@@ -57,5 +56,7 @@ class AllocationsController < ApplicationController
     @trip_collection_methods   = Allocation.all.map(&:trip_collection_method).uniq
     @run_collection_methods    = Allocation.all.map(&:run_collection_method).uniq
     @cost_collection_methods   = Allocation.all.map(&:cost_collection_method).uniq
+    @trimet_providers          = TrimetProvider.default_order
+    @trimet_programs           = TrimetProgram.default_order
   end
 end

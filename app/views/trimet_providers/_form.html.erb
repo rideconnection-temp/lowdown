@@ -1,0 +1,20 @@
+<%= form_for(@trimet_provider) do |form| %>
+  <%= render "shared/error_messages", :target => @trimet_provider %>
+  
+  <fieldset>
+    <ol class="section ">
+      <li class="selfclear">
+        <%= form.label :name %>
+        <%= form.text_field :name %>
+      </li>
+      <li class="selfclear">
+        <%= form.label :trimet_identifier %>
+        <%= form.text_field :trimet_identifier, :size => 5 %>
+      </li>
+    </ol>
+    
+    <div class="actions">
+      <%= form.submit %>
+    </div>
+  </fieldset>
+<% end %>
