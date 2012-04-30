@@ -3,34 +3,27 @@
 </div>
 
 <% if @reports.size == 0 %>
-<p>No reports.</p>
+  <p>No reports.</p>
 <% end %>
 
 <ul id="all-reports">
-<% for report in @reports %>
+  <% for report in @reports %>
+    <li class="predefined-report" data-id="<%= report.id %>">
+      <%= form_for report, :html => { :method => 'delete' } do |f| %>
+        <span class="handle">[Reorder]</span>
+      
+        <%= link_to "Edit Report", edit_report_path(report), :class => "edit" %>
+        <input type="hidden" name="report[id]" value="<%= report.id %>" />
+        <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
+      <% end %>
 
-<li class="predefined-report" data-id="<%= report.id %>">
-  <%= form_for report, :html => { :method => 'delete' } do |f| %>
-  <span class="handle">[Reorder]</span>
-  
-    <%= link_to "Edit Report", edit_report_path(report), :class => "edit" %>
-    <input type="hidden" name="report[id]" value="<%= report.id %>" />
-    <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
+      <%= form_for report, :html => { :class => "run-report" } do |f| %>
+        <fieldset>
+          <h2 class="report-header"><%= report.name %></h2>
+          <%= content_tag :p, report.description if report.description.present? %>
+          <%= render "run_form", :f => f, :report => report, :ol_class => "" %>
+        </fieldset>
+      <% end %>
+    </li>
   <% end %>
-
-  <%= form_for report, :html => { :class => "run-report" } do |f| %>
-    <fieldset>
-      <h2 class="report-header"><%= report.name %></h2>
-      <%= content_tag :p, report.description if report.description.present? %>
-      <%= render "run_form", :f => f, :report => report, :ol_class => "" %>
-    </fieldset>
-  <% end %>
-
-</li>
-
-<% end %>
 </ul>
-
-<hr />
-
-<%= link_to 'Define New Report', new_report_path, :class=>'action-bttn' %>
