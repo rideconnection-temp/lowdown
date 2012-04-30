@@ -1,7 +1,7 @@
 <% if target.errors.any? %>
-  <div id="error_explanation" class="shrinkable">
+  <div id="error_explanation" class="expandable">
     <a class="shrinker" href="#"></a>
-    <h2><%= pluralize(target.errors.count, "error") %> prohibited this record from being saved</h2>
+    <h2><%= pluralize(target.errors.count, "error") %> prevented this record from being saved</h2>
     <ul>
       <% target.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
