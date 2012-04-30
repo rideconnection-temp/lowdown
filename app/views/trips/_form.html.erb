@@ -13,6 +13,11 @@
       </p>
     </li>
 
+    <li class="selfclear">
+      <%= f.label :customer_type, "Customer Type (this trip only):" %>
+      <%= f.select :customer_type, options_for_select(%w{Honored Adult Child}, @trip.customer_type), :include_blank => true %>
+    </li>
+      
     <li>
       <%= f.label :home_address, "Home Address:" %>
       <p class="disabled-input">

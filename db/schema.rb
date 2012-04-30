@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120426211817) do
+ActiveRecord::Schema.define(:version => 20120430192106) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -254,6 +254,7 @@ ActiveRecord::Schema.define(:version => 20120426211817) do
     t.string   "spd_office",                       :limit => 25
     t.boolean  "complete",                                                                      :default => false
     t.string   "original_override"
+    t.string   "customer_type"
   end
 
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"

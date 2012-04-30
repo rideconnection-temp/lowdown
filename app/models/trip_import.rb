@@ -290,6 +290,7 @@ private
             current_trip.pickup_address_id = current_pickup_id
             current_trip.dropoff_address_id = current_dropoff_id
             current_trip.customer_id = current_customer_id
+            current_trip.customer_type = record[:customer_type]
             current_trip.home_address_id = current_home_id
             current_trip.run_id = current_run_id
             current_trip.bulk_import = true
