@@ -271,7 +271,14 @@ private
             current_trip.guest_count = record[:guest_count]
             current_trip.attendant_count = record[:attendant_count]
             current_trip.mobility = record[:trip_mobility]
-            current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
+            if record[:calculated_bpa_fare] =~ /.;.+;./
+              fare_parts = record[:calculated_bpa_fare].split(";")
+              current_trip.calculated_bpa_fare = fare_parts[0].to_d
+              current_trip.minimum_cost = fare_parts[1].to_d
+              current_trip.free_miles = fare_parts[2].to_i
+            else
+              current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
+            end
             current_trip.bpa_driver_name = record[:bpa_driver_name]
             current_trip.volunteer_trip = make_boolean(record[:volunteer_trip])
             current_trip.in_trimet_district = make_boolean(record[:in_trimet_district])
