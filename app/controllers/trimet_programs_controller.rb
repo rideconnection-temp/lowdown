@@ -1,7 +1,7 @@
 class TrimetProgramsController < ApplicationController
   
   def index
-    @trimet_programs = TrimetProgram.paginate :page => params[:page]
+    @trimet_programs = TrimetProgram.default_order.paginate :page => params[:page]
   end
   
   def new
