@@ -55,7 +55,7 @@ class ReportsController < ApplicationController
 
     csv_string = CSV.generate do |csv|
       csv << ReportRow.fields(@report.fields)
-      apply_to_leaves! @results, @group_fields.size,  do | row |
+      apply_to_leaves!(@results, @group_fields.size) do | row |
         csv << row.csv(@report.fields)
         nil
       end
