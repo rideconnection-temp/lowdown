@@ -1,4 +1,5 @@
 Lowdown::Application.routes.draw do
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
   
@@ -9,6 +10,7 @@ Lowdown::Application.routes.draw do
   resources :runs
   resources :trimet_providers
   resources :trimet_programs
+  resources :trimet_report_groups
   
   resources :reports do
     collection do
