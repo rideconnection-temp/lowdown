@@ -58,5 +58,6 @@ class AllocationsController < ApplicationController
     @cost_collection_methods   = Allocation.all.map(&:cost_collection_method).uniq
     @trimet_providers          = TrimetProvider.default_order
     @trimet_programs           = TrimetProgram.default_order
+    @trimet_report_group       = TrimetReportGroup.default_order
   end
 end

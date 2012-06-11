@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120501001946) do
+ActiveRecord::Schema.define(:version => 20120607201457) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(:version => 20120501001946) do
     t.string  "vehicle_maint_data",       :limit => 15
     t.integer "trimet_program_id"
     t.integer "trimet_provider_id"
+    t.integer "trimet_report_group_id"
   end
 
   create_table "customers", :force => true do |t|
@@ -195,6 +196,12 @@ ActiveRecord::Schema.define(:version => 20120501001946) do
     t.datetime "updated_at"
   end
 
+  create_table "trimet_report_groups", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "trip_imports", :force => true do |t|
     t.string   "file_path"
     t.datetime "created_at"
@@ -281,6 +288,8 @@ ActiveRecord::Schema.define(:version => 20120501001946) do
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  add_foreign_key "allocations", ["trimet_report_group_id"], "trimet_report_groups", ["id"], :name => "allocations_trimet_report_group_id_fkey"
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 

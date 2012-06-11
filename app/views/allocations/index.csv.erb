@@ -23,6 +23,7 @@
       'Vehicle Maintenance Data',
       'TriMet Provider',
       'TriMet Program',
+      'TriMet E&D Report Group',
       'Inactivated Date'
 ] %>
 <% csv = '' %>
@@ -55,6 +56,7 @@
       a.vehicle_maint_data,
       a.trimet_provider.try(:name),
       a.trimet_program.try(:name),
+      a.trimet_report_group.try(:name),
       a.inactivated_on
     ] %>
     <% csv << row %>

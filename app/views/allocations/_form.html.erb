@@ -99,6 +99,11 @@
       </li>
 
       <li class="selfclear">
+        <%= form.label :trimet_report_group_id, "TriMet E&D Report Group" %>
+        <%= form.collection_select :trimet_report_group_id, @trimet_report_group, :id, :name, {:include_blank => true} %>
+      </li>
+
+      <li class="selfclear">
         <%= form.label :inactivated_on %>
         <%= form.text_field :inactivated_on, :class => "datepicker" %>
       </li>
