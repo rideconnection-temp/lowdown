@@ -6,7 +6,7 @@
       <%= f.label :customer, "Customer:" %>
       <p class="disabled-input">
         <% if @customer.name %>
-          <%= @customer.name %>
+          <%= link_to @customer.name, @customer %>
         <% else %>
           &hellip;
         <% end %>
@@ -238,7 +238,11 @@
 
     <li><%= f.label :result_code, "Result Code:" %> <%= f.select :result_code, Trip::RESULT_CODES %></li>
 
-    <li><%= f.label :allocation, "Allocation:" %> <%= f.collection_select :allocation_id, @allocations, :id, :name %></li>
+    <li>
+      <%= f.label :allocation, "Allocation:" %> 
+      <%= f.collection_select :allocation_id, @allocations, :id, :name %>
+      <%= link_to "Details", [:edit, @trip.allocation], :class => :details if @trip.allocation %>
+    </li>
 
     <li><%= f.label :customer_pay, "Customer Pay:" %> <%= f.text_field :customer_pay, :size => 4 %></li>
 
@@ -247,6 +251,28 @@
       <p class="disabled-input">
         <% if @trip.duration %>
           <%= pluralize(@trip.duration/60,'minute') %>
+        <% else %>
+          &hellip;
+        <% end %>
+      </p>
+    </li>
+
+    <li>
+      <%= f.label :minimum_cost, "Minimum Cost:" %> 
+      <p class="disabled-input">
+        <% if @trip.duration %>
+          <%= number_to_currency @trip.minimum_cost %>
+        <% else %>
+          &hellip;
+        <% end %>
+      </p>
+    </li>
+
+    <li>
+      <%= f.label :free_miles, "Free Miles:" %> 
+      <p class="disabled-input">
+        <% if @trip.free_miles %>
+          <%= @trip.free_miles %>
         <% else %>
           &hellip;
         <% end %>

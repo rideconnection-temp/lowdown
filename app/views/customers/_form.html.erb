@@ -40,7 +40,12 @@
       
       <li class="selfclear">
         <%= f.label :race, "Race:" %>
-	      <%= f.select :race, options_from_collection_for_select(Race.all, :name, :name, @customer.race), :include_blank => true %>
+        <%= f.text_field :race %>
+      </li>
+      
+      <li class="selfclear">
+        <%= f.label :veteran_status, "Veteran status:" %>
+        <%= f.text_field :veteran_status %>
       </li>
       
       <li class="selfclear">
@@ -50,7 +55,7 @@
       
       <li class="selfclear">
         <%= f.label :mobility, "Mobility:" %>
-	      <%= f.select :mobility, options_from_collection_for_select(Mobility.all, :name, :name, @customer.mobility), :include_blank => true %>
+        <%= f.text_field :mobility %>
       </li>
       
     </ol>

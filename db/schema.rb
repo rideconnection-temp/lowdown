@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120607201457) do
+ActiveRecord::Schema.define(:version => 20120611233221) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(:version => 20120607201457) do
     t.datetime "updated_at"
     t.string   "prime_number"
     t.boolean  "disabled"
+    t.string   "veteran_status"
   end
 
   create_table "mobilities", :force => true do |t|

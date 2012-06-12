@@ -49,7 +49,8 @@ private
 
   def import_file
 
-    headers = [:routematch_customer_id, :last_name, :first_name, :middle_initial, :sex, :race, :mobility, 
+    headers = [:routematch_customer_id, :last_name, :first_name, :middle_initial, 
+        :sex, :race, :mobility, :veteran_status,
         :telephone_1, :telephone_1_ext, :telephone_2, :telephone_2_ext, 
         :home_routematch_address_id, :home_common_name, :home_building_name, 
         :home_address_1, :home_address_2, :home_city, :home_state, :home_postal_code, 
@@ -79,10 +80,13 @@ private
     run_map = {}
     self.problems = ''
     self.import_start_time = Time.xmlschema(Time.now.xmlschema)
-    @record_count = 0
+    @record_count = -1
 
     # Check for bad allocation mappings before anything else.
     CSV.foreach(file_path, headers: headers, converters: :all) do |record|
+      @record_count += 1
+      next if @record_count == 0
+
       allocation_map_key = "#{record[:override]},#{record[:provider_code]}"
       if allocation_map.has_key?(allocation_map_key)
         current_allocation_id = allocation_map[allocation_map_key][:id]
@@ -104,12 +108,12 @@ private
     end
     return false unless self.problems == ''
 
+    @record_count = -1
     if import_errors.blank?
       ActiveRecord::Base.transaction do
         CSV.foreach(file_path, headers: headers, converters: :all) do |record|
-          
           @record_count += 1
-
+          next if @record_count == 0
           next if record[:routematch_customer_id].nil?
 
           # For each address in the import, make it overwrite the previous version in this database
@@ -149,6 +153,7 @@ private
             current_customer.sex = record[:sex]
             current_customer.race = record[:race]
             current_customer.mobility = record[:mobility]
+            current_customer.veteran_status = record[:veteran_status]
             current_customer.telephone_primary = record[:telephone_1]
             current_customer.telephone_primary_extension = record[:telephone_1_ext]
             current_customer.telephone_secondary = record[:telephone_2]
