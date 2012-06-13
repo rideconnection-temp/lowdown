@@ -150,14 +150,23 @@ private
   end
   
   def reapportion_trips_for_routematch_share_id(rms_id)
-    r = Trip.current_versions.completed.where(:routematch_share_id => rms_id, :date => date).order(:end_at,:created_at)
-    # All these aggregates are run separately.  
-    # could be optimized into one query with a custom SELECT statement.
-    trip_count    = r.count
-    ride_duration = (r.maximum(:end_at) - r.minimum(:start_at)).to_i
-    ride_mileage  = r.maximum(:odometer_end) - r.minimum(:odometer_start)
-    ride_cost     = r.sum(:fare)
-    all_est_miles = r.sum(:estimated_trip_distance_in_miles)
+    r = Trip.current_versions.completed.where(:routematch_share_id=>rms_id, :date=>date).order(:end_at,:created_at).all
+    debugger
+    trip_count    = r.size
+    ride_duration = (r.map(&:end_at).max - r.map(&:start_at).min).to_i
+    ride_mileage  = r.map(&:odometer_end).max - r.map(&:odometer_start).min
+    ride_cost     = r.sum(&:fare)
+    all_est_miles = r.sum(&:estimated_trip_distance_in_miles)
+    has_rate_data = (!r.map(&:free_miles).include?(nil)) && (!r.map(&:minimum_cost).include?(nil))
+    if has_rate_data
+      total_minimum_cost = r.sum(&:minimum_cost)
+      apportionable_per_mile_cost = ride_cost - total_minimum_cost
+      apportioned_minimum_cost = total_minimum_cost / trip_count 
+
+      total_free_miles = r.sum(&:free_miles)
+      billed_ride_mileage = ride_mileage = total_free_miles 
+
+    end
 
     # Keep a tally of apportionments made so any remainder can be applied to the last trip.
     ride_duration_remaining = ride_duration
@@ -181,7 +190,11 @@ private
       ride_mileage_remaining = (ride_mileage_remaining - this_trip_mileage).round(2)
       t.apportioned_mileage = this_trip_mileage + ( trip_position == trip_count ? ride_mileage_remaining : 0 )
 
-      this_trip_cost = ((ride_cost * this_ratio) * 100).floor.to_f / 100
+      if has_rate_data && ride_cost >= total_minimum_cost
+        this_trip_cost = apportioned_minimum_cost + (((apportionable_per_mile_cost * this_ratio) * 100).floor.to_f / 100) 
+      else
+        this_trip_cost = ((ride_cost * this_ratio) * 100).floor.to_f / 100
+      end
       ride_cost_remaining = (ride_cost_remaining - this_trip_cost).round(2)
       t.apportioned_fare = this_trip_cost + ( trip_position == trip_count ? ride_cost_remaining : 0 )
       t.do_not_version = true
