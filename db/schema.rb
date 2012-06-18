@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120611233221) do
+ActiveRecord::Schema.define(:version => 20120615062326) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -263,8 +263,7 @@ ActiveRecord::Schema.define(:version => 20120611233221) do
     t.boolean  "complete",                                                                      :default => false
     t.string   "original_override"
     t.string   "customer_type"
-    t.decimal  "minimum_cost",                                   :precision => 10, :scale => 2
-    t.integer  "free_miles"
+    t.decimal  "estimated_individual_fare",                      :precision => 10, :scale => 2
   end
 
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"

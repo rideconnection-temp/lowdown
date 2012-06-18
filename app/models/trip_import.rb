@@ -27,7 +27,7 @@ class CSV
     },
     money:  lambda { |f| 
       begin
-        f =~ /\d\.\d\d$/ ? BigDecimal.new(f) : f
+        f =~ /^\d+\.\d\d$/ ? BigDecimal.new(f) : f
       rescue
         f
       end
@@ -113,7 +113,7 @@ private
       ActiveRecord::Base.transaction do
         CSV.foreach(file_path, headers: headers, converters: :all) do |record|
           @record_count += 1
-          next if @record_count == 0
+          next if @record_count == 0 
           next if record[:routematch_customer_id].nil?
 
           # For each address in the import, make it overwrite the previous version in this database
@@ -276,11 +276,10 @@ private
             current_trip.guest_count = record[:guest_count]
             current_trip.attendant_count = record[:attendant_count]
             current_trip.mobility = record[:trip_mobility]
-            if record[:calculated_bpa_fare] =~ /.;.+;./
+            if record[:calculated_bpa_fare] =~ /^\d+\.\d\d;\d+\.\d\d$/
               fare_parts = record[:calculated_bpa_fare].split(";")
-              current_trip.calculated_bpa_fare = fare_parts[0].to_d
-              current_trip.minimum_cost = fare_parts[1].to_d
-              current_trip.free_miles = fare_parts[2].to_i
+              current_trip.calculated_bpa_fare = BigDecimal.new(fare_parts[0])
+              current_trip.estimated_individual_fare = BigDecimal.new(fare_parts[1])
             else
               current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
             end

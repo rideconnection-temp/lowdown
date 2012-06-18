@@ -122,6 +122,17 @@
       </p>
     </li>
     
+    <li>
+      <%= f.label :duration, "Duration:" %>
+      <p class="disabled-input">
+        <% if @trip.duration %>
+          <%= pluralize(@trip.duration/60,'minute') %>
+        <% else %>
+          &hellip;
+        <% end %>
+      </p>
+    </li>
+
     <li class="selfclear">
       <%= f.label :case_manager, "Case Manager:" %>
       <%= f.text_field :case_manager %>
@@ -165,15 +176,18 @@
       </p>
     </li>
 
+    <li>
+      <%= f.label :estimated_trip_distance_in_miles, "Estimated Trip Distance:"  %>
+      <p class="disabled-input">
+        <% if @trip.estimated_trip_distance_in_miles %>
+          <%= @trip.estimated_trip_distance_in_miles %>
+        <% else %>
+          &hellip;
+        <% end %>
+      </p>
+    </li>
+
     <li><%= f.label :fare, "Fare:" %> <%= f.text_field :fare, :size => 4 %></li>
-
-    <li><%= f.label :purpose_type, "Purpose Type:" %> <%= f.text_field :purpose_type %></li>
-
-    <li><%= f.label :guest_count, "Guest Count:" %> <%= f.text_field :guest_count, :size => 3 %></li>
-
-    <li><%= f.label :attendant_count, "Attendant Count:" %> <%= f.text_field :attendant_count, :size => 3 %></li>
-
-    <li><%= f.label :mobility, "Mobility:" %> <%= f.text_field :mobility %></li>
 
     <li>
       <%= f.label :calculated_bpa_fare, "Calculated BPA Fare:" %>
@@ -185,6 +199,25 @@
         <% end %>
       </p>
     </li>
+
+    <li>
+      <%= f.label :estimated_individual_fare, "Estimated Individual Fare:" %>
+      <p class="disabled-input">
+        <% if @trip.estimated_individual_fare %>
+          <%= number_to_currency(@trip.estimated_individual_fare) %>
+        <% else %>
+          &hellip;
+        <% end %>
+      </p>
+    </li>
+
+    <li><%= f.label :purpose_type, "Purpose Type:" %> <%= f.text_field :purpose_type %></li>
+
+    <li><%= f.label :guest_count, "Guest Count:" %> <%= f.text_field :guest_count, :size => 3 %></li>
+
+    <li><%= f.label :attendant_count, "Attendant Count:" %> <%= f.text_field :attendant_count, :size => 3 %></li>
+
+    <li><%= f.label :mobility, "Mobility:" %> <%= f.text_field :mobility %></li>
 
     <li><%= f.label :bpa_driver_name, "BPA Driver Name:" %> <%= f.text_field :bpa_driver_name %></li>
 
@@ -215,17 +248,6 @@
     </li>
 
     <li>
-      <%= f.label :estimated_trip_distance_in_miles, "Estimated Trip Distance:"  %>
-      <p class="disabled-input">
-        <% if @trip.estimated_trip_distance_in_miles %>
-          <%= @trip.estimated_trip_distance_in_miles %>
-        <% else %>
-          &hellip;
-        <% end %>
-      </p>
-    </li>
-
-    <li>
       <%= f.label :routematch_trip_id, 'Routematch Trip ID' %>
       <p class="disabled-input">
         <% if @trip.routematch_trip_id %>
@@ -245,39 +267,6 @@
     </li>
 
     <li><%= f.label :customer_pay, "Customer Pay:" %> <%= f.text_field :customer_pay, :size => 4 %></li>
-
-    <li>
-      <%= f.label :duration, "Duration:" %>
-      <p class="disabled-input">
-        <% if @trip.duration %>
-          <%= pluralize(@trip.duration/60,'minute') %>
-        <% else %>
-          &hellip;
-        <% end %>
-      </p>
-    </li>
-
-    <li>
-      <%= f.label :minimum_cost, "Minimum Cost:" %> 
-      <p class="disabled-input">
-        <% if @trip.duration %>
-          <%= number_to_currency @trip.minimum_cost %>
-        <% else %>
-          &hellip;
-        <% end %>
-      </p>
-    </li>
-
-    <li>
-      <%= f.label :free_miles, "Free Miles:" %> 
-      <p class="disabled-input">
-        <% if @trip.free_miles %>
-          <%= @trip.free_miles %>
-        <% else %>
-          &hellip;
-        <% end %>
-      </p>
-    </li>
 
     <li>
       <%= f.label :apportioned_duration, "Apportioned Duration:" %>
