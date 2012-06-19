@@ -4,19 +4,35 @@ class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :all_dates, :start_date, :end_date, :provider, :subcontractor, :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id
+  attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :subcontractor, 
+      :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id
 
   def initialize(params, commit = nil)
     params ||= {}
     @commit              = commit
-    @trip_import_id      = params[:trip_import_id]
-    @all_dates           = (params[:all_dates] == "1")
-    @start_date          = params["start_date"] ? Date.parse(params["start_date"]) : (Date.today - 1.month - (Date.today.day - 1).days)
-    @end_date            = params["end_date"] ? Date.parse(params["end_date"]) : @start_date + 1.month - 1.day
-    @provider            = params[:provider]
-    @subcontractor       = params[:subcontractor]          
-    @allocation          = params[:allocation]
-    @dest_allocation     = params[:dest_allocation]
+    @trip_import_id      = params[:trip_import_id].present? ? params[:trip_import_id].to_i : nil
+    @all_dates           = (params[:all_dates] == "1" || params[:all_dates] == true)
+    @start_date          = Date.parse(params["start_date"]) if params["start_date"].present?
+    @end_date            = Date.parse(params["end_date"]) if params["end_date"].present?
+    if @start_date.blank? || @end_date.blank?
+      if params['date_range'] == "semimonthly" 
+        if Date.today.day > 15
+          @start_date = Date.today - Date.today.day + 1.day
+          @end_date   = @start_date + 14.days
+        else
+          @end_date   = Date.today - Date.today.day
+          @start_date = @end_date - @end_date.day + 16.days
+        end
+      else
+        @start_date   = Date.today - 1.month - Date.today.day + 1.day
+        @end_date     = @start_date + 1.month - 1.day
+      end
+    end
+    @after_end_date      = @end_date + 1.day
+    @provider            = params[:provider].present? ? params[:provider].to_i : nil
+    @subcontractor       = params[:subcontractor]
+    @allocation          = params[:allocation].present? ? params[:allocation].to_i : nil
+    @dest_allocation     = params[:dest_allocation].present? ? params[:dest_allocation].to_i : nil
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
   end
@@ -26,11 +42,11 @@ class TripQuery
   end
 
   def apply_conditions(trips)
-    trips = trips.for_date_range(start_date,end_date+1.day) if start_date.present? && end_date.present? && !all_dates
+    trips = trips.for_date_range(start_date,after_end_date) if !all_dates
     trips = trips.for_provider(provider) if provider.present?
+    trips = trips.for_subcontractor(subcontractor) if subcontractor.present?
     trips = trips.for_allocation_id(allocation) if allocation.present?
     trips = trips.for_import(trip_import_id) if trip_import_id.present?
-    trips = trips.for_subcontractor(subcontractor) if subcontractor.present?
     trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
     trips = trips.for_customer_last_name_like(customer_last_name) if customer_last_name.present?
     trips
@@ -203,19 +219,25 @@ class TripsController < ApplicationController
   end
 
   def show_bulk_update
-    @providers = [['Select a provider','']] + Provider.with_trip_data.map {|p| [p.to_s, p.id]}
+    params[:trip_query] = {} if params[:trip_query].blank?
+    params[:trip_query][:date_range] = 'semimonthly'
+    @query     = TripQuery.new params[:trip_query]
+    @providers = [['Select a provider','']] + Provider.with_trip_data.default_order.map {|p| [p.to_s, p.id]}
+    @incomplete_trips = {}
+    Provider.with_trip_data.default_order.each do |p|
+      trip_count = Trip.for_date_range(@query.start_date,@query.after_end_date).for_provider(p.id).data_entry_not_complete.count
+      @incomplete_trips[p] = trip_count unless trip_count == 0
+    end
   end
 
   def bulk_update
-    start_date = Date.parse(params[:start_date])
-    end_date = Date.parse(params[:end_date]) + 1.day
-    provider_id = params[:provider_id].to_i
-
-    updated_runs = Run.current_versions.data_entry_not_complete.for_date_range(start_date,end_date).for_provider(provider_id).update_all(:complete => true)
-    updated_trips = Trip.current_versions.data_entry_not_complete.for_date_range(start_date,end_date).for_provider(provider_id).update_all(:complete => true)
-    flash[:notice] = "Updated #{updated_trips} trips records and #{updated_runs} run records"
-
-    redirect_to :action => :show_bulk_update
+    @query = TripQuery.new params[:trip_query]
+    unless @query.provider.blank?
+      updated_runs = Run.current_versions.data_entry_not_complete.for_date_range(@query.start_date,@query.after_end_date).for_provider(@query.provider).update_all(:complete => true)
+      updated_trips = Trip.current_versions.data_entry_not_complete.for_date_range(@query.start_date,@query.after_end_date).for_provider(@query.provider).update_all(:complete => true)
+      flash[:notice] = "Updated #{updated_trips} trips records and #{updated_runs} run records"
+    end
+    redirect_to :action => :show_bulk_update, :trip_query => params[:trip_query]
   end
 
   private

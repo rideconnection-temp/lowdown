@@ -795,6 +795,34 @@ table tr.sum-totals td {
 table tr.sum-totals td:last-child {
     border-right: 0;
 }
+table#data-entry-not-complete {
+  width: 300px;
+}
+
+
+/* 
+ * Definition Lists
+ */
+dl {
+    border-bottom: 1px solid black;
+}
+dt {
+    clear: left;
+    float: left;
+    width: 200px;
+    margin: 0;
+    padding: 5px;
+    border-top: 1px solid black;
+    font-weight: bold;
+}
+dt+dd { 
+    border-top: 1px solid black; 
+}
+dd {
+    margin-left: 210px;
+    padding: 5px;
+}
+
 
 /*
  *
