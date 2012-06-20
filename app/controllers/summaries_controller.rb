@@ -85,20 +85,8 @@ class SummariesController < ApplicationController
     if @query.conditions.first.empty?
       flash[:alert] = "Cannot update without date range"
     else
-      for summary in Summary.current_versions.find(:all, :conditions=>@query.conditions)
-        next if summary.complete            
-        updated += 1
-        old_rows = summary.summary_rows.map &:clone
-        summary.complete = true
-        summary.save!
-        prev = summary.previous
-        for row in old_rows
-          row.summary_id=prev.id
-          row.save!
-        end
-      end
+      updated = Summary.current_versions.where(@query.conditions).data_entry_not_complete.update_all(:complete => true)
       flash[:alert] = "Updated #{updated} records"
-
     end
     redirect_to :action => :index, :summary_query => params[:summary_query]
   end

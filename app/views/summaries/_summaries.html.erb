@@ -1,6 +1,6 @@
 <h2 id="result-count"><%= @summaries.total_entries %> summaries found.</h2>
 <% if @summaries.total_entries > 0 %>
-  <%= link_to 'Mark All Complete', { :action => :bulk_update, :summary_query => params[:summary_query] }, :class=>'mark-complete' %>
+  <%= link_to 'Mark Data Entry Complete For All', { :action => :bulk_update, :summary_query => params[:summary_query] }, :class=>'mark-complete' %>
   <div class="list-wrapper">
     <table id="summary-results">
      <thead>
