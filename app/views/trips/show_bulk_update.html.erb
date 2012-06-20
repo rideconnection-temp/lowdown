@@ -5,7 +5,7 @@
 <%= form_for @query, :html=>{:id=>"trip-filter", :method=>:post}, :url=>{:action=>:bulk_update} do |f| %>
   <fieldset>
 
-    <p>Mark all trips and runs complete for the following period:</p>
+    <p>Mark data entry complete for all trips and runs for the following date range and provider:</p>
 
     <ol class="section first">
       <li><%= f.label :start_date, "Start Date:" %> <%= f.text_field :start_date, :class=>"datepicker", :required => :required %></li>
