@@ -23,7 +23,6 @@ class Summary < ActiveRecord::Base
 
   TripAttrs = [:total_miles,:turn_downs,:unduplicated_riders,:driver_hours_paid,:driver_hours_volunteer,:escort_hours_volunteer]
   
-  validates_uniqueness_of :allocation_id, :scope => :period_start, :message => "already in use in another summary for this month"
   validates :allocation_id, :presence => true
   validates :administrative_hours_volunteer, :numericality => true 
   validates :funds, :numericality => true
@@ -37,6 +36,9 @@ class Summary < ActiveRecord::Base
   validates_size_of :vehicle_maint, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Prohibited'}, :wrong_length => "should be blank"
 
   validate do |record|
+    if Summary.where("base_id <> COALESCE(?,0)",record.base_id).where(:period_start => record.period_start,:allocation_id => record.allocation_id).exists?
+      record.errors.add :allocation_id, "already in use in another summary for this month"
+    end
     record.summary_rows.each do |row|
       if record.allocation.try(:trip_collection_method) == 'summary_rows' 
         unless row.in_district_trips.is_a? Numeric
@@ -70,6 +72,7 @@ class Summary < ActiveRecord::Base
 
   scope :valid_range, lambda{|start_date, end_date| where("summaries.valid_start <= ? and summaries.valid_end > ?",start_date,end_date) } 
   scope :data_entry_complete, where(:complete => true)
+  scope :data_entry_not_complete, where(:complete => false)
   scope :for_date_range, lambda {|start_date, end_date| where("summaries.period_start >= ? AND summaries.period_start < ?", start_date, end_date) }
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
 
@@ -111,5 +114,7 @@ private
   def fix_period_end
     self.period_end = self.period_start.next_month - 1.day
   end
+
+
 
 end

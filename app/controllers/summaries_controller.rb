@@ -85,20 +85,8 @@ class SummariesController < ApplicationController
     if @query.conditions.first.empty?
       flash[:alert] = "Cannot update without date range"
     else
-      for summary in Summary.current_versions.find(:all, :conditions=>@query.conditions)
-        next if summary.complete            
-        updated += 1
-        old_rows = summary.summary_rows.map &:clone
-        summary.complete = true
-        summary.save!
-        prev = summary.previous
-        for row in old_rows
-          row.summary_id=prev.id
-          row.save!
-        end
-      end
+      updated = Summary.current_versions.where(@query.conditions).data_entry_not_complete.update_all(:complete => true)
       flash[:alert] = "Updated #{updated} records"
-
     end
     redirect_to :action => :index, :summary_query => params[:summary_query]
   end
@@ -112,18 +100,18 @@ class SummariesController < ApplicationController
   def update
     old_version = Summary.find(params[:summary][:id])
     @summary = old_version.current_version
-    prev = @summary.previous
 
     @providers = Provider.with_summary_data.order(:name).all
     @versions = @summary.versions.reverse
 
     #gather up the old row objects
-    old_rows = @summary.summary_rows.map &:clone if prev
+    old_rows = @summary.summary_rows.map &:clone 
 
     @summary.attributes = params[:summary]
     if @summary.save
       #this created a new prior version, to which we want to reassign the
       #newly-created old-valued summary rows
+      prev = @summary.previous
       if prev
         for row in old_rows
           row.summary_id=prev.id
