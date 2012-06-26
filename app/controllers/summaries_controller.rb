@@ -47,7 +47,6 @@ class SummariesController < ApplicationController
       @query.period_start = @query.period_end.prev_month
       params[:summary_query] = {:period_start => @query.period_start.to_s,
         :period_end => @query.period_end.to_s}
-      flash.now[:notice] = 'No search criteria set - showing default (past two months)'
     end
 
     @providers = Provider.default_order
