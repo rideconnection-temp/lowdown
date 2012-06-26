@@ -69,7 +69,7 @@ class SummariesController < ApplicationController
       render(:action => :new)
     end
     if @summary.save
-      redirect_to(:action=>:show_update, :id=>@summary.id)
+      redirect_to(:action=>:edit, :id=>@summary.id)
     else
       prep_edit
       render(:action => :new)
@@ -89,7 +89,7 @@ class SummariesController < ApplicationController
     redirect_to :action => :index, :summary_query => params[:summary_query]
   end
 
-  def show_update
+  def edit
     @summary = Summary.find params[:id]
     prep_edit
     @versions = @summary.versions.reverse
@@ -131,9 +131,9 @@ class SummariesController < ApplicationController
           SummaryRow.create(:summary_id=>@summary.id)
         end
       end
-      redirect_to(:action=>:show_update, :id=>@summary)
+      redirect_to(:action=>:edit, :id=>@summary)
     else
-      render(:action => :show_update)
+      render(:action => :edit)
     end
   end
   
@@ -148,7 +148,7 @@ class SummariesController < ApplicationController
     
       redirect_to :action => :index, :notice => "Summary successfully deleted"
     else
-      render :action => :show_update, :notice => "All previous versions must be deleted first"
+      render :action => :edit, :notice => "All previous versions must be deleted first"
     end 
   end
 
@@ -160,7 +160,7 @@ class SummariesController < ApplicationController
       @summary.delete # avoid callbacks or else delete will be halted
     end
     
-    redirect_to :action => :show_update, :id => @summary.base_id
+    redirect_to :action => :edit, :id => @summary.base_id
   end
 
 private

@@ -33,7 +33,7 @@
          <td class="number"><%= summary.driver_hours_volunteer %></td>
          <td class="number"><%= (summary.driver_hours_volunteer || 0 ) + (summary.driver_hours_paid || 0) %></td>
          <td class="number"><%= summary.unduplicated_riders %></td>
-         <td><%= link_to 'Details', :action=>:show_update, :id=>summary.id %></td>
+         <td><%= link_to 'Details', :action=>:edit, :id=>summary.id %></td>
        </tr>
        <% end %>
      </tbody>
