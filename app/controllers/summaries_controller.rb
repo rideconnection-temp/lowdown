@@ -53,7 +53,7 @@ class SummariesController < ApplicationController
     @summaries = Summary.current_versions.where(@query.conditions).includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start').paginate :page => params[:page]
   end
 
-  def show_create
+  def new
     @summary = Summary.new
     
     POSSIBLE_TRIP_PURPOSES.each do |purpose|
@@ -67,13 +67,13 @@ class SummariesController < ApplicationController
     @summary = Summary.new(params[:summary])
     if ! @summary.summary_rows.size == POSSIBLE_TRIP_PURPOSES.size * 2
       flash.now[:alert] = "You must fill in all summary rows (even if just with zeros)"
-      render(:action => :show_create)
+      render(:action => :new)
     end
     if @summary.save
       redirect_to(:action=>:show_update, :id=>@summary.id)
     else
       @providers = Provider.with_summary_data.order(:name).all
-      render(:action => :show_create)
+      render(:action => :new)
     end
   end
 
