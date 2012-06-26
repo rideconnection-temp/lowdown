@@ -7,7 +7,7 @@
     <ol class="section summary-form-part-one">
       <li>
         <%= f.label :allocation_id, "Allocation:" %> 
-        <%= f.grouped_collection_select :allocation_id, @providers, :active_non_trip_allocations, :name, :id, :name, {:prompt => '<Select Allocation>'}, {:tabindex=>1} %>
+        <%= f.select :allocation_id, grouped_options_for_select(@grouped_allocations,@summary.allocation_id), {:prompt => '<Select Allocation>'}, {:tabindex=>1} %>
       </li>
       <li>
         <label>Summary Month:</label> 
