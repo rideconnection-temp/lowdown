@@ -53,9 +53,9 @@ class AllocationsController < ApplicationController
   private
   
   def get_drop_down_data
-    @trip_collection_methods   = Allocation.all.map(&:trip_collection_method).uniq
-    @run_collection_methods    = Allocation.all.map(&:run_collection_method).uniq
-    @cost_collection_methods   = Allocation.all.map(&:cost_collection_method).uniq
+    @trip_collection_methods   = TRIP_COLLECTION_METHODS
+    @run_collection_methods    = RUN_COLLECTION_METHODS 
+    @cost_collection_methods   = COST_COLLECTION_METHODS
     @trimet_providers          = TrimetProvider.default_order
     @trimet_programs           = TrimetProgram.default_order
     @trimet_report_group       = TrimetReportGroup.default_order

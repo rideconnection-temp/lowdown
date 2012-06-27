@@ -24,13 +24,13 @@ class Summary < ActiveRecord::Base
   TripAttrs = [:total_miles,:turn_downs,:unduplicated_riders,:driver_hours_paid,:driver_hours_volunteer,:escort_hours_volunteer]
   
   validates :allocation_id, :presence => true
-  validates :administrative_hours_volunteer, :numericality => true 
-  validates :funds, :numericality => true
-  validates :donations, :numericality => true
-  validates :agency_other, :numericality => true
+  validates_numericality_of :administrative_hours_volunteer, :unless => Proc.new {|rec| rec.allocation.try(:cost_collection_method) == 'none'}
+  validates_numericality_of :funds,                          :unless => Proc.new {|rec| rec.allocation.try(:cost_collection_method) == 'none'}
+  validates_numericality_of :donations,                      :unless => Proc.new {|rec| rec.allocation.try(:cost_collection_method) == 'none'}
+  validates_numericality_of :agency_other,                   :unless => Proc.new {|rec| rec.allocation.try(:cost_collection_method) == 'none'}
   validates_numericality_of :administrative, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'} 
-  validates_numericality_of :operations, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'} 
-  validates_numericality_of :vehicle_maint, :if => Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Required'} 
+  validates_numericality_of :operations,     :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'} 
+  validates_numericality_of :vehicle_maint,  :if => Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Required'} 
   validates_size_of :administrative, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Prohibited'}, :wrong_length => "should be blank"
   validates_size_of :operations, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Prohibited'}, :wrong_length => "should be blank"
   validates_size_of :vehicle_maint, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Prohibited'}, :wrong_length => "should be blank"
