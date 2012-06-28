@@ -49,7 +49,7 @@
       a.trip_collection_method,
       a.run_collection_method,
       a.cost_collection_method,
-      a.routematch_override,
+      a.override.try(:name),
       a.routematch_provider_code,
       a.contract,
       a.admin_ops_data, 

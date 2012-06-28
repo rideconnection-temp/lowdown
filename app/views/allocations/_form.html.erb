@@ -64,8 +64,9 @@
       </li>
       
       <li class="selfclear">
-        <%= form.label :routematch_override %>
-        <%= form.text_field :routematch_override, :size => 60 %>
+        <%= form.label :override_id, "RouteMatch override code" %>
+        <%= form.collection_select :override_id, Override.default_order, :id, :name, :include_blank => true %>
+        <%= link_to "Details", [:edit, @allocation.override], :class => :details if @allocation.override %>
       </li>
       
       <li class="selfclear">

@@ -3,7 +3,7 @@ class AllocationsController < ApplicationController
   before_filter :get_drop_down_data, :only => [:new, :edit]
   
   def index
-    @allocations = Allocation.includes(:project, :provider).order('providers.name, allocations.name')
+    @allocations = Allocation.includes(:project, :provider, :override).order('providers.name, allocations.name')
     respond_to do |format|
       format.html do
         @allocations = @allocations.paginate :page => params[:page]

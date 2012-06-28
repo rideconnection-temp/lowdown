@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120615062326) do
+ActiveRecord::Schema.define(:version => 20120627204422) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(:version => 20120615062326) do
     t.integer "trimet_program_id"
     t.integer "trimet_provider_id"
     t.integer "trimet_report_group_id"
+    t.integer "override_id"
   end
 
   create_table "customers", :force => true do |t|
@@ -77,6 +78,12 @@ ActiveRecord::Schema.define(:version => 20120615062326) do
   end
 
   create_table "mobilities", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "overrides", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -289,7 +296,7 @@ ActiveRecord::Schema.define(:version => 20120615062326) do
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
-  add_foreign_key "allocations", ["trimet_report_group_id"], "trimet_report_groups", ["id"], :name => "allocations_trimet_report_group_id_fkey"
+  add_foreign_key "allocations", ["override_id"], "overrides", ["id"], :name => "allocations_override_id_fkey"
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 

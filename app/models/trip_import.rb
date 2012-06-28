@@ -91,7 +91,7 @@ private
       if allocation_map.has_key?(allocation_map_key)
         current_allocation_id = allocation_map[allocation_map_key][:id]
       else
-        current_allocation = Allocation.where(:routematch_override => record[:override].to_s, 
+        current_allocation = Allocation.joins(:override).where(:overrides => {:name => record[:override].to_s}, 
             :routematch_provider_code => record[:provider_code]).first
         if current_allocation.nil?
           import_errors_key = "#{record[:override]}|#{record[:provider_code]}"

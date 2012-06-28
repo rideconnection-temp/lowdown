@@ -79,7 +79,7 @@ class TripsController < ApplicationController
     @subcontractors = Provider.subcontractor_names
     @allocations    = Allocation.order(:name)
 
-    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project]).joins(:allocation).order(:date,:trip_import_id)
+    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project,:override]).joins(:allocation).order(:date,:trip_import_id)
     @trips = @query.apply_conditions(@trips)
 
     if @query.format == 'general'

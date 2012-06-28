@@ -6,6 +6,7 @@ class Allocation < ActiveRecord::Base
   belongs_to :trimet_provider
   belongs_to :trimet_program
   belongs_to :trimet_report_group
+  belongs_to :override
   
   DATA_OPTIONS = %w( Required Prohibited )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
@@ -13,7 +14,7 @@ class Allocation < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true
   validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
   validates :vehicle_maint_data, :inclusion => { :in => DATA_OPTIONS }
-  validates_uniqueness_of :routematch_override, :scope => :routematch_provider_code, :message => "and provider code have already been taken", :allow_blank => true
+  validates_uniqueness_of :override_id, :scope => :routematch_provider_code, :message => "and provider code have already been taken", :allow_blank => true
   validate  :require_consistent_trimet_fields
   
   self.per_page = 30
