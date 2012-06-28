@@ -123,7 +123,7 @@ class ReportsController < ApplicationController
     for trip in trips
       row_key = [trip.customer_id, trip.wheelchair?]
       customer = trip.customer
-      office_key = trip.spd_office
+      office_key = trip.case_manager_office
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
 
       row = @customer_rows[office_key][row_key]
@@ -306,7 +306,7 @@ class ReportsController < ApplicationController
 
       row_key = [trip.customer_id, wheelchair]
       customer = trip.customer
-      office_key = customer.spd_office
+      office_key = customer.case_manager_office
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
 
       row = @customer_rows[office_key][row_key]
