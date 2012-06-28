@@ -4,7 +4,7 @@ def bind(args)
   return ActiveRecord::Base.__send__(:sanitize_sql_for_conditions, args, '')
 end
 
-class ReportsController < ApplicationController
+class FlexReportsController < ApplicationController
 
   before_filter :require_admin_user, :except=>[:csv, :new, :create, :age_and_ethnicity, :show_create_age_and_ethnicity, :report, :index, :quarterly_narrative_report, :show_create_quarterly, :show_create_active_rider]
 
@@ -14,20 +14,20 @@ class ReportsController < ApplicationController
   ]
 
   def index
-    @reports = Report.all
+    @reports = FlexReport.all
   end
 
   def new
-    @report      = Report.new(params[:report])
+    @report      = FlexReport.new(params[:flex_report])
     prep_edit
   end
 
   def create
-    @report = Report.new_from_params params
+    @report = FlexReport.new_from_params params
 
     if @report.save
       flash[:notice] = "Saved #{@report.name}"
-      redirect_to edit_report_path(@report)
+      redirect_to edit_flex_report_path(@report)
     else
       prep_edit
       render :action => :new
@@ -36,9 +36,9 @@ class ReportsController < ApplicationController
 
   # the results of the report
   def show
-    @report       = Report.find params[:id]
+    @report       = FlexReport.find params[:id]
     @group_fields = @report.group_by.split(",")
-    groups        = @group_fields.map { |f| Report::GroupMappings[f] }
+    groups        = @group_fields.map { |f| FlexReport::GroupMappings[f] }
     @groups_size  = groups.size
     filters       = {}
     filters[:funding_subsource_names] = @report.funding_subsource_names if @report.funding_subsource_name_list.present?
@@ -65,19 +65,19 @@ class ReportsController < ApplicationController
   end
 
   def edit
-    @report      = Report.find params[:id]
+    @report      = FlexReport.find params[:id]
     prep_edit
   end
 
   def update
-    @report      = Report.find params[:id]
+    @report      = FlexReport.find params[:id]
 
-    if @report.update_attributes params[:report]
+    if @report.update_attributes params[:flex_report]
       if params[:commit].downcase.match /view/
-        redirect_to report_path(@report)
+        redirect_to flex_report_path(@report)
       else
         flash[:notice] = "Saved #{@report.name}"
-        redirect_to edit_report_path(@report.id)
+        redirect_to edit_flex_report_path(@report.id)
       end
     else
       prep_edit
@@ -86,14 +86,14 @@ class ReportsController < ApplicationController
   end
 
   def destroy
-    report = Report.destroy params[:id]
+    report = FlexReport.destroy params[:id]
     flash[:notice] = "Deleted #{report.name}"
     redirect_to :action => :index
   end
   
   def sort
-    params[:reports].each do |id, index|
-      Report.update_all(['position=?', index], ['id=?', id])
+    params[:flex_reports].each do |id, index|
+      FlexReport.update_all(['position=?', index], ['id=?', id])
     end
     render :nothing => true
   end
@@ -105,7 +105,7 @@ class ReportsController < ApplicationController
       params[:report][:start_date] = quarter_start - 3.months
       params[:report][:end_date] = quarter_start - 1.months
     end
-    @report = Report.new(params[:report])
+    @report = FlexReport.new(params[:report])
   end
   
   def show_create_active_rider
@@ -186,7 +186,7 @@ class ReportsController < ApplicationController
   end
 
   def quarterly_narrative_report
-    @report = Report.new(params[:report])
+    @report = FlexReport.new(params[:report])
     @report.end_date = @report.end_date + 1.month - 1.day
     allocations = Allocation.find_all_by_provider_id(params[:provider_id]) if params[:provider_id].present?
 
@@ -341,7 +341,7 @@ class ReportsController < ApplicationController
     @subcontractor_names      = [['<Select All>','']] + Provider.subcontractor_names
     @program_names            = [['<Select All>','']] + Allocation.program_names
     @county_names             = [['<Select All>','']] + Allocation.county_names
-    @group_bys = Report::GroupBys.sort
+    @group_bys = FlexReport::GroupBys.sort
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
     end

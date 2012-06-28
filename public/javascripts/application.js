@@ -60,7 +60,7 @@ $(document).ready(function() {
         order[ $(this).data("id") ] = index;
       });
       
-      $.post("reports/sort", {reports : order});
+      $.post("flex_reports/sort", {flex_reports : order});
     }
   });
   

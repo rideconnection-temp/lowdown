@@ -316,7 +316,7 @@ body {
     background: #fff;
     color: #009FFB;
 }
-body.reports #primary-nav li.reports a:link, body.reports #primary-nav li.reports a:visited,
+body.flex-reports #primary-nav li.flex-reports a:link, body.flex-reports #primary-nav li.flex-reports a:visited,
 body.summaries #primary-nav li.summaries a:link, body.summaries #primary-nav li.summaries a:visited,
 body.trips #primary-nav li.trips a:link, body.trips #primary-nav li.trips a:visited,
 body.runs #primary-nav li.runs a:link, body.runs #primary-nav li.runs a:visited,
@@ -656,7 +656,7 @@ form div.actions input[type="submit"]:hover {
 
 /* Report Form */
 
-body.reports fieldset ol.section li input {
+body.flex-reports fieldset ol.section li input {
   max-width: 100%;
 }
 
@@ -1037,7 +1037,7 @@ a.action-bttn:active {
   background: #eee url(images/plus.png) 0.8em center no-repeat scroll;
 }
 /* trip */
-body.reports a.action-bttn {
+body.flex-reports a.action-bttn {
     background: #eee url(images/report--plus.png) 0.8em center no-repeat scroll;
 }
 body.users a.action-bttn {
@@ -1049,14 +1049,14 @@ body.users a.action-bttn {
  * Reports
  *
  */
-ul.reports {
+ul.flex-reports {
     list-style: none;
     margin-left: 0;
 }
-ul.reports li {
+ul.flex-reports li {
     margin: 0 0 10px;
 }
-ul.reports li a {
+ul.flex-reports li a {
     padding: 5px 0 5px 20px;
     text-decoration: none;
     background: url(images/reports-stack.png) left center no-repeat scroll;
@@ -1103,19 +1103,19 @@ textarea#report_description {
 span.month-range {
   font-size: 23px;
 }
-li.predefined-report {
+li.flex-report {
     position: relative;
 }
-li.predefined-report form.run-report {
+li.flex-report form.run-report {
   clear: none;
 }
-li.predefined-report form.edit_report {
+li.flex-report form.edit_flex_report {
   display : block;
   float : right;
   margin : 0 10px -30px 0;
 }
 
-li.predefined-report a.edit {
+li.flex-report a.edit {
   font-size: 11px;
   line-height: 21px;
   margin-right : 5px;
@@ -1139,28 +1139,28 @@ ul#all-reports {
 	padding : 0;
 	margin : 0;
 }
-li.predefined-report {
+li.flex-report {
 	list-style : none;
 }
 
-li.predefined-report span.handle {
+li.flex-report span.handle {
   font-size : 11px;
   color : #0081CC;
   cursor: move;
   margin-right : 10px;
 }
 
-li.predefined-report ol {
+li.flex-report ol {
     list-style: none;
     margin: 0 0 10px;
     float: left;
 }
-li.predefined-report ol li {
+li.flex-report ol li {
     float: left;
     margin-right: 20px;
 }
 
-li.predefined-report form.run-report input[type="submit"] {
+li.flex-report form.run-report input[type="submit"] {
     background: #0081CC;
     color: #fff;
     font-size: 15px;
@@ -1172,7 +1172,7 @@ li.predefined-report form.run-report input[type="submit"] {
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
-li.predefined-report form.run-report input[type="submit"]:hover {
+li.flex-report form.run-report input[type="submit"]:hover {
     background: #009FFB;
 }
 

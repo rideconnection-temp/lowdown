@@ -58,7 +58,7 @@
           <span id="group-by-custom-wrapper">
             <span class="template">
               <select>
-                <% Report::GroupMappings.keys.sort.each do |key| %>
+                <% FlexReport::GroupMappings.keys.sort.each do |key| %>
                   <%= content_tag :option, key.titleize, :value => key %>
                 <% end %>
               </select>

@@ -1,4 +1,4 @@
-class Report < ActiveRecord::Base
+class FlexReport < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true
   validates :adjustment_start_date, :presence => true, :if => :adjustment?
   validates :adjustment_end_date, :presence => true, :if => :adjustment?
@@ -29,7 +29,7 @@ class Report < ActiveRecord::Base
 
 
   def self.new_from_params(params)
-    report = self.new(params[:report])
+    report = self.new(params[:flex_report])
 
     report.field_list      ||= ''
     report.allocation_list ||= ''

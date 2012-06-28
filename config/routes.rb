@@ -13,7 +13,7 @@ Lowdown::Application.routes.draw do
   resources :trimet_report_groups
   resources :overrides
   
-  resources :reports do
+  resources :flex_reports do
     collection do
       get :show_create_quarterly
       get :quarterly_narrative_report

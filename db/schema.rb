@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120628192330) do
+ActiveRecord::Schema.define(:version => 20120628211311) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -77,6 +77,26 @@ ActiveRecord::Schema.define(:version => 20120628192330) do
     t.string   "veteran_status"
   end
 
+  create_table "flex_reports", :force => true do |t|
+    t.string  "name"
+    t.date    "start_date"
+    t.date    "end_date"
+    t.string  "group_by"
+    t.text    "allocation_list"
+    t.text    "field_list"
+    t.boolean "pending"
+    t.boolean "adjustment"
+    t.text    "description"
+    t.date    "adjustment_start_date"
+    t.date    "adjustment_end_date"
+    t.integer "position"
+    t.text    "funding_subsource_name_list"
+    t.text    "provider_list"
+    t.text    "program_name_list"
+    t.text    "county_name_list"
+    t.text    "subcontractor_name_list"
+  end
+
   create_table "mobilities", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -114,26 +134,6 @@ ActiveRecord::Schema.define(:version => 20120628192330) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "reports", :force => true do |t|
-    t.string  "name"
-    t.date    "start_date"
-    t.date    "end_date"
-    t.string  "group_by"
-    t.text    "allocation_list"
-    t.text    "field_list"
-    t.boolean "pending"
-    t.boolean "adjustment"
-    t.text    "description"
-    t.date    "adjustment_start_date"
-    t.date    "adjustment_end_date"
-    t.integer "position"
-    t.text    "funding_subsource_name_list"
-    t.text    "provider_list"
-    t.text    "program_name_list"
-    t.text    "county_name_list"
-    t.text    "subcontractor_name_list"
   end
 
   create_table "runs", :force => true do |t|
