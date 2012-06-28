@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120627204422) do
+ActiveRecord::Schema.define(:version => 20120628192330) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -266,7 +266,7 @@ ActiveRecord::Schema.define(:version => 20120627204422) do
     t.date     "date_enrolled"
     t.date     "service_end"
     t.integer  "approved_rides"
-    t.string   "spd_office",                       :limit => 25
+    t.string   "case_manager_office",              :limit => 25
     t.boolean  "complete",                                                                      :default => false
     t.string   "original_override"
     t.string   "customer_type"

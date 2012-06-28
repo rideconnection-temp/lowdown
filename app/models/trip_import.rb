@@ -56,7 +56,7 @@ private
         :home_address_1, :home_address_2, :home_city, :home_state, :home_postal_code, 
         :home_x_coordinate, :home_y_coordinate, :home_in_trimet_district, 
         :language_preference, :birthdate, :email, :customer_type, :monthly_household_income, :household_size,
-        :spd_prime_number, :spd_case_manager, :spd_office, :spd_date_enrolled, :spd_service_end, :spd_approved_rides,
+        :prime_number, :case_manager, :case_manager_office, :date_enrolled, :service_end, :approved_rides,
         :routematch_run_id, :run_name, :run_start_at, :run_end_at, :run_odometer_start, :run_odometer_end, :escort_count,
         :routematch_trip_id, :date, 
         :provider_code, :provider_name, :provider_type, 
@@ -164,7 +164,7 @@ private
             current_customer.customer_type = record[:customer_type]
             current_customer.monthly_household_income = record[:monthly_household_income]
             current_customer.household_size = record[:household_size]
-            current_customer.prime_number = record[:spd_prime_number]
+            current_customer.prime_number = record[:prime_number]
             current_customer.address_id = current_home_id
             current_customer.save!
 
@@ -293,11 +293,11 @@ private
             current_trip.estimated_trip_distance_in_miles = record[:estimated_trip_distance_in_miles]
             current_trip.routematch_pickup_address_id = record[:pickup_routematch_address_id]
             current_trip.routematch_dropoff_address_id = record[:dropoff_routematch_address_id]
-            current_trip.case_manager = record[:spd_case_manager]
-            current_trip.approved_rides = record[:spd_approved_rides]
-            current_trip.date_enrolled = record[:spd_date_enrolled]
-            current_trip.service_end = record[:spd_service_end]
-            current_trip.spd_office = record[:spd_office]
+            current_trip.case_manager = record[:case_manager]
+            current_trip.approved_rides = record[:approved_rides]
+            current_trip.date_enrolled = record[:date_enrolled]
+            current_trip.service_end = record[:service_end]
+            current_trip.case_manager_office = record[:case_manager_office]
             current_trip.pickup_address_id = current_pickup_id
             current_trip.dropoff_address_id = current_dropoff_id
             current_trip.customer_id = current_customer_id
