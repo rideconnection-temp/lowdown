@@ -1,0 +1,9 @@
+<hr>
+<h2>This item is used in the following allocations:</h2>
+<ul>
+  <% target.allocations.each do |a| %>
+    <li><%= link_to a.name, [:edit, a] %></li>
+  <% end %>
+</ul>
+<hr>
+

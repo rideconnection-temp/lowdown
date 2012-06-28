@@ -92,16 +92,19 @@
       <li class="selfclear">
         <%= form.label :trimet_provider_id, "TriMet Provider" %>
         <%= form.collection_select :trimet_provider_id, @trimet_providers, :id, :name, {:include_blank => true} %>
+        <%= link_to "Details", [:edit, @allocation.trimet_provider], :class => :details if @allocation.trimet_provider %>
       </li>
 
       <li class="selfclear">
         <%= form.label :trimet_program_id, "TriMet Program" %>
         <%= form.collection_select :trimet_program_id, @trimet_programs, :id, :name, {:include_blank => true} %>
+        <%= link_to "Details", [:edit, @allocation.trimet_program], :class => :details if @allocation.trimet_program %>
       </li>
 
       <li class="selfclear">
         <%= form.label :trimet_report_group_id, "TriMet E&D Report Group" %>
         <%= form.collection_select :trimet_report_group_id, @trimet_report_group, :id, :name, {:include_blank => true} %>
+        <%= link_to "Details", [:edit, @allocation.trimet_report_group], :class => :details if @allocation.trimet_report_group %>
       </li>
 
       <li class="selfclear">

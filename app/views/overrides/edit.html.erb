@@ -3,13 +3,5 @@
 </div>
 
 <%= render 'form' %>
-
-<hr>
-<h2>This override is used in the following allocations:</h2>
-<ul>
-  <% @override.allocations.each do |a| %>
-    <li><%= link_to a.name, [:edit, a] %></li>
-  <% end %>
-</ul>
-<hr>
+<%= render 'shared/related_allocations', :target => @override %>
 <%= link_to 'Back', overrides_path, :class => "action-bttn" %>
