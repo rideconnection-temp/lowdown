@@ -317,6 +317,7 @@ body {
     color: #009FFB;
 }
 body.flex-reports #primary-nav li.flex-reports a:link, body.flex-reports #primary-nav li.flex-reports a:visited,
+body.predefined-reports #primary-nav li.predefined-reports a:link, body.predefined-reports #primary-nav li.predefined-reports a:visited,
 body.summaries #primary-nav li.summaries a:link, body.summaries #primary-nav li.summaries a:visited,
 body.trips #primary-nav li.trips a:link, body.trips #primary-nav li.trips a:visited,
 body.runs #primary-nav li.runs a:link, body.runs #primary-nav li.runs a:visited,
@@ -1181,4 +1182,30 @@ li.flex-report form.run-report input[type="submit"]:hover {
 }
 #history h2 {
     margin-bottom: 0;
+}
+
+div.predefined-report ol {
+    list-style: none;
+    margin: 0 0 10px;
+    float: left;
+}
+div.predefined-report ol li {
+    float: left;
+    margin-right: 20px;
+}
+
+div.predefined-report form.run-report input[type="submit"] {
+    background: #0081CC;
+    color: #fff;
+    font-size: 15px;
+    text-decoration: none;
+    border: 0;
+    padding: 0.3em 0.6em;
+    margin-top: -0.3em;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+div.predefined-report form.run-report input[type="submit"]:hover {
+    background: #009FFB;
 }

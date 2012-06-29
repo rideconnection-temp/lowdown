@@ -12,6 +12,7 @@
   <%= javascript_include_tag "dateFormat.js" %>
 
   <%= csrf_meta_tag %>
+  <%= content_for?(:head) ? yield(:head) : '' %>
 
 </head>
 <body class="<%= bodytag_class %>">
@@ -29,6 +30,7 @@
     <div class="wrap selfclear">             
       <ul id="primary-nav" class="selfclear">
         <li class="flex-reports"><%= link_to "Flex Reports", :controller => "flex_reports" %></li>
+        <li class="predefined-reports"><%= link_to "Predefined Reports", :controller => "predefined_reports" %></li>
         <li class="summaries"><%= link_to "Summaries", :controller => "summaries" %></li>
         <li class="trips"><%= link_to "Trips", :controller => "trips" %></li>
         <li class="runs"><%= link_to "Runs", :controller => "runs" %></li>
