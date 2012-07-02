@@ -2,14 +2,7 @@
   <h1>Active Rider Report</h1>
 </div>
 
-<form class="edit_report">
-  <p>
-    <label>Choose Month:</label> <%= date_select :active_rider_query, :start_date, :order => [:month, :year], :default => @start_date %>
-  	<input id="summary-search" type="submit" value="Search" />
-  </p>
-</form>
-
-<h2><%= @start_date.strftime "%B %Y" %></h2>
+<h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
 
 <table id="active-rider-results" class="results">
   <thead>
@@ -34,10 +27,10 @@
         <% customer = customer_row[:customer] %>
         <tr>
           <td><%= customer_row[:case_manager] %></td>
-          <td><%= customer_row[:date_enrolled].strftime('%m-%d-%Y') %></td>
+          <td><%= customer_row[:date_enrolled].try(:strftime,'%m-%d-%Y') %></td>
           <td><%= customer.first_name %> <%= customer.middle_initial %> <%= customer.last_name %> </td>
           <td><%= customer.prime_number %></td>
-          <td><%= customer_row[:service_end].strftime('%m-%d-%Y') %></td>
+          <td><%= customer_row[:service_end].try(:strftime,'%m-%d-%Y') %></td>
           <td class="number"><%= customer_row[:approved_rides] %></td>
           <td class="number"><%= customer_row[:billed_rides] %></td>
           <td class="number"><%= "%.2f" % customer_row[:billable_mileage] %></td>

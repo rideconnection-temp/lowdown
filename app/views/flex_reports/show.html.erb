@@ -4,7 +4,7 @@
 
 <p>
   <span class="month-range">
-    <%= report_month_range @start_date, @end_date %>
+    <%= report_month_range @report.start_date, @report.query_end_date %>
   </span>
   <span class="separator csv">|</span>
   <%= link_to "CSV", params.merge({:action=>:csv}), :class=>"csv" %>
@@ -13,4 +13,4 @@
 <%= content_tag :p, "Adjustments for #{report_month_range @report.adjustment_start_date, @report.adjustment_end_date}" if @report.adjustment? %>
 <%= content_tag :p, @report.description if @report.description.present? %>
 
-<%= render :partial=> "report", :locals=>{:results=>@results, :group_fields=>@group_fields} %>
+<%= render :partial=> "report", :locals=>{:results=>@report.results, :group_fields=>@report.group_fields} %>

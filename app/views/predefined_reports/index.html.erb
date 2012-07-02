@@ -60,18 +60,86 @@
 </div>
 
 <div class="predefined-report" data-name="monthly" id="basic_report">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :spd_report } do |f| %>
+  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :spd } do |f| %>
     <fieldset>
       <h2 class="report-header">SPD Report</h2>
       <p></p>
       <ol>
         <li>
           <label>Start date:</label>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :required => :required %>
+          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :spd_start_date, :required => :required %>
         </li>
         <li>
           <label>End date:</label>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :required => :required %>
+          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :spd_end_date, :required => :required %>
+        </li>
+      </ol>
+      <input type="submit" name="report" value="Report">
+    </fieldset>
+  <% end %>
+</div>
+
+<div class="predefined-report" data-name="monthly" id="basic_report">
+  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :ride_purpose } do |f| %>
+    <fieldset>
+      <h2 class="report-header">Ride Purpose Report</h2>
+      <p></p>
+      <ol>
+        <li>
+          <%= f.label :start_date %>
+          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :purpose_start_date, :required => :required %>
+        </li>
+        <li>
+          <%= f.label :end_date %>
+          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :purpose_end_date, :required => :required %>
+        </li>
+      </ol>
+      <input type="submit" name="report" value="Report">
+    </fieldset>
+  <% end %>
+</div>
+
+<div class="predefined-report" data-name="monthly" id="basic_report">
+  <%= form_for @quarterly_query, :html => { :class => "run-report"}, :url => { :action => :quarterly_narrative } do |f| %>
+    <fieldset>
+      <h2 class="report-header">Quarterly Narrative Report</h2>
+      <p></p>
+      <ol>
+        <li>
+          <%= f.label :start_date %>
+          <%= f.date_select :start_date, :order=>[:month,:year] %>
+        </li>
+        <li>
+          <%= f.label :end_date %>
+          <%= f.date_select :end_date, :order=>[:month,:year] %>
+        </li>
+        <li>
+          <%= f.label :provider_id %>
+          <%= f.select :provider_id, options_for_select([['<All Providers>','']] + Provider.default_order.all.map { |p| [p.name, p.id] }) %>
+        </li>
+      </ol>
+      <input type="submit" name="report" value="Report">
+    </fieldset>
+  <% end %>
+</div>
+
+<div class="predefined-report" data-name="monthly" id="basic_report">
+  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :age_and_ethnicity } do |f| %>
+    <fieldset>
+      <h2 class="report-header">Age & Ethnicity Report</h2>
+      <p></p>
+      <ol>
+        <li>
+          <%= f.label :start_date %>
+          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :narrative_start_date, :required => :required %>
+        </li>
+        <li>
+          <%= f.label :end_date %>
+          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :narrative_end_date, :required => :required %>
+        </li>
+        <li>
+          <%= f.label :provider %>
+          <%= f.select :provider, Provider.default_order.map {|x| x.name}.uniq %>
         </li>
       </ol>
       <input type="submit" name="report" value="Report">

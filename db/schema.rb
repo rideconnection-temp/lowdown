@@ -296,8 +296,6 @@ ActiveRecord::Schema.define(:version => 20120628211311) do
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
-  add_foreign_key "allocations", ["override_id"], "overrides", ["id"], :name => "allocations_override_id_fkey"
-
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 
 end

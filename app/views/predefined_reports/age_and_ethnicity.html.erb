@@ -1,13 +1,14 @@
 <div id="page-header">
-  <h1>A & E Report for: Month of <%= @start_date.strftime("%B %Y") %></h1>
+  <h1>Age & Ethnicity Report</h1>
+  <h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
 </div>
 
 <h2>Partner Name: <%= @provider %></h2>
 
 <div>
-The following information about your clients / customers is for
-reporting purposes only and will not be considered in determining
-eligibility for services.
+  The following information about your clients / customers is for
+  reporting purposes only and will not be considered in determining
+  eligibility for services.
 </div>
 
 <table>
