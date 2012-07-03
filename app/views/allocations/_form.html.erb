@@ -106,9 +106,12 @@
         <%= form.collection_select :trimet_report_group_id, @trimet_report_group, :id, :name, {:include_blank => true} %>
         <%= link_to "Details", [:edit, @allocation.trimet_report_group], :class => :details if @allocation.trimet_report_group %>
       </li>
-
       <li class="selfclear">
-        <%= form.label :inactivated_on %>
+        <%= form.label :activated_on, "First day active" %>
+        <%= form.text_field :activated_on, :class => "datepicker" %>
+      </li>
+      <li class="selfclear">
+        <%= form.label :inactivated_on, "First day inactive" %>
         <%= form.text_field :inactivated_on, :class => "datepicker" %>
       </li>
     </ol>

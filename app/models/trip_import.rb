@@ -81,28 +81,19 @@ private
     self.problems = ''
     self.import_start_time = Time.xmlschema(Time.now.xmlschema)
     @record_count = -1
+    allocations = Allocation.for_import
 
     # Check for bad allocation mappings before anything else.
     CSV.foreach(file_path, headers: headers, converters: :all) do |record|
       @record_count += 1
       next if @record_count == 0
 
-      allocation_map_key = "#{record[:override]},#{record[:provider_code]}"
-      if allocation_map.has_key?(allocation_map_key)
-        current_allocation_id = allocation_map[allocation_map_key][:id]
-      else
-        current_allocation = Allocation.joins(:override).where(:overrides => {:name => record[:override].to_s}, 
-            :routematch_provider_code => record[:provider_code]).first
-        if current_allocation.nil?
-          import_errors_key = "#{record[:override]}|#{record[:provider_code]}"
-          unless import_errors.include?(import_errors_key) 
-            import_errors << import_errors_key
-            self.problems << "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'.<br/>" 
-          end
-        else
-          current_allocation_id = current_allocation.id
-#           Store the entire allocation object for later use
-          allocation_map[allocation_map_key] = current_allocation
+      current_allocation = allocations.detect{|a| a.name == record[:override] && a.routematch_provider_code == record[:provider_code] && a.activated_on.to_date <= record[:date] && (a.inactivated_on.blank? || a.inactivated.to_date > record[:date])}
+      if current_allocation.nil?
+        import_errors_key = "#{record[:override]}|#{record[:provider_code]}"
+        unless import_errors.include?(import_errors_key) 
+          import_errors << import_errors_key
+          self.problems << "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'.<br/>" 
         end
       end
     end
@@ -214,12 +205,11 @@ private
             address_map[record[:dropoff_routematch_address_id]] = current_dropoff_id
           end
 
-          allocation_map_key = "#{record[:override]},#{record[:provider_code]}"
-          current_allocation_id = allocation_map[allocation_map_key][:id]
+          current_allocation = allocations.detect{|a| a.name == record[:override] && a.routematch_provider_code == record[:provider_code] && a.activated_on <= record[:date] && (a.inactivated_on.blank? || a.inactivated > record[:date])}
 
-          if current_allocation_id.present?
+          if current_allocation.present?
             # Don't collect runs when we don't collect anything about them.
-            if allocation_map[allocation_map_key][:run_collection_method] == 'runs' 
+            if current_allocation.run_collection_method == 'runs' 
               if record[:routematch_run_id].present?
                 if run_map.has_key?(record[:routematch_run_id])
                   current_run_id = run_map[record[:routematch_run_id]]
@@ -264,7 +254,7 @@ private
             current_trip.routematch_trip_id = record[:routematch_trip_id]
             current_trip.date = record[:date]
             current_trip.result_code = record[:result_code]
-            current_trip.allocation_id = current_allocation_id
+            current_trip.allocation_id = current_allocation.id
             current_trip.provider_code = record[:provider_code]
             current_trip.start_at = record[:start_at]
             current_trip.end_at = record[:end_at]
@@ -308,7 +298,7 @@ private
             current_trip.imported_at = import_start_time 
             # apportionment for run-based trips is done before import.  This helps assure that the
             # Reporting Services reports and the Service DB reports match exactly.
-            if allocation_map[allocation_map_key][:run_collection_method] == 'runs'
+            if current_allocation.run_collection_method == 'runs'
               current_trip.apportioned_duration = record[:trip_duration]
               current_trip.apportioned_mileage = record[:trip_mileage]
             end

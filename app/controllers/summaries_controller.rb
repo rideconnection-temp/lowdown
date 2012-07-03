@@ -168,7 +168,7 @@ private
   def prep_edit
     @grouped_allocations = [] 
     Provider.with_summary_data.order(:name).each do |p|
-      @grouped_allocations << [p.name, p.active_non_trip_allocations.map {|a| [a.name,a.id]}]
+      @grouped_allocations << [p.name, p.active_non_trip_allocations.map {|a| [a.select_label,a.id]}]
     end
     @grouped_allocations << ['<No provider>', Allocation.non_trip_collection_method.not_recently_inactivated.where(:provider_id => nil).map {|a| [a.name,a.id]}]
   end

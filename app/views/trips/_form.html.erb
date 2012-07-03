@@ -262,7 +262,7 @@
 
     <li>
       <%= f.label :allocation, "Allocation:" %> 
-      <%= f.collection_select :allocation_id, @allocations, :id, :name %>
+      <%= f.collection_select :allocation_id, @allocations, :id, :select_label %>
       <%= link_to "Details", [:edit, @trip.allocation], :class => :details if @trip.allocation %>
     </li>
 

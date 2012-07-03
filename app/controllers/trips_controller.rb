@@ -207,7 +207,10 @@ class TripsController < ApplicationController
     @pickup_address = @trip.pickup_address
     @dropoff_address = @trip.dropoff_address
     @updated_by_user = @trip.updated_by_user
-    @allocations = Allocation.order(:name)
+    @allocations = Allocation.order(:name).active_on(@trip.date)
+    if @allocations.detect{|a| a.id == @trip.allocation_id}.nil?
+      @allocations.unshift Allocation.find(@trip.allocation_id)
+    end
   end
   
   def update

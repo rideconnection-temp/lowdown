@@ -11,6 +11,8 @@
 
     <tr>
       <th><%= provider_name %> Allocations</th>
+      <th>Activated On</th>
+      <th>Inactivated On</th>
       <th>Program</th>
       <th>F.E. Project</th>
       <th>County</th>
@@ -20,6 +22,8 @@
     <% group.each do |allocation| %>
       <tr>
         <td><%= link_to allocation.name, edit_allocation_path(allocation) %></td>
+        <td><%= allocation.activated_on %></td>
+        <td><%= allocation.inactivated_on %></td>
         <td><%= allocation.program %></td>
         <td><%= allocation.project_name %></td>
         <td><%= allocation.county %></td>

@@ -34,6 +34,11 @@ class Summary < ActiveRecord::Base
   validates_size_of :administrative, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Prohibited'}, :wrong_length => "should be blank"
   validates_size_of :operations, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Prohibited'}, :wrong_length => "should be blank"
   validates_size_of :vehicle_maint, :is => 0, :allow_nil => true, :if => Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Prohibited'}, :wrong_length => "should be blank"
+  validates_date :period_start, 
+      :on_or_after => lambda{|r| r.allocation.try(:activated_on)}, 
+      :on_or_after_message => "is not valid for this allocation", 
+      :before => lambda{|r| r.allocation.try(:inactivated_on)},
+      :before_message => "is not valid for this allocation"
 
   validate do |record|
     if Summary.where("base_id <> COALESCE(?,0)",record.base_id).where(:period_start => record.period_start,:allocation_id => record.allocation_id).exists?

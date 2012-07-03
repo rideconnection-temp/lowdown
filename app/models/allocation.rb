@@ -11,18 +11,33 @@ class Allocation < ActiveRecord::Base
   DATA_OPTIONS = %w( Required Prohibited )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
 
-  validates :name, :presence => true, :uniqueness => true
+  validates :name, :presence => true
   validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
   validates :vehicle_maint_data, :inclusion => { :in => DATA_OPTIONS }
-  validates_uniqueness_of :override_id, :scope => :routematch_provider_code, :message => "and provider code have already been taken", :allow_blank => true
   validate  :require_consistent_trimet_fields
-  
+  validates_date :activated_on
+  validates_date :inactivated_on, :allow_nil => true, :after => :activated_on, :after_message => "must be after the first day activated"
   self.per_page = 30
+  validate do |rec|
+    if Allocation.active_on(rec.activated_on).where("id<>?",rec.id || 0).where(:name => rec.name).exists?
+      rec.errors.add :name, "has already been taken"
+    end
+    if rec.override_id.present? && rec.routematch_provider_code.present?
+      if Allocation.active_on(rec.activated_on).where("id<>?",rec.id || 0).where(:override_id => rec.override_id, :routematch_provider_code => rec.routematch_provider_code).exists?
+        rec.errors.add :override_id, "and provider code have already been taken"
+      end
+    end
+  end
+  
 
   scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
   scope :trip_collection_method, where( "trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips'" )
   scope :not_recently_inactivated, where( "inactivated_on is null or inactivated_on > current_date - interval '3 months'")
   scope :spd, includes(:project).where(:projects => {:funding_source => 'SPD'})
+  scope :active_on, lambda{|date| where("activated_on <= ? AND (inactivated_on IS NULL OR inactivated_on > ?)",date,date)}
+  def self.for_import
+    self.joins(:override).select("allocations.id,overrides.name,allocations.routematch_provider_code,allocations.activated_on,allocations.inactivated_on,allocations.run_collection_method")
+  end
 
   def self.program_names
     select('DISTINCT program').where("COALESCE(program,'') <> ''").map {|x| x.program}.sort 
@@ -38,6 +53,16 @@ class Allocation < ActiveRecord::Base
 
   def allocation_name
     name
+  end
+
+  def select_label
+    if activated_on > Date.today then
+      "#{name} (activating #{activated_on})"
+    elsif inactivated_on && inactivated_on <= Date.today
+      "#{name} (inactivated #{inactivated_on})"
+    else
+      name
+    end
   end
 
   def short_county
