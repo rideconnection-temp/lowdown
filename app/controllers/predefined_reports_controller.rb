@@ -205,18 +205,6 @@ class PredefinedReportsController < ApplicationController
 
   private
 
-  def prep_edit
-    @funding_subsource_names  = [['<Select All>','']] + Project.funding_subsource_names
-    @providers                = [['<Select All>','']] + Provider.default_order.map {|x| [x.to_s, x.id]}
-    @subcontractor_names      = [['<Select All>','']] + Provider.subcontractor_names
-    @program_names            = [['<Select All>','']] + Allocation.program_names
-    @county_names             = [['<Select All>','']] + Allocation.county_names
-    @group_bys = FlexReport::GroupBys.sort
-    if @report.group_by.present?
-      @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
-    end
-  end
-
   def date_from_params(params_in,attribute_name)
     Date.new( params_in["#{attribute_name}(1i)"].to_i, params_in["#{attribute_name}(2i)"].to_i, params_in["#{attribute_name}(3i)"].to_i ) 
   end
