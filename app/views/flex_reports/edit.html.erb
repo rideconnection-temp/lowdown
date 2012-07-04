@@ -2,6 +2,13 @@
   <h1>Edit Report</h1>
 </div>
 
+<%= form_for @report do |f| %>
+  <fieldset>
+    <h2>Run Report</h2>
+    <%= render "run_form", :f => f, :report => @report, :ol_class => "section" %>
+  </fieldset>
+<% end %>
+
 <% if @report.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(@report.errors.count, "error") %> prohibited this report from being saved:</h2>
@@ -16,11 +23,4 @@
 
 <%= form_for @report do |form| %>
   <%= render "form", :f => form %>
-<% end %>
-
-<%= form_for @report do |f| %>
-  <h2>Run Report</h2>
-  <fieldset>
-    <%= render "run_form", :f => f, :report => @report, :ol_class => "section" %>
-  </fieldset>
 <% end %>
