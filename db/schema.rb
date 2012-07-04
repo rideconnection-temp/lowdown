@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120703184410) do
+ActiveRecord::Schema.define(:version => 20120704011926) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -40,7 +40,6 @@ ActiveRecord::Schema.define(:version => 20120703184410) do
     t.string  "cost_collection_method"
     t.string  "routematch_override"
     t.string  "routematch_provider_code"
-    t.string  "contract"
     t.date    "inactivated_on"
     t.string  "program"
     t.string  "admin_ops_data",           :limit => 15
