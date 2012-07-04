@@ -570,9 +570,8 @@ fieldset ol.summary-form-part-three li input {
   width : 45%;
 }
 fieldset ol.section li textarea {
-    max-width: 60%;
-    height: 3.5em;
-    resize: none;
+    max-width: 100%;
+    height: 10em;
 }
 fieldset ol.fourth li label {
     width: 15%;

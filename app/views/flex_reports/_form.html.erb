@@ -6,6 +6,10 @@
         <%= f.text_field :name, :size => 100 %>
       </li>
       <li>
+        <%= f.label :description %>
+        <%= f.text_area :description %>
+      </li>
+      <li>
         <h2>Funding Sources to Include</h2>
         <select class="multi full" id="report_funding_subsource_names" multiple="multiple" name="report[funding_subsource_names][]">
           <%= options_for_select(@funding_subsource_names, @report.funding_subsource_names) %>
@@ -180,10 +184,6 @@
         </ol>
       </div>
       
-      <div class="selfclear">
-        <h2 class="section-header">Description</h2>
-        <%= f.text_area :description, :cols => 50, :rows => 10 %>
-      </div>
     </div>
 
     <div class="actions">
