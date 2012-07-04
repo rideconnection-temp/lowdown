@@ -29,7 +29,7 @@
       </li>
       
       <li class="selfclear">
-        <%= form.label :project_id %>
+        <%= form.label :project_id, "F.E. Project" %>
         <%= form.collection_select :project_id, Project.all, :id, :name, :include_blank => true %>
         <%= link_to "Details", [:edit, @allocation.project], :class => :details if @allocation.project %>
       </li>
