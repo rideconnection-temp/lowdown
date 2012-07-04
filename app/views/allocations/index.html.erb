@@ -6,6 +6,7 @@
   <h1>Listing Allocations</h1>
 </div>
 
+<%= will_paginate @allocations %>
 <table>
   <% @grouped_allocations.each do |provider_name, group| %>
 
