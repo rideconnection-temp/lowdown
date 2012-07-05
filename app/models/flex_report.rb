@@ -132,7 +132,6 @@ class FlexReport < ActiveRecord::Base
     if list.blank?
       self.allocation_list = ''
     else
-      debugger
       self.allocation_list = list.sort.map(&:to_s).join(",")
     end
   end
