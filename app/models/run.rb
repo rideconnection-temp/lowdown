@@ -18,22 +18,45 @@ class Run < ActiveRecord::Base
   point_in_time
 
   def created_by
-    return first_version.updated_by
+    first_version.updated_by
   end
   
   def updated_by_user
-    return (self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by)) #right now, imports run through the command line will have no user info
+    self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by)
   end
 
   def display_name
     return name if name
-    return "unnamed run #{routematch_id} on #{date}"
+    "unnamed run #{routematch_id} on #{date}"
   end
   
   def chronological_versions
-    return self.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse
+    self.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse
   end
 
+  def ads_billable_hours
+    BigDecimal.new(((((end_at - start_at) / 900).floor * 900) / 3600.0).to_s)
+  end
+
+  def ads_partner_cost
+    if trips.first.allocation.name =~ /hourly/i
+      BigDecimal.new("25.17") * ads_billable_hours 
+    else
+      BigDecimal.new("0")
+    end
+  end
+
+  def ads_scheduling_fee
+    if trips.first.allocation.name =~ /hourly/i
+      BigDecimal.new("8.61") * ads_billable_hours
+    else
+      BigDecimal.new("0")
+    end
+  end
+
+  def ads_total_cost
+    ads_partner_cost + ads_scheduling_fee
+  end
   private
   
   def create_new_version?

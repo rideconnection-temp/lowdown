@@ -5,6 +5,7 @@ class ReportQuery
   attr_accessor :start_date, :end_date, :after_end_date, :provider_id, :provider
 
   def initialize(params = {})
+    params = {} if params.nil?
     now = Date.today
     if params[:start_date]
       @start_date = params[:start_date].to_date
@@ -47,6 +48,13 @@ class PredefinedReportsController < ApplicationController
   def index
     @query = ReportQuery.new
     @quarterly_query = ReportQuery.new(:date_range => :quarter)
+  end
+
+  def multnomah_ads
+    @query = ReportQuery.new(params[:report_query])
+    @trips_billed_per_hour = Trip.current_versions.completed.multnomah_ads_billed_per_hour.date_range(@query.start_date,@query.after_end_date).includes(:customer,:run,:allocation)
+    @trips_billed_per_trip = Trip.current_versions.completed.multnomah_ads_billed_per_trip.date_range(@query.start_date,@query.after_end_date).includes(:customer,:allocation)
+    @runs_billed_per_hour = @trips_billed_per_hour.map{|t| t.run}.uniq.sort{|a,b| a.start_at <=> b.start_at}
   end
 
   def spd

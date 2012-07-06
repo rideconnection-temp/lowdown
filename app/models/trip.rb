@@ -35,6 +35,9 @@ class Trip < ActiveRecord::Base
   scope :data_entry_not_complete, where(:complete => false)
   scope :shared, where('trips.routematch_share_id IS NOT NULL')
   scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
+  scope :multnomah_ads, joins(:allocation => :project).where(:projects => {:funding_source => 'Multnomah ADS'})
+  scope :multnomah_ads_billed_per_hour, joins(:allocation => :project).where("allocations.name ILIKE '%hourly%'").where(:projects => {:funding_source => 'Multnomah ADS'})
+  scope :multnomah_ads_billed_per_trip, joins(:allocation => :project).where("allocations.name NOT ILIKE '%hourly%'").where(:projects => {:funding_source => 'Multnomah ADS'})
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
   scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
   scope :for_provider, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
@@ -90,6 +93,35 @@ class Trip < ActiveRecord::Base
     else
       return 20
     end
+  end
+
+  def ads_partner_cost
+    if allocation.provider.provider_type == "Partner" && !allocation.name =~ /hourly/i
+      BigDecimal.new("5")
+    else
+      nil
+    end
+  end
+
+  def ads_taxi_cost
+    if allocation.provider.provider_type == "BPA Provider"
+      apportioned_fare
+    else
+      nil
+    end
+  end
+
+  def ads_scheduling_fee
+    if allocation.name =~ /hourly/i
+      nil
+    else
+      BigDecimal.new("2.46")
+    end
+  end
+
+  def ads_total_cost
+    cost = (ads_partner_cost || 0) + (ads_taxi_cost || 0) + (ads_scheduling_fee || 0)
+    cost == 0 ? nil : BigDecimal.new(cost.to_s)
   end
 
   memoize :customers_served
