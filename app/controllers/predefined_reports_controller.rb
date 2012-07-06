@@ -52,9 +52,20 @@ class PredefinedReportsController < ApplicationController
 
   def multnomah_ads
     @query = ReportQuery.new(params[:report_query])
-    @trips_billed_per_hour = Trip.current_versions.completed.multnomah_ads_billed_per_hour.date_range(@query.start_date,@query.after_end_date).includes(:customer,:run,:allocation)
-    @trips_billed_per_trip = Trip.current_versions.completed.multnomah_ads_billed_per_trip.date_range(@query.start_date,@query.after_end_date).includes(:customer,:allocation)
-    @runs_billed_per_hour = @trips_billed_per_hour.map{|t| t.run}.uniq.sort{|a,b| a.start_at <=> b.start_at}
+    trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).includes(:customer,{:allocation => :provider},:pickup_address,:dropoff_address).default_order
+    trips_billed_per_hour = trips.multnomah_ads_billed_per_hour
+    @trips_billed_per_trip = trips.multnomah_ads_billed_per_trip
+    @run_groups = trips_billed_per_hour.group_by(&:run)
+    all_trips = trips_billed_per_hour + @trips_billed_per_trip
+    @total_taxi_cost      = all_trips.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
+    @total_partner_cost   = all_trips.reduce(0){|s,t| s + (t.ads_partner_cost || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_partner_cost}
+    @total_scheduling_fee = all_trips.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_scheduling_fee}
+    @total_cost           = all_trips.reduce(0){|s,t| s + (t.ads_total_cost || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_total_cost}
+    @total_billable_hours = @run_groups.keys.reduce(0){|s,r| s + r.ads_billable_hours}
+    @per_hour_trip_count  = trips_billed_per_hour.size
+    @taxi_trip_count      = @trips_billed_per_trip.select{|t| t.bpa_provider?}.size
+    @partner_trip_count   = @trips_billed_per_trip.reject{|t| t.bpa_provider?}.size
+    #debugger
   end
 
   def spd

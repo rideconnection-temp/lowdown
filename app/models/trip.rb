@@ -30,6 +30,7 @@ class Trip < ActiveRecord::Base
 
   attr_accessor :bulk_import, :secondary_update, :do_not_version
 
+  scope :default_order, order(:start_at)
   scope :completed, where(:result_code => 'COMP')
   scope :data_entry_complete, where(:complete => true)
   scope :data_entry_not_complete, where(:complete => false)
@@ -61,6 +62,10 @@ class Trip < ActiveRecord::Base
 
   def shared?
     routematch_share_id.present?
+  end
+
+  def bpa_provider?
+    (allocation.provider.provider_type == "BPA Provider")
   end
   
   def updated_by_user
@@ -96,7 +101,7 @@ class Trip < ActiveRecord::Base
   end
 
   def ads_partner_cost
-    if allocation.provider.provider_type == "Partner" && !allocation.name =~ /hourly/i
+    if allocation.provider.provider_type == "Partner" && !allocation.name.downcase.include?("hourly")
       BigDecimal.new("5")
     else
       nil

@@ -35,7 +35,7 @@ class Run < ActiveRecord::Base
   end
 
   def ads_billable_hours
-    BigDecimal.new(((((end_at - start_at) / 900).floor * 900) / 3600.0).to_s)
+    BigDecimal.new(((((end_at - start_at) / 900).ceil * 900) / 3600.0).to_s)
   end
 
   def ads_partner_cost
