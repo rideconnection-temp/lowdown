@@ -69,32 +69,32 @@
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="6"></td>
-      <td class="number"><%= number_to_currency(@total_partner_cost) %></td>
-      <td class="number"><%= number_to_currency(@total_taxi_cost) %></td>
-      <td class="number"><%= number_to_currency(@total_scheduling_fee) %></td>
-      <td class="number"><%= number_to_currency(@total_cost) %></td>
-      <td></td>
+      <th colspan="6"></th>
+      <th class="number"><%= number_to_currency(@total_partner_cost) %></th>
+      <th class="number"><%= number_to_currency(@total_taxi_cost) %></th>
+      <th class="number"><%= number_to_currency(@total_scheduling_fee) %></th>
+      <th class="number"><%= number_to_currency(@total_cost) %></th>
+      <th></th>
     </tr>
     <tr>
-      <td>Total Billable Hours</td>
-      <td class="number"><%= @total_billable_hours %></td>
+      <th class="text">Total Billable Hours</th>
+      <th class="number"><%= @total_billable_hours %></th>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;Hourly Trips</td>
-      <td class="number"><%= @per_hour_trip_count %></td>
+      <th class="text">&nbsp;&nbsp;&nbsp;Hourly Trips</th>
+      <th class="number"><%= @per_hour_trip_count %></th>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;Taxi Trips</td>
-      <td class="number"><%= @taxi_trip_count %></td>
+      <th class="text">&nbsp;&nbsp;&nbsp;Taxi Trips</th>
+      <th class="number"><%= @taxi_trip_count %></th>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;Partner Trips</td>
-      <td class="number"><%= @partner_trip_count %></td>
+      <th class="text">&nbsp;&nbsp;&nbsp;Partner Trips</th>
+      <th class="number"><%= @partner_trip_count %></th>
     </tr>
     <tr>
-      <td>Total Trip Count</td>
-      <td class="number"><%= @per_hour_trip_count + @taxi_trip_count + @partner_trip_count %></td>
+      <th class="text">Total Trip Count</th>
+      <th class="number"><%= @per_hour_trip_count + @taxi_trip_count + @partner_trip_count %></th>
     </tr>
   </tfoot>
 </table>
