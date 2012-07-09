@@ -45,6 +45,8 @@ def bind(args)
 end
 
 class PredefinedReportsController < ApplicationController
+  require 'csv'
+
   def index
     @query = ReportQuery.new
     @quarterly_query = ReportQuery.new(:date_range => :quarter)
@@ -65,7 +67,8 @@ class PredefinedReportsController < ApplicationController
     @per_hour_trip_count  = trips_billed_per_hour.size
     @taxi_trip_count      = @trips_billed_per_trip.select{|t| t.bpa_provider?}.size
     @partner_trip_count   = @trips_billed_per_trip.reject{|t| t.bpa_provider?}.size
-    #debugger
+
+    render_csv "Multnomah County ADS Report", "multnomah_ads.csv" if params[:output] == 'CSV'
   end
 
   def spd

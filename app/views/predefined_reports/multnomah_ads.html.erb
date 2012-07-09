@@ -26,7 +26,7 @@
         <td>Hourly Trip</td>
         <td><%= run.date.to_s(:mdy) %></td>
         <td class="nobreak"><%= run.start_at.to_s(:time_only) %></td>
-        <td class="nobreak"><%= run.ads_billable_hours %> billable hours</td>
+        <td class="nobreak"><%= pluralize(run.ads_billable_hours, "billable hour") %></td>
         <td></td>
         <td></td>
         <td class="number"><%= number_to_currency(run.ads_partner_cost) %></td>
