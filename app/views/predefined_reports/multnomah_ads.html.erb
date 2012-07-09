@@ -25,8 +25,8 @@
       <tr>
         <td>Hourly Trip</td>
         <td><%= run.date.to_s(:mdy) %></td>
-        <td><%= run.start_at.to_s(:time_only) %></td>
-        <td><%= run.ads_billable_hours %> billable hours</td>
+        <td class="nobreak"><%= run.start_at.to_s(:time_only) %></td>
+        <td class="nobreak"><%= run.ads_billable_hours %> billable hours</td>
         <td></td>
         <td></td>
         <td class="number"><%= number_to_currency(run.ads_partner_cost) %></td>
@@ -38,8 +38,8 @@
       <% @run_groups[run].each do |t| %>
         <tr>
           <td><%= t.customer.name %></td>
-          <td><%= t.date.to_s(:mdy) %></td>
-          <td><%= t.start_at.to_s(:time_only) %></td>
+          <td class="nobreak"><%= t.date.to_s(:mdy) %></td>
+          <td class="nobreak"><%= t.start_at.to_s(:time_only) %></td>
           <td><%= t.pickup_address.full_address %></td>
           <td><%= t.dropoff_address.full_address %></td>
           <td><%= t.case_manager_office %></td>
@@ -54,8 +54,8 @@
     <% @trips_billed_per_trip.sort{|a,b| a.customer.name <=> b.customer.name}.each do |t| %>
       <tr>
         <td><%= t.customer.name %></td>
-        <td><%= t.date.to_s(:mdy) %></td>
-        <td><%= t.start_at.to_s(:time_only) %></td>
+        <td class="nobreak"><%= t.date.to_s(:mdy) %></td>
+        <td class="nobreak"><%= t.start_at.to_s(:time_only) %></td>
         <td><%= t.pickup_address.full_address %> </td>
         <td><%= t.dropoff_address.full_address %> </td>
         <td><%= t.case_manager_office %></td>
@@ -66,8 +66,6 @@
         <td><%= t.allocation.provider.name %></td>
       </tr>
     <% end %>
-  </tbody>
-  <tfoot>
     <tr>
       <th colspan="6"></th>
       <th class="number"><%= number_to_currency(@total_partner_cost) %></th>
@@ -96,6 +94,6 @@
       <th class="text">Total Trip Count</th>
       <th class="number"><%= @per_hour_trip_count + @taxi_trip_count + @partner_trip_count %></th>
     </tr>
-  </tfoot>
+  </tbody>
 </table>
 

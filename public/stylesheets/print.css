@@ -60,7 +60,7 @@ span.month-range {
 
 /* tables */
 table {
-    border-collapse: collapse;
+  border-collapse: collapse;
 }
 thead {
   border-bottom: 2pt solid #000;
@@ -109,3 +109,8 @@ td.inner-most-field {
 div.report-wrapper td.indent {
   width : 0.2in;
 }
+
+.nobreak {
+white-space: nowrap;
+}
+
