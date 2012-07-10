@@ -105,6 +105,10 @@ class Summary < ActiveRecord::Base
     self.summary_rows.inject(0) {|sum,r| sum + (r.out_of_district_trips || 0) + (r.in_district_trips || 0)}
   end
 
+  def total_cost
+    (agency_other || 0) + (funds || 0) + (donations || 0) + (administrative || 0) + (operations || 0) + (vehicle_maint || 0)
+  end
+
   def create_new_version?
     return false if do_not_version?
     

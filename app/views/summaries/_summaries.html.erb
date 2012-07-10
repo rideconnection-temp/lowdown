@@ -8,6 +8,7 @@
          <th>Allocation</th>
          <th>Month</th>
          <th>Complete</th>
+         <th class="number">Total Cost</th>
          <th class="number">In</th>
          <th class="number">Out</th>
          <th class="number">Total Trips</th>
@@ -25,6 +26,7 @@
          <td><%= summary.allocation.name %></td>
          <td><%= summary.period_start.strftime("%b %Y") %></td>
          <td><span class="status-<%= (summary.complete) ? "" : "in" %>complete"><%= summary.complete? ? "Yes" : "No" %></span></td>
+         <td class="number"><%= number_to_currency(summary.total_cost) %></td>
          <td class="number"><%= summary.in_district_trips %></td>
          <td class="number"><%= summary.out_of_district_trips %></td>
          <td class="number"><%= summary.trips %></td>
