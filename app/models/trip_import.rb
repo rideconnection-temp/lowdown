@@ -89,7 +89,7 @@ private
       next if @record_count == 0
 
       current_allocation = allocations.detect{|a| a.name == record[:override] && a.routematch_provider_code == record[:provider_code] && a.activated_on.to_date <= record[:date] && (a.inactivated_on.blank? || a.inactivated_on.to_date > record[:date])}
-      if current_allocation.nil?
+      if current_allocation.nil? && record[:result_code] != 'TD'
         import_errors_key = "#{record[:override]}|#{record[:provider_code]}"
         unless import_errors.include?(import_errors_key) 
           import_errors << import_errors_key
@@ -106,6 +106,9 @@ private
           @record_count += 1
           next if @record_count == 0 
           next if record[:routematch_customer_id].nil?
+
+          current_allocation = allocations.detect{|a| a.name == record[:override] && a.routematch_provider_code == record[:provider_code] && a.activated_on <= record[:date] && (a.inactivated_on.blank? || a.inactivated_on > record[:date])}
+          next if current_allocation.nil?
 
           # For each address in the import, make it overwrite the previous version in this database
           # Do this only with the first occurance of the address.  Cache in memory the mapping between
@@ -204,8 +207,6 @@ private
             current_dropoff_id = current_dropoff.id
             address_map[record[:dropoff_routematch_address_id]] = current_dropoff_id
           end
-
-          current_allocation = allocations.detect{|a| a.name == record[:override] && a.routematch_provider_code == record[:provider_code] && a.activated_on <= record[:date] && (a.inactivated_on.blank? || a.inactivated_on > record[:date])}
 
           if current_allocation.present?
             # Don't collect runs when we don't collect anything about them.

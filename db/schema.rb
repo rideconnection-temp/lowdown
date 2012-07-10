@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120704011926) do
+ActiveRecord::Schema.define(:version => 20120710003537) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -218,20 +218,20 @@ ActiveRecord::Schema.define(:version => 20120704011926) do
   end
 
   create_table "trips", :force => true do |t|
-    t.integer  "base_id",                                                                                          :null => false
-    t.datetime "valid_start",                                                                                      :null => false
-    t.datetime "valid_end",                                                                                        :null => false
+    t.integer  "base_id",                                                                                           :null => false
+    t.datetime "valid_start",                                                                                       :null => false
+    t.datetime "valid_end",                                                                                         :null => false
     t.date     "date"
     t.datetime "start_at"
     t.datetime "end_at"
     t.integer  "odometer_start"
     t.integer  "odometer_end"
-    t.decimal  "fare",                                           :precision => 10, :scale => 2
+    t.decimal  "fare",                                            :precision => 10, :scale => 2
     t.string   "purpose_type"
     t.integer  "guest_count"
     t.integer  "attendant_count"
     t.string   "mobility"
-    t.decimal  "calculated_bpa_fare",                            :precision => 10, :scale => 2
+    t.decimal  "calculated_bpa_fare",                             :precision => 10, :scale => 2
     t.string   "bpa_driver_name"
     t.boolean  "volunteer_trip"
     t.boolean  "in_trimet_district"
@@ -253,24 +253,24 @@ ActiveRecord::Schema.define(:version => 20120704011926) do
     t.string   "provider_code",                    :limit => 10
     t.integer  "allocation_id"
     t.integer  "home_address_id"
-    t.decimal  "customer_pay",                                   :precision => 10, :scale => 2
+    t.decimal  "customer_pay",                                    :precision => 10, :scale => 2
     t.integer  "duration"
-    t.decimal  "mileage",                                        :precision => 8,  :scale => 1
-    t.decimal  "apportioned_duration",                           :precision => 7,  :scale => 2
-    t.decimal  "apportioned_mileage",                            :precision => 9,  :scale => 2
-    t.decimal  "apportioned_fare",                               :precision => 10, :scale => 2
+    t.decimal  "mileage",                                         :precision => 8,  :scale => 1
+    t.decimal  "apportioned_duration",                            :precision => 7,  :scale => 2
+    t.decimal  "apportioned_mileage",                             :precision => 9,  :scale => 2
+    t.decimal  "apportioned_fare",                                :precision => 10, :scale => 2
     t.integer  "updated_by"
     t.datetime "imported_at"
     t.text     "adjustment_notes"
-    t.string   "case_manager"
+    t.string   "case_manager",                     :limit => 25
     t.date     "date_enrolled"
     t.date     "service_end"
     t.integer  "approved_rides"
-    t.string   "case_manager_office",              :limit => 25
-    t.boolean  "complete",                                                                      :default => false
+    t.string   "case_manager_office",              :limit => 100
+    t.boolean  "complete",                                                                       :default => false
     t.string   "original_override"
     t.string   "customer_type"
-    t.decimal  "estimated_individual_fare",                      :precision => 10, :scale => 2
+    t.decimal  "estimated_individual_fare",                       :precision => 10, :scale => 2
   end
 
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
@@ -295,8 +295,6 @@ ActiveRecord::Schema.define(:version => 20120704011926) do
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-
-  add_foreign_key "allocations", ["override_id"], "overrides", ["id"], :name => "allocations_override_id_fkey"
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 
