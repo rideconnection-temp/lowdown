@@ -1,4 +1,4 @@
-<h2 id="result-count"><%= @trips.total_entries %> trip<% if @trips.total_entries != 1 %>s<% end %> found.</h2>
+<h2 id="result-count"><%= pluralize @trips.total_entries, "record" %> found.</h2>
 
 <% if @trips.total_entries > 0 %>
 
