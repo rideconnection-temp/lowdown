@@ -26,11 +26,11 @@ class ReportQuery
       @end_date = @after_end_date - 1.day
     end
 
-    if params[:provider]
+    if params[:provider].present?
       @provider = params[:provider]
     end
 
-    if params[:provider_id]
+    if params[:provider_id].present?
       @provider_id = params[:provider_id].to_i
     end
   end
@@ -55,10 +55,12 @@ class PredefinedReportsController < ApplicationController
   def multnomah_ads
     @query = ReportQuery.new(params[:report_query])
     trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).includes(:customer,{:allocation => :provider},:pickup_address,:dropoff_address).default_order
+    trips = trips.for_provider(@query.provider_id) if @query.provider_id.present?
     trips_billed_per_hour = trips.multnomah_ads_billed_per_hour
     @trips_billed_per_trip = trips.multnomah_ads_billed_per_trip
-    @run_groups = trips_billed_per_hour.group_by(&:run)
     all_trips = trips_billed_per_hour + @trips_billed_per_trip
+    @run_groups = trips_billed_per_hour.group_by(&:run)
+
     @total_taxi_cost      = all_trips.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
     @total_partner_cost   = all_trips.reduce(0){|s,t| s + (t.ads_partner_cost || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_partner_cost}
     @total_scheduling_fee = all_trips.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_scheduling_fee}

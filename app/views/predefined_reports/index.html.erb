@@ -161,6 +161,10 @@
           <%= f.label :end_date %>
           <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :ads_end_date, :required => :required %>
         </li>
+        <li>
+          <%= f.label :provider %>
+          <%= f.collection_select :provider_id, Provider.for_multnomah_ads.default_order, :id, :name, :include_blank => true %>
+        </li>
       </ol>
       <input type="submit" name="output" value="Report">
       <input type="submit" name="output" value="CSV">
