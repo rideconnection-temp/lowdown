@@ -13,6 +13,7 @@ gem 'will_paginate', '~> 3.0'
 gem 'userstamp'
 gem 'validates_timeliness'
 gem 'jquery-rails', '>= 1.0.12'
+gem 'csv_builder'
 
 # Use unicorn as the web server
 # gem 'unicorn'

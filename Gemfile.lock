@@ -64,6 +64,8 @@ GEM
     childprocess (0.2.2)
       ffi (~> 1.0.6)
     columnize (0.3.4)
+    csv_builder (2.1.0)
+      actionpack (>= 3.0.0)
     devise (1.4.9)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.0.3)
@@ -180,6 +182,7 @@ DEPENDENCIES
   automatic_foreign_key
   capistrano
   capybara
+  csv_builder
   devise
   dynamic_form!
   exception_notification!
