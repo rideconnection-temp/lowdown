@@ -12,5 +12,6 @@
 
 <%= content_tag :p, "Adjustments for #{report_month_range @report.adjustment_start_date, @report.adjustment_end_date}" if @report.adjustment? %>
 <%= content_tag :p, @report.description if @report.description.present? %>
+<%= content_tag :p, "Group: " << @report.group_fields.join(", ").titleize if @report.group_fields.present? %>
 
 <%= render :partial=> "report", :locals=>{:results=>@report.results, :group_fields=>@report.group_fields} %>
