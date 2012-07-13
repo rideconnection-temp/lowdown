@@ -83,27 +83,12 @@ class TripsController < ApplicationController
     @trips = @query.apply_conditions(@trips)
 
     if @query.format == 'general'
-      unused_columns = ["id", "base_id", "trip_import_id", "allocation_id", 
-                        "home_address_id", "pickup_address_id", 
-                        "dropoff_address_id", "customer_id", "run_id"] 
-
-      good_columns = Trip.column_names.find_all {|x| ! unused_columns.member? x}
-
-      csv = ""
-      CSV.generate(csv) do |csv|
-        csv << good_columns.map(&:titlecase) + %w{Customer Allocation Run
-          Home\ Name Home\ Building Home\ Address\ 1 Home\ Address\ 2 Home\ City Home\ State Home\ Postal\ Code
-          Pickup\ Name Pickup\ Building Pickup\ Address\ 1 Pickup\ Address\ 2 Pickup\ City Pickup\ State Pickup\ Postal\ Code
-          Dropoff\ Name Dropoff\ Building Dropoff\ Address\ 1 Dropoff\ Address\ 2 Dropoff\ City Dropoff\ State Dropoff\ Postal\ Code}
-
-        for trip in @trips.includes(:home_address)
-          csv << good_columns.map {|x| trip.send(x)} + [trip.customer.name, trip.allocation.name, trip.run.try(:name)] + address_fields(trip.home_address) + address_fields(trip.pickup_address) + address_fields(trip.dropoff_address)
-        end
-      end
-      return send_data csv, :type => "text/csv", :filename => "trips.csv", :disposition => 'attachment'
+      @filename = "trip_list.csv"
+      render "index.csv"
     elsif @query.format == 'bpa'
       @trips = @trips.completed
-      render_csv "bpa_data", "bpa_index.csv"
+      @filename = 'bpa_index.csv'
+      render "bpa_index.csv"
     else
       @trips = @trips.paginate :page => params[:page], :per_page => 30
     end
