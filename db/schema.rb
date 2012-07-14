@@ -262,7 +262,7 @@ ActiveRecord::Schema.define(:version => 20120710003537) do
     t.integer  "updated_by"
     t.datetime "imported_at"
     t.text     "adjustment_notes"
-    t.string   "case_manager",                     :limit => 25
+    t.string   "case_manager"
     t.date     "date_enrolled"
     t.date     "service_end"
     t.integer  "approved_rides"

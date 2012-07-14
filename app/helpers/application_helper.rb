@@ -122,4 +122,8 @@ module ApplicationHelper
     seconds_out = (seconds_in - (hours_out * 3600) - (minutes_out * 60))
     "%02d:%02d:%02d" % [hours_out,minutes_out,seconds_out]
   end
+
+  def address_fields(address)
+    [address.common_name, address.building_name, address.address_1, address.address_2, address.city, address.state, address.postal_code]
+  end
 end

@@ -227,11 +227,4 @@ class TripsController < ApplicationController
     end
     redirect_to :action => :show_bulk_update, :trip_query => params[:trip_query]
   end
-
-  private
-
-  def address_fields(address)
-    [address.common_name, address.building_name, address.address_1, address.address_2, address.city, address.state, address.postal_code]
-  end
-
 end
