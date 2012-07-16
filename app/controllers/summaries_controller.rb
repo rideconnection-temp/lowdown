@@ -15,7 +15,7 @@ class SummaryQuery
     if params
       @period_start = params["period_start(1i)"] ? convert_date(params, "period_start") : Date.parse(params["period_start"])
       @period_end   = params["period_end(1i)"] ? convert_date(params, "period_end") : Date.parse(params["period_end"])
-      @provider     = params[:provider].to_i if params[:provider]
+      @provider     = params[:provider].to_i if params[:provider].present?
     end
   end
 
@@ -26,11 +26,13 @@ class SummaryQuery
   def conditions
     arr = [""]
     if @period_start
-      arr[0] = arr[0] << "period_start between ? and ? and period_end between ? and ?"
-      arr += [@period_start, @period_end + 1.month, @period_start, @period_end + 1.month]
+      arr[0] = arr[0] << "period_start BETWEEN ? AND ?"
+      arr += [@period_start, @period_end]
     end
     if provider && provider != 0
-      arr[0] = arr[0] << "and allocation_id in (#{Allocation.where(:provider_id => provider).map(&:id).join(",")})"
+      arr[0] = arr[0] << "AND allocation_id IN (#{Allocation.where(:provider_id => provider).map(&:id).join(",")})"
+    elsif provider && provider == 0
+      arr[0] = arr[0] << "AND allocation_id IN (#{Allocation.where(:provider_id => nil).map(&:id).join(",")})"
     end
     arr
   end
@@ -49,7 +51,9 @@ class SummariesController < ApplicationController
         :period_end => @query.period_end.to_s}
     end
 
-    @providers = Provider.default_order
+    na_provider = Provider.new(:name => "<Not Applicable>")
+    na_provider.id = 0
+    @providers = [na_provider] + Provider.default_order
     @summaries = Summary.current_versions.where(@query.conditions).includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start').paginate :page => params[:page]
   end
 
