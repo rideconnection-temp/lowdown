@@ -16,6 +16,7 @@ class Allocation < ActiveRecord::Base
   validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
   validates :vehicle_maint_data, :inclusion => { :in => DATA_OPTIONS }
   validate  :require_consistent_trimet_fields
+  validate  :require_consistent_provider_fields
   validates_date :activated_on
   validates_date :inactivated_on, :allow_nil => true, :after => :activated_on, :after_message => "must be after the first day activated"
   self.per_page = 30
@@ -94,11 +95,29 @@ class Allocation < ActiveRecord::Base
     provider.try :name
   end
 
+  def reporting_agency_name
+    reporting_agency.try :name
+  end
+
   def subcontractor
     provider.try :subcontractor
   end
 
   private
+
+  def require_consistent_provider_fields
+    unless (provider.present? && reporting_agency.present?) || 
+           (provider.nil? && reporting_agency.nil?)
+      errors.add(:base, "The provider and reporting agency fields must both be filled or both left blank.")
+    end
+  end
+
+  def require_consistent_trimet_fields
+    unless (trimet_provider_id.present? && trimet_program_id.present?) || 
+           (trimet_provider_id.nil? && trimet_program_id.nil?)
+      errors.add(:base, "Either both TriMet fields must be filled or both must be left blank.")
+    end
+  end
 
   def require_consistent_trimet_fields
     unless (trimet_provider_id.present? && trimet_program_id.present?) || 
