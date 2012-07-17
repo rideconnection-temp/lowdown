@@ -2,6 +2,7 @@ class Allocation < ActiveRecord::Base
   has_many :trips
   has_many :summaries
   belongs_to :provider
+  belongs_to :reporting_agency, :class_name => "Provider", :foreign_key => :reporting_agency_id
   belongs_to :project
   belongs_to :trimet_provider
   belongs_to :trimet_program

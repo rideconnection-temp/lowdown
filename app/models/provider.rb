@@ -1,5 +1,7 @@
 class Provider < ActiveRecord::Base
   has_many :allocations, :order => :name
+  has_many :allocations_as_reporting_agency, :class_name => "Allocation", 
+               :foreign_key => :reporting_agency_id, :order => :name
   has_many :summaries
   
   validates :name, :presence => true
