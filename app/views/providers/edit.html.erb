@@ -3,5 +3,6 @@
 </div>
 
 <%= render 'form' %>
-<%= render 'shared/related_allocations', :target => @provider %>
+<%= render 'shared/related_allocations', :target => @provider.allocations, :as_a => "provider" %>
+<%= render 'shared/related_allocations', :target => @provider.allocations_as_reporting_agency, :as_a => "reporting agency"%>
 <%= link_to 'Back', providers_path, :class => "action-bttn" %>

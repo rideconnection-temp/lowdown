@@ -3,5 +3,5 @@
 </div>
 
 <%= render 'form' %>
-<%= render 'shared/related_allocations', :target => @override %>
+<%= render 'shared/related_allocations', :target => @override.allocations %>
 <%= link_to 'Back', overrides_path, :class => "action-bttn" %>

@@ -1,9 +1,8 @@
-<hr>
-<h2>This item is used in the following allocations:</h2>
+<% as_a ||= nil %>
+<h2>This record is used in the following allocations<%= " as a #{as_a}" if as_a.present? %>:</h2>
 <ul>
-  <% target.allocations.each do |a| %>
+  <% target.each do |a| %>
     <li><%= link_to a.name, [:edit, a] %></li>
   <% end %>
 </ul>
 <hr>
-

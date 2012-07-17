@@ -3,5 +3,5 @@
 </div>
 
 <%= render 'form' %>
-<%= render 'shared/related_allocations', :target => @trimet_provider %>
+<%= render 'shared/related_allocations', :target => @trimet_provider.allocations %>
 <%= link_to 'Back', trimet_providers_path, :class => "action-bttn" %>

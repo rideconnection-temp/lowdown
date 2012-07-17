@@ -3,5 +3,5 @@
 </div>
 
 <%= render 'form' %>
-<%= render 'shared/related_allocations', :target => @project %>
+<%= render 'shared/related_allocations', :target => @project.allocations %>
 <%= link_to 'Back', projects_path, :class => "action-bttn" %>
