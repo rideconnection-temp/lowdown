@@ -30,16 +30,16 @@
 
     <ol class="section fourth">
       <li>
+        <%= f.label :provider, "Reporting Agency:" %> 
+        <%= f.collection_select :reporting_agency, @providers.partners, :id, :to_s, :include_blank => true %>
+      </li>
+      <li>
         <%= f.label :provider, "Provider:" %> 
         <%= f.collection_select :provider, @providers, :id, :to_s, :include_blank => true %>
       </li>
       <li>
         <%= f.label :allocation, "Allocation:" %> 
         <%= f.select :allocation, options_for_select( @allocations.map { |a| [a.name, a.id, {'data-provider-id' => a.provider_id } ] },@query.allocation), :include_blank => true %>
-      </li>
-      <li>
-        <%= f.label :subcontractor, "Subcontractor:" %> 
-        <%= f.select :subcontractor, @subcontractors, :include_blank => true %>
       </li>
     </ol>
 

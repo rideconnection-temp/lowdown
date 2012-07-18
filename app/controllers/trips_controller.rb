@@ -4,7 +4,7 @@ class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :subcontractor, 
+  attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
       :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id
 
   def initialize(params, commit = nil)
@@ -13,7 +13,7 @@ class TripQuery
     @trip_import_id      = params[:trip_import_id].present? ? params[:trip_import_id].to_i : nil
     @all_dates           = (params[:all_dates] == "1" || params[:all_dates] == true)
     @start_date          = Date.parse(params["start_date"]) if params["start_date"].present?
-    @end_date            = Date.parse(params["end_date"]) if params["end_date"].present?
+    @end_date            = Date.parse(params["end_date"])   if params["end_date"].present?
     if @start_date.blank? || @end_date.blank?
       if params['date_range'] == "semimonthly" 
         if Date.today.day > 15
@@ -29,10 +29,10 @@ class TripQuery
       end
     end
     @after_end_date      = @end_date + 1.day
-    @provider            = params[:provider].present? ? params[:provider].to_i : nil
-    @subcontractor       = params[:subcontractor]
-    @allocation          = params[:allocation].present? ? params[:allocation].to_i : nil
-    @dest_allocation     = params[:dest_allocation].present? ? params[:dest_allocation].to_i : nil
+    @provider            = params[:provider].to_i         if params[:provider].present? 
+    @reporting_agency    = params[:reporting_agency].to_i if params[:reporting_agency].present? 
+    @allocation          = params[:allocation].to_i       if params[:allocation].present? 
+    @dest_allocation     = params[:dest_allocation].to_i  if params[:dest_allocation].present? 
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
   end
@@ -44,7 +44,7 @@ class TripQuery
   def apply_conditions(trips)
     trips = trips.for_date_range(start_date,after_end_date) if !all_dates
     trips = trips.for_provider(provider) if provider.present?
-    trips = trips.for_subcontractor(subcontractor) if subcontractor.present?
+    trips = trips.for_reporting_agency(reporting_agency) if reporting_agency.present?
     trips = trips.for_allocation_id(allocation) if allocation.present?
     trips = trips.for_import(trip_import_id) if trip_import_id.present?
     trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
@@ -74,10 +74,10 @@ class TripsController < ApplicationController
   end
 
   def list
-    @query          = TripQuery.new params[:trip_query], params[:commit]
-    @providers      = Provider.default_order
-    @subcontractors = Provider.subcontractor_names
-    @allocations    = Allocation.order(:name)
+    @query              = TripQuery.new params[:trip_query], params[:commit]
+    @providers          = Provider.default_order
+    @reporting_agencies = Provider.partners.default_order
+    @allocations        = Allocation.order(:name)
 
     @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project,:override]).joins(:allocation).order(:date,:trip_import_id)
     @trips = @query.apply_conditions(@trips)

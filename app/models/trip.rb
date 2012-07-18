@@ -42,7 +42,7 @@ class Trip < ActiveRecord::Base
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
   scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
   scope :for_provider, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
-  scope :for_subcontractor, lambda {|subcontractor| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id IN (SELECT id FROM providers where subcontractor = ?))",subcontractor)}
+  scope :for_reporting_agency, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",provider_id)}
   scope :for_date_range, lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
   scope :without_no_shows, where("trips.result_code <> ?","NS")
   scope :without_cancels, where("trips.result_code <> ?","CANC")
