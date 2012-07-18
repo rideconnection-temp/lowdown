@@ -1,10 +1,9 @@
 <% content_for :menu_bar do %>
-        <ul id="subnav" class="selfclear">
-          <li><%= link_to "View Summaries", :action=>:index %></li>
-<% if current_user.is_admin %>
-          <li><%= link_to "Create Summary", :action=>:new %></li>
-<% end %>
-        </ul>
+  <ul id="subnav" class="selfclear">
+    <% if current_user.is_admin %>
+      <li><%= link_to "New Summary", {:action=>:new}, {:class => :add} %></li>
+    <% end %>
+  </ul>
 <% end %>
 
 <%= render :file => 'layouts/application' %>
