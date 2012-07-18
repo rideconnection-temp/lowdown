@@ -51,6 +51,7 @@ $(document).ready(function() {
     $("#" + district + "_district_total").val( total );
   });
   
+  // Adds drag-and-drop sortability to flex reports listing
   $("#all-reports").sortable({
     handle : ".handle",
     stop : function(event, ui) {
@@ -64,24 +65,6 @@ $(document).ready(function() {
     }
   });
   
-  var options_buffer = [];
-  // When trip index is filtered by provider, allocations list is filtered for that provider
-  $("body.trips.list #trip_query_provider").change(function(event){
-    while (options_buffer.length > 0){
-      $("#trip_query_allocation").append( options_buffer.pop() );
-    }
-    
-    var provider_id = parseInt( $(this).val() );
-        
-    $("#trip_query_allocation option").each(function(i, item){
-      var this_provider_id = parseInt($(item).data("provider-id"));
-      if ( this_provider_id && this_provider_id != provider_id ) {
-        options_buffer.push( item );
-        $(item).remove();
-      }
-    });    
-  });
-
   // generates a new group by select value, given each of the custom field values
   var updateCustomOptionValue = function() {
     var realSelect = $("#group-by");

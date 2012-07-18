@@ -39,7 +39,7 @@
       </li>
       <li>
         <%= f.label :allocation, "Allocation:" %> 
-        <%= f.select :allocation, options_for_select( @allocations.map { |a| [a.name, a.id, {'data-provider-id' => a.provider_id } ] },@query.allocation), :include_blank => true %>
+        <%= f.grouped_collection_select :allocation, Provider.default_order.includes(:allocations).all, :allocations, :name, :id, :select_label, :include_blank => true %>
       </li>
     </ol>
 
