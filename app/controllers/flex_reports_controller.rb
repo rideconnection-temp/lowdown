@@ -85,6 +85,7 @@ class FlexReportsController < ApplicationController
   def prep_edit
     @funding_subsource_names  = [['<Select All>','']] + Project.funding_subsource_names
     @providers                = [['<Select All>','']] + Provider.default_order.map {|x| [x.to_s, x.id]}
+    @reporting_agencies       = [['<Select All>','']] + Provider.partners.default_order.map {|x| [x.to_s, x.id]}
     @subcontractor_names      = [['<Select All>','']] + Provider.subcontractor_names
     @program_names            = [['<Select All>','']] + Allocation.program_names
     @county_names             = [['<Select All>','']] + Allocation.county_names

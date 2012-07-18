@@ -16,15 +16,15 @@
         </select>
       </li>
       <li>
-        <h2>Providers to Include</h2>
-        <select class="multi full" id="report_providers" multiple="multiple" name="flex_report[providers][]">
-          <%= options_for_select(@providers, @report.provider_ids) %>
+        <h2>Reporting Agencies to Include</h2>
+        <select class="multi full" id="report_subcontractor_names" multiple="multiple" name="flex_report[reporting_agencies][]">
+          <%= options_for_select(@reporting_agencies, @report.reporting_agency_ids) %>
         </select>
       </li>
       <li>
-        <h2>Subcontractors to Include</h2>
-        <select class="multi full" id="report_subcontractor_names" multiple="multiple" name="flex_report[subcontractor_names][]">
-          <%= options_for_select(@subcontractor_names, @report.subcontractor_names) %>
+        <h2>Providers to Include</h2>
+        <select class="multi full" id="report_providers" multiple="multiple" name="flex_report[providers][]">
+          <%= options_for_select(@providers, @report.provider_ids) %>
         </select>
       </li>
       <li>

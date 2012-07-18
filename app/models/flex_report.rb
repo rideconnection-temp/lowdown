@@ -12,22 +12,22 @@ class FlexReport < ActiveRecord::Base
 
   TimePeriods = [ "year", "quarter", "month" ]
   
-  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,county,provider_name,program}
+  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,county,provider_name,program,reporting_agency_name}
 
   GroupMappings = {
-    "agency"            => "providers.agency",
-    "county"            => "allocations.county",
-    "funding_source"    => "projects.funding_source",
-    "funding_subsource" => "projects.funding_subsource",
-    "allocation_name"   => "allocations.name",
-    "program"           => "allocations.program",
-    "project_name"      => "projects.name",
-    "project_number"    => "projects.project_number",
-    "provider_name"     => "providers.name",
-    "subcontractor"     => "providers.subcontractor",
-    "quarter"           => "quarter",
-    "month"             => "month",
-    "year"              => "year"
+    "county"                => "allocations.county",
+    "funding_source"        => "projects.funding_source",
+    "funding_subsource"     => "projects.funding_subsource",
+    "allocation_name"       => "allocations.name",
+    "program"               => "allocations.program",
+    "project_name"          => "projects.name",
+    "project_number"        => "projects.project_number",
+    "provider_name"         => "providers.name",
+    "reporting_agency_name" => "reporting_agencies.name",
+    "subcontractor"         => "providers.subcontractor",
+    "quarter"               => "quarter",
+    "month"                 => "month",
+    "year"                  => "year"
   }
 
 
@@ -101,6 +101,22 @@ class FlexReport < ActiveRecord::Base
       self.county_name_list = nil
     else
       self.county_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
+    end
+  end
+
+  def reporting_agencies
+    reporting_agency_list.blank? ? [] : Provider.find(reporting_agency_list.split(",").map(&:to_i))
+  end
+
+  def reporting_agency_ids
+    reporting_agency_list.blank? ? [""] : reporting_agency_list.split(",").map(&:to_i)
+  end
+
+  def reporting_agencies=(list)
+    if list.blank?
+      self.reporting_agency_list = nil
+    else
+      self.reporting_agency_list = list.sort.map(&:to_s).join(",")
     end
   end
 
@@ -190,14 +206,13 @@ class FlexReport < ActiveRecord::Base
       where_strings << "COALESCE(projects.funding_source,'') || ': ' || COALESCE(projects.funding_subsource) IN (?)"
       where_params << funding_subsource_names
     end
+    if reporting_agency_list.present? 
+      where_strings << "reporting_agency_id IN (?)"
+      where_params << provider_ids
+    end
     if provider_list.present? 
       where_strings << "provider_id IN (?)"
       where_params << provider_ids
-    end
-    if subcontractor_name_list.present?
-      results = results.joins(:provider)
-      where_strings << "providers.subcontractor IN (?)"
-      where_params << subcontractor_names
     end
     if program_name_list.present?
       where_strings << "program IN (?)"

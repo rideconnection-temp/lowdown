@@ -164,10 +164,6 @@ class ReportRow
     allocation.project.try :name
   end
 
-  def agency
-    allocation.provider.try :agency
-  end
-
   def county
     allocation.county
   end
@@ -176,6 +172,18 @@ class ReportRow
     allocation.short_county
   end
   
+  def reporting_agency_id
+    allocation.reporting_agency_id
+  end
+
+  def reporting_agency_name
+    allocation.reporting_agency.try :name
+  end
+
+  def short_reporting_agency_name
+    allocation.reporting_agency.try :short_name
+  end
+
   def provider_id
     allocation.provider_id
   end
