@@ -75,37 +75,56 @@ class PredefinedReportsController < ApplicationController
 
   def spd
     @query = ReportQuery.new(params[:report_query])
-    trips = Trip.current_versions.completed.spd.date_range(@query.start_date,@query.after_end_date).includes(:customer)
+    trips = Trip.current_versions.completed.spd.date_range(@query.start_date,@query.after_end_date).includes(:customer).default_order
 
-    @spd_offices = {}
+    @offices = {}
     @customer_rows = {}
     @approved_rides = 0
-    @wc_billed_rides = @nonwc_billed_rides = @unknown_billed_rides = 0
-    @wc_mileage = @nonwc_mileage = @unknown_mileage = 0
+    @all_billed_rides = @wc_billed_rides = @nonwc_billed_rides = @unknown_billed_rides = 0
+    @all_mileage = @wc_mileage = @nonwc_mileage = @unknown_mileage = BigDecimal("0")
 
     for trip in trips
-      row_key = [trip.customer_id, trip.wheelchair?]
-      customer = trip.customer
+      row_key = trip.customer_id
       office_key = trip.case_manager_office
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
+      unless @offices.has_key?(office_key)
+        @offices[office_key] = {} 
+        @offices[office_key][:approved_rides] = 0
+        @offices[office_key][:billed_rides] = 0
+        @offices[office_key][:billable_mileage] = BigDecimal.new("0")
+        @offices[office_key][:customer_count] = 0
+      end
 
       row = @customer_rows[office_key][row_key]
       if row.nil?
-        row = {:customer          => customer,
+        @offices[office_key][:approved_rides] += trip.approved_rides || 0
+        @offices[office_key][:customer_count] += 1
+        @approved_rides += trip.approved_rides.to_i
+        row = {:customer          => trip.customer,
                :billed_rides      => 0, 
-               :billable_mileage  => 0, 
+               :billable_mileage  => BigDecimal.new("0"), 
                :mobility          => trip.wheelchair?,
                :date_enrolled     => trip.date_enrolled,
                :service_end       => trip.service_end,
                :approved_rides    => trip.approved_rides,
                :case_manager      => trip.case_manager}
         @customer_rows[office_key][row_key] = row
+        row[:trips] = []
       end
 
       row[:billed_rides] += 1
       row[:billable_mileage] += trip.spd_mileage
+      row[:mobility] = trip.wheelchair? if trip.wheelchair?
+      row[:trips] << {:date => trip.date,
+                      :estimated_mileage => trip.estimated_trip_distance_in_miles,
+                      :billable_mileage => trip.spd_mileage,
+                      :mobility => trip.wheelchair?}
 
-      @approved_rides += trip.approved_rides.to_i
+      @offices[office_key][:billed_rides] += 1
+      @offices[office_key][:billable_mileage] += trip.spd_mileage
+
+      @all_billed_rides += 1
+      @all_mileage += trip.spd_mileage
       if trip.wheelchair?.nil?
         @unknown_billed_rides += 1
         @unknown_mileage += trip.spd_mileage
@@ -116,6 +135,10 @@ class PredefinedReportsController < ApplicationController
         @nonwc_billed_rides += 1
         @nonwc_mileage += trip.spd_mileage
       end
+    end
+    if params[:output] == 'CSV'
+      @filename = "SPD Report".sub(" ","_")
+      render "spd.csv" 
     end
   end
 

@@ -1,0 +1,33 @@
+csv << [
+  "Office",
+  "Case Manager",
+  "Date Enrolled",
+  "Customer",
+  "Prime Number",
+  "Service End",
+  "Approved Rides",
+  "Trip Date",
+  "Estimated Mileage",
+  "Billable Mileage",
+  "Scooter or Wheelchair"
+]
+@customer_rows.keys.sort.each do |office|
+  @customer_rows[office].values.sort {|a,b| a[:customer].name <=> b[:customer].name }.each do |customer_row|
+    c = customer_row[:customer]
+    customer_row[:trips].each do |trip|
+      csv << [
+        office,
+        customer_row[:case_manager],
+        customer_row[:date_enrolled],
+        "#{c.first_name} #{c.middle_initial} #{c.last_name}",
+        c.prime_number,
+        customer_row[:service_end],
+        customer_row[:approved_rides],
+        trip[:date],
+        trip[:estimated_mileage],
+        trip[:billable_mileage],
+        trip[:mobility]
+      ]
+    end
+  end
+end

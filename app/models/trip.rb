@@ -92,11 +92,11 @@ class Trip < ActiveRecord::Base
 
   def spd_mileage
     if self.estimated_trip_distance_in_miles < 5
-      return 0
-    elsif self.estimated_trip_distance_in_miles < 25
-      return self.estimated_trip_distance_in_miles - 5
+      return BigDecimal("0")
+    elsif self.estimated_trip_distance_in_miles < 20
+      return BigDecimal((self.estimated_trip_distance_in_miles - 5).to_s).round(2)
     else
-      return 20
+      return BigDecimal("15")
     end
   end
 
