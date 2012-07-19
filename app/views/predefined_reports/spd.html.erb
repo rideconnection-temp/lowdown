@@ -49,12 +49,6 @@
       <th>Billable Mileage</th>
     </tr>
     <tr>
-      <td colspan="5">All Trips</td>
-      <td class="number"><%= @approved_rides %></td>
-      <td class="number"><%= @all_billed_rides %></td>
-      <td class="number"><%= "%.2f" % @all_mileage %></td>
-    </tr>
-    <tr>
       <td colspan="5">Scooter or Wheelchair</td>
       <td class="number"></td>
       <td class="number"><%= @wc_billed_rides %></td>
@@ -72,6 +66,11 @@
       <td class="number"><%= @unknown_billed_rides %></td>
       <td class="number"><%= "%.2f" % @unknown_mileage %></td>
     </tr>
-
+    <tr>
+      <td colspan="5">All Trips</td>
+      <td class="number"><%= @approved_rides %></td>
+      <td class="number"><%= @all_billed_rides %></td>
+      <td class="number"><%= "%.2f" % @all_mileage %></td>
+    </tr>
   </tbody>
 </table>
