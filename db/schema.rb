@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120718004135) do
+ActiveRecord::Schema.define(:version => 20120719214443) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -177,9 +177,9 @@ ActiveRecord::Schema.define(:version => 20120718004135) do
     t.integer  "allocation_id"
     t.integer  "updated_by"
     t.boolean  "complete",                                                      :default => false
-    t.integer  "administrative"
-    t.integer  "operations"
-    t.integer  "vehicle_maint"
+    t.decimal  "administrative",                 :precision => 10, :scale => 2
+    t.decimal  "operations",                     :precision => 10, :scale => 2
+    t.decimal  "vehicle_maint",                  :precision => 10, :scale => 2
     t.text     "adjustment_notes"
   end
 
@@ -263,7 +263,7 @@ ActiveRecord::Schema.define(:version => 20120718004135) do
     t.integer  "updated_by"
     t.datetime "imported_at"
     t.text     "adjustment_notes"
-    t.string   "case_manager",                     :limit => 25
+    t.string   "case_manager"
     t.date     "date_enrolled"
     t.date     "service_end"
     t.integer  "approved_rides"
