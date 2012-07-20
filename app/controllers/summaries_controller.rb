@@ -2,39 +2,57 @@ class SummaryQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :period_start
-  attr_accessor :period_end
-
-  attr_accessor :provider
+  attr_accessor :start_date, :end_date, :after_end_date
+  attr_accessor :provider, :reporting_agency
 
   def convert_date(obj, base)
-    Date.new(obj["#{base}(1i)"].to_i,obj["#{base}(2i)"].to_i)
+    Date.new(obj["#{base}(1i)"].to_i, obj["#{base}(2i)"].to_i)
   end
 
   def initialize(params)
-    if params
-      @period_start = params["period_start(1i)"] ? convert_date(params, "period_start") : Date.parse(params["period_start"])
-      @period_end   = params["period_end(1i)"] ? convert_date(params, "period_end") : Date.parse(params["period_end"])
-      @provider     = params[:provider].to_i if params[:provider].present?
+    params ||= {}
+    if params["start_date(1i)"].present?
+      @start_date = convert_date(params, "start_date")
+    elsif params["start_date"].present?
+      @start_date = Date.parse(params["start_date"])
     end
+    if params["end_date(1i)"].present?
+      @end_date = convert_date(params, "end_date")
+    elsif params["end_date"].present?
+      @end_date = Date.parse(params["end_date"])
+    end
+    if @start_date.blank? || @end_date.blank?
+      @start_date   = Date.today - 1.month - Date.today.day + 1.day
+      @end_date     = @start_date + 1.month
+    end
+    @after_end_date = Date.new(@end_date.year,@end_date.month,1) + 1.month
+    @reporting_agency = params[:reporting_agency].to_i if params[:reporting_agency].present?
+    @provider         = params[:provider].to_i if params[:provider].present?
   end
 
   def persisted?
     false
   end
 
-  def conditions
-    arr = [""]
-    if @period_start
-      arr[0] = arr[0] << "period_start BETWEEN ? AND ?"
-      arr += [@period_start, @period_end]
-    end
-    if provider && provider != 0
-      arr[0] = arr[0] << "AND allocation_id IN (#{Allocation.where(:provider_id => provider).map(&:id).join(",")})"
-    elsif provider && provider == 0
-      arr[0] = arr[0] << "AND allocation_id IN (#{Allocation.where(:provider_id => nil).map(&:id).join(",")})"
-    end
-    arr
+  def apply_conditions(summaries)
+    summaries = summaries.for_date_range(start_date,after_end_date) if start_date
+    summaries = summaries.for_provider(provider) if provider.present? && provider != 0 
+    summaries = summaries.with_no_provider if provider == 0
+    summaries = summaries.for_reporting_agency(reporting_agency) if reporting_agency.present? && reporting_agency != 0 
+    summaries = summaries.with_no_reporting_agency if reporting_agency == 0
+    summaries
+  end
+
+  def providers
+    na_provider = Provider.new(:name => "<Not Applicable>")
+    na_provider.id = 0
+    [na_provider] + Provider.default_order
+  end
+
+  def reporting_agencies
+    na_reporting_agency = Provider.new(:name => "<Not Applicable>")
+    na_reporting_agency.id = 0
+    [na_reporting_agency] + Provider.partners.default_order
   end
 end
 
@@ -43,18 +61,8 @@ class SummariesController < ApplicationController
 
   def index
     @query = SummaryQuery.new(params[:summary_query])
-    if @query.conditions.first.empty?
-      today = Date.today
-      @query.period_end = Date.new(today.year, today.month)
-      @query.period_start = @query.period_end.prev_month
-      params[:summary_query] = {:period_start => @query.period_start.to_s,
-        :period_end => @query.period_end.to_s}
-    end
-
-    na_provider = Provider.new(:name => "<Not Applicable>")
-    na_provider.id = 0
-    @providers = [na_provider] + Provider.default_order
-    @summaries = Summary.current_versions.where(@query.conditions).includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start').paginate :page => params[:page]
+    @summaries = Summary.current_versions.includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start').paginate :page => params[:page]
+    @summaries = @query.apply_conditions(@summaries)
   end
 
   def new
