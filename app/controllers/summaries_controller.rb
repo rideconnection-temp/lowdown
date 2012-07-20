@@ -33,6 +33,10 @@ class SummaryQuery
   def persisted?
     false
   end
+  
+  def has_dates?
+    start_date.present? && end_date.present?
+  end
 
   def apply_conditions(summaries)
     summaries = summaries.for_date_range(start_date,after_end_date) if start_date
@@ -92,11 +96,11 @@ class SummariesController < ApplicationController
     updated = 0
 
     @query = SummaryQuery.new(params[:summary_query])
-    if @query.conditions.first.empty?
+    unless @query.has_dates?
       flash[:alert] = "Cannot update without date range"
     else
-      updated = Summary.current_versions.where(@query.conditions).data_entry_not_complete.update_all(:complete => true)
-      flash[:alert] = "Updated #{updated} records"
+      updated = @query.apply_conditions(Summary.current_versions.data_entry_not_complete).update_all(:complete => true)
+      flash[:alert] = "Updated #{view_context.pluralize updated, "record"}"
     end
     redirect_to :action => :index, :summary_query => params[:summary_query]
   end
