@@ -13,7 +13,7 @@ class Provider < ActiveRecord::Base
   scope :for_multnomah_ads, where("id in (SELECT provider_id FROM allocations WHERE project_id = (SELECT id FROM projects WHERE funding_source = ?))",'Multnomah ADS')
   scope :partners, where(["provider_type = ?", "Partner"])
   scope :partners_or_current, lambda{|provider_id| where(["provider_type = ? OR id = ?", "Partner", provider_id])}
-  scope :default_order
+  scope :default_order, order(:name)
 
   def to_s
     name
