@@ -1,40 +1,36 @@
-<h2 id="result-count"><%= @runs.total_entries %> run<% if @runs.total_entries != 1 %>s<% end %> found.</h2>
+<h2 id="result-count"><%= pluralize @runs.total_entries, "run" %> found.</h2>
 
 <% if @runs.total_entries > 0 %>
-
-<%= link_to 'Mark All Complete', { :action=>:bulk_update, "query[start_date]" => @query.start_date, "query[end_date]" => @query.end_date }, :class=>"mark-complete", :confirm=>"Are you sure you want to mark all runs complete?" %>
-
-<div class="report-wrapper">
-<table id="run-results">
-  <thead>
-    <tr>
-      <th>Routematch ID</th>
-      <th>Start Time</th>
-      <th>End Time</th>
-      <th>Odometer Start</th>
-      <th>Odometer End</th>
-      <th>Escort Count</th>
-      <th>Complete</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @runs.each do |run| %>
-    <tr>
-      <td><%= run.routematch_id %></td>
-      <td><%= run.start_at %></td>
-      <td><%= run.end_at %></td>
-      <td><%= run.odometer_start %></td>
-      <td><%= run.odometer_end %></td>
-      <td><%= run.escort_count %></td>
-      <td><span class="status-<%= (run.complete) ? "" : "in" %>complete"><%= run.complete %></span></td>
-      <td><%= link_to "Details", :action=>:show, :id=>run.id %></td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
-</div>
-
+  <div class="report-wrapper">
+  <table id="run-results">
+    <thead>
+      <tr>
+        <th>Routematch ID</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Odometer Start</th>
+        <th>Odometer End</th>
+        <th>Escort Count</th>
+        <th>Complete</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @runs.each do |run| %>
+      <tr>
+        <td><%= run.routematch_id %></td>
+        <td><%= run.start_at %></td>
+        <td><%= run.end_at %></td>
+        <td><%= run.odometer_start %></td>
+        <td><%= run.odometer_end %></td>
+        <td><%= run.escort_count %></td>
+        <td><span class="status-<%= (run.complete) ? "" : "in" %>complete"><%= run.complete %></span></td>
+        <td><%= link_to "Details", :action=>:show, :id=>run.id %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  </div>
 <% end %>
 
 <%= will_paginate @runs %>

@@ -879,6 +879,8 @@ a.details,
 a.delete,
 a.mark-complete,
 a.add,
+a.move,
+a.import,
 a.change-password {
     padding: 5px 0 5px 20px;
     text-decoration: none;
@@ -900,7 +902,15 @@ a.delete {
 }
 a.mark-complete {
     background: url(images/tick.png) left center no-repeat scroll;
+}
+body.summaries a.mark-complete {
     float: right;
+}
+a.move {
+    background: url(images/truck.png) left center no-repeat scroll;
+}
+a.import {
+    background: url(images/application-import.png) left center no-repeat scroll;
 }
 a.add {
     background: url(images/plus-button.png) left center no-repeat scroll;

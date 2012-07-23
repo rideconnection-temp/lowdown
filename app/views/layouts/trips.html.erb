@@ -1,10 +1,9 @@
 <% content_for :menu_bar do %>
         <ul id="subnav" class="selfclear">
-          <li><%= link_to "View Trips", :action=>:list %></li>
 <% if current_user.is_admin %>
-          <li><%= link_to "Import Trips", :action=>:import %></li>
-          <li><%= link_to "Move Trips", :action=>:update_allocation %></li>
-          <li><%= link_to "Mark Data Entry Complete", :action=>:show_bulk_update %></li>
+          <li><%= link_to "Import Trips", {:action=>:import}, :class=>:import %></li>
+          <li><%= link_to "Move Trips", {:action=>:update_allocation}, :class=>:move %></li>
+          <li><%= link_to "Mark Data Entry Complete", {:action=>:show_bulk_update}, :class=>"mark-complete" %></li>
 <% end %>
         </ul>
 <% end %>
