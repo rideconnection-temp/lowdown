@@ -192,6 +192,8 @@ class TripsController < ApplicationController
     @pickup_address = @trip.pickup_address
     @dropoff_address = @trip.dropoff_address
     @updated_by_user = @trip.updated_by_user
+    @result_codes = Trip::RESULT_CODES
+    @result_codes[@trip.result_code] = (@trip.result_code) if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
     @allocations = Allocation.order(:name).active_on(@trip.date)
     if @allocations.detect{|a| a.id == @trip.allocation_id}.nil?
       @allocations.unshift Allocation.find(@trip.allocation_id)
