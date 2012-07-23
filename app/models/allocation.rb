@@ -99,10 +99,6 @@ class Allocation < ActiveRecord::Base
     reporting_agency.try :name
   end
 
-  def subcontractor
-    provider.try :subcontractor
-  end
-
   private
 
   def require_consistent_provider_fields

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120719214443) do
+ActiveRecord::Schema.define(:version => 20120723165315) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -124,7 +124,6 @@ ActiveRecord::Schema.define(:version => 20120719214443) do
     t.string   "provider_type", :limit => 15
     t.string   "agency",        :limit => 50
     t.string   "branch",        :limit => 50
-    t.string   "subcontractor", :limit => 50
     t.string   "routematch_id", :limit => 10
     t.datetime "created_at"
     t.datetime "updated_at"

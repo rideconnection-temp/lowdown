@@ -6,7 +6,6 @@ one:
   provider_type: MyString
   agency: MyString
   branch: MyString
-  subcontractor: MyString
   routematch_id: MyString
 
 two:
@@ -14,5 +13,4 @@ two:
   provider_type: MyString
   agency: MyString
   branch: MyString
-  subcontractor: MyString
   routematch_id: MyString

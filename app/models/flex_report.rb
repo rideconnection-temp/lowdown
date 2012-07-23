@@ -24,7 +24,6 @@ class FlexReport < ActiveRecord::Base
     "project_number"        => "projects.project_number",
     "provider_name"         => "providers.name",
     "reporting_agency_name" => "reporting_agencies.name",
-    "subcontractor"         => "providers.subcontractor",
     "quarter"               => "quarter",
     "month"                 => "month",
     "year"                  => "year"
@@ -69,22 +68,6 @@ class FlexReport < ActiveRecord::Base
       self.program_name_list = nil
     else
       self.program_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
-    end
-  end
-
-  def subcontractor_names
-    if subcontractor_name_list.blank?
-      [""]
-    else
-      subcontractor_name_list.split("|")
-    end
-  end
-
-  def subcontractor_names=(list)
-    if list.blank? 
-      self.subcontractor_name_list = nil
-    else
-      self.subcontractor_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
     end
   end
 
