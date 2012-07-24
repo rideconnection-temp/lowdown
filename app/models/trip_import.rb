@@ -348,10 +348,10 @@ private
     Trip.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
   end
 
-  # Source data can have 1 or -1 as true.  0 is false, nil is nil
+  # Source data can have 1 or -1 as true. 0 and nil are false
   def make_boolean(value)
     if value.blank?
-      nil
+      false
     elsif value == 0
       false
     else

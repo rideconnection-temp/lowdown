@@ -1,335 +1,314 @@
   <ol class="section first">
-
     <%= f.hidden_field :id %>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:customer) %>>
       <%= f.label :customer, "Customer:" %>
       <p class="disabled-input">
         <% if @customer.name %>
           <%= link_to @customer.name, @customer %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li class="selfclear">
+    <li<%= mark_if_changed(@trip,:customer_type) %>>
       <%= f.label :customer_type, "Customer Type (this trip only):" %>
       <%= f.select :customer_type, options_for_select(%w{Honored Adult Child}, @trip.customer_type), :include_blank => true %>
     </li>
-      
-    <li>
+    <li<%= mark_if_changed(@trip,:home_address) %>>
       <%= f.label :home_address, "Home Address:" %>
       <p class="disabled-input">
         <% if @home_address.display_name %>
           <%= @home_address.display_name %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:pickup_address) %>>
       <%= f.label :pickup_address, "Pickup Address:" %>
       <p class="disabled-input">
         <% if @pickup_address.display_name %>
           <%= @pickup_address.display_name %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:dropoff_address) %>>
       <%= f.label :dropoff_address, "Dropoff Address:" %>
       <p class="disabled-input">
         <% if @dropoff_address.display_name %>
           <%= @dropoff_address.display_name %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li><%= f.label :volunteer_trip, "Volunteer Trip:", :class => "checkbox" %> <%= f.check_box :volunteer_trip %></li>
-
-    <li><%= f.label :in_trimet_district, "In Trimet District:" %> <%= f.check_box :in_trimet_district %></li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:volunteer_trip) %>>
+      <%= f.label :volunteer_trip, "Volunteer Trip:", :class => "checkbox" %> 
+      <%= f.check_box :volunteer_trip %>
+    </li>
+    <li<%= mark_if_changed(@trip,:in_trimet_district) %>>
+      <%= f.label :in_trimet_district, "In Trimet District:" %> 
+      <%= f.check_box :in_trimet_district %>
+    </li>
+    <li<%= mark_if_changed(@trip,:trip_import_id) %>>
       <%= f.label :trip_import_id, "Trip Import ID:" %>
       <p class="disabled-input">
         <% if @trip.trip_import_id %>
           <%= @trip.trip_import_id %>
-          <% if !@trip.trip_import_id.nil? %>
-            <br />
-            <%= link_to "View All trips from this Import", url_for(:action=>:import_trips, :id=>@trip.trip_import_id) %>
-          <% end %>
+          <%= link_to "View All trips from this Import", url_for(:action=>:import_trips, :id=>@trip.trip_import_id), :class => :details %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:routematch_share_id) %>>
       <%= f.label :routematch_share_id, "Share ID:" %>
       <p class="disabled-input">
         <% if @trip.routematch_share_id %>
           <%= @trip.routematch_share_id %>
-          <% if !@trip.routematch_share_id.nil? %>
-            <br />
-            <%= link_to "View All trips in this shared ride", url_for(:action=>:share, :id=>@trip.routematch_share_id) %>
-          <% end %>
+          <%= link_to "View All trips in this shared ride", url_for(:action=>:share, :id=>@trip.routematch_share_id), :class => :details %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:run_id) %>>
       <%= f.label :run_id, "Run:" %>
       <p class="disabled-input">
         <% if @trip.run_id %>
           <%= link_to @trip.run.display_name, @trip.run %>
-          <% if !@trip.run_id.nil? %>
-            <br />
-            <%= link_to "View All Trips in this Run", url_for(:action=>:run, :id=>@trip.run_id) %>
-          <% end %>
+          <%= link_to "View All Trips in this Run", url_for(:action=>:run, :id=>@trip.run_id), :class => :details %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:start_at) %>>
       <%= f.label :start_at, "Start At:" %>
       <p class="disabled-input">
         <% if @trip.start_at %>
-          <%= @trip.start_at %>
+          <%= @trip.start_at.to_s(:full) %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:end_at) %>>
       <%= f.label :end_at, "End At:" %>
       <p class="disabled-input">
         <% if @trip.end_at %>
-          <%= @trip.end_at %>
+          <%= @trip.end_at.to_s(:full) %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-    
-    <li>
+    <li<%= mark_if_changed(@trip,:duration) %>>
       <%= f.label :duration, "Duration:" %>
       <p class="disabled-input">
         <% if @trip.duration %>
           <%= pluralize(@trip.duration/60,'minute') %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li class="selfclear">
+    <li<%= mark_if_changed(@trip,:case_manager) %>>
       <%= f.label :case_manager, "Case Manager:" %>
       <%= f.text_field :case_manager %>
     </li>
-    
-    <li class="selfclear">
+    <li<%= mark_if_changed(@trip,:case_manager_office) %>>
       <%= f.label :case_manager_office, "Case Manager Office:" %>
       <%= f.text_field :case_manager_office %>
     </li>
-    
-    <li class="selfclear">
+    <li<%= mark_if_changed(@trip,:date_enrolled) %>>
       <%= f.label :date_enrolled, "Date Customer Enrolled:" %>
       <%= f.text_field :date_enrolled, :class => "datepicker"  %>
     </li>
-    
-    <li class="selfclear">
+    <li<%= mark_if_changed(@trip,:service_end) %>>
       <%= f.label :service_end, "Customer Service End:" %>
       <%= f.text_field :service_end, :class => "datepicker" %>
     </li>
-    
-    <li class="selfclear">
+    <li<%= mark_if_changed(@trip,:approved_rides) %>>
       <%= f.label :approved_rides, "Customer Approved Rides:" %>
       <%= f.text_field :approved_rides, :type => "number", :size => 3 %>
     </li>
   </ol>
 
   <ol class="section second">
-
-    <li><%= f.label :odometer_start, "Odometer Start:" %> <%= f.text_field :odometer_start, :size => 4 %></li>
-
-    <li><%= f.label :odometer_end, "Odometer End:" %> <%= f.text_field :odometer_end, :size => 4 %></li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:odometer_start) %>>
+      <%= f.label :odometer_start, "Odometer Start:" %> 
+      <%= f.text_field :odometer_start, :size => 4 %>
+    </li>
+    <li<%= mark_if_changed(@trip,:odometer_end) %>>
+      <%= f.label :odometer_end, "Odometer End:" %> 
+      <%= f.text_field :odometer_end, :size => 4 %>
+    </li>
+    <li<%= mark_if_changed(@trip,:mileage) %>>
       <%= f.label :mileage, "Mileage:" %>
       <p class="disabled-input">
         <% if @trip.mileage %>
           <%= @trip.mileage %> (Calculated from odometer values)
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:estimated_trip_distance_in_miles) %>>
       <%= f.label :estimated_trip_distance_in_miles, "Estimated Trip Distance:"  %>
       <p class="disabled-input">
         <% if @trip.estimated_trip_distance_in_miles %>
           <%= @trip.estimated_trip_distance_in_miles %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li><%= f.label :fare, "Fare:" %> <%= f.text_field :fare, :size => 4 %></li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:fare) %>>
+      <%= f.label :fare, "Fare:" %> 
+      <%= f.text_field :fare, :size => 4 %>
+    </li>
+    <li<%= mark_if_changed(@trip,:calculated_bpa_fare) %>>
       <%= f.label :calculated_bpa_fare, "Calculated BPA Fare:" %>
       <p class="disabled-input">
         <% if @trip.calculated_bpa_fare %>
           <%= number_to_currency(@trip.calculated_bpa_fare) %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:estimated_individual_fare) %>>
       <%= f.label :estimated_individual_fare, "Estimated Individual Fare:" %>
       <p class="disabled-input">
         <% if @trip.estimated_individual_fare %>
           <%= number_to_currency(@trip.estimated_individual_fare) %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li><%= f.label :purpose_type, "Purpose Type:" %> <%= f.text_field :purpose_type %></li>
-
-    <li><%= f.label :guest_count, "Guest Count:" %> <%= f.text_field :guest_count, :size => 3 %></li>
-
-    <li><%= f.label :attendant_count, "Attendant Count:" %> <%= f.text_field :attendant_count, :size => 3 %></li>
-
-    <li><%= f.label :mobility, "Mobility:" %> <%= f.text_field :mobility %></li>
-
-    <li><%= f.label :bpa_driver_name, "BPA Driver Name:" %> <%= f.text_field :bpa_driver_name %></li>
-
+    <li<%= mark_if_changed(@trip,:purpose_type) %>>
+      <%= f.label :purpose_type, "Purpose Type:" %> 
+      <%= f.text_field :purpose_type %>
+    </li>
+    <li<%= mark_if_changed(@trip,:guest_count) %>>
+      <%= f.label :guest_count, "Guest Count:" %> 
+      <%= f.text_field :guest_count, :size => 3 %>
+    </li>
+    <li<%= mark_if_changed(@trip,:attendant_count) %>>
+      <%= f.label :attendant_count, "Attendant Count:" %> 
+      <%= f.text_field :attendant_count, :size => 3 %>
+    </li>
+    <li<%= mark_if_changed(@trip,:mobility) %>>
+      <%= f.label :mobility, "Mobility:" %> 
+      <%= f.text_field :mobility %>
+    </li>
+    <li<%= mark_if_changed(@trip,:bpa_driver_name) %>>
+      <%= f.label :bpa_driver_name, "BPA Driver Name:" %> 
+      <%= f.text_field :bpa_driver_name %>
+    </li>
   </ol>
 
   <ol class="section third">
-
-    <li>
+    <li<%= mark_if_changed(@trip,:override) %>>
       <%= f.label :override, "Override:" %>
       <p class="disabled-input">
         <% if @trip.override %>
           <%= @trip.override %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:original_override) %>>
       <%= f.label :original_override, "Original override:" %>
       <p class="disabled-input">
         <% if @trip.original_override %>
           <%= @trip.original_override %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:routematch_trip_id) %>>
       <%= f.label :routematch_trip_id, 'Routematch Trip ID' %>
       <p class="disabled-input">
         <% if @trip.routematch_trip_id %>
           <%= @trip.routematch_trip_id %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:result_code) %>>
       <%= f.label :result_code, "Result Code:" %> 
       <%= f.select :result_code, @result_codes, :include_blank => true %>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:allocation_id) %>>
       <%= f.label :allocation, "Allocation:" %> 
       <%= f.collection_select :allocation_id, @allocations, :id, :select_label %>
       <%= link_to "Details", [:edit, @trip.allocation], :class => :details if @trip.allocation %>
     </li>
-
-    <li><%= f.label :customer_pay, "Customer Pay:" %> <%= f.text_field :customer_pay, :size => 4 %></li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:customer_pay) %>>
+      <%= f.label :customer_pay, "Customer Pay:" %> 
+      <%= f.text_field :customer_pay, :size => 4 %>
+    </li>
+    <li<%= mark_if_changed(@trip,:apportioned_duration) %>>
       <%= f.label :apportioned_duration, "Apportioned Duration:" %>
       <p class="disabled-input">
         <% if @trip.apportioned_duration %>
           <%= pluralize((@trip.apportioned_duration/60).to_i,'minute') %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:apportioned_mileage) %>>
       <%= f.label :apportioned_mileage, "Apportioned Mileage:" %>
       <p class="disabled-input">
         <% if @trip.apportioned_mileage %>
           <%= @trip.apportioned_mileage %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
-    <li>
+    <li<%= mark_if_changed(@trip,:apportioned_fare) %>>
       <%= f.label :apportioned_fare, "Apportioned Fare:" %>
       <p class="disabled-input">
         <% if @trip.apportioned_fare %>
           <%= number_to_currency(@trip.apportioned_fare) %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
     <li>
-      <%= f.label :complete, "Data Entry Complete:" %> <%= f.check_box :complete, :tabindex=>3 %>
+      <%= f.label :complete, "Data Entry Complete:" %> 
+      <%= f.check_box :complete, :tabindex=>3 %>
     </li>
-    
     <li>
       <%= f.label :updated_by, "Updated By:" %>
       <p class="disabled-input">
         <% if @updated_by_user.email %>
           <%= @updated_by_user.email %>
         <% else %>
-          &hellip;
+          &mdash;
         <% end %>
       </p>
     </li>
-
   </ol>
 
   <ol class="section fourth">
-
-  <% if !f.object.new_record? %>
-    <li>
-      <%= f.label :adjustment_notes, "Adjustment Notes:" %>
-      <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
-    </li>
-  <% end %>
-
+    <% if !f.object.new_record? %>
+      <li<%= mark_if_changed(@trip,:adjustment_notes) %>>
+        <%= f.label :adjustment_notes, "Adjustment Notes:" %>
+        <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
+      </li>
+    <% end %>
   </ol>
 
 

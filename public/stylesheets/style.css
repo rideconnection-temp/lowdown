@@ -487,6 +487,12 @@ ol.section li {
     margin-bottom: 10px;
     clear: left;
 }
+ol.section li.changed {
+    padding: 3px;
+    background-color: #E5F2FF;
+    border: 2px solid yellow;
+    border-radius: 3px;
+}
 form label {
     font-weight: bold;
 }

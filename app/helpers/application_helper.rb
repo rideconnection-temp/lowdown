@@ -126,4 +126,10 @@ module ApplicationHelper
   def address_fields(address)
     [address.common_name, address.building_name, address.address_1, address.address_2, address.city, address.state, address.postal_code]
   end
+
+  def mark_if_changed(record,attribute)
+    return if record.previous.nil?
+    return if record.send(attribute).blank? && record.previous.send(attribute).blank?
+    ' class="changed"'.html_safe if record.send(attribute) != record.previous.send(attribute)
+  end
 end
