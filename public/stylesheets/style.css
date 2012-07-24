@@ -1062,8 +1062,12 @@ body.flex-reports fieldset ol.section li input,
 body.flex-reports fieldset ol.section li textarea {
   max-width: 100%;
 }
+body.flex-reports hr {
+  margin: 5px 0;
+}
 body.flex-reports #filters {
   margin: 0;
+  clear: both;
 }
 body.flex-reports #filters li {
   list-style-type: none;
@@ -1073,7 +1077,8 @@ body.flex-reports h2 {
   margin: 10px 0 0 0;
 }
 #report-fields-to-include {
-    float: left;
+    clear: both;
+    padding-top: 10px;
 }
 #report-checkbox-area {
     float: left;
