@@ -591,7 +591,6 @@ fieldset ol.section li input.full {
     width: 60%;
 }
 fieldset select.full {
-    min-width: 100%;
     height: 22em;
 }
 fieldset ol.section li.passengers input {
@@ -659,13 +658,6 @@ form div.actions input[type="submit"] {
 form div.actions input[type="submit"]:hover {
     background: #009FFB;
 }
-
-/* Report Form */
-
-body.flex-reports fieldset ol.section li input {
-  max-width: 100%;
-}
-
 
 /* tables */
 table {
@@ -1062,23 +1054,23 @@ body.users a.action-bttn {
 
 /*
  *
- * Reports
+ * Flex Reports form
  *
  */
-ul.flex-reports {
-    list-style: none;
-    margin-left: 0;
+
+body.flex-reports fieldset ol.section li input, 
+body.flex-reports fieldset ol.section li textarea {
+  max-width: 100%;
 }
-ul.flex-reports li {
-    margin: 0 0 10px;
+body.flex-reports #filters {
+  margin: 0;
 }
-ul.flex-reports li a {
-    padding: 5px 0 5px 20px;
-    text-decoration: none;
-    background: url(images/reports-stack.png) left center no-repeat scroll;
+body.flex-reports #filters li {
+  list-style-type: none;
+  float: left;
 }
-p input[type="checkbox"] { 
-    vertical-align: middle; 
+body.flex-reports h2 {
+  margin: 10px 0 0 0;
 }
 #report-fields-to-include {
     float: left;
@@ -1108,6 +1100,25 @@ textarea#report_description {
   height : 50px;
   margin-bottom: 10px;
   
+}
+body.flex-reports div.actions {
+  margin-top: 10px;
+}
+
+ul.flex-reports {
+    list-style: none;
+    margin-left: 0;
+}
+ul.flex-reports li {
+    margin: 0 0 10px;
+}
+ul.flex-reports li a {
+    padding: 5px 0 5px 20px;
+    text-decoration: none;
+    background: url(images/reports-stack.png) left center no-repeat scroll;
+}
+p input[type="checkbox"] { 
+    vertical-align: middle; 
 }
 
 /* Predefined Reports */
