@@ -882,7 +882,7 @@ a.import,
 a.change-password {
     padding: 5px 0 5px 20px;
     text-decoration: none;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 16px;
 }
 a.edit {
@@ -1045,9 +1045,6 @@ a.action-bttn:active {
   background: #eee url(images/plus.png) 0.8em center no-repeat scroll;
 }
 /* trip */
-body.flex-reports a.action-bttn {
-    background: #eee url(images/report--plus.png) 0.8em center no-repeat scroll;
-}
 body.users a.action-bttn {
     background: #eee url(images/user--plus.png) 0.8em center no-repeat scroll;
 }
@@ -1058,9 +1055,26 @@ body.users a.action-bttn {
  *
  */
 
+body.flex-reports a.action-bttn {
+    background: #eee url(images/report--plus.png) 0.8em center no-repeat scroll;
+}
 body.flex-reports fieldset ol.section li input, 
 body.flex-reports fieldset ol.section li textarea {
+  width: 100%;
   max-width: 100%;
+}
+body.flex-reports fieldset ol.section li textarea {
+  height: 6em;
+}
+body.flex-reports fieldset ol.first,
+body.flex-reports fieldset ol.second {
+  width: 49%;
+}
+body.flex-reports fieldset ol.first {
+  margin: 0 2% 0 0;
+}
+body.flex-reports fieldset ol.second {
+  margin: 0;
 }
 body.flex-reports hr {
   margin: 5px 0;

@@ -3,11 +3,7 @@
       <ol class="section first">
         <li>
           <h2 class="section-header">Report Name</h2>
-          <%= f.text_field :name, :size => 100 %>
-        </li>
-        <li>
-          <h2 class="section-header">Description</h2>
-          <%= f.text_area :description %>
+          <%= f.text_field :name %>
         </li>
         <li>
           <h2 class="section-header">Grouping</h2>
@@ -31,6 +27,12 @@
             </span>
             <p><a href="#" class="add">Add New Group Field</a></p>
           </div>
+        </li>
+      </ol>
+      <ol class="section second">
+        <li>
+          <h2 class="section-header">Description</h2>
+          <%= f.text_area :description %>
         </li>
       </ol>
     </div>
