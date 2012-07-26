@@ -3,8 +3,8 @@
   <%= link_to 'Mark Data Entry Complete For All', { :action => :bulk_update, :summary_query => params[:summary_query] }, :class=>'mark-complete' %>
   <div class="list-wrapper">
     <table id="summary-results">
-     <thead>
-       <tr>
+      <thead>
+        <tr>
          <th>Allocation</th>
          <th>Month</th>
          <th>Complete</th>
@@ -18,27 +18,59 @@
          <th class="number">Total Driver Hours</th>
          <th class="number">Undup</th>
          <th>&nbsp;</th>
-       </tr>
-     </thead>
-     <tbody>
-       <% @summaries.each do |summary| %>
-       <tr>
-         <td><%= summary.allocation.name %></td>
-         <td><%= summary.period_start.strftime("%b %Y") %></td>
-         <td><span class="status-<%= (summary.complete) ? "" : "in" %>complete"><%= summary.complete? ? "Yes" : "No" %></span></td>
-         <td class="number"><%= number_to_currency(summary.total_cost) %></td>
-         <td class="number"><%= summary.in_district_trips %></td>
-         <td class="number"><%= summary.out_of_district_trips %></td>
-         <td class="number"><%= summary.trips %></td>
-         <td class="number"><%= summary.total_miles %></td>
-         <td class="number"><%= summary.driver_hours_paid %></td>
-         <td class="number"><%= summary.driver_hours_volunteer %></td>
-         <td class="number"><%= (summary.driver_hours_volunteer || 0 ) + (summary.driver_hours_paid || 0) %></td>
-         <td class="number"><%= summary.unduplicated_riders %></td>
-         <td><%= link_to 'Details', :action=>:edit, :id=>summary.id %></td>
-       </tr>
-       <% end %>
-     </tbody>
+        </tr>
+      </thead>
+      <tbody>
+        <% @summaries.each do |summary| %>
+          <tr>
+            <td><%= summary.allocation.name %></td>
+            <td><%= summary.period_start.strftime("%b %Y") %></td>
+            <td><span class="status-<%= (summary.complete) ? "" : "in" %>complete"><%= summary.complete? ? "Yes" : "No" %></span></td>
+            <td class="number"><%= number_to_currency(summary.total_cost) %></td>
+            <td class="number"><%= summary.in_district_trips %></td>
+            <td class="number"><%= summary.out_of_district_trips %></td>
+            <td class="number"><%= summary.trips %></td>
+            <td class="number"><%= summary.total_miles %></td>
+            <td class="number"><%= summary.driver_hours_paid %></td>
+            <td class="number"><%= summary.driver_hours_volunteer %></td>
+            <td class="number"><%= summary.total_driver_hours %></td>
+            <td class="number"><%= summary.unduplicated_riders %></td>
+            <td><%= link_to 'Details', :action=>:edit, :id=>summary.id %></td>
+          </tr>
+        <% end %>
+        <% if @grand_totals[:total_cost] != @page_totals[:total_cost] -%>
+          <tr class="totals">
+            <th>Page Total:</th>
+            <td> </td> 
+            <td> </td> 
+            <td class="number"><%= number_to_currency(@page_totals[:total_cost]) %></td>
+            <td class="number"><%= @page_totals[:in_district_trips] %></td>
+            <td class="number"><%= @page_totals[:out_of_district_trips] %></td>
+            <td class="number"><%= @page_totals[:trips] %></td>
+            <td class="number"><%= @page_totals[:total_miles] %></td>
+            <td class="number"><%= @page_totals[:driver_hours_paid] %></td>
+            <td class="number"><%= @page_totals[:driver_hours_volunteer] %></td>
+            <td class="number"><%= @page_totals[:total_driver_hours] %></td>
+            <td> </td> 
+            <td> </td> 
+          </tr>
+        <% end -%>
+        <tr class="sum-totals">
+          <th>Grand Total:</th>
+          <td> </td> 
+          <td> </td> 
+          <td class="number"><%= number_to_currency(@grand_totals[:total_cost]) %></td>
+          <td class="number"><%= @grand_totals[:in_district_trips] %></td>
+          <td class="number"><%= @grand_totals[:out_of_district_trips] %></td>
+          <td class="number"><%= @grand_totals[:trips] %></td>
+          <td class="number"><%= @grand_totals[:total_miles] %></td>
+          <td class="number"><%= @grand_totals[:driver_hours_paid] %></td>
+          <td class="number"><%= @grand_totals[:driver_hours_volunteer] %></td>
+          <td class="number"><%= @grand_totals[:total_driver_hours] %></td>
+          <td> </td> 
+          <td> </td> 
+        </tr>
+      </tbody>
     </table>
   </div>
 <% end %>

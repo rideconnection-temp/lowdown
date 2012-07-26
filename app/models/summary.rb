@@ -113,6 +113,10 @@ class Summary < ActiveRecord::Base
     (agency_other || 0) + (funds || 0) + (donations || 0) + (administrative || 0) + (operations || 0) + (vehicle_maint || 0)
   end
 
+  def total_driver_hours
+    (driver_hours_volunteer || 0 ) + (driver_hours_paid || 0)
+  end
+
   def create_new_version?
     return false if do_not_version?
     

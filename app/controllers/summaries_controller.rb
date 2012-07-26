@@ -64,9 +64,17 @@ class SummariesController < ApplicationController
   before_filter :require_admin_user, :except=>[:index]
 
   def index
+    attributes_to_sum = %w{total_cost in_district_trips out_of_district_trips trips total_miles driver_hours_paid driver_hours_volunteer total_driver_hours}
+    @grand_totals = {}
+    @page_totals = {}
+
     @query = SummaryQuery.new(params[:summary_query])
-    @summaries = Summary.current_versions.includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start').paginate :page => params[:page]
-    @summaries = @query.apply_conditions(@summaries)
+    @filtered_summaries = @query.apply_conditions(Summary).current_versions.includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start')
+    @summaries = @filtered_summaries.paginate :page => params[:page]
+    attributes_to_sum.each do |attribute|
+      @grand_totals[attribute.to_sym] = @filtered_summaries.inject(0){|sum,item| sum + (item.send(attribute) || 0)}
+      @page_totals[attribute.to_sym]  = @summaries.inject(0){|sum,item| sum + (item.send(attribute) || 0)}
+    end
   end
 
   def new
