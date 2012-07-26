@@ -36,7 +36,6 @@ class TripQuery
     @dest_allocation     = params[:dest_allocation].to_i  if params[:dest_allocation].present? 
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
-    @adjustment_notes    = params[:adjustment_notes]
   end
 
   def persisted?
@@ -104,6 +103,7 @@ class TripsController < ApplicationController
       @completed_trips_count = @query.apply_conditions(Trip).current_versions.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").completed.first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
       @completed_transfer_count = params[:transfer_count].try(:to_i) || 0
       @transfer_all = (params[:transfer_all] == '1' || params[:transfer_all] == true)
+      @adjustment_notes = params[:adjustment_notes]
       if @completed_trips_count > 0 || @transfer_all 
         if @transfer_all
           ratio = 1
@@ -133,7 +133,7 @@ class TripsController < ApplicationController
                 if trips_remaining > 0 && passengers <= trips_remaining
                   trip.allocation_id = @query.dest_allocation 
                   trip.version_switchover_time = now
-                  trip.adjustment_notes = @query.adjustment_notes
+                  trip.adjustment_notes = @adjustment_notes if @adjustment_notes
                   trip.save!
                   trips_remaining -= passengers
                   @trips_transferred[rc] += passengers
