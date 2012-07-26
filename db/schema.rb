@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120723165315) do
+ActiveRecord::Schema.define(:version => 20120726174839) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(:version => 20120723165315) do
     t.integer "override_id"
     t.date    "activated_on"
     t.integer "reporting_agency_id"
+    t.text    "notes"
   end
 
   create_table "customers", :force => true do |t|
@@ -295,8 +296,6 @@ ActiveRecord::Schema.define(:version => 20120723165315) do
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-
-  add_foreign_key "allocations", ["reporting_agency_id"], "providers", ["id"], :name => "allocations_reporting_agency_id_fkey"
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 
