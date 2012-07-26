@@ -35,7 +35,7 @@
     </td>
   <% end %>
   <% if @report.results_fields.member? 'total' %>
-    <td class="number">
+    <td class="number total">
       <%= number_to_currency(row.total, :precision => 0) %>
     </td>
   <% end %>

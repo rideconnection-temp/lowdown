@@ -98,7 +98,8 @@ tr.sum-totals td {
   border-top: 2pt solid #000;
   padding-top: 1.5em;
 }
-table tr.totals td {
+table tr.totals td,
+table td.total {
     font-weight: bold;
 }
 
