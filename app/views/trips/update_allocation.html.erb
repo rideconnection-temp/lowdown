@@ -40,7 +40,10 @@
         <%= label_tag :transfer_all, "Transfer all trips" %>
         <%= check_box_tag :transfer_all %>
       </li>
-      
+      <li>
+        <%= label_tag :adjustment_notes, "Adjustment notes" %>
+        <%= text_area_tag :adjustment_notes %>
+      </li>
       <li>
         <input id="transfer-trips" type="submit" value="Transfer Trips" name="commit"/>
         <% if @query.update_allocation? && @completed_trips_count > 0 %>

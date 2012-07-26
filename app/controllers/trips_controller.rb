@@ -5,7 +5,8 @@ class TripQuery
   include ActiveModel::Conversion
 
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
-      :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id
+      :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id,
+      :adjustment_notes
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -35,6 +36,7 @@ class TripQuery
     @dest_allocation     = params[:dest_allocation].to_i  if params[:dest_allocation].present? 
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
+    @adjustment_notes    = params[:adjustment_notes]
   end
 
   def persisted?
@@ -131,6 +133,7 @@ class TripsController < ApplicationController
                 if trips_remaining > 0 && passengers <= trips_remaining
                   trip.allocation_id = @query.dest_allocation 
                   trip.version_switchover_time = now
+                  trip.adjustment_notes = @query.adjustment_notes
                   trip.save!
                   trips_remaining -= passengers
                   @trips_transferred[rc] += passengers
