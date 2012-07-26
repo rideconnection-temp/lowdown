@@ -1058,22 +1058,22 @@ body.users a.action-bttn {
 body.flex-reports a.action-bttn {
     background: #eee url(images/report--plus.png) 0.8em center no-repeat scroll;
 }
-body.flex-reports fieldset ol.section li input, 
-body.flex-reports fieldset ol.section li textarea {
+body.flex-reports fieldset.main-form ol.section li input, 
+body.flex-reports fieldset.main-form ol.section li textarea {
   width: 100%;
   max-width: 100%;
 }
-body.flex-reports fieldset ol.section li textarea {
+body.flex-reports fieldset.main-form ol.section li textarea {
   height: 6em;
 }
-body.flex-reports fieldset ol.first,
-body.flex-reports fieldset ol.second {
+body.flex-reports fieldset.main-form ol.first,
+body.flex-reports fieldset.main-form ol.second {
   width: 49%;
 }
-body.flex-reports fieldset ol.first {
+body.flex-reports fieldset.main-form ol.first {
   margin: 0 2% 0 0;
 }
-body.flex-reports fieldset ol.second {
+body.flex-reports fieldset.main-form ol.second {
   margin: 0;
 }
 body.flex-reports hr {
@@ -1206,7 +1206,7 @@ li.flex-report ol li {
     margin-right: 20px;
 }
 
-li.flex-report form.run-report input[type="submit"] {
+body.flex-reports form.run-report input[type="submit"] {
     background: #0081CC;
     color: #fff;
     font-size: 15px;
@@ -1218,7 +1218,7 @@ li.flex-report form.run-report input[type="submit"] {
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
-li.flex-report form.run-report input[type="submit"]:hover {
+body.flex-reports form.run-report input[type="submit"]:hover {
     background: #009FFB;
 }
 
