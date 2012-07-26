@@ -29,7 +29,7 @@
       </li>
       
       <li class="selfclear">
-        <%= form.label :project_id, "F.E. Project" %>
+        <%= form.label :project_id, "F.E. project" %>
         <%= form.collection_select :project_id, Project.all, :id, :name, :include_blank => true %>
         <%= link_to "Details", [:edit, @allocation.project], :class => :details if @allocation.project %>
       </li>
@@ -76,7 +76,7 @@
       </li>
       
       <li class="selfclear">
-        <%= form.label :routematch_provider_code %>
+        <%= form.label :routematch_provider_code, "RouteMatch provider code" %>
         <%= form.text_field :routematch_provider_code, :size => 5 %>      
       </li>
 
@@ -91,19 +91,19 @@
       </li>
 
       <li class="selfclear">
-        <%= form.label :trimet_provider_id, "TriMet Provider" %>
+        <%= form.label :trimet_provider_id, "TriMet provider" %>
         <%= form.collection_select :trimet_provider_id, @trimet_providers, :id, :name, {:include_blank => true} %>
         <%= link_to "Details", [:edit, @allocation.trimet_provider], :class => :details if @allocation.trimet_provider %>
       </li>
 
       <li class="selfclear">
-        <%= form.label :trimet_program_id, "TriMet Program" %>
+        <%= form.label :trimet_program_id, "TriMet program" %>
         <%= form.collection_select :trimet_program_id, @trimet_programs, :id, :name, {:include_blank => true} %>
         <%= link_to "Details", [:edit, @allocation.trimet_program], :class => :details if @allocation.trimet_program %>
       </li>
 
       <li class="selfclear">
-        <%= form.label :trimet_report_group_id, "TriMet E&D Report Group" %>
+        <%= form.label :trimet_report_group_id, "TriMet E&D report group" %>
         <%= form.collection_select :trimet_report_group_id, @trimet_report_group, :id, :name, {:include_blank => true} %>
         <%= link_to "Details", [:edit, @allocation.trimet_report_group], :class => :details if @allocation.trimet_report_group %>
       </li>
