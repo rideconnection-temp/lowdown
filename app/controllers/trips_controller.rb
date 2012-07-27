@@ -6,13 +6,21 @@ class TripQuery
 
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
       :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id,
-      :adjustment_notes
+      :adjustment_notes, :display_search_form, :run_id, :share_id
 
   def initialize(params, commit = nil)
     params ||= {}
     @commit              = commit
     @trip_import_id      = params[:trip_import_id].present? ? params[:trip_import_id].to_i : nil
-    @all_dates           = (params[:all_dates] == "1" || params[:all_dates] == true)
+    @run_id              = params[:run_id].present? ? params[:run_id].to_i : nil
+    @share_id            = params[:share_id].present? ? params[:share_id].to_i : nil
+    @display_search_form = !(@trip_import_id || @run_id || @share_id)
+    if @display_search_form
+      @all_dates         = (params[:all_dates] == "1" || params[:all_dates] == true)
+    else
+      @all_dates         = true
+    end
+
     @start_date          = Date.parse(params["start_date"]) if params["start_date"].present?
     @end_date            = Date.parse(params["end_date"])   if params["end_date"].present?
     if @start_date.blank? || @end_date.blank?
@@ -48,6 +56,8 @@ class TripQuery
     trips = trips.for_reporting_agency(reporting_agency) if reporting_agency.present?
     trips = trips.for_allocation_id(allocation) if allocation.present?
     trips = trips.for_import(trip_import_id) if trip_import_id.present?
+    trips = trips.for_run(run_id) if run_id.present?
+    trips = trips.for_share(share_id) if share_id.present?
     trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
     trips = trips.for_customer_last_name_like(customer_last_name) if customer_last_name.present?
     trips
@@ -152,22 +162,6 @@ class TripsController < ApplicationController
     end
   end
 
-  def share
-    @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => {:routematch_share_id=>params[:id]}
-  end
-
-  def run
-    id = params[:id]
-    @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => {:run_id=>id}
-    @run = Run.find(id)
-  end
-  
-  def import_trips
-    id = params[:id]
-    @trips = Trip.current_versions.paginate :page => params[:page], :per_page => 30, :conditions => {:trip_import_id=>id}
-    @import = TripImport.find(id)
-  end
-
   def show_import
     @trip_imports = TripImport.order("trip_imports.created_at DESC").paginate :page => params[:page], :per_page => 30
   end
@@ -206,7 +200,6 @@ class TripsController < ApplicationController
   def update
     old_trip = Trip.find(params[:trip][:id])
     @trip = old_trip.current_version
-    # clean_new_row # needed for Trips?
     @trip.update_attributes(params[:trip]) ?
       redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
   end

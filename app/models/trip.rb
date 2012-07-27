@@ -41,6 +41,8 @@ class Trip < ActiveRecord::Base
   scope :multnomah_ads_billed_per_trip, joins(:allocation => :project).where("allocations.name NOT ILIKE '%hourly%'").where(:projects => {:funding_source => 'Multnomah ADS'})
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
   scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
+  scope :for_run, lambda {|run_id| where(:run_id => run_id) }
+  scope :for_share, lambda {|share_id| where(:routematch_share_id => share_id) }
   scope :for_provider, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
   scope :for_reporting_agency, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",provider_id)}
   scope :for_date_range, lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
