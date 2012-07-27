@@ -34,8 +34,7 @@ module VersionFu
           end                    
         end
 
-        scope :old_versions, :conditions => {:valid_end => @@end_of_time}
-
+        scope :old_versions, :conditions => ["#{self.table_name}.valid_end <> ?", @@end_of_time]
         scope :current_versions, :conditions => {:valid_end => @@end_of_time}
 
         def self.next_val
