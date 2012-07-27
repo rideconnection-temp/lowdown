@@ -50,7 +50,7 @@
     </td>
   <% end %>
   <% if @report.results_fields.member? 'total_trips' %>
-    <td class="number">
+    <td class="number total">
       <%= number_with_delimiter(row.total_trips.to_i) %>
     </td>
   <% end %>
