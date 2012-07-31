@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120726174839) do
+ActiveRecord::Schema.define(:version => 20120730232344) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -158,6 +158,8 @@ ActiveRecord::Schema.define(:version => 20120726174839) do
     t.text     "adjustment_notes"
   end
 
+  add_index "runs", ["base_id"], :name => "index_runs_on_base_id"
+
   create_table "summaries", :force => true do |t|
     t.integer  "base_id",                                                                          :null => false
     t.datetime "valid_start",                                                                      :null => false
@@ -182,6 +184,8 @@ ActiveRecord::Schema.define(:version => 20120726174839) do
     t.decimal  "vehicle_maint",                  :precision => 10, :scale => 2
     t.text     "adjustment_notes"
   end
+
+  add_index "summaries", ["base_id"], :name => "index_summaries_on_base_id"
 
   create_table "summary_rows", :force => true do |t|
     t.integer "summary_id"
@@ -274,6 +278,7 @@ ActiveRecord::Schema.define(:version => 20120726174839) do
     t.decimal  "estimated_individual_fare",                       :precision => 10, :scale => 2
   end
 
+  add_index "trips", ["base_id"], :name => "index_trips_on_base_id"
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
 
   create_table "users", :force => true do |t|
