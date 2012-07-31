@@ -226,6 +226,7 @@ private
                   current_run.bulk_import = true
                   if current_run.changed?
                     current_run.imported_at = import_start_time 
+                    current_run.version_switchover_time = import_start_time
                     current_run.save! 
                   end
 
@@ -242,6 +243,7 @@ private
                   current_run.date = record[:date]
                   if current_run.changed?
                     current_run.imported_at = import_start_time 
+                    current_run.version_switchover_time = import_start_time
                     current_run.save! 
                   end
 
@@ -297,6 +299,7 @@ private
             current_trip.run_id = current_run_id
             current_trip.bulk_import = true
             current_trip.imported_at = import_start_time 
+            current_trip.version_switchover_time = import_start_time
             # apportionment for run-based trips is done before import.  This helps assure that the
             # Reporting Services reports and the Service DB reports match exactly.
             if current_allocation.run_collection_method == 'runs'
