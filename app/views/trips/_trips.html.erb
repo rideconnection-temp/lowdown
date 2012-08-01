@@ -1,62 +1,58 @@
-<h2 id="result-count"><%= pluralize @trips.total_entries, "record" %> found.</h2>
+<% if trips.total_entries > 0 %>
+  <div class="report-wrapper">
+    <table id="trip-results">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Provider</th>
+          <th>Funding Source</th>
+          <th>Pickup</th>
+          <th>Dropoff</th>
+          <th>Google Route</th>
+          <th>Customers Served</th>
+          <th>Shared</th>
+          <th>Run Name</th>
+          <th>Fare</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% trips.each do |trip| %>
+          <tr>
+            <td><%= link_to trip.customer.name, customer_path(trip.customer) %></td>
+            <td><%= trip.date %></td>
+            <td><%= Trip::RESULT_CODES.invert[trip.result_code] %></td>
+            <td><%= trip.allocation.provider.name if trip.allocation.provider %></td>
+            <td><%= trip.allocation.project.funding_source if trip.allocation.project %></td>
+            <td><%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
+            <td><%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
+            <td><%= raw gmaps_route_link trip.pickup_address, trip.dropoff_address, "" %></td>
+            <td><%= trip.customers_served %></td>
+            <td>
+              <% if trip.shared? %>
+                <%= link_to "Yes", {:action=>:list, "trip_query[share_id]"=>trip.routematch_share_id}, {:title=>"View all trips in this share"} %>
+              <% else %>
+                No
+              <% end %>
+            </td>
+            <td>
+              <% if trip.run %>
+                <%= link_to trip.run.display_name, {:action=>:list, "trip_query[run_id]"=>trip.run_id}, {:title=>"View all trips in this run"} %>
+              <% else %>
+                (no run)
+              <% end %>
+            </td>
+            <td class="number"><%= number_to_currency trip.fare %></td>
+            <td>
+              <%= link_to "Details", {:action=>:show, :id=>trip.id}, {:title=>"View details for this trip", :class => :details} %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 
-<% if @trips.total_entries > 0 %>
-
-<div class="report-wrapper">
-<table id="trip-results">
-  <thead>
-    <tr>
-      <th>Customer</th>
-      <th>Date</th>
-      <th>Status</th>
-      <th>Provider</th>
-      <th>Funding Source</th>
-      <th>Pickup</th>
-      <th>Dropoff</th>
-      <th>Google Route</th>
-      <th>Customers Served</th>
-      <th>Shared</th>
-      <th>Run Name</th>
-      <th>Fare</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @trips.each do |trip| %>
-      <tr>
-        <td><%= link_to trip.customer.name, customer_path(trip.customer) %></td>
-        <td><%= trip.date %></td>
-        <td><%= Trip::RESULT_CODES.invert[trip.result_code] %></td>
-        <td><%= trip.allocation.provider.name if trip.allocation.provider %></td>
-        <td><%= trip.allocation.project.funding_source if trip.allocation.project %></td>
-        <td><%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
-        <td><%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
-        <td><%= raw gmaps_route_link trip.pickup_address, trip.dropoff_address, "" %></td>
-        <td><%= trip.customers_served %></td>
-        <td>
-          <% if trip.shared? %>
-            <%= link_to "Yes", {:action=>:list, "trip_query[share_id]"=>trip.routematch_share_id}, {:title=>"View all trips in this share"} %>
-          <% else %>
-            No
-          <% end %>
-        </td>
-        <td>
-          <% if trip.run %>
-            <%= link_to trip.run.display_name, {:action=>:list, "trip_query[run_id]"=>trip.run_id}, {:title=>"View all trips in this run"} %>
-          <% else %>
-            (no run)
-          <% end %>
-        </td>
-        <td class="number"><%= number_to_currency trip.fare %></td>
-        <td>
-          <%= link_to "Details", {:action=>:show, :id=>trip.id}, {:title=>"View details for this trip", :class => :details} %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-</div>
-
-<%= will_paginate @trips %>
-
+  <%= will_paginate trips %>
 <% end %>

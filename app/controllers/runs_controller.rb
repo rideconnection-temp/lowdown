@@ -74,6 +74,7 @@ class RunsController < ApplicationController
 
   def show
     @run = Run.find(params[:id])
+    @trips = @run.trips.paginate :page => params[:page], :per_page => 30
   end
 
   def update

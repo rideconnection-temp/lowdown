@@ -4,4 +4,8 @@
 
 <%= render 'search' if @query.display_search_form %>
 
-<%= render 'trips' %>
+<h2 id="result-count">
+  <%= pluralize @trips.total_entries, "record" %> found.
+</h2>
+
+<%= render 'trips', :trips => @trips %>
