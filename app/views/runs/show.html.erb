@@ -23,7 +23,7 @@
 <% end %>
 <%= form_for @run, :url=>{:action=>:update} do |f| %>
   <fieldset>
-    <%= render :partial => "form", :locals=>{:f=>f} %>
+    <%= render "form", :f => f %>
     <% if @run.latest? -%>
       <div class="actions">
         <%= submit_tag 'Update' %>
@@ -32,4 +32,7 @@
   </fieldset>
 <% end %>
 
+<h2 id="result-count">
+  <%= pluralize @trips.total_entries, "related trip record" %>
+</h2>
 <%= render 'trips/trips', :trips => @trips %>

@@ -39,7 +39,7 @@
             </td>
             <td>
               <% if trip.run %>
-                <%= link_to trip.run.display_name, {:action=>:list, "trip_query[run_id]"=>trip.run_id}, {:title=>"View all trips in this run"} %>
+                <%= link_to trip.run.display_name, trip.run, {:title=>"View all trips in this run"} %>
               <% else %>
                 (no run)
               <% end %>
