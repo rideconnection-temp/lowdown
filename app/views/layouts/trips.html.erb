@@ -1,11 +1,12 @@
 <% content_for :menu_bar do %>
-        <ul id="subnav" class="selfclear">
-<% if current_user.is_admin %>
-          <li><%= link_to "Import Trips", {:action=>:import}, :class=>:import %></li>
-          <li><%= link_to "Move Trips", {:action=>:update_allocation}, :class=>:move %></li>
-          <li><%= link_to "Mark Data Entry Complete", {:action=>:show_bulk_update}, :class=>"mark-complete" %></li>
-<% end %>
-        </ul>
+  <ul id="subnav" class="selfclear">
+    <% if current_user.is_admin %>
+      <li><%= link_to "Past Trip Adjustments", {:action=>:adjustments}, :class=>:history %></li>
+      <li><%= link_to "Import Trips", {:action=>:import}, :class=>:import %></li>
+      <li><%= link_to "Move Trips", {:action=>:update_allocation}, :class=>:move %></li>
+      <li><%= link_to "Mark Data Entry Complete", {:action=>:show_bulk_update}, :class=>"mark-complete" %></li>
+    <% end %>
+  </ul>
 <% end %>
 
 <%= render :file => 'layouts/application' %>

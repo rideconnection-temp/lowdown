@@ -8,6 +8,10 @@ class Trip < ActiveRecord::Base
       after_end_date = after_end_date.to_date
       where("trips.date >= ? AND trips.date < ?",start_date,after_end_date)
     end
+
+    def version_group_count
+      Trip.find_by_sql("SELECT COUNT(*) FROM (SELECT DISTINCT valid_start, adjustment_notes FROM trips where valid_start <> imported_at) AS x").first['count']
+    end
   end
 
   stampable :updater_attribute  => :updated_by,
@@ -42,6 +46,7 @@ class Trip < ActiveRecord::Base
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
   scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
   scope :for_run, lambda {|run_id| where(:run_id => run_id) }
+  scope :for_valid_start, lambda {|valid_start| where(:valid_start => valid_start) }
   scope :for_share, lambda {|share_id| where(:routematch_share_id => share_id) }
   scope :for_provider, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
   scope :for_reporting_agency, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",provider_id)}
@@ -51,6 +56,8 @@ class Trip < ActiveRecord::Base
   scope :for_customer_first_name_like, lambda {|name| where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(first_name) LIKE ?)","%#{name.downcase}%") }
   scope :for_customer_last_name_like, lambda {|name| where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(last_name) LIKE ?)","%#{name.downcase}%") }
   scope :for_import, lambda {|import_id| where(:trip_import_id=>import_id)}
+  scope :for_valid_start, lambda {|valid_start| where(:valid_start => valid_start) }
+  scope :grouped_by_adjustment, select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, MIN(trips.id) as id").group("trips.valid_start, trips.adjustment_notes").order("trips.valid_start DESC").where("valid_start <> imported_at")
 
   RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 

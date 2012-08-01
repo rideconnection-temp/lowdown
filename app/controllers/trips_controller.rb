@@ -6,15 +6,16 @@ class TripQuery
 
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
       :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id,
-      :adjustment_notes, :display_search_form, :run_id, :share_id
+      :adjustment_notes, :display_search_form, :run_id, :share_id, :valid_start
 
   def initialize(params, commit = nil)
     params ||= {}
     @commit              = commit
     @trip_import_id      = params[:trip_import_id].present? ? params[:trip_import_id].to_i : nil
+    @valid_start         = params[:valid_start].present? ? Time.parse(params[:valid_start]) : nil
     @run_id              = params[:run_id].present? ? params[:run_id].to_i : nil
     @share_id            = params[:share_id].present? ? params[:share_id].to_i : nil
-    @display_search_form = !(@trip_import_id || @run_id || @share_id)
+    @display_search_form = !(@trip_import_id || @run_id || @share_id || @valid_start)
     if @display_search_form
       @all_dates         = (params[:all_dates] == "1" || params[:all_dates] == true)
     else
@@ -53,6 +54,7 @@ class TripQuery
   def apply_conditions(trips)
     trips = trips.for_date_range(start_date,after_end_date) if !all_dates
     trips = trips.for_provider(provider) if provider.present?
+    trips = trips.for_valid_start(valid_start) if valid_start.present?
     trips = trips.for_reporting_agency(reporting_agency) if reporting_agency.present?
     trips = trips.for_allocation_id(allocation) if allocation.present?
     trips = trips.for_import(trip_import_id) if trip_import_id.present?
@@ -164,6 +166,10 @@ class TripsController < ApplicationController
 
   def show_import
     @trip_imports = TripImport.order("trip_imports.created_at DESC").paginate :page => params[:page], :per_page => 30
+  end
+
+  def adjustments
+    @adjustments = Trip.grouped_by_adjustment.paginate :page => params[:page], :per_page => 30, :total_entries => Trip.version_group_count
   end
 
   def import

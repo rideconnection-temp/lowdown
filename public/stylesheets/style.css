@@ -880,6 +880,7 @@ a.mark-complete,
 a.add,
 a.move,
 a.import,
+a.history,
 a.change-password {
     padding: 5px 0 5px 20px;
     text-decoration: none;
@@ -904,6 +905,9 @@ a.mark-complete {
 }
 body.summaries a.mark-complete {
     float: right;
+}
+a.history {
+    background: url(images/clock-history.png) left center no-repeat scroll;
 }
 a.move {
     background: url(images/truck.png) left center no-repeat scroll;
