@@ -77,9 +77,13 @@ class RunsController < ApplicationController
   end
 
   def update
-    @run = Run.current_versions.find(params[:run][:id])
-    @run.update_attributes(params[:run]) ?
-      redirect_to(:action=>:show, :id=>@run) : render(:action => :show)
+    @run = Run.find(params[:run][:id]).current_version
+    @run.attributes = params[:run]
+    if has_real_changes? @run
+      @run.update_attributes(params[:run]) ? redirect_to(:action=>:show, :id=>@run) : render(:action => :show)
+    else
+      redirect_to(:action=>:show, :id=>@run)
+    end
   end
 
   def bulk_update

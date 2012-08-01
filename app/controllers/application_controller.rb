@@ -27,4 +27,9 @@ class ApplicationController < ActionController::Base
       render template_name, :layout => false
     end
   end
+
+  def has_real_changes?(record)
+    record.changes.values.each {|change| return true unless change[0].blank? && change[1].blank? }
+    return false
+  end
 end

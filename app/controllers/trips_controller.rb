@@ -204,10 +204,13 @@ class TripsController < ApplicationController
   end
   
   def update
-    old_trip = Trip.find(params[:trip][:id])
-    @trip = old_trip.current_version
-    @trip.update_attributes(params[:trip]) ?
-      redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
+    @trip = Trip.find(params[:trip][:id]).current_version
+    @trip.attributes = params[:trip]
+    if has_real_changes? @trip
+      @trip.save ? redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
+    else
+      redirect_to(:action=>:show, :id=>@trip)
+    end
   end
 
   def show_bulk_update
