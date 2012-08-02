@@ -132,4 +132,11 @@ module ApplicationHelper
     return if record.send(attribute).blank? && record.previous.send(attribute).blank?
     ' class="changed"'.html_safe if record.send(attribute) != record.previous.send(attribute)
   end
+
+  def mark_if_summary_row_changed(row,attribute)
+    return if row.summary.previous.nil?
+    previous_row = row.summary.previous.summary_rows.detect{|prev| prev.purpose == row.purpose }
+    return if row.send(attribute).blank? && previous_row.send(attribute).blank?
+    ' class="changed"'.html_safe if row.send(attribute) != previous_row.send(attribute)
+  end
 end

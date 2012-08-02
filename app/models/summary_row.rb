@@ -1,5 +1,5 @@
 class SummaryRow < ActiveRecord::Base
-  belongs_to :summary, :primary_key=>"base_id"
+  belongs_to :summary
   stampable :updater_attribute  => :updated_by,
             :creator_attribute  => :updated_by
 

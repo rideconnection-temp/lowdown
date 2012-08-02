@@ -115,7 +115,6 @@ button, input, select, textarea { margin: 0; }
 input:valid, textarea:valid   {  }
 input:invalid, textarea:invalid { 
       border-radius: 1px;
-    -moz-box-shadow: 0px 0px 5px red; 
  -webkit-box-shadow: 0px 0px 5px red; 
          box-shadow: 0px 0px 5px red;
 }
@@ -240,7 +239,6 @@ body {
     margin: 0;
     background: #0a3968;
     float: left;
-    -moz-box-shadow: 0 0 10px #062340;
     -webkit-box-shadow: 0 0 10px #062340;
     box-shadow: 0 0 10px #062340;
 }
@@ -475,7 +473,6 @@ form textarea {
     padding: 0.25em;
     background: #fff;
     border: 1px solid #bbb;
-    -moz-box-shadow:inset 1px 2px 2px #ccc;
     -webkit-box-shadow:inset 1px 2px 2px #ccc;
     box-shadow:inset 1px 2px 2px #ccc;
 }
@@ -492,6 +489,10 @@ ol.section li.changed {
     background-color: #E5F2FF;
     border: 2px solid yellow;
     border-radius: 3px;
+}
+td.changed {
+    background-color: #E5F2FF;
+    border: 2px solid yellow !important;
 }
 form label {
     font-weight: bold;
@@ -546,12 +547,12 @@ fieldset ol.summary-form-part-two {
     float: left;
     width: 30%;
 }
-    fieldset ol.summary-form-part-two textarea {
-        width: 85%;
-        height: 4.5em;
-        overflow: auto;
-        margin-bottom: 10px;
-    }
+body.summaries fieldset ol.summary-form-part-two li textarea {
+    width: 85%;
+    height: 4.5em;
+    overflow: auto;
+    margin-bottom: 10px;
+}
 fieldset ol.summary-form-part-three {
     float: right;
     width: 32%;
@@ -567,13 +568,15 @@ fieldset ol.section li label {
     margin-right: 2%;
 }
 fieldset ol.section li input {
+    text-align: right;
     max-width: 60%;
 }
 fieldset ol.summary-form-part-three li label {
   width : 50%;
 }
 fieldset ol.summary-form-part-three li input {
-  width : 45%;
+  width : 20%;
+  text-align: right;
 }
 fieldset ol.section li textarea {
     max-width: 100%;

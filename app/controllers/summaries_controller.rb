@@ -134,7 +134,7 @@ class SummariesController < ApplicationController
       #this created a new prior version, to which we want to reassign the
       #newly-created old-valued summary rows
       prev = @summary.previous
-      if prev
+      if prev && !@summary.do_not_version?
         for row in old_rows
           row.summary_id=prev.id
           row.save!
