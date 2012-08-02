@@ -10,7 +10,11 @@ class Trip < ActiveRecord::Base
     end
 
     def version_group_count
-      Trip.find_by_sql("SELECT COUNT(*) FROM (SELECT DISTINCT valid_start, adjustment_notes FROM trips where valid_start <> imported_at) AS x").first['count']
+      Trip.find_by_sql("SELECT COUNT(*) FROM (SELECT DISTINCT valid_start, adjustment_notes FROM trips where valid_start <> imported_at) AS x").first['count'].to_i
+    end
+
+    def completed_trip_count_for_valid_start(valid_start)
+      Trip.select("COUNT(*) + SUM(guest_count) + SUM(attendant_count) AS count").completed.for_valid_start(valid_start).first['count'].to_i
     end
   end
 
@@ -57,7 +61,7 @@ class Trip < ActiveRecord::Base
   scope :for_customer_last_name_like, lambda {|name| where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(last_name) LIKE ?)","%#{name.downcase}%") }
   scope :for_import, lambda {|import_id| where(:trip_import_id=>import_id)}
   scope :for_valid_start, lambda {|valid_start| where(:valid_start => valid_start) }
-  scope :grouped_by_adjustment, select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, MIN(trips.id) as id").group("trips.valid_start, trips.adjustment_notes").order("trips.valid_start DESC").where("valid_start <> imported_at")
+  scope :grouped_by_adjustment, select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, MIN(date) as min_date, MAX(date) AS max_date, MIN(trips.id) as id").group("trips.valid_start, trips.adjustment_notes").order("trips.valid_start DESC").where("valid_start <> imported_at")
 
   RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 
