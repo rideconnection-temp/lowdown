@@ -490,9 +490,23 @@ ol.section li.changed {
     border: 2px solid yellow;
     border-radius: 3px;
 }
+ol.section li.changed div.change {
+    text-align: right;
+    margin: 4px 10% 0 0;
+    float: right;
+    width: 15%;
+    font-weight: bold;
+}
 td.changed {
     background-color: #E5F2FF;
     border: 2px solid yellow !important;
+}
+td.change {
+    background-color: #E5F2FF;
+    border: 2px solid yellow !important;
+    font-weight: bold;
+    padding-top: 9px;
+    text-align: right;
 }
 form label {
     font-weight: bold;
@@ -536,6 +550,14 @@ fieldset ol.fourth {
     float: left;
     width: 65%;
 }
+fieldset ol.section li input {
+    max-width: 60%;
+}
+fieldset ol.section li label {
+    float: left;
+    width: 35%;
+    margin: 4px 2% 0 0;
+}
 fieldset ol.summary-form-part-one {
     float: left;
     width: 35%;
@@ -557,26 +579,35 @@ fieldset ol.summary-form-part-three {
     float: right;
     width: 32%;
 }
-fieldset ol.summary-form-part-four {
-    float: left;
-    width: 65%;
-    clear: left;
-}
-fieldset ol.section li label {
-    float: left;
-    width: 35%;
-    margin-right: 2%;
-}
-fieldset ol.section li input {
-    text-align: right;
-    max-width: 60%;
-}
 fieldset ol.summary-form-part-three li label {
   width : 50%;
 }
 fieldset ol.summary-form-part-three li input {
   width : 20%;
   text-align: right;
+}
+fieldset ol.summary-form-part-four {
+    float: left;
+    width: 65%;
+    clear: left;
+}
+fieldset ol.summary-form-part-four td {
+    text-align: right;
+}
+fieldset ol.summary-form-part-four td input {
+    max-width: 100%;
+    text-align: right;
+}
+fieldset ol.summary-form-part-four td.total {
+    padding-right: 16px;
+}
+fieldset ol.summary-form-part-four td.label {
+    width: 30%;
+    text-align: left;
+    font-weight: bold;
+}
+fieldset ol.summary-form-part-four td label {
+    width: 100%;
 }
 fieldset ol.section li textarea {
     max-width: 100%;
@@ -614,6 +645,8 @@ fieldset ol.section li p {
 }
 fieldset ol.section li p.disabled-input {
     margin-left: 37%;
+    margin-bottom: 3px;
+    padding-top: 4px;
 }
 fieldset ol.section li ul {
     list-style: none;

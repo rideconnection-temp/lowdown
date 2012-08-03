@@ -139,4 +139,20 @@ module ApplicationHelper
     return if row.send(attribute).blank? && previous_row.send(attribute).blank?
     ' class="changed"'.html_safe if row.send(attribute) != previous_row.send(attribute)
   end
+
+  def summary_attribute_change(record,attribute)
+    return if record.previous.nil?
+    change = (record.send(attribute) || 0) - (record.previous.send(attribute) || 0)
+    return if change == 0
+    "<div class=\"change\">#{change}</div>".html_safe
+  end
+
+  def summary_row_attribute_change(row,attribute)
+    return '<td></td>'.html_safe if row.summary.previous.nil?
+    previous_row = row.summary.previous.summary_rows.detect{|prev| prev.purpose == row.purpose }
+    change = (row.send(attribute) || 0) - (previous_row.send(attribute) || 0)
+    return '<td></td>'.html_safe if change == 0
+    "<td class=\"change\">#{change}</td>".html_safe
+  end
+
 end
