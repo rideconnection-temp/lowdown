@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120730232344) do
+ActiveRecord::Schema.define(:version => 20120804025855) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(:version => 20120730232344) do
     t.decimal  "operations",                     :precision => 10, :scale => 2
     t.decimal  "vehicle_maint",                  :precision => 10, :scale => 2
     t.text     "adjustment_notes"
+    t.datetime "first_version_created_at"
   end
 
   add_index "summaries", ["base_id"], :name => "index_summaries_on_base_id"
@@ -301,6 +302,8 @@ ActiveRecord::Schema.define(:version => 20120730232344) do
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  add_foreign_key "allocations", ["reporting_agency_id"], "providers", ["id"], :name => "allocations_reporting_agency_id_fkey"
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 

@@ -117,6 +117,7 @@ module VersionFu
           self.base_id = id          
           self.valid_start = (version_switchover_time || now_rounded)
           self.valid_end = @@end_of_time
+          self.first_version_created_at = valid_start if self.respond_to? :first_version_created_at
           self.should_run_callbacks=true
       elsif self.id && self.base_id
           #an edit to an existing object; may need to create a new
