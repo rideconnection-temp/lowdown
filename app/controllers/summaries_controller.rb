@@ -128,13 +128,15 @@ class SummariesController < ApplicationController
 
     #gather up the old row objects
     old_rows = @summary.summary_rows.map &:clone 
-
     @summary.attributes = params[:summary]
+
+    create_new_version = @summary.create_new_version?
+
     if @summary.save
       #this created a new prior version, to which we want to reassign the
       #newly-created old-valued summary rows
       prev = @summary.previous
-      if prev && !@summary.do_not_version?
+      if prev && create_new_version
         for row in old_rows
           row.summary_id=prev.id
           row.save!

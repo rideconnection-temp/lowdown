@@ -134,7 +134,7 @@ module ApplicationHelper
   end
 
   def mark_if_summary_row_changed(row,attribute)
-    return if row.summary.previous.nil?
+    return if row.summary.nil? || row.summary.previous.nil?
     previous_row = row.summary.previous.summary_rows.detect{|prev| prev.purpose == row.purpose }
     return if row.send(attribute).blank? && previous_row.send(attribute).blank?
     ' class="changed"'.html_safe if row.send(attribute) != previous_row.send(attribute)
@@ -148,7 +148,7 @@ module ApplicationHelper
   end
 
   def summary_row_attribute_change(row,attribute)
-    return '<td></td>'.html_safe if row.summary.previous.nil?
+    return '<td></td>'.html_safe if row.summary.nil? || row.summary.previous.nil?
     previous_row = row.summary.previous.summary_rows.detect{|prev| prev.purpose == row.purpose }
     change = (row.send(attribute) || 0) - (previous_row.send(attribute) || 0)
     return '<td></td>'.html_safe if change == 0

@@ -137,7 +137,7 @@
                 </td>
                 <td></td>
               <% else %>
-                <% if @summary.in_district_trips == @summary.previous.in_district_trips -%>
+                <% if !@summary.previous || @summary.in_district_trips == @summary.previous.in_district_trips -%>
                   <td class="total">
                     <%= @summary.in_district_trips %>
                   </td>
@@ -150,7 +150,7 @@
                     <%= @summary.in_district_trips - @summary.previous.in_district_trips %>
                   </td>
                 <% end -%>
-                <% if @summary.out_of_district_trips == @summary.previous.out_of_district_trips -%>
+                <% if !@summary.previous || @summary.out_of_district_trips == @summary.previous.out_of_district_trips -%>
                   <td class="total">
                     <%= @summary.out_of_district_trips %>
                   </td>
@@ -168,7 +168,7 @@
                 <td class="label">Grand Total</td>
                 <td>&nbsp;</td>
                 <td></td>
-                <% if @summary.trips == @summary.previous.trips -%>
+                <% if !@summary.previous || @summary.trips == @summary.previous.trips -%>
                   <td class="total">
                     <%= @summary.trips %>
                   </td>
