@@ -77,6 +77,10 @@ class SummariesController < ApplicationController
     end
   end
 
+  def adjustments
+    @summaries = Summary.revisions.order('summaries.valid_start DESC').includes(:allocation,:summary_rows).paginate :page => params[:page]
+  end
+
   def new
     @summary = Summary.new
     

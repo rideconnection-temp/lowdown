@@ -5,7 +5,7 @@ class AddTimestampsToSummaries < ActiveRecord::Migration
   end
 
   def self.down
-    remove_column :summaries, :created_at, :datetime
-    remove_column :summaries, :updated_at, :datetime
+    remove_column :summaries, :created_at
+    remove_column :summaries, :updated_at
   end
 end

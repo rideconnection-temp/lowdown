@@ -1,6 +1,7 @@
 <% content_for :menu_bar do %>
   <ul id="subnav" class="selfclear">
     <% if current_user.is_admin %>
+      <li><%= link_to "Summary Adjustment History", {:action=>:adjustments}, :class=>:history %></li>
       <li><%= link_to "New Summary", {:action=>:new}, {:class => :add} %></li>
     <% end %>
   </ul>

@@ -749,7 +749,8 @@ table th {
 div.report-wrapper table th {
     font-size: 10px;
 }
-div.report-wrapper table th.column-group {
+div.report-wrapper table th.column-group,
+div.list-wrapper table th.column-group {
     font-size: 12px;
     letter-spacing: 0;
     text-align: center;

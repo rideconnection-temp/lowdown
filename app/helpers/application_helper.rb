@@ -155,4 +155,9 @@ module ApplicationHelper
     "<td class=\"change\">#{change}</td>".html_safe
   end
 
+  def attribute_difference(record, attribute)
+    return if record.previous.nil?
+    change = (record.send(attribute) || 0) - (record.previous.send(attribute) || 0)
+    change == 0 ? nil : change
+  end
 end
