@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120804025855) do
+ActiveRecord::Schema.define(:version => 20120804074241) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -184,6 +184,8 @@ ActiveRecord::Schema.define(:version => 20120804025855) do
     t.decimal  "vehicle_maint",                  :precision => 10, :scale => 2
     t.text     "adjustment_notes"
     t.datetime "first_version_created_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "summaries", ["base_id"], :name => "index_summaries_on_base_id"
