@@ -6,7 +6,7 @@ class TripQuery
 
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
       :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id,
-      :adjustment_notes, :display_search_form, :run_id, :share_id, :valid_start
+      :adjustment_notes, :display_search_form, :run_id, :share_id, :valid_start, :result_code
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -43,6 +43,7 @@ class TripQuery
     @reporting_agency    = params[:reporting_agency].to_i if params[:reporting_agency].present? 
     @allocation          = params[:allocation].to_i       if params[:allocation].present? 
     @dest_allocation     = params[:dest_allocation].to_i  if params[:dest_allocation].present? 
+    @result_code         = params[:result_code]
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
   end
@@ -60,6 +61,7 @@ class TripQuery
     trips = trips.for_import(trip_import_id) if trip_import_id.present?
     trips = trips.for_run(run_id) if run_id.present?
     trips = trips.for_share(share_id) if share_id.present?
+    trips = trips.for_result_code(result_code) if result_code.present?
     trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
     trips = trips.for_customer_last_name_like(customer_last_name) if customer_last_name.present?
     trips
@@ -91,6 +93,7 @@ class TripsController < ApplicationController
     @providers          = Provider.default_order
     @reporting_agencies = Provider.partners.default_order
     @allocations        = Allocation.order(:name)
+    @result_codes       = Trip::RESULT_CODES
 
     @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project,:override]).joins(:allocation).order(:date,:trip_import_id)
     @trips = @query.apply_conditions(@trips)

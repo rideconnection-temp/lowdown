@@ -55,6 +55,7 @@ class Trip < ActiveRecord::Base
   scope :for_provider, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
   scope :for_reporting_agency, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",provider_id)}
   scope :for_date_range, lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
+  scope :for_result_code, lambda {|result_code| where(:result_code => result_code) }
   scope :without_no_shows, where("trips.result_code <> ?","NS")
   scope :without_cancels, where("trips.result_code <> ?","CANC")
   scope :for_customer_first_name_like, lambda {|name| where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(first_name) LIKE ?)","%#{name.downcase}%") }
