@@ -28,19 +28,6 @@ class RunQuery
     runs = runs.for_allocation_id(allocation_id) if allocation_id.present?
     runs
   end
-  def conditions
-    d = {}
-    if start_date
-      d[:date] = start_date..end_date
-    end
-    if provider && provider != 0
-      d["allocations.provider_id"] = provider
-    end
-    if allocation && allocation != 0
-      d[:allocation_id] = allocation
-    end
-    d
-  end
 end
 
 class RunsController < ApplicationController
@@ -69,19 +56,4 @@ class RunsController < ApplicationController
       redirect_to(:action=>:show, :id=>@run)
     end
   end
-
-  def bulk_update
-    updated = 0
-
-    @query = RunQuery.new(params[:run_query])
-    if @query.conditions.empty?
-      flash[:alert] = "Cannot update without date range"
-    else
-      updated_runs = Run.current_versions(:conditions => @query.conditions).update_all(:complete => true)
-      updated_trips = Trip.current_versions(:conditions => @query.conditions).update_all(:complete => true)
-      flash[:notice] = "Updated #{updated_trips} trips records and #{updated_runs} run records"
-    end
-    redirect_to :action=>:index
-  end
-
 end
