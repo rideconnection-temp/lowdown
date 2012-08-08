@@ -21,7 +21,7 @@
       <tbody>
         <% trips.each do |trip| %>
           <tr>
-            <td><%= link_to trip.customer.name, customer_path(trip.customer) %></td>
+            <td><%= link_to_unless_current trip.customer.name, customer_path(trip.customer) %></td>
             <td><%= trip.date %></td>
             <td><%= Trip::RESULT_CODES.invert[trip.result_code] %></td>
             <td><%= trip.allocation.provider.name if trip.allocation.provider %></td>
@@ -39,7 +39,7 @@
             </td>
             <td>
               <% if trip.run %>
-                <%= link_to trip.run.display_name, trip.run, {:title=>"View all trips in this run"} %>
+                <%= link_to_unless_current trip.run.display_name, trip.run, {:title=>"View all trips in this run"} %>
               <% else %>
                 (no run)
               <% end %>
