@@ -14,6 +14,7 @@ class Run < ActiveRecord::Base
   scope :data_entry_not_complete, where(:complete => false)
   scope :for_date_range, lambda {|start_date, end_date| where("date >= ? AND date < ?", start_date, end_date) }
   scope :for_provider, lambda {|provider_id| where("runs.id IN (SELECT run_id FROM trips where allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?))",provider_id)}
+  scope :for_allocation_id, lambda {|allocation_id| where("runs.id IN (SELECT run_id FROM trips where allocation_id = ?)",allocation_id)}
 
   point_in_time
 

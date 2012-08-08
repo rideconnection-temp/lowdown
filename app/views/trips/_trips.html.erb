@@ -46,7 +46,7 @@
             </td>
             <td class="number"><%= number_to_currency trip.fare %></td>
             <td>
-              <%= link_to "Details", {:action=>:show, :id=>trip.id}, {:title=>"View details for this trip", :class => :details} %>
+              <%= link_to "Details", {:controller => :trips, :action=>:show, :id=>trip.id}, {:title=>"View details for this trip", :class => :details} %>
             </td>
           </tr>
         <% end %>
