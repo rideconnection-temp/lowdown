@@ -47,8 +47,20 @@ form.edit_report,
 #logo {
   display : none;
 }
-
+body.flex-reports #date-header {
+  float: left;
+  width: 50%;
+}
+body.flex-reports #report-description {
+  float: right;
+  width: 50%;
+}
+body.flex-reports #grouping-description {
+  clear: both;
+  margin-bottom: .5em;
+}
 h1 {
+  margin-top: 0;
   margin-bottom: 0;
 }
 h2 {
