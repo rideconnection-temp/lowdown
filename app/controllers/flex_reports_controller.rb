@@ -33,11 +33,11 @@ class FlexReportsController < ApplicationController
   end
 
   def csv
-    show
-
+    @report = FlexReport.find params[:id]
+    @report.populate_results!
     csv_string = CSV.generate do |csv|
-      csv << ReportRow.fields(@report.fields)
-      apply_to_leaves!(@results, @group_fields.size) do | row |
+      csv << @report.csv_fields
+      apply_to_leaves!(@report.results, @report.group_fields.size) do | row |
         csv << row.csv(@report.fields)
         nil
       end

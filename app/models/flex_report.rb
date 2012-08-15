@@ -166,6 +166,15 @@ class FlexReport < ActiveRecord::Base
     group_fields.map { |f| GroupMappings[f] }
   end
 
+  def csv_fields
+    group_fields + fields
+  end
+
+  def flattened_results
+    this_result = []
+
+  end
+
   # Collect all data, and summarize it grouped according to the groups provided.
   # groups: the names of groupings, in order from coarsest to finest (i.e. project_name, quarter)
   # group_fields: the names of groupings with table names (i.e. projects.name, quarter)
@@ -359,4 +368,15 @@ class FlexReport < ActiveRecord::Base
     return hash
   end
 
+  def flatten_nested_hash(input, output = {}, prefix = [])
+    input.each do |key, value|
+      full_key = prefix + [key]
+      if value.is_a? Hash
+        flatten_nested_hash(value, output, full_key) 
+      else
+        output[full_key] = value
+      end
+    end
+    output
+  end
 end
