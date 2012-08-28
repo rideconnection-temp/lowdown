@@ -81,17 +81,17 @@
   <% end %>
   <% if @report.results_fields.member? 'cost_per_trip' %>
     <td class="number">
-      <%= number_to_currency(row.cost_per_trip) %>
+      <%= row.cost_per_trip.present? ? number_to_currency(row.cost_per_trip) : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'cost_per_mile' %>
     <td class="number">
-      <%= number_to_currency(row.cost_per_mile) %>
+      <%= row.cost_per_mile.present? ? number_to_currency(row.cost_per_mile) : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'cost_per_hour' %>
     <td class="number">
-      <%= number_to_currency(row.cost_per_hour) %>
+      <%= row.cost_per_hour.present? ? number_to_currency(row.cost_per_hour) : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'miles_per_ride'%>
