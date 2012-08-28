@@ -185,8 +185,7 @@ class FlexReport < ActiveRecord::Base
     where_strings = []
     where_params = []
     if funding_subsource_name_list.present?
-      results = results.joins(:project)
-      where_strings << "COALESCE(projects.funding_source,'') || ': ' || COALESCE(projects.funding_subsource) IN (?)"
+      where_strings << "project_id IN (SELECT id FROM projects where COALESCE(funding_source,'') || ': ' || COALESCE(funding_subsource) IN (?))"
       where_params << funding_subsource_names
     end
     if reporting_agency_list.present? 
