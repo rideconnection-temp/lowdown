@@ -92,5 +92,10 @@ class FlexReportsController < ApplicationController
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
     end
+    @grouped_allocations = [] 
+    Provider.order(:name).each do |p|
+      @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]
+    end
+    @grouped_allocations << ['<No provider>', Allocation.where(:provider_id => nil).map {|a| [a.name,a.id]}]
   end
 end

@@ -71,7 +71,7 @@
         <h2>Individual Allocations</h2>
         <select class="multi full" id="report_allocations" multiple="multiple" name="flex_report[allocations][]">
           <%= options_for_select([['<Select None>','']],(@report.allocation_ids.blank? ? [''] : [])) %> 
-          <%= option_groups_from_collection_for_select Provider.default_order.includes(:allocations).all, :allocations, :name, :id, :select_label, @report.allocation_ids %>
+          <%= grouped_options_for_select @grouped_allocations, @report.allocation_ids %>
         </select>
       </li>
     </ol>
