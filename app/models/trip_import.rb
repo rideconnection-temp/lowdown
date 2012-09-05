@@ -303,7 +303,7 @@ private
             # apportionment for run-based trips is done before import.  This helps assure that the
             # Reporting Services reports and the Service DB reports match exactly.
             if current_allocation.run_collection_method == 'runs'
-              current_trip.apportioned_duration = record[:trip_duration]
+              current_trip.apportioned_duration = record[:trip_duration] * 60
               current_trip.apportioned_mileage = record[:trip_mileage]
             end
             current_trip.save! if current_trip.new_record? || (current_trip.changed != ['imported_at'])
