@@ -66,17 +66,17 @@
   <% end %>
   <% if @report.results_fields.member? 'driver_volunteer_hours' %>
     <td class="number">
-      <%= number_with_delimiter(row.driver_volunteer_hours.to_i) %>
+      <%= number_with_precision(row.driver_volunteer_hours, :precision => 1, :delimiter => ',') %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'driver_paid_hours' %>
     <td class="number">
-      <%= number_with_delimiter(row.driver_paid_hours.to_i) %>
+      <%= number_with_precision(row.driver_paid_hours, :precision => 1, :delimiter => ',') %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'driver_total_hours' %>
     <td class="number total">
-      <%= number_with_delimiter(row.driver_total_hours.to_i) %>
+      <%= number_with_precision(row.driver_total_hours, :precision => 1, :delimiter => ',') %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'cost_per_trip' %>
