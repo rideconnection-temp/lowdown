@@ -3,7 +3,15 @@
   <% (@report.groups.size - 1).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
-  <td><%= "#{short_name} " if defined?(short_name) && short_name.present? %>Total</td>
+  <td>
+    <% if defined?(short_name) && short_name.present? %>
+      <%= "#{short_name}" %>
+    <% elsif defined?(short_name) && short_name.blank? %>
+      <%= "Unspecified" %>
+    <% else %>
+      <%= "Grand" %>
+    <% end %> Total
+  </td>
   <% if @report.results_fields.member? 'funds' %>
     <td class="number">
       <%= number_to_currency(row.funds, :precision => 0) %>
@@ -96,7 +104,7 @@
   <% end %>
   <% if @report.results_fields.member? 'miles_per_ride'%>
     <td class="number">
-      <%= number_with_precision(row.miles_per_ride, :precision => 1, :delimiter => ",") %>
+      <%= row.miles_per_ride.present? ? number_with_precision(row.miles_per_ride, :precision => 1, :delimiter => ",") : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'turn_downs' %>
