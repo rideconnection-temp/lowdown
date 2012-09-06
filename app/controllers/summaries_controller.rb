@@ -96,10 +96,11 @@ class SummariesController < ApplicationController
       flash.now[:alert] = "You must fill in all summary rows (even if just with zeros)"
       render(:action => :new)
     end
+    prep_edit
     if @summary.save
-      redirect_to(:action=>:edit, :id=>@summary.id)
+      flash[:alert] = "Successfully created summary for allocation \"#{@summary.allocation.name}\" for #{@summary.period_start.strftime('%B %Y')}"
+      redirect_to(:action=>:new)
     else
-      prep_edit
       render(:action => :new)
     end
   end
