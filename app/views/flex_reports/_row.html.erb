@@ -75,7 +75,7 @@
     </td>
   <% end %>
   <% if @report.results_fields.member? 'driver_total_hours' %>
-    <td class="number">
+    <td class="number total">
       <%= number_with_delimiter(row.driver_total_hours.to_i) %>
     </td>
   <% end %>
@@ -120,7 +120,7 @@
     </td>
   <% end %>
   <% if @report.results_fields.member? 'total_volunteer_hours' %>
-    <td class="number">
+    <td class="number total">
       <%= number_with_delimiter(row.total_volunteer_hours.to_i) %>
     </td>
   <% end %>
