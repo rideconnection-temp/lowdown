@@ -190,7 +190,7 @@ class FlexReport < ActiveRecord::Base
     end
     if reporting_agency_list.present? 
       where_strings << "reporting_agency_id IN (?)"
-      where_params << provider_ids
+      where_params << reporting_agency_ids
     end
     if provider_list.present? 
       where_strings << "provider_id IN (?)"
