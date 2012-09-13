@@ -184,6 +184,10 @@ class FlexReport < ActiveRecord::Base
     results = Allocation
     where_strings = []
     where_params = []
+
+    where_strings << "(inactivated_on IS NULL or inactivated_on > ?) AND activated_on < ?"
+    where_params.concat [start_date, query_end_date]
+    
     if funding_subsource_name_list.present?
       where_strings << "project_id IN (SELECT id FROM projects where COALESCE(funding_source,'') || ': ' || COALESCE(funding_subsource) IN (?))"
       where_params << funding_subsource_names
