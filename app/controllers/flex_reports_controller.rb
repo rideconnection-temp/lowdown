@@ -29,6 +29,7 @@ class FlexReportsController < ApplicationController
   # the results of the report
   def show
     @report = FlexReport.find params[:id]
+    @report.attributes = params[:flex_report]
     @report.populate_results!
   end
 
