@@ -3,7 +3,7 @@ class SummaryQuery
   include ActiveModel::Conversion
 
   attr_accessor :start_date, :end_date, :after_end_date
-  attr_accessor :provider, :reporting_agency
+  attr_accessor :provider, :reporting_agency, :complete
 
   def convert_date(obj, base)
     Date.new(obj["#{base}(1i)"].to_i, obj["#{base}(2i)"].to_i)
@@ -28,6 +28,8 @@ class SummaryQuery
     @after_end_date = Date.new(@end_date.year,@end_date.month,1) + 1.month
     @reporting_agency = params[:reporting_agency].to_i if params[:reporting_agency].present?
     @provider         = params[:provider].to_i if params[:provider].present?
+    @complete         = true if params[:complete] == 'Yes'
+    @complete         = false if params[:complete] == 'No'
   end
 
   def persisted?
@@ -44,6 +46,8 @@ class SummaryQuery
     summaries = summaries.with_no_provider if provider == 0
     summaries = summaries.for_reporting_agency(reporting_agency) if reporting_agency.present? && reporting_agency != 0 
     summaries = summaries.with_no_reporting_agency if reporting_agency == 0
+    summaries = summaries.data_entry_complete if complete 
+    summaries = summaries.data_entry_not_complete if complete == false
     summaries
   end
 
