@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121002011413) do
+ActiveRecord::Schema.define(:version => 20121002162115) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -168,10 +168,10 @@ ActiveRecord::Schema.define(:version => 20121002011413) do
     t.date     "period_start"
     t.date     "period_end"
     t.integer  "total_miles"
-    t.integer  "driver_hours_paid"
-    t.integer  "driver_hours_volunteer"
-    t.integer  "escort_hours_volunteer"
-    t.integer  "administrative_hours_volunteer"
+    t.decimal  "driver_hours_paid",              :precision => 7,  :scale => 2
+    t.decimal  "driver_hours_volunteer",         :precision => 7,  :scale => 2
+    t.decimal  "escort_hours_volunteer",         :precision => 7,  :scale => 2
+    t.decimal  "administrative_hours_volunteer", :precision => 7,  :scale => 2
     t.integer  "unduplicated_riders"
     t.integer  "turn_downs"
     t.decimal  "agency_other",                   :precision => 10, :scale => 2
