@@ -52,6 +52,11 @@
       </li>
       
       <li class="selfclear">
+        <%= form.label :do_not_show_on_flex_reports, "Do not show on flex reports (unless specified individually)" %>
+        <%= form.check_box :do_not_show_on_flex_reports %>
+      </li>
+      
+      <li class="selfclear">
         <%= form.label :trip_collection_method %>
         <%= form.select :trip_collection_method, 
           options_for_select(@trip_collection_methods.map {|tcm| [tcm, tcm]}, @allocation.trip_collection_method) %>

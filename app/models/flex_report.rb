@@ -185,6 +185,8 @@ class FlexReport < ActiveRecord::Base
     where_strings = []
     where_params = []
 
+    where_strings << "do_not_show_on_flex_reports = false"
+
     where_strings << "(inactivated_on IS NULL or inactivated_on > ?) AND activated_on < ?"
     where_params.concat [start_date, query_end_date]
     

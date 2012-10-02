@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120804074241) do
+ActiveRecord::Schema.define(:version => 20121002011413) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -42,8 +42,8 @@ ActiveRecord::Schema.define(:version => 20120804074241) do
     t.string  "routematch_provider_code"
     t.date    "inactivated_on"
     t.string  "program"
-    t.string  "admin_ops_data",           :limit => 15
-    t.string  "vehicle_maint_data",       :limit => 15
+    t.string  "admin_ops_data",              :limit => 15
+    t.string  "vehicle_maint_data",          :limit => 15
     t.integer "trimet_program_id"
     t.integer "trimet_provider_id"
     t.integer "trimet_report_group_id"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(:version => 20120804074241) do
     t.date    "activated_on"
     t.integer "reporting_agency_id"
     t.text    "notes"
+    t.boolean "do_not_show_on_flex_reports",               :default => false, :null => false
   end
 
   create_table "customers", :force => true do |t|
