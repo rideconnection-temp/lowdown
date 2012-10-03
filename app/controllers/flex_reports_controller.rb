@@ -2,8 +2,7 @@ require 'csv'
 
 class FlexReportsController < ApplicationController
 
-  before_filter :require_admin_user, :except=>[:csv, :new, :create, :index]
-
+  before_filter :require_admin_user, :except=>[:index, :show, :csv, :edit]
 
   def index
     @reports = FlexReport.all

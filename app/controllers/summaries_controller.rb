@@ -65,7 +65,8 @@ class SummaryQuery
 end
 
 class SummariesController < ApplicationController
-  before_filter :require_admin_user, :except=>[:index]
+
+  before_filter :require_admin_user, :except=>[:index, :edit]
 
   def index
     attributes_to_sum = %w{total_cost in_district_trips out_of_district_trips trips total_miles driver_hours_paid driver_hours_volunteer total_driver_hours}

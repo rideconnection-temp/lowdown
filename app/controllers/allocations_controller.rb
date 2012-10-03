@@ -1,6 +1,7 @@
 class AllocationsController < ApplicationController
   
   before_filter :get_drop_down_data, :only => [:new, :edit]
+  before_filter :require_admin_user, :except => [:index, :edit]
   
   def index
     @allocations = Allocation.includes(:project, :provider, :override).order('providers.name, allocations.name')

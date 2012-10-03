@@ -82,7 +82,8 @@ class TripQuery
 end
 
 class TripsController < ApplicationController
-  before_filter :require_admin_user, :only=>[:import]
+
+  before_filter :require_admin_user, :except=>[:index, :list, :show_import, :adjustments, :show]
 
   def index
     redirect_to :action=>:list

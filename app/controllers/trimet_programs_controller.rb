@@ -1,5 +1,7 @@
 class TrimetProgramsController < ApplicationController
   
+  before_filter :require_admin_user, :except => [:index, :edit]
+
   def index
     @trimet_programs = TrimetProgram.default_order.paginate :page => params[:page]
   end

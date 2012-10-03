@@ -1,4 +1,7 @@
 class CustomersController < ApplicationController
+
+  before_filter :require_admin_user, :except=>[:show]
+
   def show
     @customer = Customer.find params[:id]
     @trips = @customer.trips.paginate :page => params[:page], :per_page => 30

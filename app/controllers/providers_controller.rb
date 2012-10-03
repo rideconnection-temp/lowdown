@@ -1,6 +1,7 @@
 class ProvidersController < ApplicationController
   
   before_filter :get_drop_down_data, :only => [:new, :edit]
+  before_filter :require_admin_user, :except => [:index, :edit]
   
   def index
     @providers = Provider.default_order.paginate :page => params[:page]

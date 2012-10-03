@@ -1,6 +1,8 @@
 <% content_for :menu_bar do %>
   <ul id="subnav" class="selfclear">
-    <li><%= link_to "Define New Flex Report", new_flex_report_path, :class => :add %></li>
+    <% if current_user.is_admin %>
+      <li><%= link_to "Define New Flex Report", new_flex_report_path, :class => :add %></li>
+    <% end %>
   </ul>
 <% end %>
 
