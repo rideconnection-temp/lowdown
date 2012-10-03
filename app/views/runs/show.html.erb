@@ -24,7 +24,7 @@
 <%= form_for @run, :url=>{:action=>:update} do |f| %>
   <fieldset>
     <%= render "form", :f => f %>
-    <% if @run.latest? -%>
+    <% if @run.latest? && current_user.is_admin -%>
       <div class="actions">
         <%= submit_tag 'Update' %>
       </div>

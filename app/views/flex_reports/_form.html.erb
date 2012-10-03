@@ -186,9 +186,10 @@
       </div>
     </div>
 
-    <div class="actions">
-      <%= f.submit :id => "report-create" %>
-      <!-- <input id="report-create" type="submit" value="Create Report" /> -->
-    </div>
+    <% if current_user.is_admin %>
+      <div class="actions">
+        <%= f.submit :id => "report-create" %>
+      </div>
+    <% end %>
 
   </fieldset>

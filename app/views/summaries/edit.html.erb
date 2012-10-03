@@ -17,8 +17,8 @@
             <%= link_to time_ago_in_words(version.valid_start), :action=>:edit, :id=>version.id %> ago
           <% end %>
           by <span class="update-user"><%= version.updater.email %></span> 
-          <%= link_to "", delete_summary_version_path(version), :class => "delete", :method => :post, :confirm => "Are you sure you want to delete this version?" unless version.latest? %>
-          <%= link_to "", delete_summary_path(version), :class => "delete", :method => :delete, :confirm => "Are you sure you want to delete this summary?" if @versions.size == 1 %>
+          <%= link_to "", delete_summary_version_path(version), :class => "delete", :method => :post, :confirm => "Are you sure you want to delete this version?" if !version.latest? && current_user.is_admin %>
+          <%= link_to "", delete_summary_path(version), :class => "delete", :method => :delete, :confirm => "Are you sure you want to delete this summary?" if @versions.size == 1 && current_user.is_admin %>
         </li>
       <% end %>
     </ul>
@@ -33,7 +33,7 @@
   <%= form_for @summary, :url=>{:action=>:update} do |f| %>
     <%= render :partial => "form", :locals=>{:f=>f} %>
 
-    <% if @summary.latest? -%>
+    <% if @summary.latest? && current_user.is_admin -%>
       <div class="actions">
         <%= submit_tag 'Update' %>
       </div>

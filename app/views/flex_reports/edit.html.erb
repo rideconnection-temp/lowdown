@@ -1,13 +1,19 @@
 <div id="page-header">
-  <h1>Edit Flex Report</h1>
+  <% if current_user.is_admin %>
+    <h1>Edit Flex Report</h1>
+  <% else %>
+    <h1>Flex Report Definition</h1>
+  <% end %>
 </div>
 
-<%= form_for(@report, :html => {:class => "run-report"}) do |f| %>
-  <fieldset>
-    <h2>Run Report</h2>
-    <hr>
-    <%= render "run_form", :f => f, :report => @report, :ol_class => "section" %>
-  </fieldset>
+<% if current_user.is_admin %>
+  <%= form_for(@report, :html => {:class => "run-report"}) do |f| %>
+    <fieldset>
+      <h2>Run Report</h2>
+      <hr>
+      <%= render "run_form", :f => f, :report => @report, :ol_class => "section" %>
+    </fieldset>
+  <% end %>
 <% end %>
 
 <% if @report.errors.any? %>
