@@ -21,7 +21,7 @@
       <a id="logo" href="/">Ride Connection Service Database</a>
       <div id="login-area">
         <% if current_user %>
-        <a href="#"><%= current_user.email %></a> | <%= link_to "Log out", logout_path, {:method=>"post"} %>
+          <a href="#"><%= current_user.email %></a> | <%= link_to "Log out", logout_path, {:method=>"post"} %>
         <% end %>
       </div>
     </div><!-- /.wrap -->
@@ -37,7 +37,7 @@
       </ul>
       <ul id="secondary-nav" class="selfclear">
         <li class="admin"><%= link_to "Admin", :controller => "admin" %></li>
-        <% if current_user.is_admin %>
+        <% if current_user.try :is_admin %>
           <li class="users"><%= link_to "Users", :controller => "users", :action => "index" %></li>
         <% end %>
       </ul>
