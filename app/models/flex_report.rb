@@ -229,7 +229,7 @@ class FlexReport < ActiveRecord::Base
       end
     end
 
-    allocations = group(group_fields, results)
+    allocations = Allocation.group(group_fields, results)
     apply_to_leaves! allocations, group_fields.size do | allocationset |
       row = ReportRow.new fields
 
@@ -298,45 +298,6 @@ class FlexReport < ActiveRecord::Base
   end
 
   private
-  # group a set of records by a list of fields.  
-  # groups is a list of fields to group by
-  # records is a list of records
-  # the output is a nested hash, with one level for each element of groups
-  # for example,
-
-  # groups = [kingdom, edible]
-  # records = [platypus, cow, oak, apple, orange, shiitake]
-  # output = {'animal' => { 'no' => ['platypus'], 
-  #                         'yes' => ['cow'] 
-  #                       }, 
-  #           'plant' => { 'no' => 'oak'], 
-  #                        'yes' => ['apple', 'orange']
-  #                       }
-  #           'fungus' => { 'yes' => ['shiitake'] }
-  #          }
-  def group(groups, records)
-    out = {}
-    last_group = groups[-1]
-
-    for record in records
-      cur_group = out
-      for group in groups
-        group_value = record.send(group)
-        if group == last_group
-          if !cur_group.member? group_value
-            cur_group[group_value] = []
-          end
-        else
-          if ! cur_group.member? group_value
-            cur_group[group_value] = {}
-          end
-        end
-        cur_group = cur_group[group_value]
-      end
-      cur_group << record
-    end
-    return out
-  end
 
 
   # Apply the specified block to the leaves of a nested hash (leaves

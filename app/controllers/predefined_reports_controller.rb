@@ -147,7 +147,7 @@ class PredefinedReportsController < ApplicationController
 
     results = Allocation.all
     group_fields = ["county", "provider"]
-    allocations = group(group_fields, results)
+    allocations = Allocation.group(group_fields, results)
     @counties = {}
     for county, rows in allocations
       @counties[county] = {}

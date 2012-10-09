@@ -30,7 +30,6 @@ class Allocation < ActiveRecord::Base
       end
     end
   end
-  
 
   scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
   scope :trip_collection_method, where( "trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips'" )
@@ -47,6 +46,45 @@ class Allocation < ActiveRecord::Base
 
   def self.county_names
     select('DISTINCT county').where("COALESCE(county,'') <> ''").map {|x| x.county}.sort 
+  end
+
+  # group a set of records by a list of fields.  
+  # groups is a list of fields to group by
+  # records is a list of records
+  # the output is a nested hash, with one level for each element of groups
+  # for example,
+  # groups = [kingdom, edible]
+  # records = [platypus, cow, oak, apple, orange, shiitake]
+  # output = {'animal' => { 'no' => ['platypus'], 
+  #                         'yes' => ['cow'] 
+  #                       }, 
+  #           'plant' => { 'no' => 'oak'], 
+  #                        'yes' => ['apple', 'orange']
+  #                       }
+  #           'fungus' => { 'yes' => ['shiitake'] }
+  #          }
+  def self.group(groups, records)
+    out = {}
+    last_group = groups[-1]
+
+    for record in records
+      cur_group = out
+      for group in groups
+        group_value = record.send(group)
+        if group == last_group
+          if !cur_group.member? group_value
+            cur_group[group_value] = []
+          end
+        else
+          if ! cur_group.member? group_value
+            cur_group[group_value] = {}
+          end
+        end
+        cur_group = cur_group[group_value]
+      end
+      cur_group << record
+    end
+    return out
   end
 
   def to_s
