@@ -33,8 +33,8 @@ class ReportRow
     fields.sort!
   end
 
-  def self.sum(rows, out=nil)
-    out ||= ReportRow.new
+  def self.sum(rows, out=nil, results_fields=nil)
+    out ||= ReportRow.new(results_fields)
 
     if rows.instance_of? Hash
       rows.each do |key, row|

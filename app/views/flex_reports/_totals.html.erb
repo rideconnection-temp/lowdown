@@ -1,4 +1,4 @@
-<% row = ReportRow.sum(row) %>
+<% row = ReportRow.sum(row, nil, @report.results_fields.keys) %>
 <tr class="<% if group_fields.size >= 2 %>sum-<% end %>totals">
   <% (@report.groups.size - 1).times do %>
     <td class="indent">&nbsp;</td>
