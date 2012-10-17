@@ -235,8 +235,8 @@ class FlexReport < ActiveRecord::Base
 
       for allocation in allocationset
         if allocation.respond_to? :period_start_date 
-          collection_start_date = allocation.period_start_date
-          collection_end_date = allocation.period_end_date
+          collection_start_date = allocation.collection_start_date
+          collection_end_date = allocation.collection_end_date
         else
           collection_start_date = start_date
           collection_end_date = query_end_date
