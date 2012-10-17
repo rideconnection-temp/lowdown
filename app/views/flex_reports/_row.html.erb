@@ -3,7 +3,9 @@
     <td class="indent">&nbsp;</td>
   <% end %>
   
-  <td class="inner-most-field"><%= label %></td>
+  <td class="inner-most-field">
+    <%= label.present? ? label : "#{@report.group_fields.last.titleize} Not Specified" %>
+  </td>
   <% if @report.results_fields.member? 'funds' %>
     <td class="number">
       <%= number_to_currency(row.funds, :precision => 0, :negative_format => "(%u%n)") %>
