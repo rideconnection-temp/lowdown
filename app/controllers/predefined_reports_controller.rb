@@ -85,7 +85,7 @@ class PredefinedReportsController < ApplicationController
 
     for trip in trips
       row_key = trip.customer_id
-      office_key = trip.case_manager_office
+      office_key = (trip.case_manager_office || "Unspecified")
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
       unless @offices.has_key?(office_key)
         @offices[office_key] = {} 
