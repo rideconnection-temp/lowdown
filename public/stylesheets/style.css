@@ -1182,7 +1182,11 @@ p input[type="checkbox"] {
     vertical-align: middle; 
 }
 
-/* Predefined Reports */
+/* 
+ *
+ * Flex Reports 
+ *
+ */
 .report-header {
     border-bottom: 1px solid #bbb; 
     padding-bottom: 5px;
@@ -1283,6 +1287,11 @@ body.flex-reports form.run-report input[type="submit"]:hover {
     margin-bottom: 0;
 }
 
+/* 
+ *
+ * Predefined Report Form
+ *
+ */
 div.predefined-report ol {
     list-style: none;
     margin: 0 0 10px;
@@ -1308,3 +1317,13 @@ div.predefined-report form.run-report input[type="submit"] {
 div.predefined-report form.run-report input[type="submit"]:hover {
     background: #009FFB;
 }
+
+/* 
+ *
+ * Predefined Reports
+ *
+ */
+body.ride-purpose th.data {
+    width: 8%;
+}
+
