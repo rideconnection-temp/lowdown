@@ -1181,6 +1181,9 @@ ul.flex-reports li a {
 p input[type="checkbox"] { 
     vertical-align: middle; 
 }
+body.flex-reports span#group-by-custom-wrapper span {
+  display: block;
+}
 
 /* 
  *
