@@ -11,7 +11,7 @@
 </div>
 
 <%= content_tag(:div, "Adjustments for #{report_month_range @report.adjustment_start_date, @report.adjustment_end_date}", :id => "adjustment-description") if @report.adjustment? %>
-<%= content_tag(:div, @report.description, :id => "report-description") if @report.description.present? %>
+<%= content_tag(:div, @report.subtitle, :id => "report-description") if @report.subtitle.present? %>
 <%= content_tag(:div, "Grouping: " << @report.group_fields.join(", ").titleize, :id => "grouping-description") if @report.group_fields.present? %>
 
 <%= render :partial=> "report", :locals=>{:results=>@report.results, :group_fields=>@report.group_fields} %>

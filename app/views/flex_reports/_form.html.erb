@@ -6,6 +6,10 @@
           <%= f.text_field :name %>
         </li>
         <li>
+          <h2 class="section-header">Subtitle</h2>
+          <%= f.text_field :subtitle %>
+        </li>
+        <li>
           <h2 class="section-header">Grouping</h2>
           <select id="group-by" name="flex_report[group_by]">
             <% @group_bys.each do |fields| %>
