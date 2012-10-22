@@ -282,9 +282,8 @@ start_date, end_date, end_date ]))
   end
 
   def collect_trips_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
-    results = Summary.select("sum(in_district_trips) as in_district_trips, sum(out_of_district_trips) as out_of_district_trips, turn_downs, unduplicated_riders as undup_riders")
-    results = results.where(:allocation_id => allocation['id'])
-    results = results.joins(:summary_rows).group("turn_downs, summaries.unduplicated_riders")
+    results = Summary.select("sum(in_district_trips) as in_district_trips, sum(out_of_district_trips) as out_of_district_trips, SUM(turn_downs) AS turn_downs, SUM(unduplicated_riders) as undup_riders")
+    results = results.where(:allocation_id => allocation['id']).joins(:summary_rows)
     results = results.data_entry_complete unless pending
 
     if adjustment && false # turn off adjustments option for now
