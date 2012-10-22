@@ -127,3 +127,11 @@ div.report-wrapper td.indent {
 white-space: nowrap;
 }
 
+/* 
+ *
+ * Predefined Reports
+ *
+ */
+body.ride-purpose th.data {
+    width: 8%;
+}

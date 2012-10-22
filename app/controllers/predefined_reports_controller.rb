@@ -145,21 +145,19 @@ class PredefinedReportsController < ApplicationController
   def ride_purpose
     @query = ReportQuery.new(params[:report_query])
 
-    results = Allocation.all
-    group_fields = ["county", "provider"]
-    allocations = Allocation.group(group_fields, results)
-    @counties = {}
-    for county, rows in allocations
-      @counties[county] = {}
+    group_fields = ["county", "reporting_agency"]
+    results = Allocation.group(group_fields, Allocation.where("reporting_agency_id IS NOT NULL"))
+    @results = {}
+    for county, rows in results
+      @results[county] = {}
       for provider, allocations in rows
-        row = @counties[county][provider] = RidePurposeRow.new
+        row = @results[county][provider] = RidePurposeRow.new
         for allocation in allocations
           if allocation['trip_collection_method'] == 'trips'
             row.collect_by_trip(allocation, @query.start_date, @query.end_date)
           else
             row.collect_by_summary(allocation, @query.start_date, @query.end_date)
           end
-
         end
       end
     end
