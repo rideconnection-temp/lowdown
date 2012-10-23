@@ -282,12 +282,22 @@ start_date, end_date, end_date ]))
   end
 
   def collect_trips_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
-    results = Summary.select("sum(in_district_trips) as in_district_trips, sum(out_of_district_trips) as out_of_district_trips, SUM(turn_downs) AS turn_downs, SUM(unduplicated_riders) as undup_riders")
+    results = Summary.select("sum(in_district_trips) as in_district_trips, sum(out_of_district_trips) as out_of_district_trips")
     results = results.where(:allocation_id => allocation['id']).joins(:summary_rows)
     results = results.data_entry_complete unless pending
-
     if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_summary(sql + group_by, allocation, start_date, end_date)
+      add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
+    else
+      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+      subtract_results = {}
+    end
+    apply_results(add_results, subtract_results)
+
+    results = Summary.select("SUM(turn_downs) AS turn_downs, SUM(unduplicated_riders) as undup_riders")
+    results = results.where(:allocation_id => allocation['id'])
+    results = results.data_entry_complete unless pending
+    if adjustment && false # turn off adjustments option for now
+      add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
     else
       add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
       subtract_results = {}
