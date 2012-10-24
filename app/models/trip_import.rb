@@ -215,7 +215,7 @@ private
                 if run_map.has_key?(record[:routematch_run_id])
                   current_run_id = run_map[record[:routematch_run_id]]
                 else
-                  current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
+                  current_run = Run.current_versions.find_or_initialize_by_routematch_id(record[:routematch_run_id])
                   current_run.name = record[:run_name]
                   current_run.date = record[:date]
                   current_run.start_at = record[:run_start_at]
@@ -253,7 +253,7 @@ private
               end
             end
 
-            current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
+            current_trip = Trip.current_versions.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
             current_trip.routematch_trip_id = record[:routematch_trip_id]
             current_trip.date = record[:date]
             current_trip.result_code = record[:result_code]
