@@ -191,6 +191,18 @@ class ReportRow
   def short_provider_name
     allocation.provider.try :short_name
   end
+  
+  def trimet_provider 
+    allocation.trimet_provider.try :name
+  end
+
+  def trimet_program
+    allocation.trimet_program.try :name
+  end
+
+  def trimet_report_group
+    allocation.trimet_report_group.try :name
+  end
 
   def include_row(row)
     @funds                  += row.funds

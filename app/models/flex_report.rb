@@ -24,8 +24,11 @@ class FlexReport < ActiveRecord::Base
     "project_number"        => "projects.project_number",
     "provider_name"         => "providers.name",
     "reporting_agency_name" => "reporting_agencies.name",
-    "quarter"               => "quarter",
+    "trimet_program"        => "trimet_programs.name",
+    "trimet_provider"       => "trimet_providers.name",
+    "trimet_report_group"   => "trimet_report_groups.name",
     "month"                 => "month",
+    "quarter"               => "quarter",
     "year"                  => "year"
   }
 
