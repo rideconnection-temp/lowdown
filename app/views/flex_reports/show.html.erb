@@ -9,7 +9,7 @@
   <span class="separator csv">|</span>
   <%= link_to "CSV", params.merge({:action=>:csv}), :class=>"csv" %>
   <% if current_user.is_admin %>
-    <span class="separator">|</span>
+    <span class="separator edit">|</span>
     <%= link_to "Edit Report", edit_flex_report_path(@report), :class => "edit" %>
   <% end %>
 </div>

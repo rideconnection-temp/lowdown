@@ -31,7 +31,8 @@ body {
 .action-bttn,
 #new_report,
 form.edit_report,
-.csv { display: none; clear: both; }
+.csv,
+.edit { display: none; clear: both; }
 
 /* format stuff */
 #header {
