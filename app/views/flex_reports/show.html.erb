@@ -8,6 +8,10 @@
   </span>
   <span class="separator csv">|</span>
   <%= link_to "CSV", params.merge({:action=>:csv}), :class=>"csv" %>
+  <% if current_user.is_admin %>
+    <span class="separator">|</span>
+    <%= link_to "Edit Report", edit_flex_report_path(@report), :class => "edit" %>
+  <% end %>
 </div>
 
 <%= content_tag(:div, "Adjustments for #{report_month_range @report.adjustment_start_date, @report.adjustment_end_date}", :id => "adjustment-description") if @report.adjustment? %>
