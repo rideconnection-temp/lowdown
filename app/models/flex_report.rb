@@ -15,21 +15,21 @@ class FlexReport < ActiveRecord::Base
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,county,provider_name,program,reporting_agency_name}
 
   GroupMappings = {
-    "county"                => "allocations.county",
-    "funding_source"        => "projects.funding_source",
-    "funding_subsource"     => "projects.funding_subsource",
-    "allocation_name"       => "allocations.name",
-    "program"               => "allocations.program",
-    "project_name"          => "projects.name",
-    "project_number"        => "projects.project_number",
-    "provider_name"         => "providers.name",
-    "reporting_agency_name" => "reporting_agencies.name",
-    "trimet_program"        => "trimet_programs.name",
-    "trimet_provider"       => "trimet_providers.name",
-    "trimet_report_group"   => "trimet_report_groups.name",
-    "month"                 => "month",
-    "quarter"               => "quarter",
-    "year"                  => "year"
+    "county"                   => "allocations.county",
+    "funding_source"           => "projects.funding_source",
+    "funding_subsource"        => "projects.funding_subsource",
+    "allocation_name"          => "allocations.name",
+    "program"                  => "allocations.program",
+    "project_name"             => "projects.name",
+    "project_number"           => "projects.project_number",
+    "provider_name"            => "providers.name",
+    "reporting_agency_name"    => "reporting_agencies.name",
+    "trimet_program_name"      => "trimet_programs.name",
+    "trimet_provider_name"     => "trimet_providers.name",
+    "trimet_report_group_name" => "trimet_report_groups.name",
+    "month"                    => "month",
+    "quarter"                  => "quarter",
+    "year"                     => "year"
   }
 
 

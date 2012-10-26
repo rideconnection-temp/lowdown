@@ -157,7 +157,7 @@ class ReportRow
   end
 
   def project_name
-    allocation.project.try :name
+    allocation.project_name
   end
 
   def county
@@ -173,7 +173,7 @@ class ReportRow
   end
 
   def reporting_agency_name
-    allocation.reporting_agency.try :name
+    allocation.reporting_agency_name
   end
 
   def short_reporting_agency_name
@@ -185,23 +185,23 @@ class ReportRow
   end
 
   def provider_name
-    allocation.provider.try :name
+    allocation.provider_name
   end
 
   def short_provider_name
     allocation.provider.try :short_name
   end
   
-  def trimet_provider 
-    allocation.trimet_provider.try :name
+  def trimet_provider_name 
+    allocation.trimet_provider_name
   end
 
-  def trimet_program
-    allocation.trimet_program.try :name
+  def trimet_program_name
+    allocation.trimet_program_name
   end
 
-  def trimet_report_group
-    allocation.trimet_report_group.try :name
+  def trimet_report_group_name
+    allocation.trimet_report_group_name
   end
 
   def include_row(row)

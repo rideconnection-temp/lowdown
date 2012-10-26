@@ -137,6 +137,18 @@ class Allocation < ActiveRecord::Base
     reporting_agency.try :name
   end
 
+  def trimet_program_name
+    trimet_program.try :name
+  end
+
+  def trimet_provider_name
+    trimet_provider.try :name
+  end
+
+  def trimet_report_group_name
+    trimet_report_group.try :name
+  end
+
   private
 
   def require_consistent_provider_fields
