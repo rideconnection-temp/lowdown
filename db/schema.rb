@@ -316,6 +316,4 @@ ActiveRecord::Schema.define(:version => 20121026023227) do
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 
-  add_foreign_key "flex_reports", ["report_category_id"], "report_categories", ["id"], :name => "flex_reports_report_category_id_fkey"
-
 end

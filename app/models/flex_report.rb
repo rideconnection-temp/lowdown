@@ -1,4 +1,6 @@
 class FlexReport < ActiveRecord::Base
+  belongs_to :report_category
+
   validates :name, :presence => true, :uniqueness => true
   validates :adjustment_start_date, :presence => true, :if => :adjustment?
   validates :adjustment_end_date, :presence => true, :if => :adjustment?

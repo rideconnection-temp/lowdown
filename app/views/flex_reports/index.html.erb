@@ -64,10 +64,11 @@
 <% end %>
 
 <ul id="all-reports">
-  <% @reports.group_by(&:category).each do |category, report_group| %>
+  <% categorized_reports = @reports.group_by{|r| r.report_category.try(:name)} %>
+  <% categorized_reports.keys.sort_by{|k| k || ''}.each do |category| %>
     <div class="report-category">
       <h1><%= category || "Unspecified Category" %></h1>
-      <% report_group.each do |report| %>
+      <% categorized_reports[category].sort_by{|r| r.name}.each do |report| %>
         <li class="flex-report" data-id="<%= report.id %>">
           <%= form_for report, :html => { :method => 'delete' } do |f| %>
             <input type="hidden" name="report[id]" value="<%= report.id %>" />
@@ -83,7 +84,7 @@
           <%= form_for report, :html => { :class => "run-report", :method => :get } do |f| %>
             <fieldset>
               <h2 class="report-header"><%= report.name %></h2>
-              <%= content_tag :p, report.description if report.description.present? %>
+              <p><%= report.subtitle %></p>
               <%= render "run_form", :f => f, :report => report, :ol_class => "" %>
             </fieldset>
           <% end %>

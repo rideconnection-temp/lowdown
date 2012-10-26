@@ -5,7 +5,7 @@ class FlexReportsController < ApplicationController
   before_filter :require_admin_user, :except=>[:index, :show, :csv, :edit]
 
   def index
-    @reports = FlexReport.order(:category, :name).all
+    @reports = FlexReport.all
   end
 
   def new

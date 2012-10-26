@@ -11,7 +11,7 @@
         </li>
         <li>
           <h2 class="section-header">Category</h2>
-          <%= f.text_field :category %>
+          <%= f.collection_select :report_category_id, ReportCategory.default_order, :id, :name, :include_blank => true %>
         </li>
         <li>
           <h2 class="section-header">Grouping</h2>

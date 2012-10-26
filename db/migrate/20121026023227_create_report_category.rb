@@ -4,7 +4,9 @@ class CreateReportCategory < ActiveRecord::Migration
       t.string :name
       t.timestamps
     end
-    add_column :flex_reports, :report_category_id, :integer
+    change_table :flex_reports do |t|
+      t.references :report_category
+    end
   end
 
   def self.down
