@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121021064635) do
+ActiveRecord::Schema.define(:version => 20121026023227) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -99,6 +99,7 @@ ActiveRecord::Schema.define(:version => 20121021064635) do
     t.text    "county_name_list"
     t.text    "reporting_agency_list"
     t.text    "subtitle"
+    t.integer "report_category_id"
   end
 
   create_table "mobilities", :force => true do |t|
@@ -134,6 +135,12 @@ ActiveRecord::Schema.define(:version => 20121021064635) do
   end
 
   create_table "races", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "report_categories", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -308,5 +315,7 @@ ActiveRecord::Schema.define(:version => 20121021064635) do
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
+
+  add_foreign_key "flex_reports", ["report_category_id"], "report_categories", ["id"], :name => "flex_reports_report_category_id_fkey"
 
 end

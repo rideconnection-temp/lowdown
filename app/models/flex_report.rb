@@ -8,8 +8,6 @@ class FlexReport < ActiveRecord::Base
   attr_accessor :is_new
   attr_reader   :results, :results_fields
   
-  default_scope :order => 'position ASC'
-
   TimePeriods = [ "year", "quarter", "month" ]
   
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,county,provider_name,program,reporting_agency_name}
