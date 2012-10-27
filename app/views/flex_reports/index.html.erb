@@ -82,7 +82,7 @@
 
           <%= form_for report, :html => { :class => "run-report", :method => :get } do |f| %>
             <fieldset>
-              <h2 class="report-header"><%= report.name %></h2>
+              <h2 class="report-header" title="<%= report.description %>"><%= report.name %></h2>
               <p><%= report.subtitle %></p>
               <%= render "run_form", :f => f, :report => report, :ol_class => "" %>
             </fieldset>
