@@ -1,6 +1,6 @@
 class Customer < ActiveRecord::Base
   belongs_to :primary_address, :class_name => "Address", :foreign_key => "address_id"
-  has_many :trips
+  has_many :trips, :order => "start_at DESC"
   
   accepts_nested_attributes_for :primary_address
   
