@@ -69,15 +69,11 @@
     <div class="report-category">
       <h1><%= category || "Unspecified Category" %></h1>
       <% categorized_reports[category].sort_by{|r| r.name}.each do |report| %>
-        <li class="flex-report" data-id="<%= report.id %>">
-          <%= form_for report, :html => { :method => 'delete' } do |f| %>
-            <input type="hidden" name="report[id]" value="<%= report.id %>" />
-            <% if current_user.is_admin %>
-              <%= link_to "Edit Report", edit_flex_report_path(report), :class => "edit" %>
-              <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
-            <% else %>
-              <%= link_to "View Report Definition", edit_flex_report_path(report), :class => "details" %>
-            <% end %>
+        <li class="flex-report">
+          <% if current_user.is_admin %>
+            <%= link_to "Edit Report", edit_flex_report_path(report), :class => "edit" %>
+          <% else %>
+            <%= link_to "View Report Definition", edit_flex_report_path(report), :class => "details" %>
           <% end %>
 
           <%= form_for report, :html => { :class => "run-report", :method => :get } do |f| %>
