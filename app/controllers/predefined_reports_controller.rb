@@ -75,17 +75,20 @@ class PredefinedReportsController < ApplicationController
 
   def spd
     @query = ReportQuery.new(params[:report_query])
-    trips = Trip.current_versions.completed.spd.date_range(@query.start_date,@query.after_end_date).includes(:customer).default_order
+    trips = Trip.current_versions.completed.spd.date_range(@query.start_date,@query.after_end_date).includes(:customer).order("start_at DESC")
 
     @offices = {}
     @customer_rows = {}
+    customer_office = {}
     @approved_rides = 0
     @all_billed_rides = @wc_billed_rides = @nonwc_billed_rides = @unknown_billed_rides = 0
     @all_mileage = @wc_mileage = @nonwc_mileage = @unknown_mileage = BigDecimal("0")
 
     for trip in trips
       row_key = trip.customer_id
-      office_key = (trip.case_manager_office || "Unspecified")
+      # Use the most recent case_manager_office a customer has for all trips
+      customer_office[trip.customer_id] = trip.case_manager_office if customer_office[trip.customer_id].nil?
+      office_key = (customer_office[trip.customer_id] || "Unspecified")
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
       unless @offices.has_key?(office_key)
         @offices[office_key] = {} 
