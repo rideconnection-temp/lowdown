@@ -1,33 +1,31 @@
-<div id="page-header">
-  <h1>SPD Report</h1>
-</div>
+<% for office in @customer_rows.keys.sort %>
+  <div id="page-header">
+    <h1>SPD Report</h1>
+  </div>
 
-<h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
+  <h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
+  <h3><%= office %> Office</h3>
 
-<table id="active-rider-results" class="results">
-  <thead>
-    <tr>
-      <th>Case Manager</th>
-      <th>Date Enrolled</th>
-      <th>Customer</th>
-      <th>Prime Number</th>
-      <th>Service End</th>
-      <th>Approved Rides</th>
-      <th>Billed Rides</th>
-      <th>Billable Mileage</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% for office in @customer_rows.keys.sort %>
+  <table id="active-rider-results" class="results break-after">
+    <thead>
       <tr>
-        <td class="report-item" colspan="8"><%= office %></td>
+        <th>Case Manager</th>
+        <th>Date Enrolled</th>
+        <th>Customer</th>
+        <th>Prime Number</th>
+        <th>Service End</th>
+        <th>Approved Rides</th>
+        <th>Billed Rides</th>
+        <th>Billable Mileage</th>
       </tr>
-      <% @customer_rows[office].values.sort {|a,b| a[:customer].name <=> b[:customer].name }.each do |customer_row| %>
+    </thead>
+    <tbody>
+      <% @customer_rows[office].values.sort_by {|a| a[:customer].name }.each do |customer_row| %>
         <% customer = customer_row[:customer] %>
         <tr>
           <td><%= customer_row[:case_manager] %></td>
           <td><%= customer_row[:date_enrolled].try(:strftime,'%m-%d-%Y') %></td>
-          <td><%= customer.first_name %> <%= customer.middle_initial %> <%= customer.last_name %></td>
+          <td><%= customer.name %></td>
           <td><%= customer.prime_number %></td>
           <td><%= customer_row[:service_end].try(:strftime,'%m-%d-%Y') %></td>
           <td class="number"><%= customer_row[:approved_rides] %></td>
@@ -41,24 +39,30 @@
         <td class="number"><%= @offices[office][:billed_rides] %></td>
         <td class="number"><%= "%.2f" % @offices[office][:billable_mileage] %></td>
       </tr>
-    <% end %>
+  </table>
+<% end %>
+
+<table id="active-rider-results" class="totals">
+  <thead>
     <tr>
       <th colspan="5">Mobility</th>
       <th>Approved Rides</th>
       <th>Billed Rides</th>
       <th>Billable Mileage</th>
     </tr>
-    <tr>
-      <td colspan="5">Scooter or Wheelchair</td>
-      <td class="number"></td>
-      <td class="number"><%= @wc_billed_rides %></td>
-      <td class="number"><%= "%.2f" % @wc_mileage %></td>
-    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td colspan="5">Not Scooter or Wheelchair</td>
       <td class="number"></td>
       <td class="number"><%= @nonwc_billed_rides %></td>
       <td class="number"><%= "%.2f" % @nonwc_mileage %></td>
+    </tr>
+    <tr>
+      <td colspan="5">Scooter or Wheelchair</td>
+      <td class="number"></td>
+      <td class="number"><%= @wc_billed_rides %></td>
+      <td class="number"><%= "%.2f" % @wc_mileage %></td>
     </tr>
     <tr>
       <td colspan="5">Unknown Mobility</td>

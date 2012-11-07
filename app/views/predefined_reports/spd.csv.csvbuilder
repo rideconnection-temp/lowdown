@@ -19,7 +19,7 @@ csv << [
         office,
         customer_row[:case_manager],
         customer_row[:date_enrolled],
-        "#{c.first_name} #{c.middle_initial} #{c.last_name}",
+        c.name,
         c.prime_number,
         customer_row[:service_end],
         customer_row[:approved_rides],
