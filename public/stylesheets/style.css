@@ -1193,7 +1193,8 @@ body.flex-reports input.delete-report {
   font-size: 11px;
   line-height: 16px;
   border: 0;
-  padding: 5px 25px 5px 17px;
+  padding: 5px 15px 5px 17px;
+  margin-top: -63px;
 }
 input.delete-report:hover,
 input.delete-report:active {
@@ -1232,16 +1233,13 @@ li.flex-report {
 li.flex-report form.run-report {
   clear: none;
 }
-li.flex-report form.edit_flex_report {
-  display : block;
-  float : right;
-  margin : 0 10px -30px 0;
-}
 
 li.flex-report a.edit {
+  float : right;
+  display : block;
   font-size: 11px;
   line-height: 21px;
-  margin-right : 5px;
+  margin : 0 10px -31px 0;
 }
 
 ul#all-reports {
