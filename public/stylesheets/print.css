@@ -7,8 +7,7 @@
 /* Base Print Style Reset */
 * { background: transparent !important; color: #000 !important; text-shadow: none !important; 
     -moz-box-shadow: none !important; -webkit-box-shadow: none !important; box-shadow: none !important;}
-a, a:visited { text-decoration: underline; color: blue !important; }
-a:after { content: " (" attr(href) ")"; } 
+a { text-decoration: none; }
 abbr:after { content: " (" attr(title) ")"; }
 .ir a:after { content: ""; }  /* Don't show links for images */
 pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
