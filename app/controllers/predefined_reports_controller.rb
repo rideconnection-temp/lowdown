@@ -157,9 +157,9 @@ class PredefinedReportsController < ApplicationController
         row = @results[county][provider] = RidePurposeRow.new
         for allocation in allocations
           if allocation['trip_collection_method'] == 'trips'
-            row.collect_by_trip(allocation, @query.start_date, @query.end_date)
+            row.collect_by_trip(allocation, @query.start_date, @query.after_end_date)
           else
-            row.collect_by_summary(allocation, @query.start_date, @query.end_date)
+            row.collect_by_summary(allocation, @query.start_date, @query.after_end_date)
           end
         end
       end
