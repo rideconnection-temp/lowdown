@@ -5,7 +5,13 @@ class FlexReportsController < ApplicationController
   before_filter :require_admin_user, :except=>[:index, :show, :csv, :edit]
 
   def index
-    @reports = FlexReport.all
+    @reports = FlexReport.includes(:report_category)
+    respond_to do |format|
+      format.html
+      format.csv do 
+        @filename = 'flex_reports.csv'
+      end
+    end
   end
 
   def new

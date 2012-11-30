@@ -10,7 +10,9 @@ class AllocationsController < ApplicationController
         @allocations = @allocations.paginate :page => params[:page]
         @grouped_allocations = @allocations.group_by(&:provider_name)
       end
-      format.csv
+      format.csv do
+        @filename = 'allocations.csv'
+      end
     end
   end
   

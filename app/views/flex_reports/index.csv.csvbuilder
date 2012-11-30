@@ -1,0 +1,17 @@
+csv << [
+  "Report Category",
+  "Report Name",
+  "Subtitle",
+  "Description",
+  "Grouping"
+]
+
+@reports.sort_by{|r| "#{r.report_category.try(:name)}:#{r.name}"}.each do |report|
+  csv << [
+    report.report_category.try(:name),
+    report.name,
+    report.subtitle,
+    report.description,
+    report.group_by.try(:titleize).try(:gsub,",",", ")
+  ]
+end

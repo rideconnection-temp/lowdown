@@ -918,7 +918,8 @@ a.add,
 a.move,
 a.import,
 a.history,
-a.change-password {
+a.change-password,
+a.csv {
     padding: 5px 0 5px 20px;
     text-decoration: none;
     font-size: 12px;
@@ -957,6 +958,9 @@ a.add {
 }
 a.change-password {
     background: url(images/lock.png) left center no-repeat scroll;
+}
+a.csv {
+    background: url(images/document-excel-csv.png) left center no-repeat scroll;
 }
 
 a.delete:hover,
