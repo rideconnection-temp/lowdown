@@ -38,7 +38,7 @@
         <% percentages = total.percentages %>
         <th scope="row">% of total county trips</th>
         <% for purpose in @trip_purposes %>
-          <td class="number"><%= "%.2f\%" % percentages[purpose] %></td>
+          <td class="number"><%= "%.1f\%" % percentages[purpose] %></td>
         <% end %>
       </tr>
     <% end %>
@@ -62,7 +62,7 @@
       <% percentages = total.percentages %>
       <th scope="row">% of total trips</th>
       <% for purpose in @trip_purposes %>
-        <td class="number"><%= "%.2f\%" % percentages[purpose] %></td>
+        <td class="number"><%= "%.1f\%" % percentages[purpose] %></td>
       <% end %>
     </tr>
   </tbody>
