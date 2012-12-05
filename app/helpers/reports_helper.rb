@@ -12,11 +12,11 @@ module ReportsHelper
   end
 
   def get_row(e)
-      if e.instance_of? Hash
-        get_row e.first[1]
-      else
-        e
-      end
+    if e.instance_of? Hash
+      get_row e.first[1]
+    else
+      e
+    end
   end
 
 end

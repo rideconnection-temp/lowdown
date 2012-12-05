@@ -75,17 +75,20 @@ class PredefinedReportsController < ApplicationController
 
   def spd
     @query = ReportQuery.new(params[:report_query])
-    trips = Trip.current_versions.completed.spd.date_range(@query.start_date,@query.after_end_date).includes(:customer).default_order
+    trips = Trip.current_versions.completed.spd.date_range(@query.start_date,@query.after_end_date).includes(:customer).order("start_at DESC")
 
     @offices = {}
     @customer_rows = {}
+    customer_office = {}
     @approved_rides = 0
     @all_billed_rides = @wc_billed_rides = @nonwc_billed_rides = @unknown_billed_rides = 0
     @all_mileage = @wc_mileage = @nonwc_mileage = @unknown_mileage = BigDecimal("0")
 
     for trip in trips
       row_key = trip.customer_id
-      office_key = trip.case_manager_office
+      # Use the most recent case_manager_office a customer has for all trips
+      customer_office[trip.customer_id] = trip.case_manager_office if customer_office[trip.customer_id].nil?
+      office_key = (customer_office[trip.customer_id] || "Unspecified")
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
       unless @offices.has_key?(office_key)
         @offices[office_key] = {} 
@@ -137,7 +140,7 @@ class PredefinedReportsController < ApplicationController
       end
     end
     if params[:output] == 'CSV'
-      @filename = "SPD Report".sub(" ","_")
+      @filename = "SPD_Report_#{@query.start_date.strftime('%m-%d-%y')}_#{@query.end_date.strftime('%m-%d-%y')}.csv"
       render "spd.csv" 
     end
   end
@@ -145,21 +148,19 @@ class PredefinedReportsController < ApplicationController
   def ride_purpose
     @query = ReportQuery.new(params[:report_query])
 
-    results = Allocation.all
-    group_fields = ["county", "provider"]
-    allocations = group(group_fields, results)
-    @counties = {}
-    for county, rows in allocations
-      @counties[county] = {}
+    group_fields = ["county", "reporting_agency"]
+    results = Allocation.group(group_fields, Allocation.where("reporting_agency_id IS NOT NULL"))
+    @results = {}
+    for county, rows in results
+      @results[county] = {}
       for provider, allocations in rows
-        row = @counties[county][provider] = RidePurposeRow.new
+        row = @results[county][provider] = RidePurposeRow.new
         for allocation in allocations
           if allocation['trip_collection_method'] == 'trips'
-            row.collect_by_trip(allocation, @query.start_date, @query.end_date)
+            row.collect_by_trip(allocation, @query.start_date, @query.after_end_date)
           else
-            row.collect_by_summary(allocation, @query.start_date, @query.end_date)
+            row.collect_by_summary(allocation, @query.start_date, @query.after_end_date)
           end
-
         end
       end
     end

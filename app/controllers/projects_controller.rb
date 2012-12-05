@@ -1,5 +1,6 @@
 class ProjectsController < ApplicationController
   
+  before_filter :require_admin_user, :except => [:index, :edit]
   before_filter :get_drop_down_data, :only => [:new, :edit]
   
   def index

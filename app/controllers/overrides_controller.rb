@@ -1,4 +1,6 @@
 class OverridesController < ApplicationController
+
+  before_filter :require_admin_user, :except => [:index, :edit]
   
   def index
     @overrides = Override.default_order.paginate :page => params[:page]

@@ -1,5 +1,5 @@
 class PeriodAllocation
-  attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date
+  attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date, :collection_start_date, :collection_end_date
 
   def self.apply_periods(allocations, start_date, end_date, period)
     #enumerate periods between start_date and end_date
@@ -22,8 +22,10 @@ class PeriodAllocation
 
     periods = []
     begin
+      collection_start_date = (start_date > period_start_date ? start_date : period_start_date)
+      collection_end_date = (end_date < period_end_date ? end_date : period_end_date)
       periods += allocations.map do |allocation|
-        PeriodAllocation.new allocation, period_start_date, period_end_date
+        PeriodAllocation.new allocation, period_start_date, period_end_date, collection_start_date, collection_end_date
       end
 
       period_start_date = period_start_date.advance(:months=>advance)
@@ -33,10 +35,12 @@ class PeriodAllocation
     periods
   end
 
-  def initialize(allocation, period_start_date, period_end_date)
+  def initialize(allocation, period_start_date, period_end_date, collection_start_date, collection_end_date)
     @allocation = allocation
     @period_start_date = period_start_date
     @period_end_date = period_end_date
+    @collection_start_date = collection_start_date
+    @collection_end_date = collection_end_date
     @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
     @year = period_start_date.year
     @month = period_start_date.year * 100 + period_start_date.month

@@ -26,7 +26,7 @@ class RidePurposeRow
   end
 
   def collect_by_trip(allocation, start_date, end_date)
-    rows = Trip.select("purpose_type as purpose, COUNT(*) as trips").group("purpose_type").completed.for_allocation(allocation).for_date_range(start_date, end_date).current_versions
+    rows = Trip.select("purpose_type as purpose, COUNT(*) + SUM(guest_count) + SUM(attendant_count) as trips").group("purpose_type").completed.for_allocation(allocation).for_date_range(start_date, end_date).current_versions
     for row in rows
       @by_purpose['Total'] += row.trips.to_i
       @by_purpose[TRIP_PURPOSE_TO_SUMMARY_PURPOSE[row['purpose']]] += row.trips.to_i
@@ -36,7 +36,7 @@ class RidePurposeRow
   def collect_by_summary(allocation, start_date, end_date)
     rows = Summary.select("purpose, in_district_trips, out_of_district_trips").joins(:summary_rows).for_allocation(allocation).for_date_range(start_date, end_date).current_versions
     for row in rows
-      @by_purpose["Total"] += (row['in_district_trips'].to_i + row['.out_of_district_trips'].to_i) 
+      @by_purpose["Total"] += (row['in_district_trips'].to_i + row['out_of_district_trips'].to_i) 
       @by_purpose[row['purpose']] += (row['in_district_trips'].to_i + row['out_of_district_trips'].to_i)
     end
   end

@@ -12,6 +12,7 @@ Lowdown::Application.routes.draw do
   resources :trimet_programs
   resources :trimet_report_groups
   resources :overrides
+  resources :report_categories
   
   resources :flex_reports do
     collection do

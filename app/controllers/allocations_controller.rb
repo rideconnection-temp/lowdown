@@ -1,6 +1,7 @@
 class AllocationsController < ApplicationController
   
   before_filter :get_drop_down_data, :only => [:new, :edit]
+  before_filter :require_admin_user, :except => [:index, :edit]
   
   def index
     @allocations = Allocation.includes(:project, :provider, :override).order('providers.name, allocations.name')
@@ -9,7 +10,9 @@ class AllocationsController < ApplicationController
         @allocations = @allocations.paginate :page => params[:page]
         @grouped_allocations = @allocations.group_by(&:provider_name)
       end
-      format.csv
+      format.csv do
+        @filename = 'allocations.csv'
+      end
     end
   end
   

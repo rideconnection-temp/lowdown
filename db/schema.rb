@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120804074241) do
+ActiveRecord::Schema.define(:version => 20121026023227) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -42,8 +42,8 @@ ActiveRecord::Schema.define(:version => 20120804074241) do
     t.string  "routematch_provider_code"
     t.date    "inactivated_on"
     t.string  "program"
-    t.string  "admin_ops_data",           :limit => 15
-    t.string  "vehicle_maint_data",       :limit => 15
+    t.string  "admin_ops_data",              :limit => 15
+    t.string  "vehicle_maint_data",          :limit => 15
     t.integer "trimet_program_id"
     t.integer "trimet_provider_id"
     t.integer "trimet_report_group_id"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(:version => 20120804074241) do
     t.date    "activated_on"
     t.integer "reporting_agency_id"
     t.text    "notes"
+    t.boolean "do_not_show_on_flex_reports",               :default => false, :null => false
   end
 
   create_table "customers", :force => true do |t|
@@ -97,6 +98,8 @@ ActiveRecord::Schema.define(:version => 20120804074241) do
     t.text    "program_name_list"
     t.text    "county_name_list"
     t.text    "reporting_agency_list"
+    t.text    "subtitle"
+    t.integer "report_category_id"
   end
 
   create_table "mobilities", :force => true do |t|
@@ -137,6 +140,12 @@ ActiveRecord::Schema.define(:version => 20120804074241) do
     t.datetime "updated_at"
   end
 
+  create_table "report_categories", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "runs", :force => true do |t|
     t.integer  "base_id",                             :null => false
     t.datetime "valid_start",                         :null => false
@@ -167,10 +176,10 @@ ActiveRecord::Schema.define(:version => 20120804074241) do
     t.date     "period_start"
     t.date     "period_end"
     t.integer  "total_miles"
-    t.integer  "driver_hours_paid"
-    t.integer  "driver_hours_volunteer"
-    t.integer  "escort_hours_volunteer"
-    t.integer  "administrative_hours_volunteer"
+    t.decimal  "driver_hours_paid",              :precision => 7,  :scale => 2
+    t.decimal  "driver_hours_volunteer",         :precision => 7,  :scale => 2
+    t.decimal  "escort_hours_volunteer",         :precision => 7,  :scale => 2
+    t.decimal  "administrative_hours_volunteer", :precision => 7,  :scale => 2
     t.integer  "unduplicated_riders"
     t.integer  "turn_downs"
     t.decimal  "agency_other",                   :precision => 10, :scale => 2

@@ -215,7 +215,7 @@ private
                 if run_map.has_key?(record[:routematch_run_id])
                   current_run_id = run_map[record[:routematch_run_id]]
                 else
-                  current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
+                  current_run = Run.current_versions.find_or_initialize_by_routematch_id(record[:routematch_run_id])
                   current_run.name = record[:run_name]
                   current_run.date = record[:date]
                   current_run.start_at = record[:run_start_at]
@@ -253,7 +253,7 @@ private
               end
             end
 
-            current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
+            current_trip = Trip.current_versions.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
             current_trip.routematch_trip_id = record[:routematch_trip_id]
             current_trip.date = record[:date]
             current_trip.result_code = record[:result_code]
@@ -303,7 +303,7 @@ private
             # apportionment for run-based trips is done before import.  This helps assure that the
             # Reporting Services reports and the Service DB reports match exactly.
             if current_allocation.run_collection_method == 'runs'
-              current_trip.apportioned_duration = record[:trip_duration]
+              current_trip.apportioned_duration = record[:trip_duration] * 60 if record[:trip_duration].present?
               current_trip.apportioned_mileage = record[:trip_mileage]
             end
             current_trip.save! if current_trip.new_record? || (current_trip.changed != ['imported_at'])

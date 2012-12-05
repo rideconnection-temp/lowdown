@@ -494,7 +494,7 @@ ol.section li.changed div.change {
     text-align: right;
     margin: 4px 10% 0 0;
     float: right;
-    width: 15%;
+    width: 14%;
     font-weight: bold;
 }
 td.changed {
@@ -918,7 +918,8 @@ a.add,
 a.move,
 a.import,
 a.history,
-a.change-password {
+a.change-password,
+a.csv {
     padding: 5px 0 5px 20px;
     text-decoration: none;
     font-size: 12px;
@@ -957,6 +958,9 @@ a.add {
 }
 a.change-password {
     background: url(images/lock.png) left center no-repeat scroll;
+}
+a.csv {
+    background: url(images/document-excel-csv.png) left center no-repeat scroll;
 }
 
 a.delete:hover,
@@ -1181,8 +1185,32 @@ ul.flex-reports li a {
 p input[type="checkbox"] { 
     vertical-align: middle; 
 }
+body.flex-reports span#group-by-custom-wrapper span {
+  display: block;
+}
 
-/* Predefined Reports */
+body.flex-reports input.delete-report {
+  background: url(images/cross-button.png) left center no-repeat scroll;
+  float: right;
+  color: #e5004d;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 16px;
+  border: 0;
+  padding: 5px 15px 5px 17px;
+  margin-top: -63px;
+}
+input.delete-report:hover,
+input.delete-report:active {
+    color: #ff4d88;
+    text-decoration: underline;
+}
+
+/* 
+ *
+ * Flex Reports 
+ *
+ */
 .report-header {
     border-bottom: 1px solid #bbb; 
     padding-bottom: 5px;
@@ -1209,32 +1237,15 @@ li.flex-report {
 li.flex-report form.run-report {
   clear: none;
 }
-li.flex-report form.edit_flex_report {
-  display : block;
-  float : right;
-  margin : 0 10px -30px 0;
-}
 
 li.flex-report a.edit {
+  float : right;
+  display : block;
   font-size: 11px;
   line-height: 21px;
-  margin-right : 5px;
+  margin : 0 10px -31px 0;
 }
 
-input.delete-report {
-    background: url(images/cross-button.png) left center no-repeat scroll;
-    color: #e5004d;
-    text-decoration: none;
-    font-size: 11px;
-    line-height: 16px;
-    border: 0;
-    padding: 5px 0 5px 17px;
-}
-input.delete-report:hover,
-input.delete-report:active {
-    color: #ff4d88;
-    text-decoration: underline;
-}
 ul#all-reports {
 	padding : 0;
 	margin : 0;
@@ -1283,6 +1294,11 @@ body.flex-reports form.run-report input[type="submit"]:hover {
     margin-bottom: 0;
 }
 
+/* 
+ *
+ * Predefined Report Form
+ *
+ */
 div.predefined-report ol {
     list-style: none;
     margin: 0 0 10px;
@@ -1308,3 +1324,13 @@ div.predefined-report form.run-report input[type="submit"] {
 div.predefined-report form.run-report input[type="submit"]:hover {
     background: #009FFB;
 }
+
+/* 
+ *
+ * Predefined Reports
+ *
+ */
+body.ride-purpose th.data {
+    width: 8%;
+}
+

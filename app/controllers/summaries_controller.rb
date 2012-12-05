@@ -3,7 +3,7 @@ class SummaryQuery
   include ActiveModel::Conversion
 
   attr_accessor :start_date, :end_date, :after_end_date
-  attr_accessor :provider, :reporting_agency
+  attr_accessor :provider, :reporting_agency, :complete
 
   def convert_date(obj, base)
     Date.new(obj["#{base}(1i)"].to_i, obj["#{base}(2i)"].to_i)
@@ -28,6 +28,8 @@ class SummaryQuery
     @after_end_date = Date.new(@end_date.year,@end_date.month,1) + 1.month
     @reporting_agency = params[:reporting_agency].to_i if params[:reporting_agency].present?
     @provider         = params[:provider].to_i if params[:provider].present?
+    @complete         = true if params[:complete] == 'Yes'
+    @complete         = false if params[:complete] == 'No'
   end
 
   def persisted?
@@ -44,6 +46,8 @@ class SummaryQuery
     summaries = summaries.with_no_provider if provider == 0
     summaries = summaries.for_reporting_agency(reporting_agency) if reporting_agency.present? && reporting_agency != 0 
     summaries = summaries.with_no_reporting_agency if reporting_agency == 0
+    summaries = summaries.data_entry_complete if complete 
+    summaries = summaries.data_entry_not_complete if complete == false
     summaries
   end
 
@@ -61,7 +65,8 @@ class SummaryQuery
 end
 
 class SummariesController < ApplicationController
-  before_filter :require_admin_user, :except=>[:index]
+
+  before_filter :require_admin_user, :except=>[:index, :edit]
 
   def index
     attributes_to_sum = %w{total_cost in_district_trips out_of_district_trips trips total_miles driver_hours_paid driver_hours_volunteer total_driver_hours}
@@ -96,10 +101,11 @@ class SummariesController < ApplicationController
       flash.now[:alert] = "You must fill in all summary rows (even if just with zeros)"
       render(:action => :new)
     end
+    prep_edit
     if @summary.save
-      redirect_to(:action=>:edit, :id=>@summary.id)
+      flash[:alert] = "Successfully created summary for allocation \"#{@summary.allocation.name}\" for #{@summary.period_start.strftime('%B %Y')}"
+      redirect_to(:action=>:new)
     else
-      prep_edit
       render(:action => :new)
     end
   end

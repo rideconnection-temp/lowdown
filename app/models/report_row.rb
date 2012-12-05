@@ -32,8 +32,8 @@ class ReportRow
     fields.delete 'volunteer_hours'
   end
 
-  def self.sum(rows, out=nil)
-    out ||= ReportRow.new
+  def self.sum(rows, out=nil, results_fields=nil)
+    out ||= ReportRow.new(results_fields)
 
     if rows.instance_of? Hash
       rows.each do |key, row|
@@ -156,7 +156,7 @@ class ReportRow
   end
 
   def project_name
-    allocation.project.try :name
+    allocation.project_name
   end
 
   def county
@@ -172,7 +172,7 @@ class ReportRow
   end
 
   def reporting_agency_name
-    allocation.reporting_agency.try :name
+    allocation.reporting_agency_name
   end
 
   def short_reporting_agency_name
@@ -184,11 +184,23 @@ class ReportRow
   end
 
   def provider_name
-    allocation.provider.try :name
+    allocation.provider_name
   end
 
   def short_provider_name
     allocation.provider.try :short_name
+  end
+  
+  def trimet_provider_name 
+    allocation.trimet_provider_name
+  end
+
+  def trimet_program_name
+    allocation.trimet_program_name
+  end
+
+  def trimet_report_group_name
+    allocation.trimet_report_group_name
   end
 
   def include_row(row)
@@ -281,13 +293,22 @@ start_date, end_date, end_date ]))
   end
 
   def collect_trips_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
-    results = Summary.select("sum(in_district_trips) as in_district_trips, sum(out_of_district_trips) as out_of_district_trips, turn_downs, unduplicated_riders as undup_riders")
-    results = results.where(:allocation_id => allocation['id'])
-    results = results.joins(:summary_rows).group("turn_downs, summaries.unduplicated_riders")
+    results = Summary.select("sum(in_district_trips) as in_district_trips, sum(out_of_district_trips) as out_of_district_trips")
+    results = results.where(:allocation_id => allocation['id']).joins(:summary_rows)
     results = results.data_entry_complete unless pending
-
     if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_summary(sql + group_by, allocation, start_date, end_date)
+      add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
+    else
+      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+      subtract_results = {}
+    end
+    apply_results(add_results, subtract_results)
+
+    results = Summary.select("SUM(turn_downs) AS turn_downs, SUM(unduplicated_riders) as undup_riders")
+    results = results.where(:allocation_id => allocation['id'])
+    results = results.data_entry_complete unless pending
+    if adjustment && false # turn off adjustments option for now
+      add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
     else
       add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
       subtract_results = {}
@@ -296,7 +317,7 @@ start_date, end_date, end_date ]))
   end
 
   def collect_runs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
-    results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, 0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
+    results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, 0 as escort_volunteer_hours")
     results = results.completed.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
@@ -310,7 +331,7 @@ start_date, end_date, end_date ]))
   end
 
   def collect_runs_by_run(allocation, start_date, end_date, pending=false, adjustment=false)
-    results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, sum(COALESCE((SELECT escort_count FROM runs where id = trips.run_id),0) * apportioned_duration)/3600.0 as escort_volunteer_hours, 0 as admin_volunteer_hours")
+    results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, sum(COALESCE((SELECT escort_count FROM runs where id = trips.run_id),0) * apportioned_duration)/3600.0 as escort_volunteer_hours")
     results = results.completed.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
@@ -324,7 +345,7 @@ start_date, end_date, end_date ]))
   end
 
   def collect_runs_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
-    results = Summary.select("sum(total_miles) as mileage, sum(driver_hours_paid) as driver_paid_hours, sum(driver_hours_volunteer) as driver_volunteer_hours, sum(administrative_hours_volunteer) as admin_volunteer_hours, sum(escort_hours_volunteer) as escort_volunteer_hours")
+    results = Summary.select("sum(total_miles) as mileage, sum(driver_hours_paid) as driver_paid_hours, sum(driver_hours_volunteer) as driver_volunteer_hours, sum(escort_hours_volunteer) as escort_volunteer_hours")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
@@ -366,7 +387,7 @@ start_date, end_date, end_date ]))
   end
 
   def collect_operation_data_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
-    results = Summary.select("sum(operations) as operations, sum(administrative) as administrative, sum(vehicle_maint) as vehicle_maint")
+    results = Summary.select("sum(operations) as operations, sum(administrative) as administrative, sum(vehicle_maint) as vehicle_maint, sum(administrative_hours_volunteer) as admin_volunteer_hours")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 

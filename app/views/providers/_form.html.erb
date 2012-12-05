@@ -39,9 +39,11 @@
       </li>
     </ol>
     
-    <div class="actions">
-      <%= form.submit %>
-    </div>
+    <% if current_user.is_admin %>
+      <div class="actions">
+        <%= form.submit %>
+      </div>
+    <% end %>
 
   </fieldset>
 

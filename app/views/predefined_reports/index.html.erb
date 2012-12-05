@@ -164,7 +164,7 @@
         </li>
         <li>
           <%= f.label :provider %>
-          <%= f.collection_select :provider_id, Provider.for_multnomah_ads.default_order, :id, :name, :include_blank => true %>
+          <%= f.select :provider_id, [['<All Providers>',nil]] + Provider.for_multnomah_ads.default_order.map {|p| [p.name, p.id] } %>
         </li>
       </ol>
       <input type="submit" name="output" value="Report">

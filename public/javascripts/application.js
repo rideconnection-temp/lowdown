@@ -51,20 +51,6 @@ $(document).ready(function() {
     $("#" + district + "_district_total").val( total );
   });
   
-  // Adds drag-and-drop sortability to flex reports listing
-  $("#all-reports").sortable({
-    handle : ".handle",
-    stop : function(event, ui) {
-      var order = {};
-
-      ui.item.closest('ul').children('li').each(function(index) {
-        order[ $(this).data("id") ] = index;
-      });
-      
-      $.post("flex_reports/sort", {flex_reports : order});
-    }
-  });
-  
   // generates a new group by select value, given each of the custom field values
   var updateCustomOptionValue = function() {
     var realSelect = $("#group-by");

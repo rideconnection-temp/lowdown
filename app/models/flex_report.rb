@@ -1,4 +1,6 @@
 class FlexReport < ActiveRecord::Base
+  belongs_to :report_category
+
   validates :name, :presence => true, :uniqueness => true
   validates :adjustment_start_date, :presence => true, :if => :adjustment?
   validates :adjustment_end_date, :presence => true, :if => :adjustment?
@@ -8,25 +10,26 @@ class FlexReport < ActiveRecord::Base
   attr_accessor :is_new
   attr_reader   :results, :results_fields
   
-  default_scope :order => 'position ASC'
-
   TimePeriods = [ "year", "quarter", "month" ]
   
-  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,county,provider_name,program,reporting_agency_name}
+  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program}.sort
 
   GroupMappings = {
-    "county"                => "allocations.county",
-    "funding_source"        => "projects.funding_source",
-    "funding_subsource"     => "projects.funding_subsource",
-    "allocation_name"       => "allocations.name",
-    "program"               => "allocations.program",
-    "project_name"          => "projects.name",
-    "project_number"        => "projects.project_number",
-    "provider_name"         => "providers.name",
-    "reporting_agency_name" => "reporting_agencies.name",
-    "quarter"               => "quarter",
-    "month"                 => "month",
-    "year"                  => "year"
+    "county"                   => "allocations.county",
+    "funding_source"           => "projects.funding_source",
+    "funding_subsource"        => "projects.funding_subsource",
+    "allocation_name"          => "allocations.name",
+    "program"                  => "allocations.program",
+    "project_name"             => "projects.name",
+    "project_number"           => "projects.project_number",
+    "provider_name"            => "providers.name",
+    "reporting_agency_name"    => "reporting_agencies.name",
+    "trimet_program_name"      => "trimet_programs.name",
+    "trimet_provider_name"     => "trimet_providers.name",
+    "trimet_report_group_name" => "trimet_report_groups.name",
+    "month"                    => "month",
+    "quarter"                  => "quarter",
+    "year"                     => "year"
   }
 
 
@@ -193,14 +196,19 @@ class FlexReport < ActiveRecord::Base
     results = Allocation
     where_strings = []
     where_params = []
+
+    where_strings << "do_not_show_on_flex_reports = false"
+
+    where_strings << "(inactivated_on IS NULL or inactivated_on > ?) AND activated_on < ?"
+    where_params.concat [start_date, query_end_date]
+    
     if funding_subsource_name_list.present?
-      results = results.joins(:project)
-      where_strings << "COALESCE(projects.funding_source,'') || ': ' || COALESCE(projects.funding_subsource) IN (?)"
+      where_strings << "project_id IN (SELECT id FROM projects where COALESCE(funding_source,'') || ': ' || COALESCE(funding_subsource) IN (?))"
       where_params << funding_subsource_names
     end
     if reporting_agency_list.present? 
       where_strings << "reporting_agency_id IN (?)"
-      where_params << provider_ids
+      where_params << reporting_agency_ids
     end
     if provider_list.present? 
       where_strings << "provider_id IN (?)"
@@ -233,14 +241,14 @@ class FlexReport < ActiveRecord::Base
       end
     end
 
-    allocations = group(group_fields, results)
+    allocations = Allocation.group(group_fields, results)
     apply_to_leaves! allocations, group_fields.size do | allocationset |
       row = ReportRow.new fields
 
       for allocation in allocationset
         if allocation.respond_to? :period_start_date 
-          collection_start_date = allocation.period_start_date
-          collection_end_date = allocation.period_end_date
+          collection_start_date = allocation.collection_start_date
+          collection_end_date = allocation.collection_end_date
         else
           collection_start_date = start_date
           collection_end_date = query_end_date
@@ -302,45 +310,6 @@ class FlexReport < ActiveRecord::Base
   end
 
   private
-  # group a set of records by a list of fields.  
-  # groups is a list of fields to group by
-  # records is a list of records
-  # the output is a nested hash, with one level for each element of groups
-  # for example,
-
-  # groups = [kingdom, edible]
-  # records = [platypus, cow, oak, apple, orange, shiitake]
-  # output = {'animal' => { 'no' => ['platypus'], 
-  #                         'yes' => ['cow'] 
-  #                       }, 
-  #           'plant' => { 'no' => 'oak'], 
-  #                        'yes' => ['apple', 'orange']
-  #                       }
-  #           'fungus' => { 'yes' => ['shiitake'] }
-  #          }
-  def group(groups, records)
-    out = {}
-    last_group = groups[-1]
-
-    for record in records
-      cur_group = out
-      for group in groups
-        group_value = record.send(group)
-        if group == last_group
-          if !cur_group.member? group_value
-            cur_group[group_value] = []
-          end
-        else
-          if ! cur_group.member? group_value
-            cur_group[group_value] = {}
-          end
-        end
-        cur_group = cur_group[group_value]
-      end
-      cur_group << record
-    end
-    return out
-  end
 
 
   # Apply the specified block to the leaves of a nested hash (leaves

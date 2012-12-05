@@ -2,11 +2,16 @@ require 'csv'
 
 class FlexReportsController < ApplicationController
 
-  before_filter :require_admin_user, :except=>[:csv, :new, :create, :index]
-
+  before_filter :require_admin_user, :except=>[:index, :show, :csv, :edit]
 
   def index
-    @reports = FlexReport.all
+    @reports = FlexReport.includes(:report_category)
+    respond_to do |format|
+      format.html
+      format.csv do 
+        @filename = 'flex_reports.csv'
+      end
+    end
   end
 
   def new
@@ -29,6 +34,7 @@ class FlexReportsController < ApplicationController
   # the results of the report
   def show
     @report = FlexReport.find params[:id]
+    @report.attributes = params[:flex_report]
     @report.populate_results!
   end
 
@@ -92,5 +98,10 @@ class FlexReportsController < ApplicationController
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
     end
+    @grouped_allocations = [] 
+    Provider.order(:name).includes(:allocations).each do |p|
+      @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]
+    end
+    @grouped_allocations << ['<No provider>', Allocation.where(:provider_id => nil).map {|a| [a.name,a.id]}]
   end
 end

@@ -6,6 +6,14 @@
           <%= f.text_field :name %>
         </li>
         <li>
+          <h2 class="section-header">Subtitle</h2>
+          <%= f.text_field :subtitle %>
+        </li>
+        <li>
+          <h2 class="section-header">Category</h2>
+          <%= f.collection_select :report_category_id, ReportCategory.default_order, :id, :name, :include_blank => true %>
+        </li>
+        <li>
           <h2 class="section-header">Grouping</h2>
           <select id="group-by" name="flex_report[group_by]">
             <% @group_bys.each do |fields| %>
@@ -71,7 +79,7 @@
         <h2>Individual Allocations</h2>
         <select class="multi full" id="report_allocations" multiple="multiple" name="flex_report[allocations][]">
           <%= options_for_select([['<Select None>','']],(@report.allocation_ids.blank? ? [''] : [])) %> 
-          <%= option_groups_from_collection_for_select Provider.default_order.includes(:allocations).all, :allocations, :name, :id, :select_label, @report.allocation_ids %>
+          <%= grouped_options_for_select @grouped_allocations, @report.allocation_ids %>
         </select>
       </li>
     </ol>
@@ -186,9 +194,10 @@
       </div>
     </div>
 
-    <div class="actions">
-      <%= f.submit :id => "report-create" %>
-      <!-- <input id="report-create" type="submit" value="Create Report" /> -->
-    </div>
+    <% if current_user.is_admin %>
+      <div class="actions">
+        <%= f.submit :id => "report-create" %>
+      </div>
+    <% end %>
 
   </fieldset>

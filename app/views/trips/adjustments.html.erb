@@ -34,7 +34,7 @@
         <%= Trip.completed_trip_count_for_valid_start(adjustment.valid_start) %>
       </td>
       <td>
-        <%= truncate(adjustment.adjustment_notes) %>
+        <%= adjustment.adjustment_notes %>
       </td>
       <td>
         <% if adjustment['cnt'] == '1' -%>

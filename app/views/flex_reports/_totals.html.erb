@@ -1,42 +1,50 @@
-<% row = ReportRow.sum(row) %>
+<% row = ReportRow.sum(row, nil, @report.results_fields.keys) %>
 <tr class="<% if group_fields.size >= 2 %>sum-<% end %>totals">
   <% (@report.groups.size - 1).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
-  <td><%= "#{short_name} " if defined?(short_name) && short_name.present? %>Total</td>
+  <td>
+    <% if defined?(short_name) && short_name.present? %>
+      <%= "#{short_name}" %>
+    <% elsif defined?(short_name) && short_name.blank? %>
+      <%= "#{group_field_name} Not Specified" %>
+    <% else %>
+      <%= "Grand" %>
+    <% end %> Total
+  </td>
   <% if @report.results_fields.member? 'funds' %>
     <td class="number">
-      <%= number_to_currency(row.funds, :precision => 0) %>
+      <%= number_to_currency(row.funds, :precision => 0, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'agency_other' %>
     <td class="number">
-      <%= number_to_currency(row.agency_other, :precision => 0) %>
+      <%= number_to_currency(row.agency_other, :precision => 0, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'vehicle_maint' %>
     <td class="number">
-      <%= number_to_currency(row.vehicle_maint, :precision => 0) %>
+      <%= number_to_currency(row.vehicle_maint, :precision => 0, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'administrative' %>
     <td class="number">
-      <%= number_to_currency(row.administrative, :precision => 0) %>
+      <%= number_to_currency(row.administrative, :precision => 0, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'operations' %>
     <td class="number">
-      <%= number_to_currency(row.operations, :precision => 0) %>
+      <%= number_to_currency(row.operations, :precision => 0, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'donations' %>
     <td class="number">
-      <%= number_to_currency(row.donations, :precision => 0) %>
+      <%= number_to_currency(row.donations, :precision => 0, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'total' %>
     <td class="number">
-      <%= number_to_currency(row.total, :precision => 0) %>
+      <%= number_to_currency(row.total, :precision => 0, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'in_district_trips' %>
@@ -66,37 +74,37 @@
   <% end %>
   <% if @report.results_fields.member? 'driver_volunteer_hours' %>
     <td class="number">
-      <%= number_with_delimiter(row.driver_volunteer_hours.to_i) %>
+      <%= number_with_precision(row.driver_volunteer_hours, :precision => 1, :delimiter => ',') %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'driver_paid_hours' %>
     <td class="number">
-      <%= number_with_delimiter(row.driver_paid_hours.to_i) %>
+      <%= number_with_precision(row.driver_paid_hours, :precision => 1, :delimiter => ',') %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'driver_total_hours' %>
     <td class="number">
-      <%= number_with_delimiter(row.driver_total_hours.to_i) %>
+      <%= number_with_precision(row.driver_total_hours, :precision => 1, :delimiter => ',') %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'cost_per_trip' %>
     <td class="number">
-      <%= number_to_currency(row.cost_per_trip) %>
+      <%= row.cost_per_trip.present? ? number_to_currency(row.cost_per_trip, :negative_format => "(%u%n)") : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'cost_per_mile' %>
     <td class="number">
-      <%= number_to_currency(row.cost_per_mile) %>
+      <%= row.cost_per_mile.present? ? number_to_currency(row.cost_per_mile, :negative_format => "(%u%n)") : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'cost_per_hour' %>
     <td class="number">
-      <%= number_to_currency(row.cost_per_hour) %>
+      <%= row.cost_per_hour.present? ? number_to_currency(row.cost_per_hour, :negative_format => "(%u%n)") : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'miles_per_ride'%>
     <td class="number">
-      <%= number_with_precision(row.miles_per_ride, :precision => 1, :delimiter => ",") %>
+      <%= row.miles_per_ride.present? ? number_with_precision(row.miles_per_ride, :precision => 1, :delimiter => ",") : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'turn_downs' %>
@@ -111,17 +119,17 @@
   <% end %>
   <% if @report.results_fields.member? 'escort_volunteer_hours' %>
     <td class="number">
-      <%= number_with_delimiter(row.escort_volunteer_hours.to_i) %>
+      <%= number_with_precision(row.escort_volunteer_hours, :precision => 1, :delimiter => ",") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'admin_volunteer_hours' %>
     <td class="number">
-      <%= number_with_delimiter(row.admin_volunteer_hours.to_i) %>
+      <%= number_with_precision(row.admin_volunteer_hours, :precision => 1, :delimiter => ",") %>
     </td>
   <% end %>
   <% if @report.results_fields.member? 'total_volunteer_hours' %>
     <td class="number">
-      <%= number_with_delimiter(row.total_volunteer_hours.to_i) %>
+      <%= number_with_precision(row.total_volunteer_hours, :precision => 1, :delimiter => ",") %>
     </td>
   <% end %>
 </tr>

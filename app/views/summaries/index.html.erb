@@ -20,6 +20,10 @@
         <label>Providers:</label>
         <%= f.collection_select :provider, @query.providers, :id, :to_s, :include_blank => true %>
       </li>
+      <li>
+        <label>Data Entry Complete:</label>
+        <%= f.select :complete, ['Yes','No'], :include_blank => true %>
+      </li>
     </ol>
 
     <div class="actions">
