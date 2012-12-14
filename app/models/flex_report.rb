@@ -12,7 +12,7 @@ class FlexReport < ActiveRecord::Base
   
   TimePeriods = [ "year", "quarter", "month" ]
   
-  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program}.sort
+  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program quarter,month}.sort
 
   GroupMappings = {
     "county"                   => "allocations.county",
