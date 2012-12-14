@@ -42,6 +42,21 @@ class FlexReport < ActiveRecord::Base
     report
   end
 
+  # Apply the specified block to the leaves of a nested hash (leaves
+  # are defined as elements {depth} levels deep, so that hashes
+  # can be leaves)
+  def self.apply_to_leaves!(group, depth, &block) 
+    if depth == 0
+      return block.call group
+    else
+      group.each do |k, v|
+        group[k] = apply_to_leaves! v, depth - 1, &block
+      end
+      return group
+    end
+  end
+
+
   def funding_subsource_names
     if funding_subsource_name_list.blank?
       [""]

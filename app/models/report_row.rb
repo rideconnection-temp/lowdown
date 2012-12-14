@@ -14,9 +14,8 @@ class ReportRow
   def csv(requested_fields = nil)
     result = []
 
-    the_fields = ReportRow.fields(requested_fields)
-    the_fields.each do |attr|
-      result << self.send(attr).to_s
+    requested_fields.each do |attr|
+      result << self.send(attr)
     end
     return result
   end
