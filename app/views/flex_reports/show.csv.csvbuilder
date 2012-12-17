@@ -1,11 +1,19 @@
-csv << @report.csv_fields
+header_row = @report.group_fields.map{|f| f.titleize}
+
+columns = %w{funds agency_other vehicle_maint administrative operations donations total in_district_trips out_of_district_trips total_trips total_last_year mileage driver_volunteer_hours driver_paid_hours driver_total_hours cost_per_trip cost_per_mile cost_per_hour miles_per_ride turn_downs undup_riders escort_volunteer_hours admin_volunteer_hours total_volunteer_hours}
+
+columns.each do |column|
+  header_row << column.titleize if @report.results_fields.member? column
+end
+
+csv << header_row
 
 FlexReport.apply_to_leaves!(@report.results, @report.group_fields.size) do |row|
   csv_row = []
 
   @report.group_fields.each do |group_field|
     label = row.send(group_field)
-    csv_row << (label.present? ? label : "#{group_field} Not Specified")
+    csv_row << (label.present? ? label : "#{group_field.titleize} Not Specified")
   end
 
   if @report.results_fields.member? 'funds'
