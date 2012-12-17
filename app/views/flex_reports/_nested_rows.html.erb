@@ -1,7 +1,7 @@
 <% if group_fields.size > 1 %>
   <!-- an outer layer, print group headers with proper level of indentation -->
   <% group_field_name = @report.group_fields[@report.groups.size - group_fields.size].titleize %>
-  <% rows.sort_by {|k,v| row_sort(k,v)}.each do |group_name, row| %>
+  <% rows.sort_by {|k,v| row_sort(k)}.each do |group_name, row| %>
     <tr> 
       <% (@report.groups.size - group_fields.size).times do %>
         <td class="indent">&nbsp;</td>
@@ -13,7 +13,7 @@
   <% end %>
 <% else %>  
   <!-- innermost layer, render the data -->
-  <% rows.sort_by {|k,v| row_sort(k,v)}.each do |group_name, row| %>
+  <% rows.sort_by {|k,v| row_sort(k)}.each do |group_name, row| %>
     <%= render "row", :row => row, :label => row.send(group_fields[0]) %>
   <% end %>
 <% end %>

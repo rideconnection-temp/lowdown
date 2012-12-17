@@ -56,7 +56,6 @@ class FlexReport < ActiveRecord::Base
     end
   end
 
-
   def funding_subsource_names
     if funding_subsource_name_list.blank?
       [""]

@@ -8,7 +8,14 @@ end
 
 csv << header_row
 
+rows = {}
 FlexReport.apply_to_leaves!(@report.results, @report.group_fields.size) do |row|
+  key = @report.group_fields.map {|group_field| row_sort(row.send(group_field)) }
+  debugger
+  rows[key] = row
+end
+
+rows.sort_by{|k,v| k }.each do |key, row|
   csv_row = []
 
   @report.group_fields.each do |group_field|
@@ -62,16 +69,16 @@ FlexReport.apply_to_leaves!(@report.results, @report.group_fields.size) do |row|
     csv_row << number_with_precision(row.driver_total_hours, :precision => 1, :delimiter => ',')
   end
   if @report.results_fields.member? 'cost_per_trip'
-    csv_row << (row.cost_per_trip.present? ? number_to_currency(row.cost_per_trip, :negative_format => "(%u%n)") : "-")
+    csv_row << number_to_currency(row.cost_per_trip, :negative_format => "(%u%n)")
   end
   if @report.results_fields.member? 'cost_per_mile'
-    csv_row << (row.cost_per_mile.present? ? number_to_currency(row.cost_per_mile, :negative_format => "(%u%n)") : "-")
+    csv_row << number_to_currency(row.cost_per_mile, :negative_format => "(%u%n)")
   end
   if @report.results_fields.member? 'cost_per_hour'
-    csv_row << (row.cost_per_hour.present? ? number_to_currency(row.cost_per_hour, :negative_format => "(%u%n)") : "-")
+    csv_row << number_to_currency(row.cost_per_hour, :negative_format => "(%u%n)")
   end
   if @report.results_fields.member? 'miles_per_ride'
-    csv_row << (row.miles_per_ride.present? ? number_with_precision(row.miles_per_ride, :precision => 1, :delimiter => ",") : "-")
+    csv_row << number_with_precision(row.miles_per_ride, :precision => 1, :delimiter => ",")
   end
   if @report.results_fields.member? 'turn_downs'
     csv_row << number_with_delimiter(row.turn_downs.to_i)

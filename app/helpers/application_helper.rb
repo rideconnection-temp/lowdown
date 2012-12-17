@@ -36,7 +36,7 @@ module ApplicationHelper
     end
   end
   
-  def row_sort(k,v)
+  def row_sort(k)
     if k.blank?
       [2, ""]
     elsif k.class == Fixnum
