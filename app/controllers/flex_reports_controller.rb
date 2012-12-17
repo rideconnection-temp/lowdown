@@ -1,7 +1,6 @@
 require 'csv'
 
 class FlexReportsController < ApplicationController
-
   before_filter :require_admin_user, :except=>[:index, :show, :csv, :edit]
 
   def index
@@ -36,26 +35,13 @@ class FlexReportsController < ApplicationController
     @report = FlexReport.find params[:id]
     @report.attributes = params[:flex_report]
     @report.populate_results!
+    request.format = :csv if params[:csv]
     respond_to do |format|
       format.html
       format.csv do 
-        @filename = 'flex_reports.csv'
+        @filename = "\"#{@report.name.gsub('"','')}.csv\""
       end
     end
-  end
-
-  def csv
-    @report = FlexReport.find params[:id]
-    @report.populate_results!
-    csv_string = CSV.generate do |csv|
-      csv << @report.csv_fields
-      apply_to_leaves!(@report.results, @report.group_fields.size) do | row |
-        csv << row.csv(@report.csv_fields)
-        nil
-      end
-    end
-
-    send_data csv_string, :type => "text/plain", :filename => "report.csv", :disposition => 'attachment'
   end
 
   def edit
@@ -109,19 +95,5 @@ class FlexReportsController < ApplicationController
       @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]
     end
     @grouped_allocations << ['<No provider>', Allocation.where(:provider_id => nil).map {|a| [a.name,a.id]}]
-  end
-
-  # Apply the specified block to the leaves of a nested hash (leaves
-  # are defined as elements {depth} levels deep, so that hashes
-  # can be leaves)
-  def apply_to_leaves!(group, depth, &block) 
-    if depth == 0
-      return block.call group
-    else
-      group.each do |k, v|
-        group[k] = apply_to_leaves! v, depth - 1, &block
-      end
-      return group
-    end
   end
 end

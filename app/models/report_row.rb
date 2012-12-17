@@ -11,14 +11,6 @@ class ReportRow
   end
 
   @@selector_fields = ['allocation', 'county', 'provider_id', 'project_name']
-  def csv(requested_fields = nil)
-    result = []
-
-    requested_fields.each do |attr|
-      result << self.send(attr)
-    end
-    return result
-  end
 
   def self.fields(requested_fields=nil)
     if requested_fields.nil? || requested_fields.empty?

@@ -18,6 +18,9 @@
     <li>
       <%= f.submit "View Report" %>
     </li>
+    <li>
+      <%= f.submit "Export as CSV", :name => "csv" %>
+    </li>
   </ol>
 
   <ol class="<%= ol_class %> adjustments<%= " hidden" unless report.adjustment? %>">

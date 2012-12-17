@@ -50,7 +50,7 @@ class FlexReport < ActiveRecord::Base
       return block.call group
     else
       group.each do |k, v|
-        group[k] = apply_to_leaves! v, depth - 1, &block
+        group[k] = FlexReport.apply_to_leaves! v, depth - 1, &block
       end
       return group
     end
@@ -188,11 +188,6 @@ class FlexReport < ActiveRecord::Base
     group_fields + fields
   end
 
-  def flattened_results
-    this_result = []
-
-  end
-
   # Collect all data, and summarize it grouped according to the groups provided.
   # groups: the names of groupings, in order from coarsest to finest (i.e. project_name, quarter)
   # group_fields: the names of groupings with table names (i.e. projects.name, quarter)
@@ -257,7 +252,7 @@ class FlexReport < ActiveRecord::Base
     end
 
     allocations = Allocation.group(group_fields, results)
-    apply_to_leaves! allocations, group_fields.size do | allocationset |
+    FlexReport.apply_to_leaves! allocations, group_fields.size do | allocationset |
       row = ReportRow.new fields
 
       for allocation in allocationset
@@ -326,21 +321,6 @@ class FlexReport < ActiveRecord::Base
 
   private
 
-
-  # Apply the specified block to the leaves of a nested hash (leaves
-  # are defined as elements {depth} levels deep, so that hashes
-  # can be leaves)
-  def apply_to_leaves!(group, depth, &block) 
-    if depth == 0
-      return block.call group
-    else
-      group.each do |k, v|
-        group[k] = apply_to_leaves! v, depth - 1, &block
-      end
-      return group
-    end
-  end
-
   def get_by_key(groups, hash, keysrc)
     for group in groups
       val = keysrc.instance_variable_get "@#{group}"
@@ -350,17 +330,5 @@ class FlexReport < ActiveRecord::Base
       hash = hash[val]
     end
     return hash
-  end
-
-  def flatten_nested_hash(input, output = {}, prefix = [])
-    input.each do |key, value|
-      full_key = prefix + [key]
-      if value.is_a? Hash
-        flatten_nested_hash(value, output, full_key) 
-      else
-        output[full_key] = value
-      end
-    end
-    output
   end
 end
