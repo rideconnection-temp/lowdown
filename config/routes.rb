@@ -4,7 +4,6 @@ Lowdown::Application.routes.draw do
   # first created -> highest priority.
   
   resources :customers, :only => [:show, :update]
-  resources :allocations
   resources :providers
   resources :projects
   resources :runs
@@ -13,6 +12,11 @@ Lowdown::Application.routes.draw do
   resources :trimet_report_groups
   resources :overrides
   resources :report_categories
+  resources :allocations do
+    collection do
+      get :trimet_report_groups
+    end
+  end
   
   resources :flex_reports do
     collection do
@@ -23,7 +27,6 @@ Lowdown::Application.routes.draw do
       get :show_create_age_and_ethnicity
       get :age_and_ethnicity
       get :show_create_active_rider
-      post :sort
     end
   end
   

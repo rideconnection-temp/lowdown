@@ -15,6 +15,21 @@ class AllocationsController < ApplicationController
       end
     end
   end
+
+  def trimet_report_groups
+    allocations = Allocation.includes(:trimet_report_group,:trimet_program,:trimet_provider).where('trimet_report_group_id IS NOT NULL AND trimet_program_id IS NOT NULL AND trimet_provider_id IS NOT NULL')
+
+    @trimet_groups = {}
+    allocations.each do |a|
+      @trimet_groups[[a.trimet_report_group,a.trimet_program,a.trimet_provider]] ||= []
+      @trimet_groups[[a.trimet_report_group,a.trimet_program,a.trimet_provider]] << a
+    end
+    respond_to do |format|
+      format.csv do
+        @filename = '"TriMet Groupings.csv"'
+      end
+    end
+  end
   
   def new
     @allocation = Allocation.new
