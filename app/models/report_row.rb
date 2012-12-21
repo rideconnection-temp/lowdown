@@ -21,6 +21,7 @@ class ReportRow
     end
     fields.delete 'driver_hours'
     fields.delete 'volunteer_hours'
+    fields
   end
 
   def self.sum(rows, out=nil, results_fields=nil)
@@ -45,13 +46,14 @@ class ReportRow
   end
 
   def total
-    total = 0
+    # Total cost is the sum of the user-selected constituent cost fields. If no constituent cost 
+    # fields are selected, then total cost is the sum of all the constituent cost fields.
     cost_fields = [:funds, :agency_other, :vehicle_maint, :donations, :administrative, :operations]
-    for field in cost_fields
-      if @fields_to_show.nil? || @fields_to_show.map(&:to_sym).member?( field.to_sym )
-        total += instance_variable_get("@#{field}")
-      end
-    end
+    cost_fields_to_use = @fields_to_show.map(&:to_sym) & cost_fields if @fields_to_show.present?
+    cost_fields_to_use = cost_fields if @fields_to_show.blank? || cost_fields_to_use.blank?
+
+    total = 0
+    cost_fields_to_use.each{|field| total += instance_variable_get("@#{field}") }
     total
   end
 
@@ -186,8 +188,16 @@ class ReportRow
     allocation.trimet_provider_name
   end
 
+  def trimet_provider_identifier 
+    allocation.trimet_provider_identifier
+  end
+
   def trimet_program_name
     allocation.trimet_program_name
+  end
+
+  def trimet_program_identifier
+    allocation.trimet_program_identifier
   end
 
   def trimet_report_group_name

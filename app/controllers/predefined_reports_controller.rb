@@ -9,6 +9,8 @@ class ReportQuery
     now = Date.today
     if params[:start_date]
       @start_date = params[:start_date].to_date
+    elsif params['start_date(1i)']
+      @start_date = date_from_params(params,:start_date)
     elsif params[:date_range] == :quarter
       @start_date = Date.new(Date.today.year, (Date.today.month-1)/3*3+1,1) - 3.months
     else
@@ -17,6 +19,9 @@ class ReportQuery
 
     if params[:end_date]
       @end_date = params[:end_date].to_date
+      @after_end_date = @end_date + 1.day
+    elsif params['end_date(1i)']
+      @end_date = date_from_params(params,:end_date)
       @after_end_date = @end_date + 1.day
     elsif params[:date_range] == :quarter
       @after_end_date = start_date + 3.months
@@ -37,6 +42,12 @@ class ReportQuery
 
   def persisted?
     false
+  end
+
+  private
+
+  def date_from_params(params_in,attribute_name)
+    Date.new( params_in["#{attribute_name}(1i)"].to_i, params_in["#{attribute_name}(2i)"].to_i, params_in["#{attribute_name}(3i)"].to_i ) 
   end
 end
 
@@ -168,12 +179,29 @@ class PredefinedReportsController < ApplicationController
   end
 
   def quarterly_narrative
+    @query = ReportQuery.new(params[:report_query])
+
     @report = FlexReport.new
-    @report.start_date = date_from_params(params[:report_query],"start_date")
-    @report.end_date = date_from_params(params[:report_query],"end_date")
+    @report.start_date = @query.start_date
+    @report.end_date = @query.end_date
     @report.provider_list =  params[:report_query][:provider_id] if params[:report_query][:provider_id].present?
     @report.group_by = "allocation_name,month"
     @report.populate_results!
+  end
+
+  def trimet_export
+    @query = ReportQuery.new(params[:report_query])
+
+    @report = FlexReport.new
+    @report.start_date = @query.start_date
+    @report.end_date = @query.start_date # One month only
+    @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier"
+    @report.county_names = [:none] # This has the effect of making sure only the allocations below are used.
+    @report.allocations = Allocation.in_trimet_report_group.active_in_range(@report.start_date,@query.after_end_date).map{|a| a.id }
+    @report.populate_results!
+
+    @filename = "\"#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Report\""
+    render "trimet_export.csv"
   end
 
   def age_and_ethnicity
@@ -250,11 +278,4 @@ class PredefinedReportsController < ApplicationController
       @ethnicity[race]["ytd"] = row['undup_riders']
     end
   end
-
-  private
-
-  def date_from_params(params_in,attribute_name)
-    Date.new( params_in["#{attribute_name}(1i)"].to_i, params_in["#{attribute_name}(2i)"].to_i, params_in["#{attribute_name}(3i)"].to_i ) 
-  end
-  
 end

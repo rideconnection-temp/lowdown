@@ -36,6 +36,8 @@ class Allocation < ActiveRecord::Base
   scope :not_recently_inactivated, where( "inactivated_on is null or inactivated_on > current_date - interval '3 months'")
   scope :spd, includes(:project).where(:projects => {:funding_source => 'SPD'})
   scope :active_on, lambda{|date| where("activated_on <= ? AND (inactivated_on IS NULL OR inactivated_on > ?)",date,date)}
+  scope :active_in_range, lambda{|start_date,after_end_date| where("(inactivated_on IS NULL OR inactivated_on > ?) AND activated_on < ?", start_date, after_end_date) }
+  scope :in_trimet_report_group, where('trimet_report_group_id IS NOT NULL AND trimet_program_id IS NOT NULL AND trimet_provider_id IS NOT NULL')
   def self.for_import
     self.joins(:override).select("allocations.id,overrides.name,allocations.routematch_provider_code,allocations.activated_on,allocations.inactivated_on,allocations.run_collection_method")
   end
@@ -141,8 +143,16 @@ class Allocation < ActiveRecord::Base
     trimet_program.try :name
   end
 
+  def trimet_program_identifier
+    trimet_program.try :trimet_identifier
+  end
+
   def trimet_provider_name
     trimet_provider.try :name
+  end
+
+  def trimet_provider_identifier
+    trimet_provider.try :trimet_identifier
   end
 
   def trimet_report_group_name

@@ -27,6 +27,7 @@ Lowdown::Application.routes.draw do
       get :show_create_age_and_ethnicity
       get :age_and_ethnicity
       get :show_create_active_rider
+      get :trimet_export
     end
   end
   

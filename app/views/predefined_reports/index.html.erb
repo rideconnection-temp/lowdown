@@ -173,4 +173,18 @@
   <% end %>
 </div>
 
-
+<div class="predefined-report" data-name="monthly">
+  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :trimet_export } do |f| %>
+    <fieldset>
+      <h2 class="report-header">Trimet E&D Export</h2>
+      <p></p>
+      <ol>
+        <li>
+          <%= f.label :start_date, "Month" %>
+          <%= f.date_select :start_date, :order => [:month, :year] %>
+        </li>
+      </ol>
+      <input type="submit" name="output" value="CSV">
+    </fieldset>
+  <% end %>
+</div>

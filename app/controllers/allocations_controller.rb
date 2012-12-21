@@ -17,7 +17,7 @@ class AllocationsController < ApplicationController
   end
 
   def trimet_report_groups
-    allocations = Allocation.includes(:trimet_report_group,:trimet_program,:trimet_provider).where('trimet_report_group_id IS NOT NULL AND trimet_program_id IS NOT NULL AND trimet_provider_id IS NOT NULL')
+    allocations = Allocation.in_trimet_report_group.includes(:trimet_report_group,:trimet_program,:trimet_provider)
 
     @trimet_groups = {}
     allocations.each do |a|

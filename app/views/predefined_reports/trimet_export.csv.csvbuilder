@@ -1,0 +1,27 @@
+columns = %w{provider_name program_name ed_provider_id ed_program_id vehicle_miles unduplicated_riders on_time_percentage road_calls monthly_rides monthly_cost entry_year entry_month}
+
+csv << columns
+
+rows = {}
+FlexReport.apply_to_leaves!(@report.results, @report.group_fields.size) do |row|
+  key = @report.group_fields.map {|group_field| row_sort(row.send(group_field)) }
+  rows[key] = row
+end
+
+rows.sort_by{|k,v| k }.each do |key, row|
+  csv_row = []
+
+  @report.group_fields.each do |group_field|
+    label = row.send(group_field)
+    csv_row << (label.present? ? label : "#{group_field.titleize} Not Specified")
+  end
+  csv_row << row.mileage.round
+  csv_row << row.undup_riders.to_i
+  csv_row << nil
+  csv_row << nil
+  csv_row << row.total_trips.to_i
+  csv_row << number_with_precision(row.total, :precision => 0)
+  csv_row << nil
+  csv_row << nil
+  csv << csv_row
+end

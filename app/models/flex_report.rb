@@ -15,21 +15,23 @@ class FlexReport < ActiveRecord::Base
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program quarter,month}.sort
 
   GroupMappings = {
-    "county"                   => "allocations.county",
-    "funding_source"           => "projects.funding_source",
-    "funding_subsource"        => "projects.funding_subsource",
-    "allocation_name"          => "allocations.name",
-    "program"                  => "allocations.program",
-    "project_name"             => "projects.name",
-    "project_number"           => "projects.project_number",
-    "provider_name"            => "providers.name",
-    "reporting_agency_name"    => "reporting_agencies.name",
-    "trimet_program_name"      => "trimet_programs.name",
-    "trimet_provider_name"     => "trimet_providers.name",
-    "trimet_report_group_name" => "trimet_report_groups.name",
-    "month"                    => "month",
-    "quarter"                  => "quarter",
-    "year"                     => "year"
+    "county"                        => "allocations.county",
+    "funding_source"                => "projects.funding_source",
+    "funding_subsource"             => "projects.funding_subsource",
+    "allocation_name"               => "allocations.name",
+    "program"                       => "allocations.program",
+    "project_name"                  => "projects.name",
+    "project_number"                => "projects.project_number",
+    "provider_name"                 => "providers.name",
+    "reporting_agency_name"         => "reporting_agencies.name",
+    "trimet_program_name"           => "trimet_programs.name",
+    "trimet_program_identifier"     => "trimet_programs.trimet_identifier",
+    "trimet_provider_name"          => "trimet_providers.name",
+    "trimet_provider_identifier"    => "trimet_providers.trimet_identifier",
+    "trimet_report_group_name"      => "trimet_report_groups.name",
+    "month"                         => "month",
+    "quarter"                       => "quarter",
+    "year"                          => "year"
   }
 
 
@@ -183,10 +185,6 @@ class FlexReport < ActiveRecord::Base
     group_fields.map { |f| GroupMappings[f] }
   end
 
-  def csv_fields
-    group_fields + fields
-  end
-
   # Collect all data, and summarize it grouped according to the groups provided.
   # groups: the names of groupings, in order from coarsest to finest (i.e. project_name, quarter)
   # group_fields: the names of groupings with table names (i.e. projects.name, quarter)
@@ -208,7 +206,7 @@ class FlexReport < ActiveRecord::Base
 
     where_strings << "do_not_show_on_flex_reports = false"
 
-    where_strings << "(inactivated_on IS NULL or inactivated_on > ?) AND activated_on < ?"
+    where_strings << "(inactivated_on IS NULL OR inactivated_on > ?) AND activated_on < ?"
     where_params.concat [start_date, query_end_date]
     
     if funding_subsource_name_list.present?
