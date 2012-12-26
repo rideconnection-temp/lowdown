@@ -61,11 +61,6 @@
    nil, nil, nil, nil, nil, nil, nil, nil, nil 
   ] %>
   <% csv << [
-   "Hourly Trips",
-   @per_hour_trip_count,
-   nil, nil, nil, nil, nil, nil, nil, nil, nil 
-  ] %>
-  <% csv << [
    "Taxi Trips",
    @taxi_trip_count,
    nil, nil, nil, nil, nil, nil, nil, nil, nil 
@@ -73,11 +68,6 @@
   <% csv << [
    "Partner Trips",
    @partner_trip_count,
-   nil, nil, nil, nil, nil, nil, nil, nil, nil 
-  ] %>
-  <% csv << [
-   "Total Trip Count",
-   @per_hour_trip_count + @taxi_trip_count + @partner_trip_count,
    nil, nil, nil, nil, nil, nil, nil, nil, nil 
   ] %>
 <% end) %>

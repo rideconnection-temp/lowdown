@@ -86,20 +86,12 @@
       <th class="number"><%= @total_billable_hours %></th>
     </tr>
     <tr>
-      <th class="text">&nbsp;&nbsp;&nbsp;Hourly Trips</th>
-      <th class="number"><%= @per_hour_trip_count %></th>
-    </tr>
-    <tr>
-      <th class="text">&nbsp;&nbsp;&nbsp;Taxi Trips</th>
+      <th class="text">Taxi Trips</th>
       <th class="number"><%= @taxi_trip_count %></th>
     </tr>
     <tr>
-      <th class="text">&nbsp;&nbsp;&nbsp;Partner Trips</th>
+      <th class="text">Partner Trips</th>
       <th class="number"><%= @partner_trip_count %></th>
-    </tr>
-    <tr>
-      <th class="text">Total Trip Count</th>
-      <th class="number"><%= @per_hour_trip_count + @taxi_trip_count + @partner_trip_count %></th>
     </tr>
   </tbody>
 </table>
