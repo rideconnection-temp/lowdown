@@ -264,25 +264,25 @@ class FlexReport < ActiveRecord::Base
         end
 
         if allocation.trip_collection_method == 'trips'
-          row.collect_trips_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
+          row.collect_trips_by_trip(allocation, collection_start_date, collection_end_date, pending)
         else
-          row.collect_trips_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
+          row.collect_trips_by_summary(allocation, collection_start_date, collection_end_date, pending)
         end
 
         if allocation.run_collection_method == 'trips' 
-          row.collect_runs_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
+          row.collect_runs_by_trip(allocation, collection_start_date, collection_end_date, pending)
         elsif allocation.run_collection_method == 'runs'
-          row.collect_runs_by_run(allocation, collection_start_date, collection_end_date, pending, adjustment)
+          row.collect_runs_by_run(allocation, collection_start_date, collection_end_date, pending)
         else
-          row.collect_runs_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
+          row.collect_runs_by_summary(allocation, collection_start_date, collection_end_date, pending)
         end
 
         if allocation.cost_collection_method == 'summary'
-          row.collect_costs_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
+          row.collect_costs_by_summary(allocation, collection_start_date, collection_end_date, pending)
         end
-        row.collect_costs_by_trip(allocation, collection_start_date, collection_end_date, pending, adjustment)
+        row.collect_costs_by_trip(allocation, collection_start_date, collection_end_date, pending)
 
-        row.collect_operation_data_by_summary(allocation, collection_start_date, collection_end_date, pending, adjustment)
+        row.collect_operation_data_by_summary(allocation, collection_start_date, collection_end_date, pending)
 
       end
       row.allocation = allocationset[0]

@@ -226,183 +226,97 @@ class ReportRow
     @admin_volunteer_hours  += row.admin_volunteer_hours
   end
 
-  def apply_results(add_result, subtract_result={})
-    for field in add_result.keys
-      var = "@#{field}"
-      new = instance_variable_get var
-      new += BigDecimal(add_result[field].to_s) if add_result[field].present?
-      new -= BigDecimal(subtract_result[field].to_s) if subtract_result[field].present?
-      instance_variable_set var, new
-    end if add_result.present?
+  def apply_results(add_result)
+    add_result.keys.each do |field|
+      if add_result[field].present?
+        var = "@#{field}"
+        new = instance_variable_get var
+        new += BigDecimal(add_result[field].to_s) 
+        instance_variable_set var, new
+      end
+    end
   end
 
-  def collect_adjustment_by_summary(sql, allocation, start_date, end_date)
-    subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? "
-
-    subtract_results = ActiveRecord::Base.connection.select_one(bind([subtract_sql, allocation['id'], 
-start_date, start_date]))
-
-    add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end > ? "
-
-    add_results = ActiveRecord::Base.connection.select_one(bind([add_sql, allocation['id'], 
-end_date, end_date]))
-
-    return add_results, subtract_results
-  end
-
-  def collect_adjustment_by_trip(sql, allocation, start_date, end_date)
-
-    #in adjustment mode, we add data from trips that are valid at
-    #end_date, and subtract data form trips that are valid at
-    #start_date.  We ignore trips that are valid at both or neither.
-
-    subtract_sql = sql + "and runs.valid_start <= ? and runs.valid_end >= ?
-and trips.valid_start <= ? and trips.valid_end > ? and trips.valid_end <= ? "
-
-    subtract_results = ActiveRecord::Base.connection.select_one(bind([subtract_sql, allocation['id'], 
-start_date, start_date, 
-start_date, start_date, end_date ]))
-
-    add_sql = sql + "and runs.valid_start <= ? and runs.valid_end >= ?
-and trips.valid_start > ? and trips.valid_start <= ? and trips.valid_end > ? "
-
-    add_results = ActiveRecord::Base.connection.select_one(bind([add_sql, allocation['id'], 
-end_date, end_date, 
-start_date, end_date, end_date ]))
-    return add_results, subtract_results
-  end
-
-  def collect_trips_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
+  def collect_trips_by_trip(allocation, start_date, end_date, pending=false)
     results = Trip.select("sum(case when in_trimet_district=true and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as in_district_trips, sum(case when in_trimet_district=false and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips, sum(case when result_code='TD' then 1 + guest_count + attendant_count else 0 end) as turn_downs")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
-    if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
 
-      pending_where = pending ? "" : "complete=true and " 
-      undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where #{pending_where}allocation_id=? and valid_end=? and result_code = 'COMP' group by customer_id, year) as morx where date (year || '-' || month || '-' || 1) >= ? and date (year || '-' || month || '-' || 1) < ? "
-      row = ActiveRecord::Base.connection.select_one(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.advance(:months=>6), end_date.advance(:months=>6)]))
-      add_results['undup_riders'] = row['undup_riders'].to_i
-
-      subtract_results = {}
-    end
-
-    apply_results(add_results, subtract_results)
+    pending_where = pending ? "" : "complete=true and " 
+    undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where #{pending_where}allocation_id=? and valid_end=? and result_code = 'COMP' group by customer_id, year) as morx where date (year || '-' || month || '-' || 1) >= ? and date (year || '-' || month || '-' || 1) < ? "
+    row = ActiveRecord::Base.connection.select_one(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.advance(:months=>6), end_date.advance(:months=>6)]))
+    add_results['undup_riders'] = row['undup_riders'].to_i
+    apply_results(add_results)
   end
 
-  def collect_trips_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
+  def collect_trips_by_summary(allocation, start_date, end_date, pending=false)
     results = Summary.select("sum(in_district_trips) as in_district_trips, sum(out_of_district_trips) as out_of_district_trips")
     results = results.where(:allocation_id => allocation['id']).joins(:summary_rows)
     results = results.data_entry_complete unless pending
-    if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      subtract_results = {}
-    end
-    apply_results(add_results, subtract_results)
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+    apply_results(add_results)
 
     results = Summary.select("SUM(turn_downs) AS turn_downs, SUM(unduplicated_riders) as undup_riders")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
-    if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_summary(sql, allocation, start_date, end_date)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      subtract_results = {}
-    end
-    apply_results(add_results, subtract_results)
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+    apply_results(add_results)
   end
 
-  def collect_runs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
+  def collect_runs_by_trip(allocation, start_date, end_date, pending=false)
     results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, 0 as escort_volunteer_hours")
     results = results.completed.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
-    if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      subtract_results = {}
-    end
-    apply_results(add_results, subtract_results)
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+    apply_results(add_results)
   end
 
-  def collect_runs_by_run(allocation, start_date, end_date, pending=false, adjustment=false)
+  def collect_runs_by_run(allocation, start_date, end_date, pending=false)
     results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, sum(COALESCE((SELECT escort_count FROM runs where id = trips.run_id),0) * apportioned_duration)/3600.0 as escort_volunteer_hours")
     results = results.completed.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
-    if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      subtract_results = {}
-    end
-    apply_results(add_results, subtract_results)
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+    apply_results(add_results)
   end
 
-  def collect_runs_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
+  def collect_runs_by_summary(allocation, start_date, end_date, pending=false)
     results = Summary.select("sum(total_miles) as mileage, sum(driver_hours_paid) as driver_paid_hours, sum(driver_hours_volunteer) as driver_volunteer_hours, sum(escort_hours_volunteer) as escort_volunteer_hours")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
-    if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_summary(sql + group_by, allocation, start_date, end_date)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      subtract_results = {}
-    end
-    apply_results(add_results, subtract_results)
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+    apply_results(add_results)
   end
 
-  def collect_costs_by_trip(allocation, start_date, end_date, pending=false, adjustment=false)
+  def collect_costs_by_trip(allocation, start_date, end_date, pending=false)
     results = Trip.select("sum(apportioned_fare) as funds, 0 as agency_other, 0 as donations")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
-    if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_trip(sql, allocation, start_date, end_date)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      subtract_results = {}
-    end
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
   end
 
-  def collect_costs_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
+  def collect_costs_by_summary(allocation, start_date, end_date, pending=false)
     results = Summary.select("sum(funds) as funds, sum(agency_other) as agency_other, sum(donations) as donations")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
-    if adjustment && false # turn off adjustments option for now
-      add_results, subtract_results = collect_adjustment_by_summary(sql + group_by, allocation, start_date, end_date)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      subtract_results = {}
-    end
-    apply_results(add_results, subtract_results)
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+    apply_results(add_results)
   end
 
-  def collect_operation_data_by_summary(allocation, start_date, end_date, pending=false, adjustment=false)
+  def collect_operation_data_by_summary(allocation, start_date, end_date, pending=false)
     results = Summary.select("sum(operations) as operations, sum(administrative) as administrative, sum(vehicle_maint) as vehicle_maint, sum(administrative_hours_volunteer) as admin_volunteer_hours")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless pending
 
-    if adjustment && false # turn off adjustments option for now
-      subtract_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end >= ? "
-      subtract_results = ActiveRecord::Base.connection.select_one(bind([subtract_sql, allocation['id'], start_date, start_date]))
-      add_sql = sql + "and summaries.valid_start <= ? and summaries.valid_end >= ? "
-      add_results = ActiveRecord::Base.connection.select_one(bind([add_sql, allocation['id'], end_date, end_date ]))
-      apply_results(add_results, subtract_results)
-    else
-      add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      subtract_results = {}
-    end
-    apply_results(add_results, subtract_results)
+    add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+    apply_results(add_results)
   end
 
 end
