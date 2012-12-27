@@ -44,7 +44,7 @@ class TripImport < ActiveRecord::Base
   has_many :runs
 
   before_create :import_file, :apportion_imported_shared_rides 
-  after_create :associate_records_with_trip_import
+  after_create :associate_records_with_trip_import, :mark_record_data_entry_complete
 private
 
   def import_file
@@ -349,6 +349,11 @@ private
   def associate_records_with_trip_import
     Run.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
     Trip.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
+  end
+
+  def mark_record_data_entry_complete
+    Run.where(:imported_at => self.import_start_time).update_all :complete => true
+    Trip.where(:imported_at => self.import_start_time).update_all :complete => true
   end
 
   # Source data can have 1 or -1 as true. 0 and nil are false
