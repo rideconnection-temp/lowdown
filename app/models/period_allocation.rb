@@ -2,7 +2,11 @@ class PeriodAllocation
   attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date, :collection_start_date, :collection_end_date
 
   def self.apply_periods(allocations, start_date, end_date, period)
-    #enumerate periods between start_date and end_date
+    # enumerate periods between start_date and end_date.
+    # collection_*_date variables represent the date range we're going to collect data for.
+    # period_*_date variables represent the entire period range (e.g. the full 12 months of the year).
+    # collection date ranges will be a subset of the period range when the period range extends
+    # before and/or after the date range requested by the user.
     year = start_date.year
     if period == 'year'
       period_start_date = Date.new(year, 1, 1)

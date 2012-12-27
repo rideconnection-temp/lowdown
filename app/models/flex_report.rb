@@ -253,14 +253,12 @@ class FlexReport < ActiveRecord::Base
       row = ReportRow.new fields
 
       for allocation in allocationset
-        if allocation.respond_to? :period_start_date 
+        if allocation.respond_to? :collection_start_date 
           collection_start_date = allocation.collection_start_date
           collection_end_date = allocation.collection_end_date
         else
           collection_start_date = start_date
           collection_end_date = query_end_date
-          # collection_start_date = adjustment ? adjustment_start_date : start_date
-          # collection_end_date   = adjustment ? query_adustment_end_date : query_end_date
         end
 
         if allocation.trip_collection_method == 'trips'
@@ -289,7 +287,6 @@ class FlexReport < ActiveRecord::Base
       row
     end
 
-    # @levels = group_fields.size
     @results = allocations
     @results_fields = {}
     if fields.nil? or fields.empty?
