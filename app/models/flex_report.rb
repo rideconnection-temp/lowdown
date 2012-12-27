@@ -10,7 +10,7 @@ class FlexReport < ActiveRecord::Base
   attr_accessor :is_new
   attr_reader   :results, :results_fields
   
-  TimePeriods = [ "year", "quarter", "month" ]
+  TimePeriods = %w{month quarter year}
   
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program quarter,month}.sort
 
@@ -241,13 +241,15 @@ class FlexReport < ActiveRecord::Base
         where_params << allocations
     end
     results = results.where(where_string, *where_params)
-     
-    for period in TimePeriods
+
+    TimePeriods.each do |period|
       if group_fields.member? period
+        # only apply the shortest time period if there are multiple time period grouping levels
         results = PeriodAllocation.apply_periods(results, start_date, query_end_date, period)
+        break
       end
     end
-
+    
     allocations = Allocation.group(group_fields, results)
     FlexReport.apply_to_leaves! allocations, group_fields.size do | allocationset |
       row = ReportRow.new fields

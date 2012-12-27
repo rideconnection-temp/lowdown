@@ -15,19 +15,18 @@ class PeriodAllocation
       zero_based_month = start_date.month - 1
       quarter_start = (zero_based_month / 3) * 3 + 1
       period_start_date = Date.new(year, quarter_start, 1)
-
       advance = 3
     elsif period == 'month'
       period_start_date = Date.new(year, start_date.month, 1)
       advance = 1
     end
-
     period_end_date = period_start_date.advance(:months=>advance)
 
     periods = []
     begin
       collection_start_date = (start_date > period_start_date ? start_date : period_start_date)
       collection_end_date = (end_date < period_end_date ? end_date : period_end_date)
+
       periods += allocations.map do |allocation|
         PeriodAllocation.new allocation, period_start_date, period_end_date, collection_start_date, collection_end_date
       end
@@ -59,16 +58,5 @@ class PeriodAllocation
       return true
     end
     return @allocation.respond_to? method
-  end
-
-  def to_s
-    if period_end_date-period_start_date < 32
-      return period_start_date.strftime "%Y %b"
-    elsif period_end_date-period_start_date < 320
-      fiscal_period_start_date = period_start_date.advance(:months=>6)
-      return '%sQ%s' % [fiscal_period_start_date.year, (fiscal_period_start_date.month / 3 + 1)]
-    else
-      return period_start.year.to_s
-    end
   end
 end
