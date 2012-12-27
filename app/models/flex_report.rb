@@ -9,9 +9,9 @@ class FlexReport < ActiveRecord::Base
 
   attr_accessor :is_new
   attr_reader   :results, :results_fields
-  
+
   TimePeriods = %w{month quarter year}
-  
+
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program quarter,month}.sort
 
   GroupMappings = {
@@ -249,7 +249,7 @@ class FlexReport < ActiveRecord::Base
         break
       end
     end
-    
+
     allocations = Allocation.group(group_fields, results)
     FlexReport.apply_to_leaves! allocations, group_fields.size do | allocationset |
       row = ReportRow.new fields
