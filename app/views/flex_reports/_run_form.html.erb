@@ -11,25 +11,10 @@
       <%= f.check_box :pending %>
       <%= f.label :pending, "Include pending" %>
     </li>
-    <li class="hidden">
-      <%= f.check_box :adjustment %>
-      <%= f.label :adjustment, "Adjustments" %>
-    </li>
     <li>
       <%= f.submit "View Report" %>
     </li>
     <li>
       <%= f.submit "Export as CSV", :name => "csv" %>
-    </li>
-  </ol>
-
-  <ol class="<%= ol_class %> adjustments<%= " hidden" unless report.adjustment? %>">
-    <li>
-      <%= f.label :adjustment_start_date %>
-      <%= f.date_select :adjustment_start_date, :end_year => Time.now.year, :order => [:month, :year] %>
-    </li>
-    <li>
-      <%= f.label :adjustment_end_date %>
-      <%= f.date_select :adjustment_end_date, :end_year => Time.now.year, :order => [:month, :year] %>
     </li>
   </ol>

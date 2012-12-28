@@ -6,7 +6,7 @@
       <% (@report.groups.size - group_fields.size).times do %>
         <td class="indent">&nbsp;</td>
       <% end %>
-      <td class="report-item" colspan="<%= @report.results_fields.size + @report.group_fields.size %>"><%= group_name(row,group_fields).present? ? group_name(row,group_fields) : "#{group_field_name} Not Specified" %></td>
+      <td class="report-item" colspan="<%= @report.fields.size + @report.group_fields.size %>"><%= group_name(row,group_fields).present? ? group_name(row,group_fields) : "#{group_field_name} Not Specified" %></td>
     </tr> 
     <%= render "nested_rows", :rows => row, :group_fields => group_fields[1..-1] %>
     <%= render 'totals', :row=>row, :group_fields=>group_fields[1..-1], :short_name => short_group_name(row,group_fields), :group_field_name => group_field_name %>

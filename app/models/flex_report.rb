@@ -2,13 +2,10 @@ class FlexReport < ActiveRecord::Base
   belongs_to :report_category
 
   validates :name, :presence => true, :uniqueness => true
-  validates :adjustment_start_date, :presence => true, :if => :adjustment?
-  validates :adjustment_end_date, :presence => true, :if => :adjustment?
-
-  validates_date :start_date, :end_date, :adjustment_start_date, :adjustment_end_date, :allow_blank => true
+  validates_date :start_date, :end_date, :allow_blank => true
 
   attr_accessor :is_new
-  attr_reader   :results, :results_fields
+  attr_reader   :results
 
   TimePeriods = %w{month quarter year}
 
@@ -173,10 +170,6 @@ class FlexReport < ActiveRecord::Base
     Date.new(end_date.year, end_date.month, 1) + 1.months
   end
   
-  def query_adjustment_end_date
-    Date.new(adjustment_end_date.year, adjustment_end_date.month, 1) + 1.months if adjustment_end_date.present?
-  end
-
   def group_fields
     group_by.split(",")
   end
@@ -290,41 +283,5 @@ class FlexReport < ActiveRecord::Base
     end
 
     @results = allocations
-    @results_fields = {}
-    if fields.nil? or fields.empty?
-      ReportRow.fields.each do |field| 
-        @results_fields[field] = 1
-      end
-    else
-      fields.each do |field| 
-        @results_fields[field] = 1
-      end
-    end
-
-    @results_fields['driver_hours'] = 0
-    ['driver_volunteer_hours', 'driver_paid_hours', 'driver_total_hours'].each do |field| 
-      if @results_fields.member? field
-        @results_fields['driver_hours'] += 1
-      end
-    end
-    @results_fields['volunteer_hours'] = 0
-    ['escort_volunteer_hours', 'admin_volunteer_hours', 'total_volunteer_hours'].each do |field|
-      if @results_fields.member? field
-        @results_fields['volunteer_hours'] += 1
-      end
-    end
-  end
-
-  private
-
-  def get_by_key(groups, hash, keysrc)
-    for group in groups
-      val = keysrc.instance_variable_get "@#{group}"
-      if hash.nil? 
-        return nil
-      end
-      hash = hash[val]
-    end
-    return hash
   end
 end

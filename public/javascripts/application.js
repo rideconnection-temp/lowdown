@@ -32,11 +32,6 @@ $(document).ready(function() {
     th.html(word_array.join('<br />')); // join 'em back together with line breaks
   });
 
-  // toggle adjustment range selects
-  $("input:checkbox[name='report[adjustment]']").change(function(){
-    $(this).parents("form").find("ol.adjustments").toggleClass("hidden");
-  });
-
   // live totals on summary show-create
   $("body.summaries.show-create").find("input[data-district]").change(function(change){
     var district = $(this).data("district");
