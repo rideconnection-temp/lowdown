@@ -4,7 +4,6 @@
     <% if current_user.is_admin %>
       <li><%= link_to "Import Trips", {:action=>:show_import}, :class=>:import %></li>
       <li><%= link_to "Move Trips", {:action=>:update_allocation}, :class=>:move %></li>
-      <li><%= link_to "Mark Data Entry Complete", {:action=>:show_bulk_update}, :class=>"mark-complete" %></li>
     <% else %>
       <li><%= link_to "Trip Import History", {:action=>:show_import}, :class=>:import %></li>
     <% end %>

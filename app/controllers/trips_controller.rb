@@ -217,25 +217,4 @@ class TripsController < ApplicationController
     end
   end
 
-  def show_bulk_update
-    params[:trip_query] = {} if params[:trip_query].blank?
-    params[:trip_query][:date_range] = 'semimonthly'
-    @query     = TripQuery.new params[:trip_query]
-    @providers = [['Select a provider','']] + Provider.with_trip_data.default_order.map {|p| [p.to_s, p.id]}
-    @incomplete_trips = {}
-    Provider.with_trip_data.default_order.each do |p|
-      trip_count = Trip.for_date_range(@query.start_date,@query.after_end_date).for_provider(p.id).data_entry_not_complete.count
-      @incomplete_trips[p] = trip_count unless trip_count == 0
-    end
-  end
-
-  def bulk_update
-    @query = TripQuery.new params[:trip_query]
-    unless @query.provider.blank?
-      updated_runs = Run.current_versions.data_entry_not_complete.for_date_range(@query.start_date,@query.after_end_date).for_provider(@query.provider).update_all(:complete => true)
-      updated_trips = Trip.current_versions.data_entry_not_complete.for_date_range(@query.start_date,@query.after_end_date).for_provider(@query.provider).update_all(:complete => true)
-      flash[:notice] = "Updated #{updated_trips} trips records and #{updated_runs} run records"
-    end
-    redirect_to :action => :show_bulk_update, :trip_query => params[:trip_query]
-  end
 end
