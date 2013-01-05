@@ -39,7 +39,7 @@ class FlexReportsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do 
-        @filename = "\"#{@report.name.gsub('"','')}.csv\""
+        @filename = "#{@report.name.gsub('"','')}.csv"
       end
     end
   end

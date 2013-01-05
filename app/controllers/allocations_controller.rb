@@ -26,7 +26,7 @@ class AllocationsController < ApplicationController
     end
     respond_to do |format|
       format.csv do
-        @filename = '"TriMet Groupings.csv"'
+        @filename = 'TriMet Groupings.csv'
       end
     end
   end

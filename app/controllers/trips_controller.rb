@@ -100,7 +100,7 @@ class TripsController < ApplicationController
     @trips = @query.apply_conditions(@trips)
 
     if @query.format == 'general'
-      @filename = "trip_list.csv"
+      @filename = 'trip_list.csv'
       render "index.csv"
     elsif @query.format == 'bpa'
       @trips = @trips.completed

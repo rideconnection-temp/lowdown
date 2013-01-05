@@ -200,7 +200,7 @@ class PredefinedReportsController < ApplicationController
     @report.allocations = Allocation.in_trimet_report_group.active_in_range(@report.start_date,@query.after_end_date).map{|a| a.id }
     @report.populate_results!
 
-    @filename = "\"#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Report\""
+    @filename = "#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Report"
     render "trimet_export.csv"
   end
 
