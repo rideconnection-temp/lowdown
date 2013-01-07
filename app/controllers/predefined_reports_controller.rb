@@ -81,7 +81,10 @@ class PredefinedReportsController < ApplicationController
     @taxi_trip_count      = @trips_billed_per_trip.select{|t| t.bpa_provider?}.size
     @partner_trip_count   = @trips_billed_per_trip.reject{|t| t.bpa_provider?}.size
 
-    render_csv "Multnomah County ADS Report", "multnomah_ads.csv" if params[:output] == 'CSV'
+    if params[:output] == 'CSV'
+      @filename = "Multnomah County ADS Report #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"
+      render "multnomah_ads.csv" 
+    end
   end
 
   def spd

@@ -18,16 +18,6 @@ class ApplicationController < ActionController::Base
 
   private 
 
-  def render_csv(file_name, template_name = nil)
-    headers["Content-Type"] ||= 'text/csv'
-    headers["Content-Disposition"] = "attachment; filename=\"#{file_name}.csv\"" 
-    if template_name.nil?
-      render :layout => false
-    else
-      render template_name, :layout => false
-    end
-  end
-
   def has_real_changes?(record)
     record.changes.values.each {|change| return true unless change[0].blank? && change[1].blank? }
     return false
