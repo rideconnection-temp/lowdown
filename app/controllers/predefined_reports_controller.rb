@@ -154,7 +154,7 @@ class PredefinedReportsController < ApplicationController
       end
     end
     if params[:output] == 'CSV'
-      @filename = "SPD_Report_#{@query.start_date.strftime('%m-%d-%y')}_#{@query.end_date.strftime('%m-%d-%y')}.csv"
+      @filename = "SPD Report #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"
       render "spd.csv" 
     end
   end
