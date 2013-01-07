@@ -21,7 +21,7 @@ group :production do
 end
 
 group :test, :development do
-  gem 'sqlite3-ruby', :require => 'sqlite3'
+  gem 'sqlite3', :require => 'sqlite3'
   gem "debugger"
   gem 'rspec-rails', '~> 2.7.0'
   gem 'capybara'
