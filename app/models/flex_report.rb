@@ -248,6 +248,7 @@ class FlexReport < ActiveRecord::Base
       row = ReportRow.new fields
 
       for allocation in allocationset
+        options = {}
         if allocation.respond_to? :collection_start_date 
           collection_start_date = allocation.collection_start_date
           collection_end_date = allocation.collection_end_date
@@ -255,27 +256,28 @@ class FlexReport < ActiveRecord::Base
           collection_start_date = start_date
           collection_end_date = query_end_date
         end
+        options[:pending] == pending
 
         if allocation.trip_collection_method == 'trips'
-          row.collect_trips_by_trip(allocation, collection_start_date, collection_end_date, pending)
+          row.collect_trips_by_trip(allocation, collection_start_date, collection_end_date, options)
         else
-          row.collect_trips_by_summary(allocation, collection_start_date, collection_end_date, pending)
+          row.collect_trips_by_summary(allocation, collection_start_date, collection_end_date, options)
         end
 
         if allocation.run_collection_method == 'trips' 
-          row.collect_runs_by_trip(allocation, collection_start_date, collection_end_date, pending)
+          row.collect_runs_by_trip(allocation, collection_start_date, collection_end_date, options)
         elsif allocation.run_collection_method == 'runs'
-          row.collect_runs_by_run(allocation, collection_start_date, collection_end_date, pending)
+          row.collect_runs_by_run(allocation, collection_start_date, collection_end_date, options)
         else
-          row.collect_runs_by_summary(allocation, collection_start_date, collection_end_date, pending)
+          row.collect_runs_by_summary(allocation, collection_start_date, collection_end_date, options)
         end
 
         if allocation.cost_collection_method == 'summary'
-          row.collect_costs_by_summary(allocation, collection_start_date, collection_end_date, pending)
+          row.collect_costs_by_summary(allocation, collection_start_date, collection_end_date, options)
         end
-        row.collect_costs_by_trip(allocation, collection_start_date, collection_end_date, pending)
+        row.collect_costs_by_trip(allocation, collection_start_date, collection_end_date, options)
 
-        row.collect_operation_data_by_summary(allocation, collection_start_date, collection_end_date, pending)
+        row.collect_operation_data_by_summary(allocation, collection_start_date, collection_end_date, options)
 
       end
       row.allocation = allocationset[0]

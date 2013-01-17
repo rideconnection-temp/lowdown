@@ -283,37 +283,37 @@ class ReportRow
     apply_results(add_results)
   end
 
-  def collect_runs_by_summary(allocation, start_date, end_date, pending=false)
+  def collect_runs_by_summary(allocation, start_date, end_date, options = {})
     results = Summary.select("sum(total_miles) as mileage, sum(driver_hours_paid) as driver_paid_hours, sum(driver_hours_volunteer) as driver_volunteer_hours, sum(escort_hours_volunteer) as escort_volunteer_hours")
     results = results.where(:allocation_id => allocation['id'])
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
   end
 
-  def collect_costs_by_trip(allocation, start_date, end_date, pending=false)
+  def collect_costs_by_trip(allocation, start_date, end_date, options = {})
     results = Trip.select("sum(apportioned_fare) as funds, 0 as agency_other, 0 as donations")
     results = results.where(:allocation_id => allocation['id'])
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
   end
 
-  def collect_costs_by_summary(allocation, start_date, end_date, pending=false)
+  def collect_costs_by_summary(allocation, start_date, end_date, options = {})
     results = Summary.select("sum(funds) as funds, sum(agency_other) as agency_other, sum(donations) as donations")
     results = results.where(:allocation_id => allocation['id'])
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
   end
 
-  def collect_operation_data_by_summary(allocation, start_date, end_date, pending=false)
+  def collect_operation_data_by_summary(allocation, start_date, end_date, options = {})
     results = Summary.select("sum(operations) as operations, sum(administrative) as administrative, sum(vehicle_maint) as vehicle_maint, sum(administrative_hours_volunteer) as admin_volunteer_hours")
     results = results.where(:allocation_id => allocation['id'])
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
