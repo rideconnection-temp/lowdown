@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121228004228) do
+ActiveRecord::Schema.define(:version => 20130110200604) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(:version => 20121228004228) do
     t.integer "reporting_agency_id"
     t.text    "notes"
     t.boolean "do_not_show_on_flex_reports",               :default => false, :null => false
+    t.string  "eligibility"
   end
 
   create_table "customers", :force => true do |t|
