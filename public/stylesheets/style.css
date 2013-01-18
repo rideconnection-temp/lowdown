@@ -1109,6 +1109,12 @@ body.flex-reports fieldset.main-form ol.section li textarea {
   width: 100%;
   max-width: 100%;
 }
+body.flex-reports fieldset.main-form ol.section li input[type="checkbox"] {
+  float: left;
+  width: 5%;
+  text-align: left;
+}
+
 body.flex-reports fieldset.main-form ol.section li textarea {
   height: 6em;
 }

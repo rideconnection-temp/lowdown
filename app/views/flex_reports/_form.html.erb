@@ -42,6 +42,11 @@
           <h2 class="section-header">Description</h2>
           <%= f.text_area :description %>
         </li>
+        <h2 class="section-header">Other Attributes</h2>
+        <li>
+          <%= f.label :elderly_and_disabled_only, "E&D Only" %>
+          <%= f.check_box :elderly_and_disabled_only %>
+        </li>
       </ol>
     </div>
     <ol id="filters">

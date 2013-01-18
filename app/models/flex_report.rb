@@ -256,7 +256,8 @@ class FlexReport < ActiveRecord::Base
           collection_start_date = start_date
           collection_end_date = query_end_date
         end
-        options[:pending] == pending
+        options[:pending] = pending
+        options[:elderly_and_disabled_only] = elderly_and_disabled_only
 
         if allocation.trip_collection_method == 'trips'
           row.collect_trips_by_trip(allocation, collection_start_date, collection_end_date, options)

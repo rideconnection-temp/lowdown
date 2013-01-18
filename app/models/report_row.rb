@@ -237,47 +237,54 @@ class ReportRow
     end
   end
 
-  def collect_trips_by_trip(allocation, start_date, end_date, pending=false)
+  def collect_trips_by_trip(allocation, start_date, end_date, options = {})
     results = Trip.select("sum(case when in_trimet_district=true and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as in_district_trips, sum(case when in_trimet_district=false and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips, sum(case when result_code='TD' then 1 + guest_count + attendant_count else 0 end) as turn_downs")
     results = results.where(:allocation_id => allocation['id'])
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
+    results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
 
-    pending_where = pending ? "" : "complete=true and " 
+    pending_where = options[:pending] ? "" : "complete=true and " 
     undup_riders_sql = "select count(*) as undup_riders from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips where #{pending_where}allocation_id=? and valid_end=? and result_code = 'COMP' group by customer_id, year) as morx where date (year || '-' || month || '-' || 1) >= ? and date (year || '-' || month || '-' || 1) < ? "
     row = ActiveRecord::Base.connection.select_one(bind([undup_riders_sql, allocation['id'], Trip.end_of_time, start_date.advance(:months=>6), end_date.advance(:months=>6)]))
     add_results['undup_riders'] = row['undup_riders'].to_i
     apply_results(add_results)
   end
 
-  def collect_trips_by_summary(allocation, start_date, end_date, pending=false)
+  def collect_trips_by_summary(allocation, start_date, end_date, options = {})
     results = Summary.select("sum(in_district_trips) as in_district_trips, sum(out_of_district_trips) as out_of_district_trips")
     results = results.where(:allocation_id => allocation['id']).joins(:summary_rows)
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
+    results = results.where("1 = 2") if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
+
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
 
     results = Summary.select("SUM(turn_downs) AS turn_downs, SUM(unduplicated_riders) as undup_riders")
     results = results.where(:allocation_id => allocation['id'])
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
+    results = results.where("1 = 2") if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
+
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
   end
 
-  def collect_runs_by_trip(allocation, start_date, end_date, pending=false)
+  def collect_runs_by_trip(allocation, start_date, end_date, options = {})
     results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, 0 as escort_volunteer_hours")
     results = results.completed.where(:allocation_id => allocation['id'])
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
+    results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
   end
 
-  def collect_runs_by_run(allocation, start_date, end_date, pending=false)
+  def collect_runs_by_run(allocation, start_date, end_date, options = {})
     results = Trip.select("sum(apportioned_mileage) as mileage, sum(case when COALESCE(volunteer_trip,false)=false then apportioned_duration else 0 end)/3600.0 as driver_paid_hours, sum(case when volunteer_trip=true then apportioned_duration else 0 end)/3600.0 as driver_volunteer_hours, sum(COALESCE((SELECT escort_count FROM runs where id = trips.run_id),0) * apportioned_duration)/3600.0 as escort_volunteer_hours")
     results = results.completed.where(:allocation_id => allocation['id'])
-    results = results.data_entry_complete unless pending
+    results = results.data_entry_complete unless options[:pending]
+    results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
@@ -287,6 +294,7 @@ class ReportRow
     results = Summary.select("sum(total_miles) as mileage, sum(driver_hours_paid) as driver_paid_hours, sum(driver_hours_volunteer) as driver_volunteer_hours, sum(escort_hours_volunteer) as escort_volunteer_hours")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless options[:pending]
+    results = results.where("1 = 2") if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
@@ -296,6 +304,7 @@ class ReportRow
     results = Trip.select("sum(apportioned_fare) as funds, 0 as agency_other, 0 as donations")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless options[:pending]
+    results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
@@ -305,6 +314,7 @@ class ReportRow
     results = Summary.select("sum(funds) as funds, sum(agency_other) as agency_other, sum(donations) as donations")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless options[:pending]
+    results = results.where("1 = 2") if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
@@ -314,6 +324,7 @@ class ReportRow
     results = Summary.select("sum(operations) as operations, sum(administrative) as administrative, sum(vehicle_maint) as vehicle_maint, sum(administrative_hours_volunteer) as admin_volunteer_hours")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless options[:pending]
+    results = results.where("1 = 2") if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)

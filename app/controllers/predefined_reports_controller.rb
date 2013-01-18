@@ -199,11 +199,12 @@ class PredefinedReportsController < ApplicationController
     @report.start_date = @query.start_date
     @report.end_date = @query.start_date # One month only
     @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier"
+    @report.elderly_and_disabled_only = true
     @report.county_names = [:none] # This has the effect of making sure only the allocations below are used.
     @report.allocations = Allocation.in_trimet_report_group.active_in_range(@report.start_date,@query.after_end_date).map{|a| a.id }
     @report.populate_results!
 
-    @filename = "#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Report"
+    @filename = "#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Report.csv"
     render "trimet_export.csv"
   end
 

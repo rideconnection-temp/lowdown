@@ -63,6 +63,7 @@ class Trip < ActiveRecord::Base
   scope :for_import, lambda {|import_id| where(:trip_import_id=>import_id)}
   scope :for_valid_start, lambda {|valid_start| where(:valid_start => valid_start) }
   scope :grouped_by_adjustment, select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, MIN(date) as min_date, MAX(date) AS max_date, MIN(trips.id) as id").group("trips.valid_start, trips.adjustment_notes").order("trips.valid_start DESC").where("valid_start <> imported_at")
+  scope :elderly_and_disabled_only, where(:customer_type => 'Honored')
 
   RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 
