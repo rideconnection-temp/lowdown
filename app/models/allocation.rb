@@ -19,7 +19,7 @@ class Allocation < ActiveRecord::Base
   validate  :require_consistent_trimet_fields
   validate  :require_consistent_provider_fields
   validates_date :activated_on
-  validates_date :inactivated_on, :allow_nil => true, :after => :activated_on, :after_message => "must be after the first day activated"
+  validates_date :inactivated_on, :allow_blank => true, :after => :activated_on, :after_message => "must be after the first day activated"
   self.per_page = 30
   validate do |rec|
     if Allocation.active_on(rec.activated_on).where("id<>?",rec.id || 0).where(:name => rec.name).exists?
