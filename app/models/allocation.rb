@@ -11,7 +11,7 @@ class Allocation < ActiveRecord::Base
   
   DATA_OPTIONS = %w( Required Prohibited )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
-  ELIGIBILITIES = [nil,'Elderly & Disabled','General Public','Low Income Commuter']
+  ELIGIBILITIES = ['Elderly & Disabled','General Public','Low Income Commuter','Not Applicable']
 
   validates :name, :presence => true
   validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
