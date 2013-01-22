@@ -37,9 +37,6 @@
       </ul>
       <ul id="secondary-nav" class="selfclear">
         <li class="admin"><%= link_to "Admin", :controller => "admin" %></li>
-        <% if current_user.try :is_admin %>
-          <li class="users"><%= link_to "Users", :controller => "users", :action => "index" %></li>
-        <% end %>
       </ul>
     </div><!-- /.wrap -->
   </div><!-- /#crossbar -->

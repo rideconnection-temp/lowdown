@@ -319,8 +319,7 @@ body.predefined-reports #primary-nav li.predefined-reports a:link, body.predefin
 body.summaries #primary-nav li.summaries a:link, body.summaries #primary-nav li.summaries a:visited,
 body.trips #primary-nav li.trips a:link, body.trips #primary-nav li.trips a:visited,
 body.runs #primary-nav li.runs a:link, body.runs #primary-nav li.runs a:visited,
-body.admin #primary-nav li.admin a:link, body.admin #primary-nav li.admin a:visited,
-body.users #secondary-nav li.users a:link, body.users #secondary-nav li.users a:visited {
+body.admin #secondary-nav li.admin a:link, body.admin #secondary-nav li.admin a:visited {
     background: #fff;
     color: #009FFB;
 }
