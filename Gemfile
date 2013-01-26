@@ -10,6 +10,7 @@ gem 'userstamp',            '~> 2.0.1'
 gem 'validates_timeliness', '~> 3.0.7'
 gem 'jquery-rails',         '~> 1.0.12'
 gem 'csv_builder',          '~> 2.1.0'
+gem 'point_in_time',        :git => 'git://github.com/rideconnection/point_in_time'
 
 # Deploy with Capistrano
 gem "capistrano",     :require => false # We need it to be installed, but it's
