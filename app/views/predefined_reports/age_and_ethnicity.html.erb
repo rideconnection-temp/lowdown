@@ -3,57 +3,53 @@
   <h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
 </div>
 
-<h2>Partner Name: <%= @provider %></h2>
-
-<div>
-  The following information about your clients / customers is for
-  reporting purposes only and will not be considered in determining
-  eligibility for services.
-</div>
+<h2>Partner Name: <%= Provider.find_by_id(@query.provider_id).try(:name) %></h2>
 
 <table>
-<tr>
-  <th>Age:</th>
-  <th>Current Month Unduplicated</th>
-  <th>YTD</th>
-</tr>
-<tr>
-  <th>Unduplicated number of persons 60 years or older</th>
-  <td><%= @current_month_unduplicated_old %></td>
-  <td><%= @ytd_age_old %></td>
-</tr>
-<tr>
-  <th>Unduplicated number of persons 59 years or younger</th>
-  <td><%= @current_month_unduplicated_young %></td>
-  <td><%= @ytd_age_young %></td>
-</tr>
-<tr>
-  <th>Unduplicated number of persons age unknown</th>
-  <td><%= @current_month_unduplicated_unknown %></td>
-  <td><%= @ytd_age_unknown %></td>
-</tr>
-<tr>
-  <th>Total unduplicated Individuals Served</th>
-  <td><%= @current_month_unduplicated_young + @current_month_unduplicated_old + @current_month_unduplicated_unknown %></td>
-  <td><%= @ytd_age_young + @ytd_age_old + @ytd_age_unknown %></td>
-</tr>
+  <tr>
+    <th>Age</th>
+    <th>Current Month Unduplicated</th>
+    <th>YTD</th>
+  </tr>
+  <tr>
+    <th>Unduplicated number of persons 60 years or older</th>
+    <td><%= @this_month_sixty_plus %></td>
+    <td><%= @this_year_sixty_plus %></td>
+  </tr>
+  <tr>
+    <th>Unduplicated number of persons 59 years or younger</th>
+    <td><%= @this_month_less_than_sixty %></td>
+    <td><%= @this_year_less_than_sixty %></td>
+  </tr>
+  <tr>
+    <th>Unduplicated number of persons age unknown</th>
+    <td><%= @this_month_unknown_age %></td>
+    <td><%= @this_year_unknown_age %></td>
+  </tr>
+  <tr>
+    <th>Total unduplicated individuals served</th>
+    <td><%= @this_month_sixty_plus + @this_month_less_than_sixty + @this_month_unknown_age %></td>
+    <td><%= @this_year_sixty_plus + @this_year_less_than_sixty + @this_year_unknown_age %></td>
+  </tr>
 </table>
 
 <table>
-<tr>
-  <th>Ethnicity:</th>
-  <th>Current Month Unduplicated</th>
-  <th>YTD</th>
-</tr>
-<% for name in @ethnicity.keys.sort %>
-<% ethnicity = @ethnicity[name] %>
-<tr>
-  <th><%= name %></th>
-  <td><%= ethnicity["unduplicated"] %></td>
-  <td><%= ethnicity["ytd"] %></td>
-</tr>
-<% end %>
+  <tr>
+    <th>Ethnicity</th>
+    <th>Current Month Unduplicated</th>
+    <th>YTD</th>
+  </tr>
+  <% for name in @counts_by_ethnicity.keys.sort %>
+    <% ethnicity = @counts_by_ethnicity[name] %>
+    <tr>
+      <th><%= name %></th>
+      <td><%= ethnicity["month"] %></td>
+      <td><%= ethnicity["year"] %></td>
+    </tr>
+  <% end %>
+  <tr>
+    <th>Total Unduplicated Individuals Served</th>
+    <td><%= @counts_by_ethnicity.map{|k,v| v["month"]}.reduce(:+) %></td>
+    <td><%= @counts_by_ethnicity.map{|k,v| v["year"]}.reduce(:+) %></td>
+  </tr>
 </table>
-
-Total unduplicated individuals served: <%= @current_month_unduplicated_young + @current_month_unduplicated_old + @current_month_unduplicated_unknown %> ------ <%= @ytd_age_young + @ytd_age_old + @ytd_age_unknown %>
-

@@ -140,7 +140,7 @@
         </li>
         <li>
           <%= f.label :provider %>
-          <%= f.select :provider, Provider.default_order.map {|x| x.name}.uniq %>
+          <%= f.select :provider_id, options_for_select(Provider.default_order.with_trip_data.map { |p| [p.name, p.id] }) %>
         </li>
       </ol>
       <input type="submit" name="report" value="Report">

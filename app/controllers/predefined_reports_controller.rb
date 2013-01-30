@@ -210,76 +210,74 @@ class PredefinedReportsController < ApplicationController
 
   def age_and_ethnicity
     @query = ReportQuery.new(params[:report_query])
+    #we need new riders this month, where new means "first time this fy"
+    #so, for each trip this month, find the customer, then find out whether 
+    # there was a previous trip for this customer this fy
 
-    allocations = Allocation.joins(:provider).
-        where("providers.name=? and exists(SELECT id FROM trips WHERE trips.allocation_id=allocations.id)", @query.provider)
+    trip_customers = Trip.current_versions.select("DISTINCT customer_id").for_provider(@query.provider_id).completed
+    prior_customers_in_fiscal_year = trip_customers.for_date_range(fiscal_year_start_date(@query.start_date), @query.start_date).map {|x| x.customer_id}
+    customers_this_period = trip_customers.for_date_range(@query.start_date, @query.after_end_date).map {|x| x.customer_id}
 
-    if allocations.empty?
-      flash[:notice] = "No allocations for this provider"
-      return redirect_to :action => :index
-    end
+    new_customers = Customer.where(:id => (customers_this_period - prior_customers_in_fiscal_year))
+    earlier_customers = Customer.where(:id => prior_customers_in_fiscal_year)
 
-    allocation_ids = allocations.map { |x| x.id }
+    @this_month_unknown_age = 0
+    @this_month_sixty_plus = 0
+    @this_month_less_than_sixty = 0
 
-    undup_riders_sql = "select count(*) as undup_riders, %s from (select customer_id, fiscal_year(date) as year, min(fiscal_month(date)) as month from trips inner join customers on trips.customer_id=customers.id where allocation_id in (?) and valid_end=? and result_code = 'COMP' group by customer_id, year) as customer_ids, customers where year = ? %%s and customers.id=customer_id group by %s"
+    @this_year_unknown_age = 0
+    @this_year_sixty_plus = 0
+    @this_year_less_than_sixty = 0
 
-    #unduplicated by age this month
-    undup_riders_age_sql = undup_riders_sql % ["age(customers.birthdate) > interval '60 years' as over60", "over60"]
-    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "and month = ?", 
-                                                          allocation_ids, Trip.end_of_time, 
-                                                          @query.start_date.advance(:months=>6).year, 
-                                                          @query.start_date.advance(:months=>6).month]))
+    @counts_by_ethnicity = {}
 
-    @current_month_unduplicated_old = @current_month_unduplicated_young = @current_month_unduplicated_unknown = 0
-    for row in rows
-      if row['over60'] == 't'
-        @current_month_unduplicated_old = row['undup_riders'].to_i
-      elsif row['over60'] == 'f'
-        @current_month_unduplicated_young = row['undup_riders'].to_i
+    #first, handle the customers from this month
+    for customer in new_customers
+      age = customer.age_in_years(fiscal_year_start_date(@query.start_date))
+      if age.nil?
+        @this_month_unknown_age += 1
+        @this_year_unknown_age += 1
+      elsif age > 60
+        @this_month_sixty_plus += 1
+        @this_year_sixty_plus += 1
       else
-        @current_month_unduplicated_unknown = row['undup_riders'].to_i
+        @this_month_less_than_sixty += 1
+        @this_year_less_than_sixty += 1
       end
+      
+      ethnicity = customer.race || "Unspecified"
+      if ! @counts_by_ethnicity.member? ethnicity
+        @counts_by_ethnicity[ethnicity] = {'month' => 0, 'year' => 0}
+      end
+      @counts_by_ethnicity[ethnicity]['month'] += 1
+      @counts_by_ethnicity[ethnicity]['year'] += 1
     end
 
-    #unduplicated by age ytd
-    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_age_sql % "",
-                                                          allocation_ids, Trip.end_of_time, 
-                                                          @query.start_date.advance(:months=>6).year]))
-
-    @ytd_age_old = @ytd_age_young = @ytd_age_unknown = 0
-    for row in rows
-      if row['over60'] == 't'
-        @ytd_age_old = row['undup_riders'].to_i
-      elsif row['over60'] == 'f'
-        @ytd_age_young = row['undup_riders'].to_i
+    #now the customers who appear earlier in the year 
+    for customer in earlier_customers
+      age = customer.age_in_years(fiscal_year_start_date(@query.start_date))
+      if age.nil?
+        @this_year_unknown_age += 1
+      elsif age > 60
+        @this_year_sixty_plus += 1
       else
-        @ytd_age_unknown = row['undup_riders'].to_i
+        @this_year_less_than_sixty += 1
       end
-    end
 
-    #now, by ethnicity
-    undup_riders_ethnicity_sql = undup_riders_sql % ["race", "race"]
-    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_ethnicity_sql % "and month = ?",
-                                                          allocation_ids, Trip.end_of_time, 
-                                                          @query.start_date.advance(:months=>6).year, 
-                                                          @query.start_date.advance(:months=>6).month]))
-
-    @ethnicity = {}
-    for row in rows
-      @ethnicity[row["race"] || 'Unknown'] = {"unduplicated" => row['undup_riders']}
-    end
-
-    #ethnicity ytd
-    rows = ActiveRecord::Base.connection.select_all(bind([undup_riders_ethnicity_sql % "",
-                                                          allocation_ids, Trip.end_of_time, 
-                                                          @query.start_date.advance(:months=>6).year]))
-
-    for row in rows
-      race = row["race"] || 'Unknown'
-      if ! @ethnicity.member? race
-        @ethnicity[race] = {"unduplicated" => 0}
+      ethnicity = customer.race || "Unspecified"
+      if ! @counts_by_ethnicity.member? ethnicity
+        @counts_by_ethnicity[ethnicity] = {'month' => 0, 'year' => 0}
       end
-      @ethnicity[race]["ytd"] = row['undup_riders']
+      @counts_by_ethnicity[ethnicity]['year'] += 1
     end
+
   end
+  
+  private
+
+  def fiscal_year_start_date(date)
+    year = (date.month < 7 ? date.year - 1 : date.year)
+    Date.new(year, 7, 1)
+  end
+
 end
