@@ -3,18 +3,18 @@ def bind(args)
 end
 
 class ReportRow
-  @@attrs = [:allocation, :funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
+  @@attrs = [:allocation, :funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
   attr_accessor *@@attrs
 
   def numeric_fields
-    return [:funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations]
+    return [:funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations]
   end
 
   @@selector_fields = ['allocation', 'county', 'provider_id', 'project_name']
 
   def self.fields(requested_fields=nil)
     if requested_fields.nil? || requested_fields.empty?
-      fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip", "miles_per_ride"]
+      fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip", "miles_per_ride", "cost_per_customer", "miles_per_customer"]
     else
       all_fields = @@attrs.map { |x| x.to_s }
       fields = all_fields & requested_fields
@@ -69,19 +69,19 @@ class ReportRow
     @in_district_trips + @out_of_district_trips
   end
 
-  def cost_per_hour
-    if driver_total_hours == 0
-      nil
-    else
-      total / driver_total_hours
-    end
-  end
-
   def cost_per_trip
     if total_trips == 0
       nil
     else
       total / total_trips
+    end
+  end
+
+  def cost_per_customer
+    if customer_trips == 0
+      nil
+    else
+      total / customer_trips
     end
   end
 
@@ -93,11 +93,27 @@ class ReportRow
     end
   end
 
+  def cost_per_hour
+    if driver_total_hours == 0
+      nil
+    else
+      total / driver_total_hours
+    end
+  end
+
   def miles_per_ride
     if total_trips == 0
       nil
     else
       @mileage / total_trips
+    end
+  end
+
+  def miles_per_customer
+    if customer_trips == 0
+      nil
+    else
+      @mileage / customer_trips
     end
   end
 
@@ -205,25 +221,27 @@ class ReportRow
   end
 
   def include_row(row)
-    @funds                  += row.funds
-    @agency_other           += row.agency_other
-    @vehicle_maint          += row.vehicle_maint
-    @administrative         += row.administrative
-    @operations             += row.operations
-    @donations              += row.donations
+    @funds                      += row.funds
+    @agency_other               += row.agency_other
+    @vehicle_maint              += row.vehicle_maint
+    @administrative             += row.administrative
+    @operations                 += row.operations
+    @donations                  += row.donations
     
-    @in_district_trips      += row.in_district_trips
-    @out_of_district_trips  += row.out_of_district_trips
-    @total_last_year        += row.total_last_year
-    @mileage                += row.mileage
+    @in_district_trips          += row.in_district_trips
+    @out_of_district_trips      += row.out_of_district_trips
+    @total_last_year            += row.total_last_year
+    @customer_trips             += row.customer_trips
+    @guest_and_attendant_trips  += row.guest_and_attendant_trips
+    @mileage                    += row.mileage
 
-    @driver_volunteer_hours += row.driver_volunteer_hours
-    @driver_paid_hours      += row.driver_paid_hours
+    @driver_volunteer_hours     += row.driver_volunteer_hours
+    @driver_paid_hours          += row.driver_paid_hours
 
-    @turn_downs             += row.turn_downs
-    @undup_riders           += row.undup_riders
-    @escort_volunteer_hours += row.escort_volunteer_hours
-    @admin_volunteer_hours  += row.admin_volunteer_hours
+    @turn_downs                 += row.turn_downs
+    @undup_riders               += row.undup_riders
+    @escort_volunteer_hours     += row.escort_volunteer_hours
+    @admin_volunteer_hours      += row.admin_volunteer_hours
   end
 
   def apply_results(add_result)
@@ -238,7 +256,7 @@ class ReportRow
   end
 
   def collect_trips_by_trip(allocation, start_date, end_date, options = {})
-    results = Trip.select("sum(case when in_trimet_district=true and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as in_district_trips, sum(case when in_trimet_district=false and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips, sum(case when result_code='TD' then 1 + guest_count + attendant_count else 0 end) as turn_downs")
+    results = Trip.select("sum(case when in_trimet_district=true and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as in_district_trips, sum(case when in_trimet_district=false and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips, sum(case when result_code = 'COMP' then 1 else 0 end) as customer_trips, sum(case when result_code = 'COMP' then guest_count + attendant_count else 0 end) as guest_and_attendant_trips, sum(case when result_code='TD' then 1 + guest_count + attendant_count else 0 end) as turn_downs")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless options[:pending]
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'

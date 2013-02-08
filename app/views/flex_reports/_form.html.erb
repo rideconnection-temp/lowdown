@@ -132,6 +132,14 @@
             <label for="out_of_district_trips">Out of District Trips</label>
           </li>
           <li>
+            <input type="checkbox" <%= checked?("customer_trips") %> name="flex_report[fields[customer_trips]]" id="customer_trips" value="1" /> 
+            <label for="customer_trips">Customer Trips</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("guest_and_attendant_trips") %> name="flex_report[fields[guest_and_attendant_trips]]" id="guest_and_attendant_trips" value="1" /> 
+            <label for="guest_and_attendant_trips">Guest and Attendant Trips</label>
+          </li>
+          <li>
             <input type="checkbox" <%= checked?("total_trips") %> name="flex_report[fields[total_trips]]" id="total_trips" value="1" /> 
             <label for="total_trips">Total Trips</label>
           </li>
@@ -139,12 +147,12 @@
             <input type="checkbox" <%= checked?("total_last_year") %> name="flex_report[fields[total_last_year]]" id="total_last_year" value="1" /> 
             <label for="total_last_year">Total this Period Last Year</label>
           </li>
+        </ol>
+        <ol>
           <li>
             <input type="checkbox" <%= checked?("mileage") %> name="flex_report[fields[mileage]]" id="mileage" value="1" /> 
             <label for="mileage">Mileage</label>
           </li>
-        </ol>
-        <ol>
           <li>
             <input type="checkbox" <%= checked?("driver_volunteer_hours") %> name="flex_report[fields[driver_volunteer_hours]]" id="driver_volunteer_hours" value="1" /> 
             <label for="driver_volunteer_hours">Volunteer Driver Hours</label>
@@ -157,9 +165,15 @@
             <input type="checkbox" <%= checked?("driver_total_hours") %> name="flex_report[fields[driver_total_hours]]" id="driver_total_hours" value="1" /> 
             <label for="driver_total_hours">Total Driver Hours</label>
           </li>
+        </ol>
+        <ol>
           <li>
             <input type="checkbox" <%= checked?("cost_per_trip") %> name="flex_report[fields[cost_per_trip]]" id="cost_per_trip" value="1" /> 
             <label for="cost_per_trip">Cost/Trip</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("cost_per_customer") %> name="flex_report[fields[cost_per_customer]]" id="cost_per_customer" value="1" /> 
+            <label for="cost_per_customer">Cost/Customer</label>
           </li>
           <li>
             <input type="checkbox" <%= checked?("cost_per_mile") %> name="flex_report[fields[cost_per_mile]]" id="cost_per_mile" value="1" /> 
@@ -172,6 +186,10 @@
           <li>
             <input type="checkbox" <%= checked?("miles_per_ride") %> name="flex_report[fields[miles_per_ride]]" id="miles_per_ride" value="1" /> 
             <label for="miles_per_ride">Miles/Trip</label>
+          </li>
+          <li>
+            <input type="checkbox" <%= checked?("miles_per_customer") %> name="flex_report[fields[miles_per_customer]]" id="miles_per_customer" value="1" /> 
+            <label for="miles_per_customer">Miles/Customer</label>
           </li>
         </ol>
         <ol>

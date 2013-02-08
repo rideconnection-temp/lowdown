@@ -9,7 +9,7 @@
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Costs</th>
     <% end %>
-    <% column_count = (rf & %w{in_district_trips out_of_district_trips total_trips total_last_year}).count %>
+    <% column_count = (rf & %w{in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips total_trips total_last_year}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Trips</th>
     <% end %>
@@ -18,7 +18,7 @@
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Driver Hours</th>
     <% end %>
-    <% column_count = (rf & %w{cost_per_trip cost_per_mile cost_per_hour miles_per_ride}).count %>
+    <% column_count = (rf & %w{cost_per_trip cost_per_customer cost_per_mile cost_per_hour miles_per_ride cost_per_customer}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Metrics</th>
     <% end %>
@@ -42,15 +42,19 @@
     <% if rf.include? 'total' %><th class="wrap number">Total</th><% end %>
     <% if rf.include? 'in_district_trips' %><th class="wrap number">In District</th><% end %>
     <% if rf.include? 'out_of_district_trips' %><th class="wrap number">Out of District</th><% end %>
+    <% if rf.include? 'customer_trips' %><th class="wrap number">Customers</th><% end %>
+    <% if rf.include? 'guest_and_attendant_trips' %><th class="wrap number">Guests and Attendants</th><% end %>
     <% if rf.include? 'total_trips' %><th class="wrap number">Total</th><% end %>
     <% if rf.include? 'total_last_year' %><th class="wrap number">Total Last Year</th><% end %>
     <% if rf.include? 'driver_volunteer_hours' %><th class="wrap number">Volunteer</th><% end %>
     <% if rf.include? 'driver_paid_hours' %><th class="wrap number">Paid</th><% end %>
     <% if rf.include? 'driver_total_hours' %><th class="wrap number">Total</th><% end %>
     <% if rf.include? 'cost_per_trip' %><th class="wrap number">Cost/Trip</th><% end %>
+    <% if rf.include? 'cost_per_customer' %><th class="wrap number">Cost/Customer</th><% end %>
     <% if rf.include? 'cost_per_mile' %><th class="wrap number">Cost/Mile</th><% end %>
     <% if rf.include? 'cost_per_hour' %><th class="wrap number">Cost/Hour</th><% end %>
     <% if rf.include? 'miles_per_ride' %><th class="wrap number">Miles/Trip</th><% end %>
+    <% if rf.include? 'miles_per_customer' %><th class="wrap number">Miles/Customer</th><% end %>
     <% if rf.include? 'escort_volunteer_hours' %><th class="wrap number">Escort</th><% end %>
     <% if rf.include? 'admin_volunteer_hours' %><th class="wrap number">Admin</th><% end %>
     <% if rf.include? 'total_volunteer_hours' %><th class="wrap number">Total</th><% end %>
