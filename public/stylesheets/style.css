@@ -1243,7 +1243,8 @@ li.flex-report form.run-report {
   clear: none;
 }
 
-li.flex-report a.edit {
+li.flex-report a.edit,
+li.flex-report a.details {
   float : right;
   display : block;
   font-size: 11px;
