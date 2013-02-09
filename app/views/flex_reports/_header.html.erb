@@ -18,7 +18,7 @@
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Driver Hours</th>
     <% end %>
-    <% column_count = (rf & %w{cost_per_trip cost_per_customer cost_per_mile cost_per_hour miles_per_ride cost_per_customer}).count %>
+    <% column_count = (rf & %w{cost_per_trip cost_per_customer cost_per_mile cost_per_hour miles_per_ride miles_per_customer}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Metrics</th>
     <% end %>

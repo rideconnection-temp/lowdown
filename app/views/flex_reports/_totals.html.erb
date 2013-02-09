@@ -57,6 +57,16 @@
       <%= number_with_delimiter(row.out_of_district_trips.to_i) %>
     </td>
   <% end %>
+  <% if @report.fields.include? 'customer_trips' %>
+    <td class="number">
+      <%= number_with_delimiter(row.customer_trips.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'guest_and_attendant_trips' %>
+    <td class="number">
+      <%= number_with_delimiter(row.guest_and_attendant_trips.to_i) %>
+    </td>
+  <% end %>
   <% if @report.fields.include? 'total_trips' %>
     <td class="number">
       <%= number_with_delimiter(row.total_trips.to_i) %>
@@ -92,6 +102,11 @@
       <%= row.cost_per_trip.present? ? number_to_currency(row.cost_per_trip, :negative_format => "(%u%n)") : raw("&mdash;") %>
     </td>
   <% end %>
+  <% if @report.fields.include? 'cost_per_customer' %>
+    <td class="number">
+      <%= row.cost_per_customer.present? ? number_to_currency(row.cost_per_customer, :negative_format => "(%u%n)") : raw("&mdash;") %>
+    </td>
+  <% end %>
   <% if @report.fields.include? 'cost_per_mile' %>
     <td class="number">
       <%= row.cost_per_mile.present? ? number_to_currency(row.cost_per_mile, :negative_format => "(%u%n)") : raw("&mdash;") %>
@@ -105,6 +120,11 @@
   <% if @report.fields.include? 'miles_per_ride'%>
     <td class="number">
       <%= row.miles_per_ride.present? ? number_with_precision(row.miles_per_ride, :precision => 1, :delimiter => ",") : raw("&mdash;") %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'miles_per_customer'%>
+    <td class="number">
+      <%= row.miles_per_customer.present? ? number_with_precision(row.miles_per_customer, :precision => 1, :delimiter => ",") : raw("&mdash;") %>
     </td>
   <% end %>
   <% if @report.fields.include? 'turn_downs' %>
