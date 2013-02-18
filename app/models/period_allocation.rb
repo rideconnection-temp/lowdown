@@ -1,5 +1,5 @@
 class PeriodAllocation
-  attr_accessor :quarter, :year, :month, :period_start_date, :period_end_date, :collection_start_date, :collection_end_date
+  attr_accessor :quarter, :year, :month, :semimonth, :period_start_date, :period_end_date, :collection_start_date, :collection_end_date
 
   def self.apply_periods(allocations, start_date, end_date, period)
     # enumerate periods between start_date and end_date.
@@ -19,8 +19,15 @@ class PeriodAllocation
     elsif period == 'month'
       period_start_date = Date.new(year, start_date.month, 1)
       advance = 1
+    elsif period == 'semimonth'
+      period_start_date = Date.new(year, start_date.month, 1)
+      advance = 0.5
     end
-    period_end_date = period_start_date.advance(:months=>advance)
+    if advance == 0.5
+      period_end_date = period_start_date + 15
+    else
+      period_end_date = period_start_date.advance(:months=>advance)
+    end
 
     periods = []
     begin
@@ -31,8 +38,18 @@ class PeriodAllocation
         PeriodAllocation.new allocation, period_start_date, period_end_date, collection_start_date, collection_end_date
       end
 
-      period_start_date = period_start_date.advance(:months=>advance)
-      period_end_date = period_end_date.advance(:months=>advance)
+      if advance == 0.5
+        if period_start_date.day == 1 
+          period_end_date = period_start_date.advance(:months=>1)
+          period_start_date = period_start_date.change(:day=>16)
+        else
+          period_start_date = period_end_date
+          period_end_date = period_start_date.change(:day=>16)
+        end
+      else
+        period_start_date = period_start_date.advance(:months=>advance)
+        period_end_date = period_end_date.advance(:months=>advance)
+      end
     end while period_end_date <= end_date
 
     periods
@@ -44,9 +61,10 @@ class PeriodAllocation
     @period_end_date = period_end_date
     @collection_start_date = collection_start_date
     @collection_end_date = collection_end_date
-    @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
     @year = period_start_date.year
+    @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
     @month = period_start_date.year * 100 + period_start_date.month
+    @semimonth = period_start_date.year * 10000 + period_start_date.month * 100 + period_start_date.day
   end
 
   def method_missing(method_name, *args, &block)

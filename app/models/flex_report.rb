@@ -7,7 +7,7 @@ class FlexReport < ActiveRecord::Base
   attr_accessor :is_new
   attr_reader   :results
 
-  TimePeriods = %w{month quarter year}
+  TimePeriods = %w{semimonth month quarter year}
 
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program quarter,month}.sort
 
@@ -26,6 +26,7 @@ class FlexReport < ActiveRecord::Base
     "trimet_provider_name"          => "trimet_providers.name",
     "trimet_provider_identifier"    => "trimet_providers.trimet_identifier",
     "trimet_report_group_name"      => "trimet_report_groups.name",
+    "semimonth"                     => "semimonth",
     "month"                         => "month",
     "quarter"                       => "quarter",
     "year"                          => "year"

@@ -117,6 +117,10 @@ class ReportRow
     end
   end
 
+  def year
+    allocation.year.to_s
+  end
+
   def quarter
     q = allocation.quarter.to_s
     #adjust for fiscal year
@@ -132,16 +136,16 @@ class ReportRow
     'FY %s-%s Q%s' % [year-1, year.to_s[-2,2], qtr]
   end
 
-  def year
-    allocation.year.to_s
-  end
-
   def month
     m = allocation.month.to_s
     this_year = m[0...4].to_i
     this_month = m[4..5].to_i
 
     Date.new(this_year, this_month, 1).strftime "%b %Y"
+  end
+
+  def semimonth
+    "#{allocation.period_start_date.strftime("%b %-d")}-#{(allocation.period_end_date - 1).strftime("%-d %Y")}"
   end
 
   def allocation_name
