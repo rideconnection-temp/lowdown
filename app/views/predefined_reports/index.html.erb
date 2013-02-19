@@ -108,11 +108,11 @@
       <ol>
         <li>
           <%= f.label :start_date %>
-          <%= f.date_select :start_date, :order=>[:month,:year] %>
+          <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order=>[:month,:year] %>
         </li>
         <li>
           <%= f.label :end_date %>
-          <%= f.date_select :end_date, :order=>[:month,:year] %>
+          <%= f.date_select :end_date, :start_year => 2012, :end_year => Time.now.year, :order=>[:month,:year] %>
         </li>
         <li>
           <%= f.label :provider_id %>
@@ -181,7 +181,7 @@
       <ol>
         <li>
           <%= f.label :start_date, "Month" %>
-          <%= f.date_select :start_date, :order => [:month, :year] %>
+          <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
         </li>
       </ol>
       <input type="submit" name="output" value="CSV">
