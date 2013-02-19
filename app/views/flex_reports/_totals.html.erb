@@ -1,6 +1,8 @@
+<% short_name = short_group_name(row,group_fields) %>
 <% row = ReportRow.sum(row, nil, @report.fields) %>
-<tr class="<% if group_fields.size >= 2 %>sum-<% end %>totals">
-  <% (@report.groups.size - 1).times do %>
+<% group_field_name = report_group_fields[report_group_fields.size - group_fields.size].titleize %>
+<tr class="<% if group_fields.size >= 3 %>sum-<% end %>totals">
+  <% (report_group_fields.size - 1).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
   <td>

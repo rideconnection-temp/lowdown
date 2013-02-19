@@ -17,4 +17,4 @@
 <%= content_tag(:div, @report.subtitle, :id => "report-description") if @report.subtitle.present? %>
 <%= content_tag(:div, "Grouping: " << @report.group_fields.join(", ").titleize, :id => "grouping-description") if @report.group_fields.present? %>
 
-<%= render :partial=> "report", :locals=>{:results=>@report.results, :group_fields=>@report.group_fields} %>
+<%= render "report", :results => @report.results, :group_fields => @report.group_fields %>
