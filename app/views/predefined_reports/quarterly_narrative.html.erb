@@ -2,34 +2,28 @@
   <h1>Quarterly Narrative Report</h1>
 </div>
 
-<% for field, rows in @report.results %>
-<% allocation = get_row(rows).allocation %>
-<h2><%= allocation.provider_name %> &mdash; <%= describe_date_range(@report.start_date, @report.end_date) %></h2>
-<h3>Program: <%= allocation.name %></h3>
-<h3>County: <%= allocation.county %></h3>
-<h3>Funding Source: <%= allocation.funding_source %></h3>
+<% @report.results.sort_by {|k,v| row_sort(k)}.each do |provider, provider_rows| %>
+  <% provider_rows.sort_by {|k,v| row_sort(k)}.each do |program, program_rows| %>
+    <% allocation = get_row(program_rows).allocation %>
+    <h2><%= allocation.provider_name %> &mdash; <%= describe_date_range(@report.start_date, @report.end_date + 1.month - 1.day) %></h2>
+    <h3>Program: <%= allocation.program %></h3>
+    <h3>County: <%= allocation.county %></h3>
+    <h3>Funding Source: <%= allocation.funding_source %></h3>
 
-<div>Instructions: Please review the numbers provided for this funding
-source. If any discrepancies are found, they should be reported on the
-last page of this report. In the event there is a discrepancy with
-ride numbers, please indicate your corrections in terms of "in" and
-"out" of district rides and which Ride Purpose categories this change
-effects.</div>
+    <div class="report-wrapper">
+      <table>
+        <%= render "flex_reports/header" %>
+        <% program_rows.sort_by {|k,v| row_sort(k)}.each do |quarter, quarter_rows| %>
+          <%= render "flex_reports/group_header", :row => quarter_rows, :group_fields => @report.group_fields[2..-1] %>
+          <% quarter_rows.sort_by {|k,v| row_sort(k)}.each do |month, row| %>
+            <%= render "flex_reports/row", :row => row, :label => row.month %>
+          <% end %>
+          <%= render 'flex_reports/totals', :row=>quarter_rows, :group_fields=>@report.group_fields[2..-1], :short_name => short_group_name(quarter_rows,@report.group_fields[2..-1]), :group_field_name => 'quarter' %>
+        <% end %>
+        <%= render 'flex_reports/totals', :row => program_rows, :group_fields => @report.group_fields %>
+      </table>
+    </div>
 
-<div class="report-wrapper">
-<table>
-  <%= render "flex_reports/header" %>
-  <% for month, row in rows do %>
-    <%= render "flex_reports/row", :row => row, :label => month %>
+    <hr style="page-break-after: always;"/>
   <% end %>
-  
-  <%= render 'flex_reports/totals', :row => rows, :group_fields => @report.group_fields %>
-  
-</table>
-</div>
-
-<br/>
-Signature: _______________________ </br>
-
-<hr style="page-break-after: always;"/>
 <% end %>

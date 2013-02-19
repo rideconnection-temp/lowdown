@@ -1,8 +1,8 @@
 <div class="report-wrapper">
-<table>
-  <%= render "header" %>
-  <tbody>
-  <%= render :partial=> "nested_rows", :locals=>{:rows => results, :group_fields => group_fields} %>
-  </tbody>
-</table>
+  <table>
+    <%= render "header" %>
+    <tbody>
+      <%= render :partial=> "nested_rows", :locals=>{:rows => results, :group_fields => group_fields} %>
+    </tbody>
+  </table>
 </div>
