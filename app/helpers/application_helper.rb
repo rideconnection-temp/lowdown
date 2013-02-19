@@ -71,7 +71,7 @@ module ApplicationHelper
   end
 
   def describe_date_range(start_date,end_date)
-    if start_date + 1.day == end_date
+    if start_date == end_date
       result = start_date.strftime('%A %B %e %Y')
     elsif start_date.day == 1 and (end_date + 1.day).day == 1
       if start_date + 1.month == end_date + 1.day # One calendar month
