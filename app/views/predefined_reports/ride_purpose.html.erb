@@ -17,7 +17,7 @@
   
       <% @results[county].keys.sort_by{|provider| provider.try(:name) || "Unspecified" }.each do |provider| %>
         <tr>
-          <th scope="row"><%= provider.try :name || "Unspecified" %></th>
+          <th scope="row" class="text"><%= provider.try :name || "Unspecified" %></th>
           <% for purpose in @trip_purposes %>
             <td class="number"><%= number_with_delimiter(@results[county][provider].by_purpose[purpose]) %></td>
           <% end %>
@@ -26,7 +26,7 @@
 
       <!-- totals -->
       <tr>
-        <th class="contrast" scope="row"><%= county %> County Total</th>
+        <th class="contrast text" scope="row"><%= county %> County Total</th>
         <% total = RidePurposeRow.sum(@results[county]) %>
         <% for purpose in @trip_purposes %>
           <td class="number"><%= number_with_delimiter(total.by_purpose[purpose]) %></td>
@@ -36,7 +36,7 @@
       <!-- percentages -->
       <tr>
         <% percentages = total.percentages %>
-        <th scope="row">% of total county trips</th>
+        <th scope="row" class="text">% of total county trips</th>
         <% for purpose in @trip_purposes %>
           <td class="number"><%= "%.1f\%" % percentages[purpose] %></td>
         <% end %>
@@ -50,7 +50,7 @@
     </tr>
     <!-- grand totals -->
     <tr>
-      <th class="contrast" scope="row">Grand Total</th>
+      <th class="contrast text" scope="row">Grand Total</th>
       <% total = RidePurposeRow.sum(@results) %>
       <% for purpose in @trip_purposes %>
         <td class="number"><%= number_with_delimiter(total.by_purpose[purpose]) %></td>
@@ -60,7 +60,7 @@
     <!-- grand total percentages -->
     <tr>
       <% percentages = total.percentages %>
-      <th scope="row">% of total trips</th>
+      <th scope="row" class="text">% of total trips</th>
       <% for purpose in @trip_purposes %>
         <td class="number"><%= "%.1f\%" % percentages[purpose] %></td>
       <% end %>
