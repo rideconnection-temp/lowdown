@@ -1,17 +1,18 @@
 <% short_name = short_group_name(row,group_fields) %>
 <% row = ReportRow.sum(row, nil, @report.fields) %>
-<tr class="<% if group_fields.size >= 3 %>sum-<% end %>totals">
+<tr class="<% if group_fields.size >= 3 || (defined?(grand_total) && grand_total) %>sum-<% end %>totals">
   <% (report_group_fields.size - 1).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
   <td>
-    <% if defined?(short_name) && short_name.present? %>
-      <%= "#{short_name}" %>
-    <% elsif defined?(short_name) && short_name.blank? %>
-      <%= "#{report_group_fields[report_group_fields.size - group_fields.size].titleize} Not Specified" %>
-    <% else %>
+    <% if defined?(grand_total) && grand_total %>
       <%= "Grand" %>
-    <% end %> Total
+    <% elsif short_name.present? %>
+      <%= "#{short_name}" %>
+    <% else %>
+      <%= "#{report_group_fields[report_group_fields.size - group_fields.size].titleize} Not Specified" %>
+    <% end %>
+    Total
   </td>
   <% if @report.fields.include? 'funds' %>
     <td class="number">
