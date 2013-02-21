@@ -21,13 +21,13 @@ class ReportQuery
       @end_date = params[:end_date].to_date
       @after_end_date = @end_date + 1.day
     elsif params['end_date(1i)']
-      @end_date = date_from_params(params,:end_date)
-      @after_end_date = @end_date + 1.day
+      @after_end_date = date_from_params(params,:end_date) + 1.month
+      @end_date = @after_end_date - 1.day
     elsif params[:date_range] == :quarter
-      @after_end_date = start_date + 3.months
+      @after_end_date = @start_date + 3.months
       @end_date = @after_end_date - 1.day
     else
-      @after_end_date = start_date.next_month
+      @after_end_date = @start_date + 1.month
       @end_date = @after_end_date - 1.day
     end
 
@@ -186,8 +186,8 @@ class PredefinedReportsController < ApplicationController
 
     @report = FlexReport.new
     @report.start_date = @query.start_date
-    @report.end_date = @query.end_date
-    @report.provider_list =  params[:report_query][:provider_id] if params[:report_query][:provider_id].present?
+    @report.end_date = @query.after_end_date - 1.month
+    @report.provider_list =  params[:report_query][:provider_id] if params[:report_query].present? && params[:report_query][:provider_id].present?
     @report.field_list = 'admin_volunteer_hours,administrative,agency_other,cost_per_hour,cost_per_mile,cost_per_trip,donations,driver_paid_hours,driver_total_hours,driver_volunteer_hours,escort_volunteer_hours,funds,in_district_trips,mileage,miles_per_ride,operations,out_of_district_trips,total,total_trips,total_volunteer_hours,turn_downs,undup_riders,vehicle_maint'
     @report.group_by = "provider,program,quarter,month"
     @report.populate_results!
