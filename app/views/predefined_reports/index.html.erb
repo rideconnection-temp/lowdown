@@ -60,7 +60,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :spd } do |f| %>
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :spd } do |f| %>
     <fieldset>
       <h2 class="report-header">SPD Report</h2>
       <p></p>
@@ -81,7 +81,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :ride_purpose } do |f| %>
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :ride_purpose } do |f| %>
     <fieldset>
       <h2 class="report-header">Ride Purpose Report</h2>
       <p></p>
@@ -101,7 +101,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @quarterly_query, :html => { :class => "run-report"}, :url => { :action => :quarterly_narrative } do |f| %>
+  <%= form_for @quarterly_query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :quarterly_narrative } do |f| %>
     <fieldset>
       <h2 class="report-header">Quarterly Narrative Report</h2>
       <p></p>
@@ -125,7 +125,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :age_and_ethnicity } do |f| %>
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :age_and_ethnicity } do |f| %>
     <fieldset>
       <h2 class="report-header">Age & Ethnicity Report</h2>
       <p></p>
@@ -149,7 +149,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :multnomah_ads } do |f| %>
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :multnomah_ads } do |f| %>
     <fieldset>
       <h2 class="report-header">Multnomah ADS Report</h2>
       <p></p>
@@ -174,7 +174,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :trimet_export } do |f| %>
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :trimet_export } do |f| %>
     <fieldset>
       <h2 class="report-header">Trimet E&D Export</h2>
       <p></p>
