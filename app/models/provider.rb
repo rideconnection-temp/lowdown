@@ -11,8 +11,9 @@ class Provider < ActiveRecord::Base
 
   scope :with_trip_data, where("id in (SELECT provider_id FROM allocations WHERE trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips')")
   scope :for_multnomah_ads, where("id in (SELECT provider_id FROM allocations WHERE project_id = (SELECT id FROM projects WHERE funding_source = ?))",'Multnomah ADS')
-  scope :partners, where(["provider_type = ?", "Partner"])
+  scope :partners, where(:provider_type => "Partner")
   scope :partners_or_current, lambda{|provider_id| where(["provider_type = ? OR id = ?", "Partner", provider_id])}
+  scope :reporting_agencies, where("id in (SELECT reporting_agency_id from allocations)")
   scope :default_order, order(:name)
 
   def to_s
