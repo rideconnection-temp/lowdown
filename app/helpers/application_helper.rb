@@ -42,7 +42,7 @@ module ApplicationHelper
     elsif k.class == Fixnum
       [1, ("%04d" % k)]
     else
-      [1, k.to_s]
+      [1, k.to_s.downcase]
     end
   end
 
