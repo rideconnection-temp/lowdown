@@ -95,6 +95,7 @@ class PredefinedReportsController < ApplicationController
     @customer_rows = {}
     customer_office = {}
     @approved_rides = 0
+    @customer_count = 0
     @all_billed_rides = @wc_billed_rides = @nonwc_billed_rides = @unknown_billed_rides = 0
     @all_mileage = @wc_mileage = @nonwc_mileage = @unknown_mileage = BigDecimal("0")
 
@@ -116,6 +117,7 @@ class PredefinedReportsController < ApplicationController
       if row.nil?
         @offices[office_key][:approved_rides] += trip.approved_rides || 0
         @offices[office_key][:customer_count] += 1
+        @customer_count += 1
         @approved_rides += trip.approved_rides.to_i
         row = {:customer          => trip.customer,
                :billed_rides      => 0, 
