@@ -9,7 +9,7 @@ class Allocation < ActiveRecord::Base
   belongs_to :trimet_report_group
   belongs_to :override
   
-  DATA_OPTIONS = %w( Required Prohibited )
+  DATA_OPTIONS = %w( Prohibited Required )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
   ELIGIBILITIES = ['Elderly & Disabled','Low Income Commuter','Veteran, Spouse, or Widow','Unrestricted','Not Applicable']
 
