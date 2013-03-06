@@ -34,6 +34,7 @@ class FlexReportsController < ApplicationController
   def show
     @report = FlexReport.find params[:id]
     @report.attributes = params[:flex_report]
+    @report.save
     @report.populate_results!
     request.format = :csv if params[:csv]
     respond_to do |format|
