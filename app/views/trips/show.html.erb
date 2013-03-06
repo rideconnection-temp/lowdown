@@ -9,9 +9,9 @@
     <% @trip.chronological_versions.each do |version| %>
       <li>
         <% if (version.id == @trip.id) %>
-          <%= time_ago_in_words(version.valid_start) %> ago
+          <%= version.valid_start.localtime.to_s(:full) %>
         <% else %>
-          <%= link_to "#{time_ago_in_words(version.valid_start)} ago", :action=>:show, :id=>version.id %>
+          <%= link_to version.valid_start.localtime.to_s(:full), :action=>:show, :id=>version.id %>
         <% end %>
         <span class="update-user">(<%= version.updated_by_user.email %>)</span>
       </li>
