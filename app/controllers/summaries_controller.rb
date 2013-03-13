@@ -23,7 +23,7 @@ class SummaryQuery
     end
     if @start_date.blank? || @end_date.blank?
       @start_date   = Date.today - 1.month - Date.today.day + 1.day
-      @end_date     = @start_date + 1.month
+      @end_date     = @start_date
     end
     @after_end_date = Date.new(@end_date.year,@end_date.month,1) + 1.month
     @reporting_agency = params[:reporting_agency].to_i if params[:reporting_agency].present?
