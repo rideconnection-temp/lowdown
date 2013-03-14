@@ -6,26 +6,7 @@
   <% end %>
 </div>
 
-<% if current_user.is_admin %>
-  <%= form_for(@report, :html => {:class => "run-report"}) do |f| %>
-    <fieldset>
-      <h2>Run Report</h2>
-      <hr>
-      <%= render "run_form", :f => f, :report => @report, :ol_class => "section" %>
-    </fieldset>
-  <% end %>
-<% end %>
-
-<% if @report.errors.any? %>
-  <div id="error_explanation">
-    <h2><%= pluralize(@report.errors.count, "error") %> prohibited this report from being saved:</h2>
-    <ul>
-    <% @report.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
-    <% end %>
-    </ul>
-  </div>
-<% end %>
+<%= render "shared/error_messages", :target => @report %>
 
 <%= form_for @report do |form| %>
   <%= render "form", :f => form %>

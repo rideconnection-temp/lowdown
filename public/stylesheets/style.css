@@ -1103,17 +1103,11 @@ body.users a.action-bttn {
 body.flex-reports a.action-bttn {
     background: #eee url(images/report--plus.png) 0.8em center no-repeat scroll;
 }
-body.flex-reports fieldset.main-form ol.section li input, 
+body.flex-reports fieldset.main-form ol.section li input[type=text] , 
 body.flex-reports fieldset.main-form ol.section li textarea {
   width: 100%;
   max-width: 100%;
 }
-body.flex-reports fieldset.main-form ol.section li input[type="checkbox"] {
-  float: left;
-  width: 5%;
-  text-align: left;
-}
-
 body.flex-reports fieldset.main-form ol.section li textarea {
   height: 6em;
 }
@@ -1141,9 +1135,25 @@ body.flex-reports #filters li {
 body.flex-reports h2 {
   margin: 10px 0 0 0;
 }
+body.flex-reports div.actions input[type=submit] {
+  width: 200px;
+}
 #report-fields-to-include {
     clear: both;
     padding-top: 10px;
+}
+#date-range-header {
+    float: left;
+    clear: left;
+}
+#report-date-range-area {
+    float: left;
+    clear: left;
+    background: #f5f5f5;
+    border: 1px solid #bbb;
+    padding: 10px;
+    margin: 0 10px 10px 0;
+    width: 300px;
 }
 #report-checkbox-area {
     float: left;

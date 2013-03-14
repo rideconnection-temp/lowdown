@@ -215,11 +215,31 @@
           </li>
         </ol>
       </div>
+      <h2 class="section-header" id="date-range-header">Date Range</h2>
+      <div id="report-date-range-area">
+        <ol class="section">
+          <li>
+            <%= f.label :start_date %>
+            <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
+          </li>
+          <li>
+            <%= f.label :end_date %>
+            <%= f.date_select :end_date, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
+          </li>
+          <li>
+            <%= f.check_box :pending %>
+            <%= f.label :pending, "Include pending" %>
+          </li>
+        </ol>
+      </div>
     </div>
 
     <% if current_user.is_admin %>
       <div class="actions">
-        <%= f.submit :id => "report-create" %>
+        <% action = @report.new_record? ? "Create" : "Update" %>
+        <%= f.submit action %>
+        <%= f.submit "#{action} and View", :name => "view" %>
+        <%= f.submit "#{action} and Export as CSV", :name => "csv" %>
       </div>
     <% end %>
 

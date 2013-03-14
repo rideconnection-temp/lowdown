@@ -22,8 +22,14 @@ class FlexReportsController < ApplicationController
     @report = FlexReport.new_from_params params
 
     if @report.save
-      flash[:notice] = "Saved #{@report.name}"
-      redirect_to edit_flex_report_path(@report)
+      if params[:view].present?
+        redirect_to flex_report_path(@report)
+      elsif params[:csv].present?
+        redirect_to flex_report_path(@report, :csv => true)
+      else
+        flash[:notice] = "Saved \"#{@report.name}\""
+        redirect_to edit_flex_report_path(@report.id)
+      end
     else
       prep_edit
       render :action => :new
@@ -33,8 +39,10 @@ class FlexReportsController < ApplicationController
   # the results of the report
   def show
     @report = FlexReport.find params[:id]
-    @report.attributes = params[:flex_report].slice("start_date(3i)","start_date(2i)","start_date(1i)","end_date(3i)","end_date(2i)","end_date(1i)","pending")
-    @report.save
+    unless params[:flex_report].nil?
+      @report.attributes = params[:flex_report].slice("start_date(3i)","start_date(2i)","start_date(1i)","end_date(3i)","end_date(2i)","end_date(1i)","pending") 
+      @report.save
+    end
     @report.populate_results!
     request.format = :csv if params[:csv]
     respond_to do |format|
@@ -54,10 +62,12 @@ class FlexReportsController < ApplicationController
     @report = FlexReport.find params[:id]
 
     if @report.update_attributes params[:flex_report]
-      if params[:commit].downcase.match /view/
+      if params[:view].present?
         redirect_to flex_report_path(@report)
+      elsif params[:csv].present?
+        redirect_to flex_report_path(@report, :csv => true)
       else
-        flash[:notice] = "Saved #{@report.name}"
+        flash[:notice] = "Updated \"#{@report.name}\""
         redirect_to edit_flex_report_path(@report.id)
       end
     else
