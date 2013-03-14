@@ -39,12 +39,12 @@ class FlexReportsController < ApplicationController
   # the results of the report
   def show
     @report = FlexReport.find params[:id]
-    unless params[:flex_report].nil?
+    if params[:flex_report].present?
       @report.attributes = params[:flex_report].slice("start_date(3i)","start_date(2i)","start_date(1i)","end_date(3i)","end_date(2i)","end_date(1i)","pending") 
       @report.save
     end
     @report.populate_results!
-    request.format = :csv if params[:csv]
+    request.format = :csv if params[:csv].present?
     respond_to do |format|
       format.html
       format.csv do 
