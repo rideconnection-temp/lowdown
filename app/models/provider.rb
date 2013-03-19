@@ -3,6 +3,8 @@ class Provider < ActiveRecord::Base
   has_many :allocations_as_reporting_agency, :class_name => "Allocation", 
                :foreign_key => :reporting_agency_id, :order => :name
   has_many :summaries
+
+  PROVIDER_TYPES = ["BPA Provider", "Partner", "Ride Connection"]
   
   validates :name, :presence => true, :uniqueness => true
   validates :short_name, :length => { :maximum => 10 }
