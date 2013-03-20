@@ -157,7 +157,7 @@ class ReportRow
   end
 
   def program
-    allocation.program
+    allocation.program.try :name
   end
 
   def funding_source

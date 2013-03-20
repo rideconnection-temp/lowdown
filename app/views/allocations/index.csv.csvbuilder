@@ -33,7 +33,7 @@ csv << [
   csv << [
     a.name,
     a.group_trip ? 'True' : 'False',
-    a.program,
+    a.program.try(:name),
     a.project.try(:name),
     a.project.try(:project_number),
     a.project.try(:funding_source),

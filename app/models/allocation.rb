@@ -8,6 +8,7 @@ class Allocation < ActiveRecord::Base
   belongs_to :trimet_program
   belongs_to :trimet_report_group
   belongs_to :override
+  belongs_to :program
   
   DATA_OPTIONS = %w( Prohibited Required )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}

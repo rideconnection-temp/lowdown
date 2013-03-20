@@ -25,7 +25,7 @@
       
       <li class="selfclear">
         <%= form.label :program %>
-        <%= form.text_field :program, :size => 60 %>
+        <%= form.collection_select :program_id, Program.default_order, :id, :name, :include_blank => true %>
       </li>
       
       <li class="selfclear">

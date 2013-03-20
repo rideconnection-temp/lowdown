@@ -22,7 +22,7 @@ csv << [
     report.funding_subsource_names.join(', '),
     report.reporting_agencies.map{|ra| ra.name }.join(', '),
     report.providers.map{|p| p.name }.join(', '),
-    report.program_names.join(', '),
+    report.programs.map{|p| p.name }.join(', '),
     report.county_names.join(', '),
     report.allocations.map{|a| a.name }.join(', ')
   ]

@@ -16,7 +16,7 @@ class FlexReport < ActiveRecord::Base
     "funding_source"                => "projects.funding_source",
     "funding_subsource"             => "projects.funding_subsource",
     "allocation_name"               => "allocations.name",
-    "program"                       => "allocations.program",
+    "program"                       => "programs.name",
     "project_name"                  => "projects.name",
     "project_number"                => "projects.project_number",
     "provider_name"                 => "providers.name",
@@ -72,19 +72,19 @@ class FlexReport < ActiveRecord::Base
     end
   end
 
-  def program_names
-    if program_name_list.blank?
-      [""]
-    else
-      program_name_list.split("|")
-    end
+  def programs
+    program_list.blank? ? [] : Program.find(program_list.split(",").map(&:to_i))
   end
 
-  def program_names=(list)
-    if list.blank? 
-      self.program_name_list = nil
+  def program_ids
+    program_list.blank? ? [""] : program_list.split(",").map(&:to_i)
+  end
+
+  def programs=(list)
+    if list.blank?
+      self.program_list = nil
     else
-      self.program_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
+      self.program_list = list.sort.map(&:to_s).join(",")
     end
   end
 
@@ -215,9 +215,9 @@ class FlexReport < ActiveRecord::Base
       where_strings << "provider_id IN (?)"
       where_params << provider_ids
     end
-    if program_name_list.present?
-      where_strings << "program IN (?)"
-      where_params << program_names
+    if program_list.present?
+      where_strings << "program_id IN (?)"
+      where_params << program_ids
     end
     if county_name_list.present?
       where_strings << "county IN (?)"

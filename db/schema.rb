@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130117070217) do
+ActiveRecord::Schema.define(:version => 20130319211206) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.string  "routematch_override"
     t.string  "routematch_provider_code"
     t.date    "inactivated_on"
-    t.string  "program"
+    t.string  "program_name"
     t.string  "admin_ops_data",              :limit => 15
     t.string  "vehicle_maint_data",          :limit => 15
     t.integer "trimet_program_id"
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.text    "notes"
     t.boolean "do_not_show_on_flex_reports",               :default => false, :null => false
     t.string  "eligibility"
+    t.integer "program_id"
   end
 
   create_table "customers", :force => true do |t|
@@ -99,6 +100,7 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.text    "subtitle"
     t.integer "report_category_id"
     t.boolean "elderly_and_disabled_only",   :default => false, :null => false
+    t.text    "program_list"
   end
 
   create_table "mobilities", :force => true do |t|
@@ -108,6 +110,12 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
   end
 
   create_table "overrides", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "programs", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -312,6 +320,8 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  add_foreign_key "allocations", ["program_id"], "programs", ["id"], :name => "allocations_program_id_fkey"
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 

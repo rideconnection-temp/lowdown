@@ -70,8 +70,8 @@
       </li>
       <li>
         <h2>Programs</h2>
-        <select class="multi full" id="report_program_names" multiple="multiple" name="flex_report[program_names][]">
-          <%= options_for_select(@program_names, @report.program_names) %>
+        <select class="multi full" id="report_program_names" multiple="multiple" name="flex_report[programs][]">
+          <%= options_for_select(@programs, @report.program_ids) %>
         </select>
       </li>
       <li>

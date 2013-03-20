@@ -6,6 +6,7 @@ Lowdown::Application.routes.draw do
   resources :customers, :only => [:show, :update]
   resources :providers
   resources :projects
+  resources :programs
   resources :runs
   resources :trimet_providers
   resources :trimet_programs
