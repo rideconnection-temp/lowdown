@@ -93,8 +93,8 @@ class FlexReportsController < ApplicationController
 
   def prep_edit
     @funding_subsource_names  = [['<Select All>','']] + Project.funding_subsource_names
-    @providers                = [['<Select All>','']] + Provider.default_order.map {|x| [x.to_s, x.id]}
-    @reporting_agencies       = [['<Select All>','']] + Provider.partners.default_order.map {|x| [x.to_s, x.id]}
+    @providers                = [['<Select All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
+    @reporting_agencies       = [['<Select All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
     @programs                 = [['<Select All>','']] + Program.default_order.map {|x| [x.name, x.id]}
     @county_names             = [['<Select All>','']] + Allocation.county_names
     @group_bys = FlexReport::GroupBys.sort

@@ -16,6 +16,7 @@ class Provider < ActiveRecord::Base
   scope :partners, where(:provider_type => "Partner")
   scope :partners_or_current, lambda{|provider_id| where(["provider_type = ? OR id = ?", "Partner", provider_id])}
   scope :reporting_agencies, where("id in (SELECT reporting_agency_id from allocations)")
+  scope :providers_in_allocations, where("id in (SELECT provider_id from allocations)")
   scope :default_order, order(:name)
 
   def to_s
