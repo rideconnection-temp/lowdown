@@ -149,9 +149,9 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :multnomah_ads } do |f| %>
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :premium_service_billing } do |f| %>
     <fieldset>
-      <h2 class="report-header">Multnomah ADS Premium Report</h2>
+      <h2 class="report-header">Premium Service Billing Report</h2>
       <p></p>
       <ol>
         <li>
@@ -161,6 +161,10 @@
         <li>
           <%= f.label :end_date %>
           <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :ads_end_date, :required => :required %>
+        </li>
+        <li>
+          <%= f.label :county %>
+          <%= f.select :county, %w(Multnomah Washington) %>
         </li>
         <li>
           <%= f.label :provider %>

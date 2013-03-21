@@ -2,7 +2,7 @@ class ReportQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :after_end_date, :provider_id, :provider
+  attr_accessor :start_date, :end_date, :after_end_date, :provider_id, :provider, :county
 
   def initialize(params = {})
     params = {} if params.nil?
@@ -31,13 +31,9 @@ class ReportQuery
       @end_date = @after_end_date - 1.day
     end
 
-    if params[:provider].present?
-      @provider = params[:provider]
-    end
-
-    if params[:provider_id].present?
-      @provider_id = params[:provider_id].to_i
-    end
+    @provider = params[:provider]             if params[:provider].present?
+    @provider_id = params[:provider_id].to_i  if params[:provider_id].present?
+    @county = params[:county]                 if params[:county].present?
   end
 
   def persisted?
@@ -63,12 +59,22 @@ class PredefinedReportsController < ApplicationController
     @quarterly_query = ReportQuery.new(:date_range => :quarter)
   end
 
-  def multnomah_ads
+  def premium_service_billing
     @query = ReportQuery.new(params[:report_query])
     trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).includes(:customer,{:allocation => :provider},:pickup_address,:dropoff_address).default_order
     trips = trips.for_provider(@query.provider_id) if @query.provider_id.present?
-    trips_billed_per_hour = trips.multnomah_ads_billed_per_hour
-    @trips_billed_per_trip = trips.multnomah_ads_billed_per_trip
+    case @query.county
+    when "Multnomah"
+      trips = trips.multnomah_ads
+      @title = "Multnomah County ADS Premium Service Report"
+    when "Washington"
+      trips = trips.washington_davs
+      @title = "Washington County DAVS Premium Service Report"
+    else
+      redirect_to :controller => :predefined_reports, :action => :index
+    end
+    trips_billed_per_hour = trips.billed_per_hour
+    @trips_billed_per_trip = trips.billed_per_trip
     all_trips = trips_billed_per_hour + @trips_billed_per_trip
     @run_groups = trips_billed_per_hour.group_by(&:run)
 
@@ -77,13 +83,12 @@ class PredefinedReportsController < ApplicationController
     @total_scheduling_fee = all_trips.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_scheduling_fee}
     @total_cost           = all_trips.reduce(0){|s,t| s + (t.ads_total_cost || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_total_cost}
     @total_billable_hours = @run_groups.keys.reduce(0){|s,r| s + r.ads_billable_hours}
-    @per_hour_trip_count  = trips_billed_per_hour.size
     @taxi_trip_count      = @trips_billed_per_trip.select{|t| t.bpa_provider?}.size
     @partner_trip_count   = @trips_billed_per_trip.reject{|t| t.bpa_provider?}.size
 
     if params[:output] == 'CSV'
-      @filename = "Multnomah County ADS Premium Report #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"
-      render "multnomah_ads.csv" 
+      @filename = "#{@title} #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"
+      render "premium_service_billing.csv" 
     end
   end
 
