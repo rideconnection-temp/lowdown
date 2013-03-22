@@ -39,32 +39,32 @@ class Trip < ActiveRecord::Base
   attr_accessor :bulk_import, :secondary_update, :do_not_version
 
   scope :default_order, order(:start_at)
-  scope :completed, where(:result_code => 'COMP')
-  scope :data_entry_complete, where(:complete => true)
-  scope :data_entry_not_complete, where(:complete => false)
-  scope :shared, where('trips.routematch_share_id IS NOT NULL')
-  scope :spd, joins(:allocation=>:project).where(:projects => {:funding_source => 'SPD'})
-  scope :multnomah_ads, joins(:allocation => :project).where(:projects => {:funding_source => 'Multnomah ADS'})
+  scope :completed,                 where(:result_code => 'COMP')
+  scope :data_entry_complete,       where(:complete => true)
+  scope :data_entry_not_complete,   where(:complete => false)
+  scope :shared,                    where('trips.routematch_share_id IS NOT NULL')
+  scope :elderly_and_disabled_only, where(:customer_type => 'Honored')
+  scope :without_no_shows,          where("trips.result_code <> ?","NS")
+  scope :without_cancels,           where("trips.result_code <> ?","CANC")
+  scope :spd,             joins(:allocation => :project).where(:projects => {:funding_source => 'SPD'})
+  scope :multnomah_ads,   joins(:allocation => :project).where(:projects => {:funding_source => 'Multnomah ADS'})
   scope :washington_davs, joins(:allocation => :project).where(:projects => {:funding_source => 'Washington Co DAVS'})
   scope :billed_per_hour, joins(:allocation).where("allocations.name ILIKE '%hourly%'")
   scope :billed_per_trip, joins(:allocation).where("allocations.name NOT ILIKE '%hourly%'")
-  scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
-  scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
-  scope :for_run, lambda {|run_id| where(:run_id => run_id) }
-  scope :for_valid_start, lambda {|valid_start| where(:valid_start => valid_start) }
-  scope :for_share, lambda {|share_id| where(:routematch_share_id => share_id) }
-  scope :for_provider, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
-  scope :for_reporting_agency, lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",provider_id)}
-  scope :for_date_range, lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
-  scope :for_result_code, lambda {|result_code| where(:result_code => result_code) }
-  scope :without_no_shows, where("trips.result_code <> ?","NS")
-  scope :without_cancels, where("trips.result_code <> ?","CANC")
-  scope :for_customer_first_name_like, lambda {|name| where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(first_name) LIKE ?)","%#{name.downcase}%") }
-  scope :for_customer_last_name_like, lambda {|name| where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(last_name) LIKE ?)","%#{name.downcase}%") }
-  scope :for_import, lambda {|import_id| where(:trip_import_id=>import_id)}
-  scope :for_valid_start, lambda {|valid_start| where(:valid_start => valid_start) }
+  scope :for_allocation,                lambda {|allocation|    where(:allocation_id => allocation.id) }
+  scope :for_allocation_id,             lambda {|allocation_id| where(:allocation_id => allocation_id) }
+  scope :for_run,                       lambda {|run_id|        where(:run_id => run_id) }
+  scope :for_valid_start,               lambda {|valid_start|   where(:valid_start => valid_start) }
+  scope :for_share,                     lambda {|share_id|      where(:routematch_share_id => share_id) }
+  scope :for_provider,                  lambda {|provider_id|   where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
+  scope :for_reporting_agency,          lambda {|provider_id|   where("trips.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",provider_id)}
+  scope :for_result_code,               lambda {|result_code|   where(:result_code => result_code) }
+  scope :for_import,                    lambda {|import_id|     where(:trip_import_id=>import_id)}
+  scope :for_customer_last_name_like,   lambda {|name|          where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(last_name) LIKE ?)","%#{name.downcase}%") }
+  scope :for_customer_first_name_like,  lambda {|name|          where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(first_name) LIKE ?)","%#{name.downcase}%") }
+  scope :for_valid_start,               lambda {|valid_start|   where(:valid_start => valid_start) }
+  scope :for_date_range,                lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
   scope :grouped_by_adjustment, select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, MIN(date) as min_date, MAX(date) AS max_date, MIN(trips.id) as id").group("trips.valid_start, trips.adjustment_notes").order("trips.valid_start DESC").where("valid_start <> imported_at")
-  scope :elderly_and_disabled_only, where(:customer_type => 'Honored')
 
   RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 
