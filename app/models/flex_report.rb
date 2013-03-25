@@ -16,7 +16,7 @@ class FlexReport < ActiveRecord::Base
     "funding_source"                => "projects.funding_source",
     "funding_subsource"             => "projects.funding_subsource",
     "allocation_name"               => "allocations.name",
-    "program"                       => "programs.name",
+    "program_name"                  => "programs.name",
     "project_name"                  => "projects.name",
     "project_number"                => "projects.project_number",
     "provider_name"                 => "providers.name",

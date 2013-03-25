@@ -125,6 +125,10 @@ class Allocation < ActiveRecord::Base
     project.try :funding_subsource
   end
 
+  def program_name
+    program.try :name
+  end
+
   def project_number
     project.try :project_number
   end
