@@ -9,7 +9,7 @@
       <%= allocation.reporting_agency_name %> &mdash; 
       <%= describe_date_range(@report.start_date, @report.end_date + 1.month - 1.day) %>
     </h2>
-    <h3>Program: <%= allocation.program.name %></h3>
+    <h3>Program: <%= allocation.program.try(:name) || "Unspecified Program" %></h3>
     <h3>County: <%= allocation.county %></h3>
     <h3>Funding Source: <%= allocation.funding_source %></h3>
 
