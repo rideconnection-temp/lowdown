@@ -1,4 +1,4 @@
-<tr class="data">
+<% content_tag :tr, :class => row_classes.join(' ') do %>
   <% (report_group_fields.size - 1).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
@@ -146,4 +146,4 @@
       <%= number_with_precision(row.total_volunteer_hours, :precision => 1, :delimiter => ",") %>
     </td>
   <% end %>
-</tr>
+<% end %>

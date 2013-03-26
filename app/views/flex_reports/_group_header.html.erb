@@ -1,6 +1,6 @@
-<tr> 
+<% content_tag :tr, :class => "#{row_classes.join(' ')} compressable", "data-group" => this_row_group_class do %>
   <% (report_group_fields.size - group_fields.size).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>
   <td class="report-item" colspan="<%= @report.fields.size + report_group_fields.size %>"><%= group_name(row,group_fields).present? ? group_name(row,group_fields) : "#{report_group_fields[report_group_fields.size - group_fields.size].titleize} Not Specified" %></td>
-</tr> 
+<% end %>
