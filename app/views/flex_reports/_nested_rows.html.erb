@@ -15,9 +15,3 @@
         :row => row, :report_group_fields => report_group_fields, :label => row.send(group_fields[0]) %>
   <% end %>
 <% end %>
-
-<% if group_fields.size == report_group_fields.size %>
-  <% # grand total, if this is the outermost layer -%>
-  <%= render 'flex_reports/totals', 
-      :row=>rows, :report_group_fields => report_group_fields, :group_fields=>group_fields, :grand_total => true %>
-<% end %>
