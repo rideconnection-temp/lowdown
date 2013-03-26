@@ -1,4 +1,4 @@
-<% content_tag :tr, :class => "#{row_classes.join(' ')} compressable", "data-group" => this_row_group_class do %>
+<% content_tag :tr, :class => (row_classes + %w(compressable visible-group)).join(' '), "data-group" => this_row_group_class, "data-visible" => true do %>
   <% (report_group_fields.size - group_fields.size).times do %>
     <td class="indent">&nbsp;</td>
   <% end %>

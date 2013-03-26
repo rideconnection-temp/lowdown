@@ -2,9 +2,11 @@
   <table>
     <%= render "flex_reports/header", :report_group_fields => group_fields %>
     <tbody>
-      <%= render "flex_reports/nested_rows", :rows => results, :report_group_fields => group_fields, :group_fields => group_fields, :row_classes => ["data"] %>
+      <%= render "flex_reports/nested_rows", :rows => results, :report_group_fields => group_fields, 
+          :group_fields => group_fields, :row_classes => [], :tree_map => [] %>
       <%= render 'flex_reports/totals', 
-          :row=>results, :report_group_fields => group_fields, :group_fields=>group_fields, :grand_total => true, :row_classes => ["data"] %>
+          :row=>results, :report_group_fields => group_fields, :group_fields=>group_fields, :grand_total => true, 
+          :row_classes => [] %>
     </tbody>
   </table>
 </div>

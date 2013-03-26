@@ -811,6 +811,18 @@ div.report-wrapper tr.data .inner-most-field {
   padding-left  : 5px;
 }
 
+tr.visible-group td.report-item {
+  background: url(images/toggle.png) left center no-repeat scroll;
+  background-color: #E5F2FF;
+  padding: 5px 0 5px 20px;
+}
+
+tr.hidden-group td.report-item {
+  background: url(images/toggle-expand.png) left center no-repeat scroll;
+  background-color: #E5F2FF;
+  padding: 5px 0 5px 20px;
+}
+
 div.report-wrapper, div.list-wrapper {
     width: 100%;
     overflow: auto;

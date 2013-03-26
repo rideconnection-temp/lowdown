@@ -122,4 +122,19 @@ $(document).ready(function() {
     }
   });
 
+  // Make flex report rows collapsable
+  $(".compressable").click(function() {
+    var t = $(this);
+    t.toggleClass('hidden-group');
+    t.toggleClass('visible-group');
+    // Go through every row that could possibly be visible, and make it so
+    $('.visible-group').each(function(i, row) {
+      $("." + $(row).data("group")).show();
+    });
+    // Now go through every row that needs to be hidden, and make it so
+    $('.hidden-group').each(function(i, row) {
+      $("." + $(row).data("group")).hide();
+    });
+  });
+
 });
