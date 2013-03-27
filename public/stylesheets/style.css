@@ -801,8 +801,9 @@ div.report-wrapper td.indent {
 
 div.report-wrapper tr.data td.indent,
 div.report-wrapper tr.totals td.indent,
+div.report-wrapper tr.collapsible td.indent,
 div.report-wrapper tr.sum-totals td.indent   {
-  background: transparent;
+  background: white;
 }
 
 div.report-wrapper tr.data .inner-most-field {

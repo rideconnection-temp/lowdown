@@ -122,8 +122,8 @@ $(document).ready(function() {
     }
   });
 
-  // Make flex report rows collapsable
-  $(".compressable").click(function() {
+  // Make flex report rows collapsible
+  $(".collapsible").click(function() {
     var t = $(this);
     t.toggleClass('hidden-group');
     t.toggleClass('visible-group');

@@ -1,6 +1,6 @@
 <% if group_fields.size > 1 %>
-  <% i = 0 %>
   <% # an outer layer, print group headers and footers with proper level of indentation -%>
+  <% i = 0 %>
   <% rows.sort_by {|k,v| row_sort(k)}.each do |group_name, row| %>
     <% this_tree_map = tree_map + [i] %>
     <% this_row_group_class = ["row-group-#{this_tree_map.join("-")}"] %>
