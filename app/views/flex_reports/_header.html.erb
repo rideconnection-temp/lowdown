@@ -1,6 +1,6 @@
 <thead>
   <tr>
-    <% (report_group_fields.size - 1).times do %>
+    <% (report_group_fields.size).times do %>
       <th class="indent">&nbsp;</th>
     <% end %>
     <% rf = @report.fields -%>
@@ -30,7 +30,7 @@
     <% end %>
   </tr>
   <tr>
-    <% (report_group_fields.size - 1).times do %>
+    <% (report_group_fields.size).times do %>
       <th class="indent">&nbsp;</th>
     <% end %>
     <% if rf.include? 'funds' %><th class="wrap number">RC Funds</th><% end %>

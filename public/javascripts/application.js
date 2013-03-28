@@ -123,18 +123,31 @@ $(document).ready(function() {
   });
 
   // Make flex report rows collapsible
-  $(".collapsible").click(function() {
+  $('.collapsible').click(function() {
     var t = $(this);
     t.toggleClass('hidden-group');
     t.toggleClass('visible-group');
+    resetFlexReportRowVisibility();
+  });
+
+  $('#collapse-all').click(function() {
+    $('.visible-group').toggleClass('hidden-group').toggleClass('visible-group');
+    resetFlexReportRowVisibility();
+  });
+
+  $('#expand-all').click(function() {
+    $('.hidden-group').toggleClass('hidden-group').toggleClass('visible-group');
+    resetFlexReportRowVisibility();
+  });
+
+  function resetFlexReportRowVisibility() {
     // Go through every row that could possibly be visible, and make it so
     $('.visible-group').each(function(i, row) {
-      $("." + $(row).data("group")).show();
+      $('.' + $(row).data('group')).show();
     });
     // Now go through every row that needs to be hidden, and make it so
     $('.hidden-group').each(function(i, row) {
-      $("." + $(row).data("group")).hide();
+      $('.' + $(row).data('group')).hide();
     });
-  });
-
+  }
 });

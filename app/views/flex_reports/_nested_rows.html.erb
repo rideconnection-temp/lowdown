@@ -8,7 +8,7 @@
     <% next_level_row_group_classes = (row_classes + this_row_group_class) %>
     <%= render 'flex_reports/group_header', 
         :row => row, :report_group_fields => report_group_fields, :group_fields => group_fields, 
-        :row_classes => row_classes, :this_row_group_class => this_row_group_class %>
+        :row_classes => row_classes, :this_row_group_class => this_row_group_class, :root_header => false %>
     <%= render 'flex_reports/nested_rows', 
         :rows => row, :report_group_fields => report_group_fields, :group_fields => group_fields[1..-1], 
         :row_classes => next_level_row_group_classes, :tree_map => this_tree_map %>

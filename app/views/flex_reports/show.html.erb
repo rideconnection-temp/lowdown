@@ -6,15 +6,19 @@
   <span class="month-range">
     <%= report_month_range @report.start_date, @report.query_end_date %>
   </span>
-  <span class="separator csv">|</span>
+  <span class="separator no-print">|</span>
   <%= link_to "CSV", params.merge({:format=>:csv}), :class=>"csv" %>
   <% if current_user.is_admin %>
-    <span class="separator edit">|</span>
+    <span class="separator no-print">|</span>
     <%= link_to "Edit Report", edit_flex_report_path(@report), :class => "edit" %>
   <% end %>
+  <span class="separator no-print">|</span>
+  <a href="#" id="collapse-all" class="no-print">Collapse All</a>
+  <span class="separator no-print">|</span>
+  <a href="#" id="expand-all" class="no-print">Expand All</a>
 </div>
 
 <%= content_tag(:div, @report.subtitle, :id => "report-description") if @report.subtitle.present? %>
-<%= content_tag(:div, "Grouping: " << @report.group_fields.join(", ").titleize, :id => "grouping-description") if @report.group_fields.present? %>
+<%= content_tag(:div, "Grouping: #{@report.group_fields.join(", ").titleize}", :id => "grouping-description") if @report.group_fields.present? %>
 
 <%= render "report", :results => @report.results, :group_fields => @report.group_fields %>

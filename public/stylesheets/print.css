@@ -33,6 +33,11 @@ form.edit_report,
 .csv,
 .edit { display: none; clear: both; }
 
+.no-print {
+  display: none;
+  clear: both;
+}
+
 /* format stuff */
 #header {
   margin: 0 auto 1em;
@@ -119,9 +124,11 @@ td.inner-most-field {
   text-align : left;
 }
 
+div.report-wrapper th.indent,
 div.report-wrapper td.indent {
-  width : 0.2in;
-}
+  min-width : 0.1in;
+  padding: 0;
+} 
 
 .nobreak {
   white-space: nowrap;
