@@ -13,9 +13,9 @@
     <%= link_to "Edit Report", edit_flex_report_path(@report), :class => "edit" %>
   <% end %>
   <span class="separator no-print">|</span>
-  <a href="#" id="collapse-all" class="no-print">Collapse All</a>
+  <a href="#" id="collapse-all" class="collapse no-print">Collapse All</a>
   <span class="separator no-print">|</span>
-  <a href="#" id="expand-all" class="no-print">Expand All</a>
+  <a href="#" id="expand-all" class="expand no-print">Expand All</a>
 </div>
 
 <%= content_tag(:div, @report.subtitle, :id => "report-description") if @report.subtitle.present? %>
