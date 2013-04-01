@@ -11,7 +11,10 @@
 <%= form_for @report do |form| %>
   <%= render "form", :f => form %>
 <% end %>
-<%= form_for @report, :html => { :method => 'delete' } do |f| %>
-  <input type="hidden" name="report[id]" value="<%= @report.id %>" />
-  <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
+
+<% if current_user.is_admin %>
+  <%= form_for @report, :html => { :method => 'delete' } do |f| %>
+    <input type="hidden" name="report[id]" value="<%= @report.id %>" />
+    <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
+  <% end %>
 <% end %>
