@@ -1,5 +1,9 @@
 $(document).ready(function() {
 
+  if ($("#page-header h1").html() != null) {
+    document.title = $("#page-header h1").html();
+  }
+
   $("tr:odd").addClass("odd");
 
   $('#flash a.closer').click(function() {
