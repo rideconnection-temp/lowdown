@@ -37,7 +37,7 @@
       
       <li class="selfclear">
         <%= form.label :reporting_agency_id %>
-        <%= form.collection_select :reporting_agency_id, Provider.partners_or_current(@allocation.reporting_agency).default_order, :id, :to_s, :include_blank => true %>
+        <%= form.collection_select :reporting_agency_id, Provider.default_order, :id, :to_s, :include_blank => true %>
         <%= link_to "Details", [:edit, @allocation.reporting_agency], :class => :details if @allocation.reporting_agency %>
       </li>
       
