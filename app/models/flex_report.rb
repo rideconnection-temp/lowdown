@@ -33,7 +33,6 @@ class FlexReport < ActiveRecord::Base
     "year"                          => "Year"
   }
 
-
   def self.new_from_params(params)
     report = self.new(params[:flex_report])
 
@@ -176,10 +175,6 @@ class FlexReport < ActiveRecord::Base
     group_by.split(",")
   end
 
-  def groups
-    group_fields.map { |f| GroupMappings[f] }
-  end
-
   # Collect all data, and summarize it grouped according to the groups provided.
   # groups: the names of groupings, in order from coarsest to finest (i.e. project_name, quarter)
   # group_fields: the names of groupings with table names (i.e. projects.name, quarter)
@@ -187,14 +182,6 @@ class FlexReport < ActiveRecord::Base
   # fields: a list of fields to display
 
   def populate_results!(filters=nil)
-    group_select = []
-
-    for group,field in groups.split(",").zip group_fields
-      group_select << "#{group} as #{field}"
-    end
-
-    group_select = group_select.join(",")
-
     results = Allocation
     where_strings = []
     where_params = []
