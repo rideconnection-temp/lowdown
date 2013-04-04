@@ -168,6 +168,10 @@ class ReportRow
     allocation.funding_subsource
   end
 
+  def funding_source_and_subsource
+    allocation.funding_source_and_subsource
+  end
+
   def project_name
     allocation.project_name
   end

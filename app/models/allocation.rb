@@ -125,6 +125,14 @@ class Allocation < ActiveRecord::Base
     project.try :funding_subsource
   end
 
+  def funding_source_and_subsource
+    if funding_subsource.present?
+      "#{funding_source}: #{funding_subsource}"
+    else
+      funding_source
+    end
+  end
+
   def program_name
     program.try :name
   end
