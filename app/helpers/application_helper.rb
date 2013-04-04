@@ -46,14 +46,12 @@ module ApplicationHelper
     end
   end
 
+  def group_by_label(value)
+    value.map { |field| FlexReport::GroupMappings[field] || field.titlecase }.join(", ")
+  end
+
   def group_by_option_tag(value)
-    mappings = {
-      #"funding_subsource" => "Funding Sub-source", 
-      #"project_number"    => "Project Code",
-      #"agency"            => "Provider"
-    }
-    
-    fields     = value.split( "," ).map { |field| mappings[field] || field.titlecase }.join(", ")
+    fields     = group_by_label(value.split(","))
     attributes = { :value => value }
     attributes[:selected] = "selected" if @report.group_by == value
     

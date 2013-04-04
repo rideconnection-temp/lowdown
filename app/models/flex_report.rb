@@ -12,25 +12,25 @@ class FlexReport < ActiveRecord::Base
   GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program quarter,month}.sort
 
   GroupMappings = {
-    "county"                        => "allocations.county",
-    "funding_source"                => "projects.funding_source",
-    "funding_subsource"             => "projects.funding_subsource",
-    "funding_source_and_subsource"  => "whatever",
-    "allocation_name"               => "allocations.name",
-    "program_name"                  => "programs.name",
-    "project_name"                  => "projects.name",
-    "project_number"                => "projects.project_number",
-    "provider_name"                 => "providers.name",
-    "reporting_agency_name"         => "reporting_agencies.name",
-    "trimet_program_name"           => "trimet_programs.name",
-    "trimet_program_identifier"     => "trimet_programs.trimet_identifier",
-    "trimet_provider_name"          => "trimet_providers.name",
-    "trimet_provider_identifier"    => "trimet_providers.trimet_identifier",
-    "trimet_report_group_name"      => "trimet_report_groups.name",
-    "semimonth"                     => "semimonth",
-    "month"                         => "month",
-    "quarter"                       => "quarter",
-    "year"                          => "year"
+    "county"                        => "County",
+    "funding_source"                => "Funding Source",
+    "funding_subsource"             => "Funding Subsource",
+    "funding_source_and_subsource"  => "Funding Source and Subsource",
+    "allocation_name"               => "Allocation Name",
+    "program_name"                  => "Program Name",
+    "project_name"                  => "F.E. Project Name",
+    "project_number"                => "F.E. Project Number",
+    "provider_name"                 => "Provider Name",
+    "reporting_agency_name"         => "Reporting Agency Name",
+    "trimet_program_name"           => "TriMet Program Name",
+    "trimet_program_identifier"     => "TriMet Program Identifier",
+    "trimet_provider_name"          => "TriMet Provider Name",
+    "trimet_provider_identifier"    => "TriMet Provider Identifier",
+    "trimet_report_group_name"      => "TriMet Report Group Name",
+    "semimonth"                     => "Semi-month",
+    "month"                         => "Month",
+    "quarter"                       => "Quarter",
+    "year"                          => "Year"
   }
 
 

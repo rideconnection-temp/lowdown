@@ -27,8 +27,8 @@
             <span id="group-by-custom-wrapper">
               <span class="template">
                 <select>
-                  <% FlexReport::GroupMappings.keys.sort.each do |key| %>
-                    <%= content_tag :option, key.titleize, :value => key %>
+                  <% FlexReport::GroupMappings.sort_by{|k,v| v }.each do |key,value| %>
+                    <%= content_tag :option, value, :value => key %>
                   <% end %>
                 </select>
               </span>
@@ -119,7 +119,7 @@
           </li>
           <li>
             <input type="checkbox" <%= checked?("total") %> name="flex_report[fields[total]]" id="total" value="1" /> 
-            <label for="total">Total Costs</label>
+            <label for="total">Total Funds</label>
           </li>
         </ol>
         <ol>
