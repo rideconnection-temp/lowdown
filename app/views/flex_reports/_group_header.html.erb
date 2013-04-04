@@ -1,15 +1,15 @@
-<% content_tag :tr, 
+<%= content_tag :tr, 
   :class => (row_classes + %w(collapsible visible-group) + (root_header ? ['no-print'] : [])).join(' '), 
   "data-group" => this_row_group_class do %>
   <% if root_header %>
-    <% content_tag :td, :class => "report-item", :colspan => (@report.fields.size + report_group_fields.size + 1) do %>
+    <%= content_tag :td, :class => "report-item", :colspan => (@report.fields.size + report_group_fields.size + 1) do %>
       All Data
     <% end %>
   <% else %>
     <% (report_group_fields.size - group_fields.size + 1).times do %>
       <td class="indent">&nbsp;</td>
     <% end %>
-    <% content_tag :td, :class => "report-item", :colspan => (@report.fields.size + report_group_fields.size) do %>
+    <%= content_tag :td, :class => "report-item", :colspan => (@report.fields.size + group_fields.size) do %>
       <% if group_name(row,group_fields).present? %> 
         <%= group_name(row,group_fields) %>
       <% else %>
