@@ -182,7 +182,6 @@ class FlexReport < ActiveRecord::Base
   # fields: a list of fields to display
 
   def populate_results!(filters=nil)
-    results = Allocation
     where_strings = []
     where_params = []
 
@@ -222,7 +221,7 @@ class FlexReport < ActiveRecord::Base
         where_string = "allocations.id IN (?)"
         where_params << allocations
     end
-    results = results.where(where_string, *where_params)
+    results = Allocation.where(where_string, *where_params)
 
     TimePeriods.each do |period|
       if group_fields.member? period

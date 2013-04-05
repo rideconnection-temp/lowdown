@@ -94,7 +94,7 @@ class TripsController < ApplicationController
     @providers          = Provider.default_order
     @reporting_agencies = Provider.partners.default_order
     @allocations        = Allocation.order(:name)
-    @result_codes       = Trip::RESULT_CODES
+    @result_codes       = Trip::RESULT_CODES.sort
 
     @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project,:override]).joins(:allocation).order(:date,:trip_import_id)
     @trips = @query.apply_conditions(@trips)
