@@ -154,4 +154,8 @@ $(document).ready(function() {
       $('.' + $(row).data('group')).hide();
     });
   }
+
+  $('#show-update-form').click(function() {
+    $('.run-report').toggle('slow');
+  });
 });

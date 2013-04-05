@@ -9,7 +9,7 @@ class FlexReport < ActiveRecord::Base
 
   TimePeriods = %w{semimonth month quarter year}
 
-  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program,reporting_agency_name reporting_agency_name,program quarter,month}.sort
+  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program_name,reporting_agency_name reporting_agency_name,program_name quarter,month}.sort
 
   GroupMappings = {
     "county"                        => "County",
@@ -73,7 +73,7 @@ class FlexReport < ActiveRecord::Base
   end
 
   def programs
-    program_list.blank? ? [] : Program.find(program_list.split(",").map(&:to_i))
+    program_list.blank? ? [] : Program.find_all_by_id(program_list.split(",").map(&:to_i))
   end
 
   def program_ids
@@ -105,7 +105,7 @@ class FlexReport < ActiveRecord::Base
   end
 
   def reporting_agencies
-    reporting_agency_list.blank? ? [] : Provider.find(reporting_agency_list.split(",").map(&:to_i))
+    reporting_agency_list.blank? ? [] : Provider.find_all_by_id(reporting_agency_list.split(",").map(&:to_i))
   end
 
   def reporting_agency_ids
@@ -121,7 +121,7 @@ class FlexReport < ActiveRecord::Base
   end
 
   def providers
-    provider_list.blank? ? [] : Provider.find(provider_list.split(",").map(&:to_i))
+    provider_list.blank? ? [] : Provider.find_all_by_id(provider_list.split(",").map(&:to_i))
   end
 
   def provider_ids

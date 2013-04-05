@@ -43,10 +43,14 @@ class FlexReportsController < ApplicationController
       @report.attributes = params[:flex_report].slice("start_date(3i)","start_date(2i)","start_date(1i)","end_date(3i)","end_date(2i)","end_date(1i)","pending") 
       @report.save
     end
+    @report.attributes = params[:flex_report]
     @report.populate_results!
+
     request.format = :csv if params[:csv].present?
     respond_to do |format|
-      format.html
+      format.html do
+        prep_partial_edit
+      end
       format.csv do 
         @filename = "#{@report.name.gsub('"','')}.csv"
       end
@@ -91,16 +95,20 @@ class FlexReportsController < ApplicationController
 
   private
 
+  def prep_partial_edit
+    @group_bys = FlexReport::GroupBys.sort
+    if @report.group_by.present?
+      @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
+    end
+  end
+
   def prep_edit
+    prep_partial_edit
     @funding_subsource_names  = [['<Select All>','']] + Project.funding_subsource_names
     @providers                = [['<Select All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
     @reporting_agencies       = [['<Select All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
     @programs                 = [['<Select All>','']] + Program.default_order.map {|x| [x.name, x.id]}
     @county_names             = [['<Select All>','']] + Allocation.county_names
-    @group_bys = FlexReport::GroupBys.sort
-    if @report.group_by.present?
-      @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
-    end
     @grouped_allocations = [] 
     Provider.order(:name).includes(:allocations).each do |p|
       @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]

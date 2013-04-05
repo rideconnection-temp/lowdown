@@ -13,7 +13,7 @@
       <% if group_name(row,group_fields).present? %> 
         <%= group_name(row,group_fields) %>
       <% else %>
-        <%= report_group_fields[report_group_fields.size - group_fields.size].titleize %> Not Specified
+        <%= FlexReport::GroupMappings[report_group_fields[report_group_fields.size - group_fields.size]] %> Not Specified
       <% end %>
     <% end %>
   <% end %>

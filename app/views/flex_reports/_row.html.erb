@@ -4,7 +4,7 @@
   <% end %>
   
   <td class="inner-most-field">
-    <%= label.present? ? label : "#{@report.group_fields.last.titleize} Not Specified" %>
+    <%= label.present? ? label : "#{FlexReport::GroupMappings[@report.group_fields.last]} Not Specified" %>
   </td>
   <% if @report.fields.include? 'funds' %>
     <td class="number">

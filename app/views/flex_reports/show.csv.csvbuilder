@@ -16,7 +16,7 @@ rows.sort_by{|k,v| k }.each do |key, row|
 
   @report.group_fields.each do |group_field|
     label = row.send(group_field)
-    csv_row << (label.present? ? label : "#{group_field.titleize} Not Specified")
+    csv_row << (label.present? ? label : "#{FlexReport::GroupMappings[group_field]} Not Specified")
   end
 
   if @report.fields.include? 'funds'

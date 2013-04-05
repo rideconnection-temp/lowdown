@@ -1,0 +1,21 @@
+<h2 class="section-header">Grouping</h2>
+<select id="group-by" name="flex_report[group_by]">
+  <% @group_bys.each do |fields| %>
+    <%= group_by_option_tag fields %>
+  <% end %>
+  <option value="">Define Custom Grouping...</option>
+</select>
+
+<div style="display:none;" id="group-by-custom-section">
+  <p><strong>Select fields to group by:</strong></p>
+  <span id="group-by-custom-wrapper">
+    <span class="template">
+      <select>
+        <% FlexReport::GroupMappings.sort_by{|k,v| v }.each do |key,value| %>
+          <%= content_tag :option, value, :value => key %>
+        <% end %>
+      </select>
+    </span>
+  </span>
+  <p><a href="#" class="add">Add New Group Field</a></p>
+</div>
