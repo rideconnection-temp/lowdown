@@ -137,11 +137,13 @@ $(document).ready(function() {
   $('#collapse-all').click(function() {
     $('.visible-group').toggleClass('hidden-group').toggleClass('visible-group');
     resetFlexReportRowVisibility();
+    return false;
   });
 
   $('#expand-all').click(function() {
     $('.hidden-group').toggleClass('hidden-group').toggleClass('visible-group');
     resetFlexReportRowVisibility();
+    return false;
   });
 
   function resetFlexReportRowVisibility() {
@@ -157,5 +159,16 @@ $(document).ready(function() {
 
   $('#show-update-form').click(function() {
     $('.run-report').toggle('slow');
+    return false;
+  });
+
+  $('#unselect-all-columns').click(function() {
+    $('#report-checkbox-area input').attr('checked', false) 
+    return false;
+  });
+
+  $('#select-all-columns').click(function() {
+    $('#report-checkbox-area input').attr('checked', true) 
+    return false;
   });
 });

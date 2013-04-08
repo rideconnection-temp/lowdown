@@ -1167,6 +1167,12 @@ body.flex-reports div.actions input[type=submit] {
     float: left;
     clear: left;
 }
+div.column-select a {
+    margin: 0 3px;
+}
+div.column-select h2 {
+    display: inline;
+}
 #report-date-range-area {
     float: left;
     clear: left;
