@@ -27,7 +27,7 @@
         <td><%= allocation.activated_on %></td>
         <td><%= allocation.inactivated_on %></td>
         <td><%= allocation.program.try(:name) %></td>
-        <td><%= allocation.project_name %></td>
+        <td><%= allocation.project.try(:number_and_name) %></td>
         <td><%= allocation.county %></td>
         <td><%= link_to "Delete", allocation_url(allocation), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this allocation?" if current_user.is_admin && !(allocation.trips.exists? || allocation.summaries.exists?) %></td>
       </tr>
