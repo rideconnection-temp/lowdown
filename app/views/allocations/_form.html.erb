@@ -31,7 +31,7 @@
       
       <li class="selfclear">
         <%= form.label :project_id, "F.E. project" %>
-        <%= form.collection_select :project_id, Project.all, :id, :name, :include_blank => true %>
+        <%= form.collection_select :project_id, Project.order(:project_number, :name), :id, :number_and_name, :include_blank => true %>
         <%= link_to "Details", [:edit, @allocation.project], :class => :details if @allocation.project %>
       </li>
       

@@ -4,7 +4,7 @@ class ProjectsController < ApplicationController
   before_filter :get_drop_down_data, :only => [:new, :edit]
   
   def index
-    @projects = Project.paginate :page => params[:page]
+    @projects = Project.default_order.paginate :page => params[:page]
   end
   
   def new
