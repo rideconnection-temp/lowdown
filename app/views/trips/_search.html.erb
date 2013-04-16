@@ -27,11 +27,11 @@
     <ol class="section fourth">
       <li>
         <%= f.label :provider, "Reporting Agency:" %> 
-        <%= f.collection_select :reporting_agency, @providers.reporting_agencies, :id, :to_s, :include_blank => true %>
+        <%= f.collection_select :reporting_agency, @reporting_agencies, :id, :to_s, :include_blank => true %>
       </li>
       <li>
         <%= f.label :provider, "Provider:" %> 
-        <%= f.collection_select :provider, @providers.providers_in_allocations, :id, :to_s, :include_blank => true %>
+        <%= f.collection_select :provider, @providers, :id, :to_s, :include_blank => true %>
       </li>
       <li>
         <%= f.label :allocation, "Allocation:" %> 
