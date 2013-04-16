@@ -91,8 +91,8 @@ class TripsController < ApplicationController
 
   def list
     @query              = TripQuery.new params[:trip_query], params[:commit]
-    @providers          = Provider.default_order
-    @reporting_agencies = Provider.partners.default_order
+    @providers          = Provider.providers_in_allocations.default_order
+    @reporting_agencies = Provider.reporting_agencies.default_order
     @allocations        = Allocation.order(:name)
     @result_codes       = Trip::RESULT_CODES.sort
 

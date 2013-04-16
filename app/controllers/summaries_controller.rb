@@ -54,13 +54,13 @@ class SummaryQuery
   def providers
     na_provider = Provider.new(:name => "<Not Applicable>")
     na_provider.id = 0
-    [na_provider] + Provider.default_order
+    [na_provider] + Provider.providers_in_allocations.default_order
   end
 
   def reporting_agencies
     na_reporting_agency = Provider.new(:name => "<Not Applicable>")
     na_reporting_agency.id = 0
-    [na_reporting_agency] + Provider.partners.default_order
+    [na_reporting_agency] + Provider.reporting_agencies.default_order
   end
 end
 
