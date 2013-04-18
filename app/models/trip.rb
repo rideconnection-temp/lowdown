@@ -117,7 +117,7 @@ class Trip < ActiveRecord::Base
   end
 
   def ads_partner_cost
-    if allocation.provider.provider_type == "Partner" && !allocation.name.downcase.include?("hourly")
+    if allocation.provider.provider_type != "BPA Provider" && !allocation.name.downcase.include?("hourly")
       BigDecimal.new("5")
     else
       nil
