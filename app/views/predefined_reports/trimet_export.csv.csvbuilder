@@ -20,7 +20,7 @@ rows.sort_by{|k,v| k }.each do |key, row|
   csv_row << nil
   csv_row << nil
   csv_row << row.total_trips.to_i
-  csv_row << number_with_precision(row.total, :precision => 0)
+  csv_row << number_with_precision(row.total_elderly_and_disabled_cost, :precision => 0)
   csv_row << nil
   csv_row << nil
   csv << csv_row
