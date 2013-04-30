@@ -3,11 +3,11 @@ def bind(args)
 end
 
 class ReportRow
-  @@attrs = [:allocation, :funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
+  @@attrs = [:allocation, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
   attr_accessor *@@attrs
 
   def numeric_fields
-    [:funds, :agency_other, :vehicle_maint, :donations, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations]
+    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations]
   end
 
   def self.fields(requested_fields=nil)
@@ -55,14 +55,41 @@ class ReportRow
     this_total
   end
 
+  # The next four method calls are only for the TriMet E&D report. This exist to handle the
+  # weirdness of collecting elderly and disable ride counts under different situations and
+  # then correlating those trips to costs accordingly.
   def total_elderly_and_disabled_cost
-    # If the total_general_public_trips attribute is present, that means we need to prorate the
+    # If the total_general_public_trips attribute is present, and we're working with allocations
+    # that collects costs on a summary (not per-trip) basis, that means we need to prorate the
     # total cost based on what portion of the trips are E&D. In this case, total_trips refers to
     # E&D trips only, while total_general_public_trips refers to entire pools of trips in the allocation.
-    if total_general_public_trips.present? && total_general_public_trips != 0
+    if total_general_public_trips.present? && 
+        total_general_public_trips != 0 &&
+        total_general_public_cost == 0
       return total * (total_trips.to_f / total_general_public_trips) 
     else
       return total
+    end
+  end
+
+  def total_non_elderly_and_disabled_cost
+    if total_general_public_cost == 0
+      total - total_elderly_and_disabled_cost
+    else
+      total_general_public_cost - total_elderly_and_disabled_cost
+    end
+  end
+
+  def total_elderly_and_disabled_trips
+    # Filtering for E&D was already carried out in the query
+    total_trips
+  end
+
+  def total_non_elderly_and_disabled_trips
+    if total_general_public_trips == 0
+      0
+    else
+      total_general_public_trips - total_elderly_and_disabled_trips
     end
   end
 
@@ -303,7 +330,8 @@ class ReportRow
       ]))
     add_results['undup_riders'] = row['undup_riders'].to_i
 
-    # Collect the total_general_public_trips only if we're dealing with a service that's not strictly for elderly and disabled customers.
+    # Collect the total_general_public_trips only if we're dealing with a service that's 
+    # not strictly for elderly and disabled customers.
     # This will be used to create a ratio of E&D to total trips so that we can calculate costs for the TriMet E&D report.
     if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
       results = Trip.select("SUM(CASE WHEN result_code = 'COMP' THEN 1 + guest_count + attendant_count ELSE 0 END) AS total_general_public_trips")
@@ -368,8 +396,18 @@ class ReportRow
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless options[:pending]
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
-
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+
+    # Collect the total_general_public_cost only if we're dealing with a service that's 
+    # not strictly for elderly and disabled customers. This is used for audit purposes.
+    if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
+      results = Trip.select("sum(apportioned_fare) AS total_general_public_cost")
+      results = results.where(:allocation_id => allocation['id'])
+      results = results.data_entry_complete unless options[:pending]
+      row = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+      add_results['total_general_public_cost'] = row['total_general_public_cost'].to_i unless row['total_general_public_cost'].blank?
+    end
+
     apply_results(add_results)
   end
 
