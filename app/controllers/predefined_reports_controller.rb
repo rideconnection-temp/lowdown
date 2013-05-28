@@ -12,7 +12,13 @@ class ReportQuery
     elsif params['start_date(1i)']
       @start_date = date_from_params(params,:start_date)
     elsif params[:date_range] == :quarter
-      @start_date = Date.new(Date.today.year, (Date.today.month-1)/3*3+1,1) - 3.months
+      @start_date = Date.new(now.year, (now.month-1)/3*3+1,1) - 3.months
+    elsif params[:date_range] == :fiscal_year_to_date
+      if (now - 1.month).month > 6
+        @start_date = Date.new(now.year, 7, 1)
+      else
+        @start_date = Date.new(now.year - 1, 7, 1)
+      end
     else
       @start_date = Date.new(now.year, now.month, 1).prev_month
     end
@@ -25,6 +31,9 @@ class ReportQuery
       @end_date = @after_end_date - 1.day
     elsif params[:date_range] == :quarter
       @after_end_date = @start_date + 3.months
+      @end_date = @after_end_date - 1.day
+    elsif params[:date_range] == :fiscal_year_to_date
+      @after_end_date = Date.new(now.year,now.month,1)
       @end_date = @after_end_date - 1.day
     else
       @after_end_date = @start_date + 1.month
@@ -57,6 +66,7 @@ class PredefinedReportsController < ApplicationController
   def index
     @query = ReportQuery.new
     @quarterly_query = ReportQuery.new(:date_range => :quarter)
+    @fiscal_year_to_date_query = ReportQuery.new(:date_range => :fiscal_year_to_date)
   end
 
   def premium_service_billing

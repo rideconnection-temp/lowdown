@@ -101,7 +101,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @quarterly_query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :quarterly_narrative } do |f| %>
+  <%= form_for @fiscal_year_to_date_query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :quarterly_narrative } do |f| %>
     <fieldset>
       <h2 class="report-header">Quarterly Narrative Report</h2>
       <p></p>
