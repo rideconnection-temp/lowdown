@@ -28,4 +28,8 @@ class Provider < ActiveRecord::Base
   def active_non_trip_allocations
     allocations.non_trip_collection_method.not_recently_inactivated
   end
+
+  def active_non_trip_allocations_as_of(d)
+    allocations.non_trip_collection_method.active_as_of(d)
+  end
 end
