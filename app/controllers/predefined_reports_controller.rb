@@ -208,6 +208,11 @@ class PredefinedReportsController < ApplicationController
     @report.field_list = 'admin_volunteer_hours,agency_other,cost_per_hour,cost_per_mile,cost_per_trip,donations,driver_paid_hours,driver_total_hours,driver_volunteer_hours,escort_volunteer_hours,funds,in_district_trips,mileage,miles_per_ride,out_of_district_trips,total,total_trips,total_volunteer_hours,turn_downs,undup_riders,vehicle_maint'
     @report.group_by = "reporting_agency,program,quarter,month"
     @report.populate_results!
+
+    @summary_report = FlexReport.new
+    @summary_report.report_rows = @report.report_rows
+    @summary_report.group_by = "reporting_agency,quarter,month"
+    @summary_report.group_report_rows!
   end
 
   def trimet_export
