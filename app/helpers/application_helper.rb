@@ -46,6 +46,12 @@ module ApplicationHelper
     end
   end
 
+  def agency_program_counties(reporting_agency_id,program_id)
+    return if program_id.blank? || reporting_agency_id.blank?
+    allocations = Allocation.where(:program_id => program_id,:reporting_agency_id => reporting_agency_id)
+    allocations.map{|x| x.county }.compact.sort.uniq.join(", ")
+  end
+
   def group_by_label(value)
     value.map { |field| FlexReport::GroupMappings[field] || field.titlecase }.join(", ")
   end
