@@ -20,8 +20,9 @@
     <div class="wrap selfclear">
       <%= link_to "Ride Connection Service Database", root_url, :id => :logo %>
       <div id="login-area">
+        <a href="https://apps.rideconnection.org/greenbook/index.php/Category:Service_Database">Help</a>
         <% if current_user %>
-          <a href="#"><%= current_user.email %></a> | <%= link_to "Log out", logout_path, {:method=>"post"} %>
+          | <a href="#"><%= current_user.email %></a> | <%= link_to "Log out", logout_path, {:method=>"post"} %>
         <% end %>
       </div>
     </div><!-- /.wrap -->
