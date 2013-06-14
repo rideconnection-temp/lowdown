@@ -46,10 +46,10 @@ module ApplicationHelper
     end
   end
 
-  def agency_program_counties(reporting_agency_id,program_id)
-    return if program_id.blank? || reporting_agency_id.blank?
-    allocations = Allocation.where(:program_id => program_id,:reporting_agency_id => reporting_agency_id)
-    allocations.map{|x| x.county }.compact.sort.uniq.join(", ")
+  def quarterly_report_funding_sources(reporting_agency_id,program_id,county)
+    return if program_id.blank? || reporting_agency_id.blank? || county.blank?
+    a = Allocation.where(:program_id => program_id,:reporting_agency_id => reporting_agency_id,:county => county)
+    a.map{|x| x.project.present? ? "#{x.project.funding_source} #{x.project.funding_subsource}" : nil }.compact.sort.uniq.join(", ")
   end
 
   def group_by_label(value)
