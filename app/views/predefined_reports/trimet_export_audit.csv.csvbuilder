@@ -1,6 +1,7 @@
 columns = [
   'Provider Name',
   'Allocation',
+  'TriMet Report Group Name',
   'TriMet Provider Name',
   'TriMet Program Name',
   'Honored Trips',
@@ -24,6 +25,7 @@ rows.sort_by{|k,v| k }.each do |key, row|
 
   csv_row << row.provider_name
   csv_row << row.allocation_name
+  csv_row << row.trimet_report_group_name
   csv_row << row.trimet_provider_name
   csv_row << row.trimet_program_name
   csv_row << row.total_elderly_and_disabled_trips
