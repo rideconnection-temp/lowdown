@@ -55,18 +55,23 @@ class ReportRow
     this_total
   end
 
-  # The next four method calls are only for the TriMet E&D report. This exist to handle the
+  # The next four methods are only for the TriMet E&D report. They exist to handle the
   # weirdness of collecting elderly and disable ride counts under different situations and
-  # then correlating those trips to costs accordingly.
+  # then correlating those trips to costs proportionately.
   def total_elderly_and_disabled_cost
-    # If the total_general_public_trips attribute is present, and we're working with allocations
-    # that collects costs on a summary (not per-trip) basis, that means we need to prorate the
+    # If the total_general_public_trips attribute is present, and we're working with an allocation
+    # that collects costs on a summary (not per-trip) basis, which means we need to prorate the
     # total cost based on what portion of the trips are E&D. In this case, total_trips refers to
     # E&D trips only, while total_general_public_trips refers to entire pools of trips in the allocation.
+
     if total_general_public_trips.present? && 
         total_general_public_trips != 0 &&
         total_general_public_cost == 0
-      return total * (total_trips.to_f / total_general_public_trips) 
+      if total_trips == total_general_public_trips
+        return total
+      else
+        return total * (total_trips.to_f / total_general_public_trips) 
+      end
     else
       return total
     end
@@ -286,6 +291,9 @@ class ReportRow
     @undup_riders               += row.undup_riders
     @escort_volunteer_hours     += row.escort_volunteer_hours
     @admin_volunteer_hours      += row.admin_volunteer_hours
+
+    @total_general_public_trips += row.total_general_public_trips
+    @total_general_public_cost  += row.total_general_public_cost
   end
 
   def apply_results(add_result)
@@ -405,7 +413,7 @@ class ReportRow
       results = results.where(:allocation_id => allocation['id'])
       results = results.data_entry_complete unless options[:pending]
       row = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
-      add_results['total_general_public_cost'] = row['total_general_public_cost'].to_i unless row['total_general_public_cost'].blank?
+      add_results['total_general_public_cost'] = BigDecimal(row['total_general_public_cost']) unless row['total_general_public_cost'].blank?
     end
 
     apply_results(add_results)
