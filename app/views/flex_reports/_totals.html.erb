@@ -1,7 +1,7 @@
 <% short_name = short_group_name(row,group_fields) %>
 <% row = ReportRow.sum(row, nil, @report.fields) %>
 <% totals_class = (group_fields.size >= 3 || (defined?(grand_total) && grand_total)) ? "sum-totals" : "totals" %>
-<%= content_tag :tr, :class => "#{row_classes.join(' ')} #{totals_class}"  do %>
+<%= content_tag :tr, :class => "#{row_classes.join(' ')} #{totals_class} level-#{tree_map.size}"  do %>
   <% if defined?(total_label) %>
     <%= content_tag :td, :colspan => group_fields.size + 1 do %>
       <%= total_label %>

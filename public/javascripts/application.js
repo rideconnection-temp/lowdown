@@ -136,6 +136,7 @@ $(document).ready(function() {
 
   $('#collapse-all').click(function() {
     $('.visible-group').toggleClass('hidden-group').toggleClass('visible-group');
+    // $('.level-1').toggleClass('hidden-group').toggleClass('visible-group');
     resetFlexReportRowVisibility();
     return false;
   });

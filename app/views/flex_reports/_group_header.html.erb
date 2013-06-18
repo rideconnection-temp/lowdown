@@ -1,5 +1,5 @@
 <%= content_tag :tr, 
-  :class => (row_classes + %w(collapsible visible-group) + (root_header ? ['no-print'] : [])).join(' '), 
+  :class => (row_classes + %w(collapsible visible-group) + (root_header ? ['no-print'] : []) + ["level-#{tree_map.size}"]).join(' '), 
   "data-group" => this_row_group_class do %>
   <% if root_header %>
     <%= content_tag :td, :class => "report-item", :colspan => (@report.fields.size + report_group_fields.size + 1) do %>
