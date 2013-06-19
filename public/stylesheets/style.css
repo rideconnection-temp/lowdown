@@ -1306,7 +1306,7 @@ li.flex-report span.handle {
 
 li.flex-report ol {
     list-style: none;
-    margin: 0 0 10px;
+    margin: 10px 0 5px;
     float: left;
 }
 li.flex-report ol li {

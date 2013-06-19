@@ -79,8 +79,11 @@
           <%= form_for report, :html => { :class => "run-report", :method => :get } do |f| %>
             <fieldset>
               <h2 class="report-header" title="<%= report.description %>"><%= report.name %></h2>
-              <p><%= report.subtitle %></p>
-              <%= render "run_form", :f => f, :report => report, :ol_class => "" %>
+              <div class="subtitle">
+                <%= report.subtitle %>
+              </div>
+              <%= content_tag(:div, "Grouping: #{group_by_label(report.group_fields)}", :class => "grouping-description") if report.group_fields.present? %>
+              <%= render "run_form", :f => f, :report => report, :ol_class => "index" %>
             </fieldset>
           <% end %>
         </li>
