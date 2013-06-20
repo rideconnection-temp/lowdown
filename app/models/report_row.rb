@@ -3,11 +3,11 @@ def bind(args)
 end
 
 class ReportRow
-  @@attrs = [:allocation, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations]
+  @@attrs = [:allocation, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations, :total_elderly_and_disabled_cost]
   attr_accessor *@@attrs
 
   def numeric_fields
-    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations]
+    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
   end
 
   def self.fields(requested_fields=nil)
@@ -58,7 +58,7 @@ class ReportRow
   # The next four methods are only for the TriMet E&D report. They exist to handle the
   # weirdness of collecting elderly and disable ride counts under different situations and
   # then correlating those trips to costs proportionately.
-  def total_elderly_and_disabled_cost
+  def calculate_total_elderly_and_disabled_cost
     # If the total_general_public_trips attribute is present, and we're working with an allocation
     # that collects costs on a summary (not per-trip) basis, which means we need to prorate the
     # total cost based on what portion of the trips are E&D. In this case, total_trips refers to
@@ -68,12 +68,12 @@ class ReportRow
         total_general_public_trips != 0 &&
         total_general_public_cost == 0
       if total_trips == total_general_public_trips
-        return total
+        @total_elderly_and_disabled_cost = total
       else
-        return total * (total_trips.to_f / total_general_public_trips) 
+        @total_elderly_and_disabled_cost = total * (total_trips.to_f / total_general_public_trips) 
       end
     else
-      return total
+      @total_elderly_and_disabled_cost = total
     end
   end
 
@@ -270,30 +270,31 @@ class ReportRow
   end
 
   def include_row(row)
-    @funds                      += row.funds
-    @agency_other               += row.agency_other
-    @vehicle_maint              += row.vehicle_maint
-    @administrative             += row.administrative
-    @operations                 += row.operations
-    @donations                  += row.donations
+    @funds                           += row.funds
+    @agency_other                    += row.agency_other
+    @vehicle_maint                   += row.vehicle_maint
+    @administrative                  += row.administrative
+    @operations                      += row.operations
+    @donations                       += row.donations
     
-    @in_district_trips          += row.in_district_trips
-    @out_of_district_trips      += row.out_of_district_trips
-    @total_last_year            += row.total_last_year
-    @customer_trips             += row.customer_trips
-    @guest_and_attendant_trips  += row.guest_and_attendant_trips
-    @mileage                    += row.mileage
+    @in_district_trips               += row.in_district_trips
+    @out_of_district_trips           += row.out_of_district_trips
+    @total_last_year                 += row.total_last_year
+    @customer_trips                  += row.customer_trips
+    @guest_and_attendant_trips       += row.guest_and_attendant_trips
+    @mileage                         += row.mileage
 
-    @driver_volunteer_hours     += row.driver_volunteer_hours
-    @driver_paid_hours          += row.driver_paid_hours
+    @driver_volunteer_hours          += row.driver_volunteer_hours
+    @driver_paid_hours               += row.driver_paid_hours
 
-    @turn_downs                 += row.turn_downs
-    @undup_riders               += row.undup_riders
-    @escort_volunteer_hours     += row.escort_volunteer_hours
-    @admin_volunteer_hours      += row.admin_volunteer_hours
+    @turn_downs                      += row.turn_downs
+    @undup_riders                    += row.undup_riders
+    @escort_volunteer_hours          += row.escort_volunteer_hours
+    @admin_volunteer_hours           += row.admin_volunteer_hours
 
-    @total_general_public_trips += row.total_general_public_trips
-    @total_general_public_cost  += row.total_general_public_cost
+    @total_general_public_trips      += row.total_general_public_trips
+    @total_general_public_cost       += row.total_general_public_cost
+    @total_elderly_and_disabled_cost += row.total_elderly_and_disabled_cost
   end
 
   def apply_results(add_result)

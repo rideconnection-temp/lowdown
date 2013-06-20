@@ -270,6 +270,7 @@ class FlexReport < ActiveRecord::Base
       row.collect_costs_by_trip(allocation_object, collection_start_date, collection_end_date, options)
 
       row.collect_operation_data_by_summary(allocation_object, collection_start_date, collection_end_date, options)
+      row.calculate_total_elderly_and_disabled_cost
 
       @report_rows[allocation_object] = row
     end
