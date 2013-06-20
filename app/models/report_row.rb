@@ -368,6 +368,17 @@ class ReportRow
 
     add_results = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
     apply_results(add_results)
+
+    # Collect the total_general_public_trips only if we're dealing with a service that's 
+    # not strictly for elderly and disabled customers.  This will be used in the E&D audit export
+    if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
+      results = Summary.select("SUM(in_district_trips) + SUM(out_of_district_trips) as total_general_public_trips")
+      results = results.where(:allocation_id => allocation['id']).joins(:summary_rows)
+      results = results.data_entry_complete unless options[:pending]
+      row = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
+      add_results['total_general_public_trips'] = row['total_general_public_trips'].to_i
+    end
+    apply_results(add_results)
   end
 
   def collect_runs_by_trip(allocation, start_date, end_date, options = {})
