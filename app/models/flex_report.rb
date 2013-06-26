@@ -18,6 +18,7 @@ class FlexReport < ActiveRecord::Base
     "funding_source"                => "Funding Source",
     "funding_subsource"             => "Funding Subsource",
     "funding_source_and_subsource"  => "Funding Source and Subsource",
+    "routematch_override"           => "RouteMatch Override",
     "allocation_name"               => "Allocation Name",
     "program_name"                  => "Program Name",
     "project_name"                  => "F.E. Project Name",

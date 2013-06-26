@@ -213,6 +213,10 @@ class ReportRow
     allocation.funding_source_and_subsource
   end
 
+  def routematch_override
+    allocation.routematch_override.blank? ? nil : allocation.routematch_override
+  end
+
   def project_name
     allocation.project_name
   end

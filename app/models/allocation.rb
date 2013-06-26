@@ -63,7 +63,7 @@ class Allocation < ActiveRecord::Base
   # output = {'animal' => { 'no' => ['platypus'], 
   #                         'yes' => ['cow'] 
   #                       }, 
-  #           'plant' => { 'no' => 'oak'], 
+  #           'plant' => { 'no' => ['oak'], 
   #                        'yes' => ['apple', 'orange']
   #                       }
   #           'fungus' => { 'yes' => ['shiitake'] }
@@ -76,6 +76,7 @@ class Allocation < ActiveRecord::Base
       cur_group = out
       for group in groups
         group_value = record.send(group)
+        group_value = nil if group_value.blank? 
         if group == last_group
           if !cur_group.member? group_value
             cur_group[group_value] = []
