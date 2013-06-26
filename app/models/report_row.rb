@@ -377,8 +377,8 @@ class ReportRow
       results = results.data_entry_complete unless options[:pending]
       row = results.current_versions.date_range(start_date, end_date).first.try(:attributes)
       add_results['total_general_public_trips'] = row['total_general_public_trips'].to_i
+      apply_results(add_results)
     end
-    apply_results(add_results)
   end
 
   def collect_runs_by_trip(allocation, start_date, end_date, options = {})
