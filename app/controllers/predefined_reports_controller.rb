@@ -181,9 +181,12 @@ class PredefinedReportsController < ApplicationController
     @query = ReportQuery.new(params[:report_query])
 
     group_fields = ["county", "reporting_agency"]
-    results = Allocation.group(group_fields, Allocation.where("reporting_agency_id IS NOT NULL"))
+    a = Allocation.where("reporting_agency_id IS NOT NULL")
+    a = a.where(:reporting_agency_id => @query.reporting_agency_id) if @query.reporting_agency_id.present?
+    grouped_allocations = Allocation.group(group_fields, a)
+
     @results = {}
-    for county, rows in results
+    for county, rows in grouped_allocations
       @results[county] = {}
       for provider, allocations in rows
         row = @results[county][provider] = RidePurposeRow.new

@@ -94,6 +94,10 @@
           <%= f.label :end_date %>
           <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :purpose_end_date, :required => :required %>
         </li>
+        <li>
+          <%= f.label :reporting_agency_id, 'Reporting Agency' %>
+          <%= f.select :reporting_agency_id, options_for_select([['<All Reporting Agencies>','']] + Provider.reporting_agencies.default_order.all.map { |p| [p.name, p.id] }) %>
+        </li>
       </ol>
       <input type="submit" name="report" value="Report">
     </fieldset>
