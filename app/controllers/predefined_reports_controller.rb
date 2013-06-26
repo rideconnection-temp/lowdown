@@ -2,7 +2,7 @@ class ReportQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :after_end_date, :provider_id, :provider, :county
+  attr_accessor :start_date, :end_date, :after_end_date, :provider_id, :reporting_agency_id, :provider, :county
 
   def initialize(params = {})
     params = {} if params.nil?
@@ -40,9 +40,10 @@ class ReportQuery
       @end_date = @after_end_date - 1.day
     end
 
-    @provider = params[:provider]             if params[:provider].present?
-    @provider_id = params[:provider_id].to_i  if params[:provider_id].present?
-    @county = params[:county]                 if params[:county].present?
+    @provider = params[:provider]                            if params[:provider].present?
+    @provider_id = params[:provider_id].to_i                 if params[:provider_id].present?
+    @county = params[:county]                                if params[:county].present?
+    @reporting_agency_id = params[:reporting_agency_id].to_i if params[:reporting_agency_id].present?
   end
 
   def persisted?
@@ -244,7 +245,9 @@ class PredefinedReportsController < ApplicationController
     #so, for each trip this month, find the customer, then find out whether 
     # there was a previous trip for this customer this fy
 
-    trip_customers = Trip.current_versions.select("DISTINCT customer_id").for_provider(@query.provider_id).completed
+    trip_customers = Trip.current_versions.select("DISTINCT customer_id").completed
+    trip_customers = trip_customers.for_provider(@query.provider_id) if @query.provider_id.present?
+    trip_customers = trip_customers.for_reporting_agency(@query.reporting_agency_id) if @query.reporting_agency_id.present?
     prior_customers_in_fiscal_year = trip_customers.for_date_range(fiscal_year_start_date(@query.start_date), @query.start_date).map {|x| x.customer_id}
     customers_this_period = trip_customers.for_date_range(@query.start_date, @query.after_end_date).map {|x| x.customer_id}
 

@@ -3,7 +3,12 @@
   <h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
 </div>
 
-<h2>Partner Name: <%= Provider.find_by_id(@query.provider_id).try(:name) %></h2>
+<% if @query.provider_id.present? %>
+  <h2>Partner Name: <%= Provider.find_by_id(@query.provider_id).try(:name) %></h2>
+<% end %>
+<% if @query.reporting_agency_id.present? %>
+  <h2>Reporting Agency Name: <%= Provider.find_by_id(@query.reporting_agency_id).try(:name) %></h2>
+<% end %>
 
 <table>
   <tr>
