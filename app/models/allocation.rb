@@ -147,6 +147,10 @@ class Allocation < ActiveRecord::Base
     project.try :name
   end
 
+  def project_number_and_name
+    "#{project.project_number} #{project.name}" if project.present?
+  end
+
   def provider_name
     provider.try :name
   end

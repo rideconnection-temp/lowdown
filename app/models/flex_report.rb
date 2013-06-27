@@ -23,6 +23,7 @@ class FlexReport < ActiveRecord::Base
     "program_name"                  => "Program Name",
     "project_name"                  => "F.E. Project Name",
     "project_number"                => "F.E. Project Number",
+    "project_number_and_name"       => "F.E. Project Number and Name",
     "provider_name"                 => "Provider Name",
     "reporting_agency_name"         => "Reporting Agency Name",
     "trimet_program_name"           => "TriMet Program Name",
