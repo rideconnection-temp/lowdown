@@ -62,6 +62,7 @@ class Trip < ActiveRecord::Base
   scope :for_import,                    lambda {|import_id|     where(:trip_import_id=>import_id)}
   scope :for_customer_last_name_like,   lambda {|name|          where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(last_name) LIKE ?)","%#{name.downcase}%") }
   scope :for_customer_first_name_like,  lambda {|name|          where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(first_name) LIKE ?)","%#{name.downcase}%") }
+  scope :for_original_override_like,    lambda {|override|      where("LOWER(trips.original_override) LIKE ?", "%#{override.downcase}%") }
   scope :for_valid_start,               lambda {|valid_start|   where(:valid_start => valid_start) }
   scope :for_date_range,                lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
   scope :grouped_by_adjustment, select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, MIN(date) as min_date, MAX(date) AS max_date, MIN(trips.id) as id").group("trips.valid_start, trips.adjustment_notes").order("trips.valid_start DESC").where("valid_start <> imported_at")

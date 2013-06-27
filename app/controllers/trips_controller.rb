@@ -6,7 +6,7 @@ class TripQuery
 
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
       :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id,
-      :adjustment_notes, :display_search_form, :run_id, :share_id, :valid_start, :result_code
+      :adjustment_notes, :display_search_form, :run_id, :share_id, :valid_start, :result_code, :original_override
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -46,6 +46,7 @@ class TripQuery
     @result_code         = params[:result_code]
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
+    @original_override   = params[:original_override]
   end
 
   def persisted?
@@ -64,6 +65,7 @@ class TripQuery
     trips = trips.for_result_code(result_code) if result_code.present?
     trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
     trips = trips.for_customer_last_name_like(customer_last_name) if customer_last_name.present?
+    trips = trips.for_original_override_like(original_override) if original_override.present?
     trips
   end
   
