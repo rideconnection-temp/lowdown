@@ -193,84 +193,12 @@ class ReportRow
     allocation.name
   end
 
-  def project_number
-    allocation.project_number
-  end
-
-  def program_name
-    allocation.program_name
-  end
-
-  def funding_source
-    allocation.funding_source
-  end
-
-  def funding_subsource
-    allocation.funding_subsource
-  end
-
-  def funding_source_and_subsource
-    allocation.funding_source_and_subsource
-  end
-
-  def routematch_override
-    allocation.routematch_override.blank? ? nil : allocation.routematch_override
-  end
-
-  def project_name
-    allocation.project_name
-  end
-
-  def county
-    allocation.county
-  end
-  
-  def short_county
-    allocation.short_county
-  end
-  
-  def reporting_agency_id
-    allocation.reporting_agency_id
-  end
-
-  def reporting_agency_name
-    allocation.reporting_agency_name
-  end
-
-  def short_reporting_agency_name
-    allocation.reporting_agency.try :short_name
-  end
-
-  def provider_id
-    allocation.provider_id
-  end
-
-  def provider_name
-    allocation.provider_name
-  end
-
-  def short_provider_name
-    allocation.provider.try :short_name
-  end
-  
-  def trimet_provider_name 
-    allocation.trimet_provider_name
-  end
-
-  def trimet_provider_identifier 
-    allocation.trimet_provider_identifier
-  end
-
-  def trimet_program_name
-    allocation.trimet_program_name
-  end
-
-  def trimet_program_identifier
-    allocation.trimet_program_identifier
-  end
-
-  def trimet_report_group_name
-    allocation.trimet_report_group_name
+  def method_missing(method)
+    if allocation.respond_to?(method)
+      allocation.send(method) 
+    else
+      raise NoMethodError.new("NoMethodError")
+    end
   end
 
   def include_row(row)

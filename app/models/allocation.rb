@@ -151,8 +151,20 @@ class Allocation < ActiveRecord::Base
     provider.try :name
   end
 
+  def short_provider_name
+    provider.try :short_name
+  end
+  
   def reporting_agency_name
     reporting_agency.try :name
+  end
+
+  def short_reporting_agency_name
+    reporting_agency.try :short_name
+  end
+
+  def override_name
+    override.try :name
   end
 
   def trimet_program_name
