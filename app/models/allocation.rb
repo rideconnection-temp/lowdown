@@ -151,6 +151,10 @@ class Allocation < ActiveRecord::Base
     "#{project.project_number} #{project.name}" if project.present?
   end
 
+  def short_project_number_and_name
+    project.try :project_number
+  end
+
   def provider_name
     provider.try :name
   end

@@ -197,7 +197,15 @@ class ReportRow
     if allocation.respond_to?(method)
       allocation.send(method) 
     else
-      raise NoMethodError.new("NoMethodError")
+      super
+    end
+  end
+
+  def respond_to?(method, include_private = false)
+    if allocation.respond_to?(method)
+      true
+    else
+      super
     end
   end
 
