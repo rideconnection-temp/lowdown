@@ -193,20 +193,16 @@ class ReportRow
     allocation.name
   end
 
-  def method_missing(method)
-    if allocation.respond_to?(method)
-      allocation.send(method) 
+  def method_missing(method_name)
+    if allocation.respond_to?(method_name)
+      allocation.send(method_name) 
     else
       super
     end
   end
 
-  def respond_to?(method, include_private = false)
-    if allocation.respond_to?(method)
-      true
-    else
-      super
-    end
+  def respond_to_missing?(method_name, include_private = false)
+    allocation.respond_to?(method_name) || super
   end
 
   def include_row(row)
