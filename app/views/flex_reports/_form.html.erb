@@ -27,8 +27,8 @@
     <ol id="filters">
       <li>
         <h2>Funding Sources</h2>
-        <select class="multi full" id="report_funding_subsource_names" multiple="multiple" name="flex_report[funding_subsource_names][]">
-          <%= options_for_select(@funding_subsource_names, @report.funding_subsource_names) %>
+        <select class="multi full" id="report_funding_sources" multiple="multiple" name="flex_report[funding_sources][]">
+          <%= options_for_select(@funding_sources, @report.funding_source_ids) %>
         </select>
       </li>
       <li>

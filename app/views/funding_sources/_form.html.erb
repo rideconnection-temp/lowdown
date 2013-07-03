@@ -1,0 +1,26 @@
+<%= form_for(@funding_source) do |form| %>
+  <%= render "shared/error_messages", :target => @funding_source %>
+  
+  <fieldset>
+    <ol class="section ">
+      <li class="selfclear">
+        <%= form.label :funding_source_name %>
+        <%= form.text_field :funding_source_name %>
+      </li>
+      <li class="selfclear">
+        <%= form.label :funding_subsource_name %>
+        <%= form.text_field :funding_subsource_name %>
+      </li>
+      <li class="selfclear">
+        <%= form.label :notes %>
+        <%= form.text_area :notes %>
+      </li>
+    </ol>
+    
+    <% if current_user.is_admin %>
+      <div class="actions">
+        <%= form.submit %>
+      </div>
+    <% end %>
+  </fieldset>
+<% end %>

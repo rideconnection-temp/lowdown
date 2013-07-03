@@ -1,0 +1,20 @@
+<div id="page-header">
+  <h1>Editing Funding Source</h1>
+</div>
+
+<%= render 'form' %>
+<h2>
+  <% if @funding_source.projects.present? %>
+    This record is used in the following Financial Edge projects
+  <% else %>
+    This record is not used in any allocations
+  <% end %>
+</h2>
+<ul>
+  <% @funding_source.projects.sort_by{|x| x.number_and_name}.each do |a| %>
+    <li><%= link_to a.number_and_name, [:edit, a] %></li>
+  <% end %>
+</ul>
+<hr>
+<%= render 'shared/related_allocations', :target => @funding_source.allocations %>
+<%= link_to 'Back', funding_sources_path, :class => "action-bttn" %>

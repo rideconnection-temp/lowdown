@@ -60,19 +60,19 @@ class FlexReport < ActiveRecord::Base
     end
   end
 
-  def funding_subsource_names
-    if funding_subsource_name_list.blank?
-      [""]
-    else
-      funding_subsource_name_list.split("|")
-    end
+  def funding_sources
+    funding_source_list.blank? ? [] : FundingSource.find_all_by_id(funding_source_list.split(",").map(&:to_i))
   end
 
-  def funding_subsource_names=(list)
-    if list.blank? 
-      self.funding_subsource_name_list = nil
+  def funding_source_ids
+    funding_source_list.blank? ? [""] : funding_source_list.split(",").map(&:to_i)
+  end
+
+  def funding_sources=(list)
+    if list.blank?
+      self.funding_source_list = nil
     else
-      self.funding_subsource_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
+      self.funding_source_list = list.sort.map(&:to_s).join(",")
     end
   end
 
@@ -190,9 +190,9 @@ class FlexReport < ActiveRecord::Base
     where_strings << "(inactivated_on IS NULL OR inactivated_on > ?) AND activated_on < ?"
     where_params.concat [start_date, query_end_date]
     
-    if funding_subsource_name_list.present?
-      where_strings << "project_id IN (SELECT id FROM projects where COALESCE(funding_source,'') || ': ' || COALESCE(funding_subsource) IN (?))"
-      where_params << funding_subsource_names
+    if funding_source_list.present?
+      where_strings << "project_id IN (SELECT id FROM projects where funding_source_id IN (?))"
+      where_params << funding_source_ids
     end
     if reporting_agency_list.present? 
       where_strings << "reporting_agency_id IN (?)"

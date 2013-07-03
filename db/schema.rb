@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130626212829) do
+ActiveRecord::Schema.define(:version => 20130703140654) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -38,7 +38,6 @@ ActiveRecord::Schema.define(:version => 20130626212829) do
     t.string  "trip_collection_method"
     t.string  "run_collection_method"
     t.string  "cost_collection_method"
-    t.string  "routematch_override"
     t.string  "routematch_provider_code"
     t.date    "inactivated_on"
     t.string  "program_name"
@@ -101,6 +100,15 @@ ActiveRecord::Schema.define(:version => 20130626212829) do
     t.integer "report_category_id"
     t.boolean "elderly_and_disabled_only",   :default => false, :null => false
     t.text    "program_list"
+    t.text    "funding_source_list"
+  end
+
+  create_table "funding_sources", :force => true do |t|
+    t.string   "funding_source_name"
+    t.string   "funding_subsource_name"
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "mobilities", :force => true do |t|
@@ -123,11 +131,12 @@ ActiveRecord::Schema.define(:version => 20130626212829) do
 
   create_table "projects", :force => true do |t|
     t.string   "name"
-    t.string   "funding_source"
-    t.string   "funding_subsource"
+    t.string   "old_funding_source_name"
+    t.string   "old_funding_subsource_name"
     t.string   "project_number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "funding_source_id"
   end
 
   create_table "providers", :force => true do |t|
@@ -320,5 +329,7 @@ ActiveRecord::Schema.define(:version => 20130626212829) do
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
+
+  add_foreign_key "projects", ["funding_source_id"], "funding_sources", ["id"], :name => "projects_funding_source_id_fkey"
 
 end
