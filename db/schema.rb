@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130703140654) do
+ActiveRecord::Schema.define(:version => 20130703225636) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(:version => 20130703140654) do
     t.boolean "elderly_and_disabled_only",   :default => false, :null => false
     t.text    "program_list"
     t.text    "funding_source_list"
+    t.text    "project_list"
   end
 
   create_table "funding_sources", :force => true do |t|

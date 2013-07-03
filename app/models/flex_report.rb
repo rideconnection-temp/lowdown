@@ -60,6 +60,22 @@ class FlexReport < ActiveRecord::Base
     end
   end
 
+  def projects
+    project_list.blank? ? [] : Project.find_all_by_id(project_list.split(",").map(&:to_i))
+  end
+
+  def project_ids
+    project_list.blank? ? [""] : project_list.split(",").map(&:to_i)
+  end
+
+  def projects=(list)
+    if list.blank?
+      self.project_list = nil
+    else
+      self.project_list = list.sort.map(&:to_s).join(",")
+    end
+  end
+
   def funding_sources
     funding_source_list.blank? ? [] : FundingSource.find_all_by_id(funding_source_list.split(",").map(&:to_i))
   end
@@ -193,6 +209,10 @@ class FlexReport < ActiveRecord::Base
     if funding_source_list.present?
       where_strings << "project_id IN (SELECT id FROM projects where funding_source_id IN (?))"
       where_params << funding_source_ids
+    end
+    if project_list.present?
+      where_strings << "project_id IN (?)"
+      where_params << project_ids
     end
     if reporting_agency_list.present? 
       where_strings << "reporting_agency_id IN (?)"

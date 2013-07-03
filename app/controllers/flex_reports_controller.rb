@@ -105,6 +105,7 @@ class FlexReportsController < ApplicationController
   def prep_edit
     prep_partial_edit
     @funding_sources          = [['<Select All>','']] + FundingSource.default_order.map {|x| [x.name, x.id]}
+    @projects                 = [['<Select All>','']] + Project.order(:project_number, :name).map {|x| [x.number_and_name, x.id]}
     @providers                = [['<Select All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
     @reporting_agencies       = [['<Select All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
     @programs                 = [['<Select All>','']] + Program.default_order.map {|x| [x.name, x.id]}
