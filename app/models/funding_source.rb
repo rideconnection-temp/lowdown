@@ -8,10 +8,6 @@ class FundingSource < ActiveRecord::Base
   scope :default_order, order(:funding_source_name, :funding_subsource_name)
 
   def name
-    if funding_subsource_name.present?
-      "#{funding_source_name}: #{funding_subsource_name}"
-    else
-      funding_source_name
-    end
+    "#{funding_source_name} #{funding_subsource_name}".strip
   end
 end
