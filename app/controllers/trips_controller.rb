@@ -98,7 +98,7 @@ class TripsController < ApplicationController
     @allocations        = Allocation.order(:name)
     @result_codes       = Trip::RESULT_CODES.sort
 
-    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project,:override]).joins(:allocation).order(:date,:trip_import_id)
+    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,{:project => :funding_source},:override]).joins(:allocation).order(:date,:trip_import_id)
     @trips = @query.apply_conditions(@trips)
 
     if @query.format == 'general'
@@ -188,7 +188,6 @@ class TripsController < ApplicationController
       flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
       redirect_to :action => :show_import
     else
-#     TODO: make into a flash error
       flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
       redirect_to :action => :show_import
     end
