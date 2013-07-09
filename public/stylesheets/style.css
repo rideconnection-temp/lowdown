@@ -629,9 +629,6 @@ fieldset select.full {
 fieldset ol.section li.passengers input {
     max-width: 3em;
 }
-fieldset ol.section li.timepicker input {
-    width: 10em;
-}
 fieldset ol.section li div {
     float: left;
     width: 60%;
@@ -894,13 +891,6 @@ input.datepicker {
     color: #444;
     font-size: 11px;
 }
-.ui-timepicker-div .ui-widget-header{ margin-bottom: 8px; }
-.ui-timepicker-div dl{ text-align: left; }
-.ui-timepicker-div dl dt{ height: 25px; }
-.ui-timepicker-div dl dd{ margin: -25px 0 10px 65px; }
-.ui-timepicker-div td {  }
-.ui_tpicker_hour,
-.ui_tpicker_minute { font-size: 9px; }
   
 .ui-datepicker-trigger {
     margin: 0 5px;

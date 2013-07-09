@@ -35,7 +35,9 @@ $(document).ready(function() {
       showOn: "button",
       buttonText: "Select",
       dateFormat: 'yy-mm-dd', 
-      changeYear : true
+      changeYear: true,
+      showOtherMonths: true,
+      selectOtherMonths: true
   });
 
   // format report headers
