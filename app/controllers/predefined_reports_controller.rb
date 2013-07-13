@@ -181,7 +181,7 @@ class PredefinedReportsController < ApplicationController
     @query = ReportQuery.new(params[:report_query])
 
     group_fields = ["county", "reporting_agency"]
-    a = Allocation.where("reporting_agency_id IS NOT NULL")
+    a = Allocation.where("reporting_agency_id IS NOT NULL AND admin_ops_data <> 'Required'")
     a = a.where(:reporting_agency_id => @query.reporting_agency_id) if @query.reporting_agency_id.present?
     grouped_allocations = Allocation.group(group_fields, a)
 
