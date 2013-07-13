@@ -177,7 +177,7 @@ class PredefinedReportsController < ApplicationController
     end
   end
 
-  def ride_purpose
+  def trip_purpose
     @query = ReportQuery.new(params[:report_query])
 
     group_fields = ["county", "reporting_agency"]
@@ -189,7 +189,7 @@ class PredefinedReportsController < ApplicationController
     for county, rows in grouped_allocations
       @results[county] = {}
       for provider, allocations in rows
-        row = @results[county][provider] = RidePurposeRow.new
+        row = @results[county][provider] = TripPurposeRow.new
         for allocation in allocations
           if allocation['trip_collection_method'] == 'trips'
             row.collect_by_trip(allocation, @query.start_date, @query.after_end_date)
@@ -199,7 +199,7 @@ class PredefinedReportsController < ApplicationController
         end
       end
     end
-    @trip_purposes = RidePurposeRow.trip_purposes
+    @trip_purposes = TripPurposeRow.trip_purposes
   end
 
   def quarterly_narrative
