@@ -1,4 +1,4 @@
-class RidePurposeRow
+class TripPurposeRow
 
   @@trip_purposes = POSSIBLE_TRIP_PURPOSES + ["Unspecified", "Total"]
 
@@ -6,11 +6,11 @@ class RidePurposeRow
 
   def self.sum(rows, out=nil)
     if out.nil?
-      out = RidePurposeRow.new
+      out = TripPurposeRow.new
     end
     if rows.instance_of? Hash
       rows.each do |key, row|
-        RidePurposeRow.sum(row, out)
+        TripPurposeRow.sum(row, out)
       end
     else
       out.include_row(rows)

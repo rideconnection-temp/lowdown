@@ -17,6 +17,7 @@ class Provider < ActiveRecord::Base
   scope :reporting_agencies, where("id in (SELECT reporting_agency_id from allocations)")
   scope :providers_in_allocations, where("id in (SELECT provider_id from allocations)")
   scope :default_order, order(:name)
+  scope :bpa_providers, where(:provider_type => 'BPA Provider')
 
   def to_s
     name

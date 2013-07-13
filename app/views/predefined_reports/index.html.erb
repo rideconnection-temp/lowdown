@@ -81,7 +81,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :ride_purpose } do |f| %>
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :trip_purpose } do |f| %>
     <fieldset>
       <h2 class="report-header">Trip Purpose Report</h2>
       <p></p>
@@ -121,6 +121,30 @@
         <li>
           <%= f.label :provider_id, 'Reporting Agency' %>
           <%= f.select :provider_id, options_for_select([['<All Reporting Agencies>','']] + Provider.reporting_agencies.default_order.all.map { |p| [p.name, p.id] }) %>
+        </li>
+      </ol>
+      <input type="submit" name="report" value="Report">
+    </fieldset>
+  <% end %>
+</div>
+
+<div class="predefined-report" data-name="monthly">
+  <%= form_for @semimonth_query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :bpa_invoice } do |f| %>
+    <fieldset>
+      <h2 class="report-header">BPA Invoice</h2>
+      <p></p>
+      <ol>
+        <li>
+          <%= f.label :start_date %>
+          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :bpa_invoice_start_date, :required => :required %>
+        </li>
+        <li>
+          <%= f.label :end_date %>
+          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :bpa_invoice_end_date, :required => :required %>
+        </li>
+        <li>
+          <%= f.label :provider_id, 'Provider' %>
+          <%= f.select :provider_id, options_for_select(Provider.bpa_providers.default_order.all.map { |p| [p.name, p.id] }) %>
         </li>
       </ol>
       <input type="submit" name="report" value="Report">
