@@ -11,6 +11,12 @@ class ReportQuery
       @start_date = params[:start_date].to_date
     elsif params['start_date(1i)']
       @start_date = date_from_params(params,:start_date)
+    elsif params[:date_range] == :semimonth
+      if now.day < 16
+        @start_date = Date.new((now - 1.month).year, (now - 1.month).month, 16)
+      else
+        @start_date = Date.new(now.year, now.month, 1)
+      end
     elsif params[:date_range] == :quarter
       @start_date = Date.new(now.year, (now.month-1)/3*3+1,1) - 3.months
     elsif params[:date_range] == :fiscal_year_to_date
@@ -24,21 +30,23 @@ class ReportQuery
     end
 
     if params[:end_date]
-      @end_date = params[:end_date].to_date
-      @after_end_date = @end_date + 1.day
+      @after_end_date = params[:end_date].to_date + 1.day
     elsif params['end_date(1i)']
       @after_end_date = date_from_params(params,:end_date) + 1.month
-      @end_date = @after_end_date - 1.day
+    elsif params[:date_range] == :semimonth
+      if now.day < 16
+        @after_end_date = Date.new(now.year, now.month, 1)
+      else
+        @after_end_date = Date.new(now.year, now.month, 16)
+      end
     elsif params[:date_range] == :quarter
       @after_end_date = @start_date + 3.months
-      @end_date = @after_end_date - 1.day
     elsif params[:date_range] == :fiscal_year_to_date
       @after_end_date = Date.new(now.year,now.month,1)
-      @end_date = @after_end_date - 1.day
     else
       @after_end_date = @start_date + 1.month
-      @end_date = @after_end_date - 1.day
     end
+    @end_date = @after_end_date - 1.day
 
     @provider = params[:provider]                            if params[:provider].present?
     @provider_id = params[:provider_id].to_i                 if params[:provider_id].present?
@@ -68,6 +76,7 @@ class PredefinedReportsController < ApplicationController
     @query = ReportQuery.new
     @quarterly_query = ReportQuery.new(:date_range => :quarter)
     @fiscal_year_to_date_query = ReportQuery.new(:date_range => :fiscal_year_to_date)
+    @semimonth_query = ReportQuery.new(:date_range => :semimonth)
   end
 
   def premium_service_billing
@@ -306,7 +315,17 @@ class PredefinedReportsController < ApplicationController
       end
       @counts_by_ethnicity[ethnicity]['year'] += 1
     end
+  end
 
+  def bpa_invoice
+    @query = ReportQuery.new(params[:report_query])
+    @report = FlexReport.new
+    @report.start_date  = @query.start_date
+    @report.end_date    = @query.after_end_date
+    @report.group_by    = "project_number_and_name,funding_source_and_subsource,override_name"
+    @report.field_list  = 'funds,total_trips,mileage,driver_total_hours'
+    @report.providers   = [@query.provider_id]
+    @report.populate_results!
   end
   
   private

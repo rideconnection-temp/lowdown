@@ -1,9 +1,9 @@
+<% rf = @report.fields -%>
 <thead>
   <tr>
     <% (report_group_fields.size).times do %>
       <th class="indent">&nbsp;</th>
     <% end %>
-    <% rf = @report.fields -%>
     <th rowspan="2" class="wrap text"><%= @report.group_fields[-1].sub("_id","").sub("_"," ").titleize %></th>
     <% column_count = (rf & %w{funds agency_other vehicle_maint administrative operations donations total}).count %>
     <% if column_count > 0 %>
