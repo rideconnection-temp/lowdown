@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '3.1.12'
 gem 'pg'
 
-gem 'devise',               '~> 2.0.0'
+gem 'devise',               '~> 2.2.0'
 gem 'dynamic_form',         '~> 1.1.4'
 gem 'will_paginate',        '~> 3.0.2'
 # Using userstamp from git for now, because 2.0.2 (Rails 3.2 compatible) has
@@ -21,7 +21,7 @@ gem "capistrano-ext", :require => false # not a runtime dependency
 gem "rvm-capistrano", :require => false
 
 group :production do
-  gem 'exception_notification', '~> 3.0'
+  gem 'exception_notification', '~> 4.0'
 end
 
 group :development do

@@ -38,15 +38,8 @@ Devise.setup do |config|
   # For bcrypt, this is the cost for hashing the password and defaults to 10. If
   # using other encryptors, it sets how many times you want the password re-encrypted.
   config.stretches = 10
-  config.use_salt_as_remember_token = true
   config.reset_password_within = 2.hours
   config.case_insensitive_keys = [:email]
-
-  # Define which will be the encryption algorithm. Devise also supports encryptors
-  # from others authentication tools as :clearance_sha1, :authlogic_sha512 (then
-  # you should set stretches above to 20 for default behavior) and :restful_authentication_sha1
-  # (then you should set stretches to 10, and copy REST_AUTH_SITE_KEY to pepper)
-  config.encryptor = :bcrypt
 
   # Setup a pepper to generate the encrypted password.
   config.pepper = "88e6b6fed39f52112e9954c6c6551fe5c56ac28e8e7d170ff2153563495565aa137c6962b97b8317fb0a79263d12927a6b23bc3972b88ecfe260d3a7dd9f0f63"
