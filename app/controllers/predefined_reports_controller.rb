@@ -322,7 +322,7 @@ class PredefinedReportsController < ApplicationController
     @report = FlexReport.new
     @report.start_date  = @query.start_date
     @report.end_date    = @query.after_end_date
-    @report.group_by    = "project_number_and_name,funding_source_and_subsource,override_name"
+    @report.group_by    = "project_number_and_name,override_name"
     @report.field_list  = 'funds,total_trips,mileage,driver_total_hours'
     @report.providers   = [@query.provider_id]
     @report.populate_results!

@@ -16,10 +16,12 @@
           :row => results, :report_group_fields => group_fields, :group_fields => group_fields, 
           :root_header => true, :row_classes => [], :this_row_group_class => root_group_class, :tree_map => [] %>
       <%= render "flex_reports/nested_rows", :rows => results, :report_group_fields => group_fields, 
-          :group_fields => group_fields, :row_classes => [root_group_class], :tree_map => [0] %>
+          :group_fields => group_fields, :row_classes => [root_group_class], :tree_map => [0],
+          :currency_precision => 2 %>
       <%= render 'flex_reports/totals', 
           :row=>results, :report_group_fields => group_fields, :group_fields=>group_fields, 
-          :grand_total => true, :row_classes => [], :tree_map => [] %>
+          :grand_total => true, :row_classes => [], :tree_map => [],
+          :currency_precision => 2 %>
     </tbody>
   </table>
 </div>

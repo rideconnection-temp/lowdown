@@ -1,3 +1,4 @@
+<% currency_precision = 0 if currency_precision.nil? %>
 <%= content_tag :tr, :class => (row_classes + ["data"] + ["level-#{tree_map.size}"]).join(' ') do %>
   <% (report_group_fields.size).times do %>
     <td class="indent">&nbsp;</td>
@@ -8,37 +9,37 @@
   </td>
   <% if @report.fields.include? 'funds' %>
     <td class="number">
-      <%= number_to_currency(row.funds, :precision => 0, :negative_format => "(%u%n)") %>
+      <%= number_to_currency(row.funds, :precision => currency_precision, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.fields.include? 'agency_other' %>
     <td class="number">
-      <%= number_to_currency(row.agency_other, :precision => 0, :negative_format => "(%u%n)") %>
+      <%= number_to_currency(row.agency_other, :precision => currency_precision, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.fields.include? 'vehicle_maint' %>
     <td class="number">
-      <%= number_to_currency(row.vehicle_maint, :precision => 0, :negative_format => "(%u%n)") %>
+      <%= number_to_currency(row.vehicle_maint, :precision => currency_precision, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.fields.include? 'administrative' %>
     <td class="number">
-      <%= number_to_currency(row.administrative, :precision => 0, :negative_format => "(%u%n)") %>
+      <%= number_to_currency(row.administrative, :precision => currency_precision, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.fields.include? 'operations' %>
     <td class="number">
-      <%= number_to_currency(row.operations, :precision => 0, :negative_format => "(%u%n)") %>
+      <%= number_to_currency(row.operations, :precision => currency_precision, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.fields.include? 'donations' %>
     <td class="number">
-      <%= number_to_currency(row.donations, :precision => 0, :negative_format => "(%u%n)") %>
+      <%= number_to_currency(row.donations, :precision => currency_precision, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.fields.include? 'total' %>
     <td class="number total">
-      <%= number_to_currency(row.total, :precision => 0, :negative_format => "(%u%n)") %>
+      <%= number_to_currency(row.total, :precision => currency_precision, :negative_format => "(%u%n)") %>
     </td>
   <% end %>
   <% if @report.fields.include? 'in_district_trips' %>
