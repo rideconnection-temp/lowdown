@@ -28,6 +28,9 @@
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Volunteer Hours</th>
     <% end %>
+    <th rowspan="2" class="no-print">
+      Details
+    </th>
   </tr>
   <tr>
     <% (report_group_fields.size).times do %>

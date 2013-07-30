@@ -679,6 +679,12 @@ form div.actions {
     clear: both;
     margin: 0 0 10px;
 }
+form .search-scope {
+    border-top: 1px solid #bbb;
+    padding: 10px 0 0 15px;
+    clear: both;
+    margin: 0 0 10px;
+}
 form div.actions input[type="submit"] {
     padding: 0.5em 0.8em;
     background: #0081CC;
@@ -812,13 +818,13 @@ div.report-wrapper tr.data .inner-most-field {
   padding-left  : 5px;
 }
 
-tr.visible-group td.report-item {
+tr.visible-group td.toggleable {
   background: url(images/toggle.png) left center no-repeat scroll;
   background-color: #E5F2FF;
   padding: 5px 0 5px 20px;
 }
 
-tr.hidden-group td.report-item {
+tr.hidden-group td.toggleable {
   background: url(images/toggle-expand.png) left center no-repeat scroll;
   background-color: #E5F2FF;
   padding: 5px 0 5px 20px;

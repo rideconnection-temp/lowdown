@@ -164,4 +164,16 @@ module ApplicationHelper
     change = (record.send(attribute) || 0) - (record.previous.send(attribute) || 0)
     change == 0 ? nil : change
   end
+
+  def row_trip_link(report,row)
+    start_date = (row.start_date || report.start_date)
+    end_date   = (row.end_date   || report.query_end_date) - 1.day
+    link_to "T", {:controller => :trips, :action => :list, :q => {:allocation_id_list => "#{row.allocations.map{|a| a.id}.sort.join(' ')}", :start_date => start_date, :end_date => end_date}}
+  end
+
+  def row_summary_link(report, row)
+    start_date = (row.start_date || report.start_date)
+    end_date   = (row.end_date   || report.query_end_date) - 1.day
+    link_to "S", {:controller => :summaries, :q => {:allocation_ids => "#{row.allocations.map{|a| a.id}.sort.join(' ')}", :start_date => start_date, :end_date => end_date}}
+  end
 end

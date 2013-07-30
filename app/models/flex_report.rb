@@ -269,8 +269,7 @@ class FlexReport < ActiveRecord::Base
         collection_end_date = query_end_date
       end
 
-      row = ReportRow.new fields
-      row.allocation = allocation_object
+      row = ReportRow.new fields, allocation_object
 
       if allocation_object.trip_collection_method == 'trips'
         row.collect_trips_by_trip(allocation_object, collection_start_date, collection_end_date, options)
@@ -303,8 +302,7 @@ class FlexReport < ActiveRecord::Base
   def group_report_rows!
     grouped_rows = Allocation.group(group_fields, @report_rows.keys)
     FlexReport.apply_to_leaves! grouped_rows, group_fields.size do | allocationset |
-      row = ReportRow.new fields
-      row.allocation = allocationset[0]
+      row = ReportRow.new fields, allocationset[0]
       allocationset.each do |allocation|
         row.include_row(@report_rows[allocation])
       end

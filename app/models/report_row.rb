@@ -3,7 +3,7 @@ def bind(args)
 end
 
 class ReportRow
-  @@attrs = [:allocation, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations, :total_elderly_and_disabled_cost]
+  @@attrs = [:allocation, :allocations, :start_date, :end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations, :total_elderly_and_disabled_cost]
   attr_accessor *@@attrs
 
   def numeric_fields
@@ -36,11 +36,18 @@ class ReportRow
     return out
   end
 
-  def initialize(fields_to_show = nil)
+  def initialize(fields_to_show = nil, allocation = nil)
     for field in numeric_fields
       self.instance_variable_set("@#{field}", BigDecimal("0"))
     end
     @fields_to_show = fields_to_show
+    @allocations = []
+    @allocation = allocation
+    @allocations << allocation if allocation.present?
+    if allocation.respond_to? "collection_start_date"
+      @start_date = allocation.collection_start_date
+      @end_date   = allocation.collection_end_date 
+    end
   end
 
   def total
@@ -231,6 +238,18 @@ class ReportRow
     @total_general_public_trips      += row.total_general_public_trips
     @total_general_public_cost       += row.total_general_public_cost
     @total_elderly_and_disabled_cost += row.total_elderly_and_disabled_cost
+
+    @allocations                      = (@allocations + row.allocations).uniq
+    if @start_date.present?
+      @start_date = row.start_date if row.start_date && @start_date > row.start_date
+    else 
+      @start_date = row.start_date
+    end
+    if @end_date.present?
+      @end_date = row.end_date if row.end_date && @end_date < row.end_date
+    else 
+      @end_date = row.end_date
+    end
   end
 
   def apply_results(add_result)
