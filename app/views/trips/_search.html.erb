@@ -56,10 +56,9 @@
     <ul class="search-scope">
       <% if @query.allocation_ids.present? %>
         <h2>This search is limited to the following allocations:</h2>
-        <% @query.allocation_ids.sort_by{|a_id| @allocations.detect{|a| a.id == a_id}.name}.each do |a_id| %>
-          <% this_allocation = @allocations.detect{|a| a.id == a_id} %>
+        <% @allocations.where(:id => @query.allocation_ids).each do |allocation| %>
           <li>
-            <%= link_to this_allocation.name, edit_allocation_url(this_allocation) %> 
+            <%= link_to allocation.name, edit_allocation_url(allocation) %> 
           </li>
         <% end %>
       <% end %>

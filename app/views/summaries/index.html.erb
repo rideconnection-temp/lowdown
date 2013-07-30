@@ -2,7 +2,7 @@
   <h1>View Summaries</h1>
 </div>
 
-<%= form_for @query, :html=>{:id=>"summary-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
+<%= form_for @query, :as => :q, :html=>{:id=>"summary-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
   <fieldset>
 
     <ol class="section first">
@@ -25,6 +25,16 @@
         <%= f.select :complete, ['Yes','No'], :include_blank => true %>
       </li>
     </ol>
+    <ul class="search-scope">
+      <% if @query.allocation_ids.present? %>
+        <h2>This search is limited to the following allocations:</h2>
+        <% @allocations.where(:id => @query.allocation_ids).each do |allocation| %>
+          <li>
+            <%= link_to allocation.name, edit_allocation_url(allocation) %> 
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
 
     <div class="actions">
       <input id="summary-search" type="submit" value="Search" />

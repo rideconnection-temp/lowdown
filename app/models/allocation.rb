@@ -35,6 +35,7 @@ class Allocation < ActiveRecord::Base
 
   scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
   scope :trip_collection_method, where( "trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips'" )
+  scope :summary_collection_method, where( "trip_collection_method = 'summary_rows' or run_collection_method = 'summary' or cost_collection_method = 'summary' or admin_ops_data = 'Required' or vehicle_maint_data = 'Required'" )
   scope :not_recently_inactivated, where( "inactivated_on is null or inactivated_on > current_date - interval '3 months'")
   scope :active_as_of, lambda{|date| where( "inactivated_on IS NULL OR inactivated_on > COALESCE(?,current_date - interval '3 months')", date) }
   scope :spd, includes(:project).where(:projects => {:funding_source => {:funding_source_name => 'SPD'}})

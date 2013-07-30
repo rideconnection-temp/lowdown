@@ -100,7 +100,7 @@ class TripsController < ApplicationController
     @query              = TripQuery.new params[:q], params[:commit]
     @providers          = Provider.providers_in_allocations.default_order
     @reporting_agencies = Provider.reporting_agencies.default_order
-    @allocations        = Allocation.order(:name)
+    @allocations        = Allocation.trip_collection_method.order(:name)
     @result_codes       = Trip::RESULT_CODES.sort
 
     @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,{:project => :funding_source},:override]).joins(:allocation).order(:date,:trip_import_id)
