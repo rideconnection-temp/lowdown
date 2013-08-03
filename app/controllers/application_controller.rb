@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
       current_user = nil
       warden.logout(scope)
 
-      return redirect_to "/"
+      return redirect_to root_url
     end
   end
 
