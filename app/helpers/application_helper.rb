@@ -86,7 +86,7 @@ module ApplicationHelper
         result = "#{start_date.strftime('%B')} to #{end_date.strftime('%B')}, #{end_date.year}"
         result += " (#{fiscal_quarter.ordinalize} Quarter of Fiscal Year #{describe_fiscal_year start_date})"
       elsif start_date + 12.months == end_date + 1.day && start_date.month == 7 # Full fiscal year
-        result = "Fiscal Year #{start_date.year} through #{end_date.strftime('%B, %Y')}"
+        result = "#{start_date.strftime('%B')} #{start_date.year} to #{end_date.strftime('%B')} #{end_date.year} (Fiscal Year #{describe_fiscal_year start_date})"
       elsif start_date + 12.months == end_date + 1.day && start_date.month == 1 # Full calendar year
         result = "Calendar Year #{start_date.year}"
       elsif start_date.year == end_date.year # Full months, all in the same calendar year
