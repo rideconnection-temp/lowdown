@@ -5,20 +5,20 @@
     <tr>
       <th colspan="2"></th>
       <% for purpose in @trip_purposes %>
-        <th class="data number"><%= purpose %></th>
+        <th class="data"><%= purpose %></th>
       <% end %>
     </tr>
   </thead>
   <tbody>
     <% @results.keys.sort.each do |county| %>
       <tr>
-        <th class="contrast banner" colspan="<%= @trip_purposes.size + 2 %>"><%= county %> County</th>
+        <th class="text group" colspan="<%= @trip_purposes.size + 2 %>"><%= county %> County</th>
       </tr>
   
       <% @results[county].keys.sort_by{|provider| provider.try(:name) || "Unspecified" }.each do |provider| %>
         <tr>
           <td class="indent">&nbsp;</td>
-          <th scope="row" class="text"><%= provider.try :name || "Unspecified" %></th>
+          <td scope="row" class="text"><%= provider.try :name || "Unspecified" %></td>
           <% for purpose in @trip_purposes %>
             <td class="number"><%= number_with_delimiter(@results[county][provider].by_purpose[purpose]) %></td>
           <% end %>
@@ -27,7 +27,7 @@
 
       <!-- totals -->
       <tr>
-        <th class="contrast text" scope="row" colspan="2"><%= county %> County Total</th>
+        <td class="contrast text" scope="row" colspan="2"><%= county %> County Total</td>
         <% total = TripPurposeRow.sum(@results[county]) %>
         <% for purpose in @trip_purposes %>
           <td class="number"><%= number_with_delimiter(total.by_purpose[purpose]) %></td>
@@ -37,7 +37,7 @@
       <!-- percentages -->
       <tr>
         <% percentages = total.percentages %>
-        <th scope="row" class="text" colspan="2">% of total county trips</th>
+        <td scope="row" class="text" colspan="2">% of total county trips</td>
         <% for purpose in @trip_purposes %>
           <td class="number"><%= "%.1f\%" % percentages[purpose] %></td>
         <% end %>
@@ -47,11 +47,11 @@
   </tbody>
   <tbody class="totals">
     <tr>
-      <th class="contrast banner" colspan="<%= @trip_purposes.size + 2 %>">All Trips</th>
+      <th class="text group" colspan="<%= @trip_purposes.size + 2 %>">All Trips</th>
     </tr>
     <!-- grand totals -->
     <tr>
-      <th class="contrast text" scope="row" colspan="2">Grand Total</th>
+      <td class="contrast text" scope="row" colspan="2">Grand Total</td>
       <% total = TripPurposeRow.sum(@results) %>
       <% for purpose in @trip_purposes %>
         <td class="number"><%= number_with_delimiter(total.by_purpose[purpose]) %></td>
@@ -61,7 +61,7 @@
     <!-- grand total percentages -->
     <tr>
       <% percentages = total.percentages %>
-      <th scope="row" class="text" colspan="2">% of total trips</th>
+      <td scope="row" class="text" colspan="2">% of total trips</td>
       <% for purpose in @trip_purposes %>
         <td class="number"><%= "%.1f\%" % percentages[purpose] %></td>
       <% end %>

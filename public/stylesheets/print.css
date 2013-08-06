@@ -150,3 +150,8 @@ div.report-wrapper td.indent {
 body.ride-purpose th.data {
   width: 8%;
 }
+
+body.trip-purpose th.group {
+  border: 0;
+  border-bottom: 1pt solid black;
+}
