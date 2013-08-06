@@ -2,7 +2,7 @@
   <h1>Move Trips to a Different Allocation</h1>
 </div>
 
-<%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:update_allocation} do |f| %>
+<%= form_for @query, :as => :q, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:update_allocation} do |f| %>
   <fieldset>
     <ol class="section ">
       <li>
