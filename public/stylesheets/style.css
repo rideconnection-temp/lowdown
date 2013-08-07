@@ -1379,7 +1379,6 @@ div.predefined-report form.run-report input[type="submit"]:hover {
  * Predefined Reports
  *
  */
-body.ride-purpose th.data {
+body.trip-purpose th.data {
     width: 8%;
 }
-

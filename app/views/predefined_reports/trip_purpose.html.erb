@@ -5,7 +5,7 @@
     <tr>
       <th colspan="2"></th>
       <% for purpose in @trip_purposes %>
-        <th class="data"><%= purpose %></th>
+        <th class="data"><%= purpose.gsub(/([\/-])/,' \1 ') %></th>
       <% end %>
     </tr>
   </thead>
