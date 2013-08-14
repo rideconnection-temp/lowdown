@@ -3,7 +3,7 @@
 </div>
 <h2>
   <%= Provider.find(@query.provider_id).name %> &mdash; 
-  <%= describe_date_range(@report.start_date, @report.end_date-1.day) %>
+  <%= describe_date_range(@report.start_date, @report.end_date) %>
 </h2>
 <% results = @report.results %>
 <% group_fields = @report.group_fields %>
