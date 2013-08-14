@@ -187,8 +187,17 @@ class FlexReport < ActiveRecord::Base
     self.field_list = list.sort.map(&:to_s).join(",")
   end
 
+  # A kludgy way of handling the end_date used for queries. 
+  # The end_date that comes in from flex reports is more accurately the end
+  # month, with the day (which is set as the first of the month) being irrelevant.
+  # Predefined reports that use the flex report engine for partial month reports
+  # need to be based on the actual day of the month
   def query_end_date
-    Date.new(end_date.year, end_date.month, 1) + 1.months
+    if end_date.day == 1 
+      Date.new(end_date.year, end_date.month, 1) + 1.months
+    else
+      end_date + 1
+    end
   end
   
   def group_fields
