@@ -11,7 +11,16 @@ class FlexReport < ActiveRecord::Base
 
   TimePeriods = %w{semimonth month quarter year}
 
-  GroupBys = %w{county,quarter funding_source,quarter funding_source,funding_subsource,quarter project_number,quarter funding_source,reporting_agency_name program_name,reporting_agency_name reporting_agency_name,program_name quarter,month}.sort
+  GroupBys = [
+    "county,quarter",
+    "funding_source,quarter",
+    "funding_source,funding_subsource,quarter",
+    "project_number,quarter",
+    "funding_source,reporting_agency_name",
+    "program_name,reporting_agency_name",
+    "reporting_agency_name,program_name",
+    "quarter,month"
+  ].sort
 
   GroupMappings = {
     "county"                        => "County",
@@ -192,7 +201,7 @@ class FlexReport < ActiveRecord::Base
   # month, with the day (which is set as the first of the month) being irrelevant.
   # Predefined reports that use the flex report engine for partial month reports
   # need to be based on the actual day of the month
-  def query_end_date
+  def query_after_end_date
     if end_date.day == 1 
       Date.new(end_date.year, end_date.month, 1) + 1.months
     else
@@ -213,7 +222,7 @@ class FlexReport < ActiveRecord::Base
     where_strings << "do_not_show_on_flex_reports = false"
 
     where_strings << "(inactivated_on IS NULL OR inactivated_on > ?) AND activated_on < ?"
-    where_params.concat [start_date, query_end_date]
+    where_params.concat [start_date, query_after_end_date]
     
     if funding_source_list.present?
       where_strings << "project_id IN (SELECT id FROM projects where funding_source_id IN (?))"
@@ -255,7 +264,7 @@ class FlexReport < ActiveRecord::Base
     TimePeriods.each do |period|
       if group_fields.member? period
         # only apply the shortest time period if there are multiple time period grouping levels
-        results = PeriodAllocation.apply_periods(results, start_date, query_end_date, period)
+        results = PeriodAllocation.apply_periods(results, start_date, query_after_end_date, period)
         break
       end
     end
@@ -272,34 +281,34 @@ class FlexReport < ActiveRecord::Base
     @allocation_objects.each do |allocation_object|
       if allocation_object.respond_to? :collection_start_date 
         collection_start_date = allocation_object.collection_start_date
-        collection_end_date = allocation_object.collection_end_date
+        collection_after_end_date = allocation_object.collection_after_end_date
       else
         collection_start_date = start_date
-        collection_end_date = query_end_date
+        collection_after_end_date = query_after_end_date
       end
 
       row = ReportRow.new fields, allocation_object
 
       if allocation_object.trip_collection_method == 'trips'
-        row.collect_trips_by_trip(allocation_object, collection_start_date, collection_end_date, options)
+        row.collect_trips_by_trip(allocation_object, collection_start_date, collection_after_end_date, options)
       else
-        row.collect_trips_by_summary(allocation_object, collection_start_date, collection_end_date, options)
+        row.collect_trips_by_summary(allocation_object, collection_start_date, collection_after_end_date, options)
       end
 
       if allocation_object.run_collection_method == 'trips' 
-        row.collect_runs_by_trip(allocation_object, collection_start_date, collection_end_date, options)
+        row.collect_runs_by_trip(allocation_object, collection_start_date, collection_after_end_date, options)
       elsif allocation_object.run_collection_method == 'runs'
-        row.collect_runs_by_run(allocation_object, collection_start_date, collection_end_date, options)
+        row.collect_runs_by_run(allocation_object, collection_start_date, collection_after_end_date, options)
       else
-        row.collect_runs_by_summary(allocation_object, collection_start_date, collection_end_date, options)
+        row.collect_runs_by_summary(allocation_object, collection_start_date, collection_after_end_date, options)
       end
 
       if allocation_object.cost_collection_method == 'summary'
-        row.collect_costs_by_summary(allocation_object, collection_start_date, collection_end_date, options)
+        row.collect_costs_by_summary(allocation_object, collection_start_date, collection_after_end_date, options)
       end
-      row.collect_costs_by_trip(allocation_object, collection_start_date, collection_end_date, options)
+      row.collect_costs_by_trip(allocation_object, collection_start_date, collection_after_end_date, options)
 
-      row.collect_operation_data_by_summary(allocation_object, collection_start_date, collection_end_date, options)
+      row.collect_operation_data_by_summary(allocation_object, collection_start_date, collection_after_end_date, options)
 
       row.calculate_total_elderly_and_disabled_cost if elderly_and_disabled_only
 

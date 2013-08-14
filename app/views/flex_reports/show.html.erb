@@ -4,7 +4,7 @@
 
 <div id="date-header">
   <span class="month-range">
-    <%= report_month_range @report.start_date, @report.query_end_date %>
+    <%= report_month_range @report.start_date, @report.query_after_end_date %>
   </span>
   <span class="separator no-print">|</span>
   <%= link_to "CSV", params.merge({:format=>:csv}), :class=>"csv" %>

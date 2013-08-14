@@ -1,8 +1,8 @@
 class PeriodAllocation
-  attr_accessor :quarter, :year, :month, :semimonth, :period_start_date, :period_end_date, :collection_start_date, :collection_end_date
+  attr_accessor :quarter, :year, :month, :semimonth, :period_start_date, :period_after_end_date, :collection_start_date, :collection_after_end_date
 
-  def self.apply_periods(allocations, start_date, end_date, period)
-    # enumerate periods between start_date and end_date.
+  def self.apply_periods(allocations, start_date, after_end_date, period)
+    # enumerate periods between start_date and after_end_date.
     # collection_*_date variables represent the date range we're going to collect data for.
     # period_*_date variables represent the entire period range (e.g. the full 12 months of the year).
     # collection date ranges will be a subset of the period range when the period range extends
@@ -24,43 +24,43 @@ class PeriodAllocation
       advance = 0.5
     end
     if advance == 0.5
-      period_end_date = period_start_date + 15
+      period_after_end_date = period_start_date + 15
     else
-      period_end_date = period_start_date.advance(:months=>advance)
+      period_after_end_date = period_start_date.advance(:months=>advance)
     end
 
     periods = []
     begin
       collection_start_date = (start_date > period_start_date ? start_date : period_start_date)
-      collection_end_date = (end_date < period_end_date ? end_date : period_end_date)
+      collection_after_end_date = (after_end_date < period_after_end_date ? after_end_date : period_after_end_date)
 
       periods += allocations.map do |allocation|
-        PeriodAllocation.new allocation, period_start_date, period_end_date, collection_start_date, collection_end_date
+        PeriodAllocation.new allocation, period_start_date, period_after_end_date, collection_start_date, collection_after_end_date
       end
 
       if advance == 0.5
         if period_start_date.day == 1 
-          period_end_date = period_start_date.advance(:months=>1)
+          period_after_end_date = period_start_date.advance(:months=>1)
           period_start_date = period_start_date.change(:day=>16)
         else
-          period_start_date = period_end_date
-          period_end_date = period_start_date.change(:day=>16)
+          period_start_date = period_after_end_date
+          period_after_end_date = period_start_date.change(:day=>16)
         end
       else
         period_start_date = period_start_date.advance(:months=>advance)
-        period_end_date = period_end_date.advance(:months=>advance)
+        period_after_end_date = period_after_end_date.advance(:months=>advance)
       end
-    end while period_end_date <= end_date
+    end while period_after_end_date <= after_end_date
 
     periods
   end
 
-  def initialize(allocation, period_start_date, period_end_date, collection_start_date, collection_end_date)
+  def initialize(allocation, period_start_date, period_after_end_date, collection_start_date, collection_after_end_date)
     @allocation = allocation
     @period_start_date = period_start_date
-    @period_end_date = period_end_date
+    @period_after_end_date = period_after_end_date
     @collection_start_date = collection_start_date
-    @collection_end_date = collection_end_date
+    @collection_after_end_date = collection_after_end_date
     @year = period_start_date.year
     @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
     @month = period_start_date.year * 100 + period_start_date.month
