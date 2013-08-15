@@ -3,11 +3,13 @@ class FlexReport < ActiveRecord::Base
 
   validates :name, :presence => true, :uniqueness => true
   validates_date :start_date, :end_date, :allow_blank => true
+  validates_date :end_month
 
   attr_accessor :is_new
   attr_accessor :allocation_objects
   attr_accessor :report_rows
   attr_reader   :results
+  columns_hash["end_month"] = ActiveRecord::ConnectionAdapters::Column.new("end_month", nil, "date")
 
   TimePeriods = %w{semimonth month quarter year}
 
@@ -69,6 +71,18 @@ class FlexReport < ActiveRecord::Base
     end
   end
 
+  def end_month
+    Date.new(end_date.year, end_date.month, 1) if end_date.present?
+  end
+
+  def end_month=(value)
+    self.end_date = Date.new(value.year,value.month,1) + 1.month - 1.day
+  end
+
+  def after_end_date
+    end_date + 1.day if end_date.present?
+  end
+  
   def projects
     project_list.blank? ? [] : Project.find_all_by_id(project_list.split(",").map(&:to_i))
   end
@@ -196,19 +210,6 @@ class FlexReport < ActiveRecord::Base
     self.field_list = list.sort.map(&:to_s).join(",")
   end
 
-  # A kludgy way of handling the end_date used for queries. 
-  # The end_date that comes in from flex reports is more accurately the end
-  # month, with the day (which is set as the first of the month) being irrelevant.
-  # Predefined reports that use the flex report engine for partial month reports
-  # need to be based on the actual day of the month
-  def query_after_end_date
-    if end_date.day == 1 
-      Date.new(end_date.year, end_date.month, 1) + 1.months
-    else
-      end_date + 1
-    end
-  end
-  
   def group_fields
     group_by.split(",")
   end
@@ -222,7 +223,7 @@ class FlexReport < ActiveRecord::Base
     where_strings << "do_not_show_on_flex_reports = false"
 
     where_strings << "(inactivated_on IS NULL OR inactivated_on > ?) AND activated_on < ?"
-    where_params.concat [start_date, query_after_end_date]
+    where_params.concat [start_date, after_end_date]
     
     if funding_source_list.present?
       where_strings << "project_id IN (SELECT id FROM projects where funding_source_id IN (?))"
@@ -264,7 +265,7 @@ class FlexReport < ActiveRecord::Base
     TimePeriods.each do |period|
       if group_fields.member? period
         # only apply the shortest time period if there are multiple time period grouping levels
-        results = PeriodAllocation.apply_periods(results, start_date, query_after_end_date, period)
+        results = PeriodAllocation.apply_periods(results, start_date, after_end_date, period)
         break
       end
     end
@@ -284,7 +285,7 @@ class FlexReport < ActiveRecord::Base
         collection_after_end_date = allocation_object.collection_after_end_date
       else
         collection_start_date = start_date
-        collection_after_end_date = query_after_end_date
+        collection_after_end_date = after_end_date
       end
 
       row = ReportRow.new fields, allocation_object

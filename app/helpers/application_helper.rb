@@ -169,7 +169,7 @@ module ApplicationHelper
     trip_allocations = (Allocation.trip_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}).sort
     if trip_allocations != []
       start_date = (row.start_date || report.start_date)
-      end_date   = (row.after_end_date   || report.query_after_end_date) - 1.day
+      end_date   = (row.after_end_date || report.after_end_date) - 1.day
       link_to "Trips", {:controller => :trips, :action => :list, 
           :q => {:allocation_id_list => "#{trip_allocations.join(' ')}", 
           :start_date => start_date, :end_date => end_date}}
@@ -180,7 +180,7 @@ module ApplicationHelper
     summary_allocations = (Allocation.summary_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}).sort
     if summary_allocations != []
       start_date = (row.start_date || report.start_date)
-      end_date   = (row.after_end_date   || report.query_after_end_date) - 1.day
+      end_date   = (row.after_end_date || report.after_end_date) - 1.day
       link_to "Summaries", {:controller => :summaries, 
           :q => {:allocation_id_list => "#{summary_allocations.join(' ')}", 
           :start_date => start_date, :end_date => end_date}}

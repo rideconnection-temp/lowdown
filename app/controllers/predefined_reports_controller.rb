@@ -2,7 +2,7 @@ class ReportQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :after_end_date, :provider_id, :reporting_agency_id, :provider, :county
+  attr_accessor :start_date, :end_date, :end_month, :after_end_date, :provider_id, :reporting_agency_id, :provider, :county
 
   def initialize(params = {})
     params = {} if params.nil?
@@ -31,6 +31,9 @@ class ReportQuery
 
     if params[:end_date]
       @after_end_date = params[:end_date].to_date + 1.day
+    elsif params['end_month(1i)']
+      d = date_from_params(params,:end_month)
+      @after_end_date = Date.new(d.year,d.month,1) + 1.month
     elsif params['end_date(1i)']
       @after_end_date = date_from_params(params,:end_date) + 1.month
     elsif params[:date_range] == :semimonth
@@ -47,6 +50,7 @@ class ReportQuery
       @after_end_date = @start_date + 1.month
     end
     @end_date = @after_end_date - 1.day
+    @end_month = Date.new(@end_date.year,@end_date.month,1)
 
     @provider = params[:provider]                            if params[:provider].present?
     @provider_id = params[:provider_id].to_i                 if params[:provider_id].present?

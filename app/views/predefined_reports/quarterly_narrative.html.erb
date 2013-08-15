@@ -8,7 +8,7 @@
       <% allocation = get_row(county_rows).allocation %>
       <h2>
         <%= allocation.reporting_agency_name %> &mdash; 
-        <%= report_month_range(@report.start_date, @report.query_after_end_date) %>
+        <%= report_month_range(@report.start_date, @report.after_end_date) %>
       </h2>
       <h3>Program: <%= allocation.program.try(:name) || "Unspecified Program" %></h3>
       <h3>County: <%= allocation.county || "Unspecified County" %></h3>
