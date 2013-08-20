@@ -237,7 +237,7 @@ class PredefinedReportsController < ApplicationController
 
     @report = FlexReport.new
     @report.start_date = @query.start_date
-    @report.end_date = @query.start_date # One month only
+    @report.end_month = @query.start_date # One month only
     @report.elderly_and_disabled_only = true
     if params[:output] == 'Audit'
       @report.group_by = "provider_name,allocation_name"
