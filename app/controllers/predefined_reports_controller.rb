@@ -329,7 +329,14 @@ class PredefinedReportsController < ApplicationController
     @report.group_by    = "project_number_and_name,override_name"
     @report.field_list  = 'funds,total_trips,mileage,driver_total_hours'
     @report.providers   = [@query.provider_id]
-    @report.populate_results!
+    if params[:output] == 'Summary'
+      @report.populate_results!
+    elsif params[:output] == 'Details'
+      @report.collect_allocation_objects! 
+      a_ids = @report.allocation_objects.map{|a| a.id }
+      @trips = Trip.current_versions.completed.for_allocation_id(a_ids).for_date_range(@query.start_date,@query.after_end_date)
+      render "bpa_invoice_details.html"
+    end
   end
   
   private

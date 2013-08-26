@@ -147,7 +147,8 @@
           <%= f.select :provider_id, options_for_select(Provider.bpa_providers.default_order.all.map { |p| [p.name, p.id] }) %>
         </li>
       </ol>
-      <input type="submit" name="report" value="Report">
+      <input type="submit" name="output" value="Summary">
+      <input type="submit" name="output" value="Details">
     </fieldset>
   <% end %>
 </div>

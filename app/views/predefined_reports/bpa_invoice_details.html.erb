@@ -1,0 +1,53 @@
+<div id="page-header">
+  <h1>BPA Invoice</h1>
+</div>
+<h2>
+  <%= Provider.find(@query.provider_id).try(:name) %> &mdash; 
+  <%= describe_date_range(@report.start_date, @report.end_date) %>
+</h2>
+<div class="report-wrapper">
+  <table id="trip-results">
+    <thead>
+      <tr>
+        <th>Trip Date</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Apportioned Hours</th>
+        <th>Apportioned Miles</th>
+        <th>Apportioned Amount</th>
+        <th>Total Trips</th>
+        <th>Share ID</th>
+        <th>Type</th>
+        <th>Project #</th>
+        <th>F.E. Project Name</th>
+        <th>RouteMatch Override</th>
+        <th class="no-print"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @trips.each do |trip| %>
+        <tr>
+          <td><%= trip.date.to_s(:mdy) %></td>
+          <td><%= trip.customer.first_name %></td>
+          <td><%= trip.customer.last_name %></td>
+          <td><%= trip.start_at.to_s(:time_only) %></td>
+          <td><%= trip.end_at.to_s(:time_only) %></td>
+          <td><%= seconds_to_hours_colon_minutes_colon_seconds(trip.apportioned_duration) %></td>
+          <td class="number"><%= trip.apportioned_mileage %></td>
+          <td class="number"><%= number_to_currency(trip.apportioned_fare) %></td>
+          <td><%= trip.customers_served %></td>
+          <td><%= trip.routematch_share_id %></td>
+          <td><%= trip.routematch_share_id.present? ? "Shared" : "Indiv" %></td>
+          <td><%= trip.try(:allocation).try(:project).try(:project_number) %></td>
+          <td><%= trip.try(:allocation).try(:project).try(:name) %></td>
+          <td><%= trip.try(:allocation).try(:override).try(:name) %></td>
+          <td class="no-print">
+            <%= link_to "Details", {:controller => :trips, :action=>:show, :id=>trip.id}, {:title=>"View details for this trip", :class => :details} %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

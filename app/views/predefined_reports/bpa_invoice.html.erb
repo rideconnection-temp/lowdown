@@ -2,7 +2,7 @@
   <h1>BPA Invoice</h1>
 </div>
 <h2>
-  <%= Provider.find(@query.provider_id).name %> &mdash; 
+  <%= Provider.find(@query.provider_id).try(:name) %> &mdash; 
   <%= describe_date_range(@report.start_date, @report.end_date) %>
 </h2>
 <% results = @report.results %>
