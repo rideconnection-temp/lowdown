@@ -335,6 +335,10 @@ class PredefinedReportsController < ApplicationController
       @report.collect_allocation_objects! 
       a_ids = @report.allocation_objects.map{|a| a.id }
       @trips = Trip.current_versions.completed.for_allocation_id(a_ids).for_date_range(@query.start_date,@query.after_end_date)
+      @total_customers_served =     @trips.inject(0){|sum, t| sum + t.customers_served }
+      @total_apportioned_duration = @trips.inject(0){|sum, t| sum + t.apportioned_duration }
+      @total_apportioned_mileage =  @trips.inject(0){|sum, t| sum + t.apportioned_mileage }
+      @total_apportioned_fare =     @trips.inject(0){|sum, t| sum + t.apportioned_fare }
       render "bpa_invoice_details.html"
     end
   end
