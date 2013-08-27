@@ -48,7 +48,7 @@
           </td>
         </tr>
       <% end %>
-      <tr>
+      <tr class="totals">
         <td colspan="5" class="number">Total:</td>
         <td class="number"><%= seconds_to_hours_colon_minutes_colon_seconds(@total_apportioned_duration) %></td>
         <td class="number"><%= number_with_precision(@total_apportioned_mileage, :precision => 2, :delimiter => ",") %></td>

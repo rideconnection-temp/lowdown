@@ -327,7 +327,7 @@ class PredefinedReportsController < ApplicationController
     @report.start_date  = @query.start_date
     @report.end_date    = @query.end_date
     @report.group_by    = "project_number_and_name,override_name"
-    @report.field_list  = 'funds,total_trips,mileage,driver_total_hours'
+    @report.field_list  = 'funds,total_trips,mileage,driver_total_hours,cost_per_trip'
     @report.providers   = [@query.provider_id]
     if params[:output] == 'Summary'
       @report.populate_results!
