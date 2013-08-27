@@ -120,9 +120,15 @@ module VersionFu
           self.first_version_created_at = valid_start if self.respond_to? :first_version_created_at
           self.should_run_callbacks=true
       elsif self.id && self.base_id
-          #an edit to an existing object; may need to create a new
-          #version
-          instantiate_revision if create_new_version?
+          #an edit to an existing object; may need to create a new version
+          # If userstamp is being used, retain the stamp of the record version being archived
+          if create_new_version?
+            if self.class.respond_to?("without_stamps")
+              self.class.without_stamps { instantiate_revision }
+            else
+              instantiate_revision 
+            end
+          end
           self.should_run_callbacks=true
       elsif !self.id && self.base_id
           #a new version automatically created; no need to make a new version
