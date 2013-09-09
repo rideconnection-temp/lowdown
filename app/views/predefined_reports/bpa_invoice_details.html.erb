@@ -17,7 +17,6 @@
         <th colspan="3" class="column-group">Apportioned Amounts</th>
         <th rowspan="2">Total Trips</th>
         <th rowspan="2">Share ID</th>
-        <th rowspan="2">Type</th>
         <th rowspan="2">Project #</th>
         <th rowspan="2">F.E. Project Name</th>
         <th rowspan="2">RouteMatch Override</th>
@@ -42,7 +41,6 @@
           <td class="number"><%= number_to_currency(trip.apportioned_fare) %></td>
           <td class="number"><%= trip.customers_served %></td>
           <td><%= trip.routematch_share_id %></td>
-          <td><%= trip.routematch_share_id.present? ? "Shared" : "Indiv" %></td>
           <td><%= trip.try(:allocation).try(:project).try(:project_number) %></td>
           <td class="nobreak"><%= trip.try(:allocation).try(:project).try(:name) %></td>
           <td class="nobreak"><%= trip.try(:allocation).try(:override).try(:name) %></td>

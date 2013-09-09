@@ -334,7 +334,10 @@ class PredefinedReportsController < ApplicationController
     elsif params[:output] == 'Details'
       @report.collect_allocation_objects! 
       a_ids = @report.allocation_objects.map{|a| a.id }
-      @trips = Trip.current_versions.completed.for_allocation_id(a_ids).for_date_range(@query.start_date,@query.after_end_date)
+      @trips = Trip.current_versions.completed.for_allocation_id(a_ids).
+        for_date_range(@query.start_date,@query.after_end_date).
+        joins(:customer).includes(:customer, :allocation => [:project, :override]).
+        order("trips.start_at, customers.last_name")
       @total_customers_served =     @trips.inject(0){|sum, t| sum + t.customers_served }
       @total_apportioned_duration = @trips.inject(0){|sum, t| sum + t.apportioned_duration }
       @total_apportioned_mileage =  @trips.inject(0){|sum, t| sum + t.apportioned_mileage }
