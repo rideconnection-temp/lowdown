@@ -15,7 +15,7 @@
         <th rowspan="2">Start Time</th>
         <th rowspan="2">End Time</th>
         <th colspan="3" class="column-group">Apportioned Amounts</th>
-        <th rowspan="2" class="number">Total Trips</th>
+        <th rowspan="2">Total Trips</th>
         <th rowspan="2">Share ID</th>
         <th rowspan="2">Type</th>
         <th rowspan="2">Project #</th>
@@ -24,16 +24,16 @@
         <th rowspan="2" class="no-print"></th>
       </tr>
       <tr>
-        <th class="number">Hours</th>
-        <th class="number">Miles</th>
-        <th class="number">Cost</th>
+        <th>Hours</th>
+        <th>Miles</th>
+        <th>Cost</th>
       </tr>
     </thead>
     <tbody>
       <% @trips.each do |trip| %>
         <tr>
           <td><%= trip.date.to_s(:mdy) %></td>
-          <td class="nobreak"><%= trip.customer.first_name %></td>
+          <td class="nobreak"><%= truncate(trip.customer.first_name, :length => 15, :separator => ' ') %></td>
           <td class="nobreak"><%= trip.customer.last_name %></td>
           <td class="nobreak"><%= trip.start_at.to_s(:time_only) %></td>
           <td class="nobreak"><%= trip.end_at.to_s(:time_only) %></td>
