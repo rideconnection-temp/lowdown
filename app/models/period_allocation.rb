@@ -9,7 +9,11 @@ class PeriodAllocation
     # before and/or after the date range requested by the user.
     year = start_date.year
     if period == 'year'
-      period_start_date = Date.new(year, 1, 1)
+      if start_date.month < 7
+        period_start_date = Date.new(year - 1, 7, 1)
+      else
+        period_start_date = Date.new(year, 7, 1)
+      end
       advance = 12
     elsif period == 'quarter'
       zero_based_month = start_date.month - 1
@@ -35,7 +39,8 @@ class PeriodAllocation
       collection_after_end_date = (after_end_date < period_after_end_date ? after_end_date : period_after_end_date)
 
       periods += allocations.map do |allocation|
-        PeriodAllocation.new allocation, period_start_date, period_after_end_date, collection_start_date, collection_after_end_date
+        PeriodAllocation.new allocation, period_start_date, period_after_end_date, 
+          collection_start_date, collection_after_end_date
       end
 
       if advance == 0.5
@@ -61,7 +66,11 @@ class PeriodAllocation
     @period_after_end_date = period_after_end_date
     @collection_start_date = collection_start_date
     @collection_after_end_date = collection_after_end_date
-    @year = period_start_date.year
+    if period_start_date.month < 7
+      @year = period_start_date.year - 1
+    else
+      @year = period_start_date.year
+    end
     @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
     @month = period_start_date.year * 100 + period_start_date.month
     @semimonth = period_start_date.year * 10000 + period_start_date.month * 100 + period_start_date.day

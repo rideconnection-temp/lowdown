@@ -166,7 +166,7 @@ class ReportRow
   end
 
   def year
-    allocation.year.to_s
+    "FY #{allocation.year.to_s}-#{(allocation.year + 1).to_s[-2,2]}"
   end
 
   def quarter
