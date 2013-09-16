@@ -1,0 +1,22 @@
+<div id="page-header">
+  <h1>Allocations Summary</h1>
+</div>
+<div class="report-wrapper">
+  <table id="trip-results">
+    <thead>
+      <tr>
+        <% @groupings.each do |group| %> 
+          <th>
+            <%= group[0] %>
+          </th>
+        <% end %>
+      </tr>
+    </thead>
+    <% current_values = {} %>
+    <tbody>
+      <% @a.each do |key, value| %>
+        <%= render "predefined_reports/allocation_summary_row", :value => value, :level => 0 %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

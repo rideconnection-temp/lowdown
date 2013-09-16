@@ -94,6 +94,28 @@ class Allocation < ActiveRecord::Base
     return out
   end
 
+  def self.member_allocation(a)
+    if a.is_a?(Array)
+      return a[0]
+    elsif a.nil?
+      return nil
+    else
+      Allocation.member_allocation(a[a.keys[0]])
+    end
+  end
+
+  def self.count_leaves(group, depth)
+    total = 0
+    if depth == 0
+      return group.count
+    else
+      group.each do |k, v|
+        total = total + Allocation.count_leaves(v, depth - 1)
+      end
+      return total
+    end
+  end
+
   def to_s
     name
   end

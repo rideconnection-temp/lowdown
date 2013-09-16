@@ -346,6 +346,18 @@ class PredefinedReportsController < ApplicationController
     end
   end
   
+  def allocation_summary
+    @groupings = [ 
+      ["Funding Source",        "funding_source"],
+      ["Funding Subsource",     "funding_subsource"],
+      ["F.E. Number",           "project_number"],
+      ["F.E. Project Name",     "project_name"],
+      ["Program Name",          "program_name"],
+      ["Reporting Agency Name", "reporting_agency_name"]
+    ]
+    @a = Allocation.group(@groupings.map{|x| x[1] }, Allocation.active_on(Date.today))
+  end
+  
   private
 
   def fiscal_year_start_date(date)
