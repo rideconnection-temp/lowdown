@@ -355,10 +355,35 @@ class PredefinedReportsController < ApplicationController
       ["Program Name",          "program_name"],
       ["Reporting Agency Name", "reporting_agency_name"]
     ]
-    @a = Allocation.group(@groupings.map{|x| x[1] }, Allocation.active_on(Date.today))
+    all_nodes = Allocation.group(@groupings.map{|x| x[1] }, Allocation.active_on(Date.today))
+    @flattened_nodes = flatten_nodes([], all_nodes, 0)
   end
   
   private
+
+  def flatten_nodes(node_list, node_in, level)
+    if node_in.is_a?(Hash) 
+      node_in.sort_by {|k,v| row_sort(k)}.each do |this_key, this_value|
+        this_node = {}
+        this_node[:level] = level
+        this_node[:allocation] = Allocation.member_allocation(this_value)
+        this_node[:member_count] = Allocation.count_members(this_value, @groupings.size - level - 1)
+        node_list << this_node
+        flatten_nodes node_list, this_value, level + 1 
+      end
+      node_list
+    end
+  end
+
+  def row_sort(k)
+    if k.blank?
+      [2, ""]
+    elsif k.class == Fixnum
+      [1, ("%04d" % k)]
+    else
+      [1, k.to_s.downcase]
+    end
+  end
 
   def fiscal_year_start_date(date)
     year = (date.month < 7 ? date.year - 1 : date.year)

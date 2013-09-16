@@ -14,9 +14,19 @@
     </thead>
     <% current_values = {} %>
     <tbody>
-      <% @a.each do |key, value| %>
-        <%= render "predefined_reports/allocation_summary_row", :value => value, :level => 0 %>
-      <% end %>
+      <tr>
+        <% previous_level = -1 %>
+        <% @flattened_nodes.each do |node| %>
+          <% if previous_level >= node[:level] %>
+            </tr>
+            <tr>
+          <% end %>
+          <%= content_tag :td, :rowspan => node[:member_count] do %>
+            <%= node[:allocation].send(@groupings[node[:level]][1]) || "(Blank)" %>
+          <% end %>
+          <% previous_level = node[:level] %>
+        <% end %>
+      </tr>
     </tbody>
   </table>
 </div>

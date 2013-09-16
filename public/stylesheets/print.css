@@ -155,3 +155,7 @@ body.trip-purpose th.group {
   border: 0;
   border-bottom: 1pt solid black;
 }
+
+body.allocation-summary td {
+  border: 1pt solid #DDDDDD;
+}

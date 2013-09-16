@@ -104,13 +104,15 @@ class Allocation < ActiveRecord::Base
     end
   end
 
-  def self.count_leaves(group, depth)
+  def self.count_members(group, depth)
     total = 0
     if depth == 0
+      return 1
+    elsif depth == 1
       return group.count
     else
       group.each do |k, v|
-        total = total + Allocation.count_leaves(v, depth - 1)
+        total = total + Allocation.count_members(v, depth - 1)
       end
       return total
     end

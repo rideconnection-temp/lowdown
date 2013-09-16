@@ -1382,3 +1382,7 @@ div.predefined-report form.run-report input[type="submit"]:hover {
 body.trip-purpose th.data {
     width: 8%;
 }
+
+body.allocation-summary td {
+  border: 1px solid gray;
+}
