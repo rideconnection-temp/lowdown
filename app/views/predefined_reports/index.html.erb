@@ -249,7 +249,7 @@
           Unselected groups
         </h3>
         <ul id="sortable-unselected" class="connectedSortable">
-          <% FlexReport::GroupMappings.delete_if{|k,v| FlexReport::TimePeriods.include?(k) || @selected_groupings.include?(k) }.
+          <% FlexReport::GroupMappings.reject{|k,v| FlexReport::TimePeriods.include?(k) || @selected_groupings.include?(k) }.
             sort_by{|k,v| v }.each do |k,v| %>
             <%= content_tag :li, :class => "sortable-item", "data-group" => k do %>
               <%= v %>
