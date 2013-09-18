@@ -22,7 +22,8 @@
             <tr>
           <% end %>
           <%= content_tag :td, :rowspan => node[:member_count] do %>
-            <%= node[:allocation].send(@groupings[node[:level]][0]) || "(Blank)" %>
+            <% node_value = node[:allocation].send(@groupings[node[:level]][0]) %>
+            <%= node_value.blank? ? "(Blank)" : node_value %>
           <% end %>
           <% previous_level = node[:level] %>
         <% end %>
