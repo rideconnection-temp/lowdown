@@ -43,7 +43,7 @@
         <%= trip_import.trips.count %>
       </td>
       <td>
-        <%= link_to "View", {:action => :list, "trip_query[trip_import_id]" => trip_import.id}, :class => :details %>
+        <%= link_to "View", {:action => :list, "q[trip_import_id]" => trip_import.id}, :class => :details %>
       </td>
     </tr>
   <% end %>
