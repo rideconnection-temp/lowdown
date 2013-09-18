@@ -158,4 +158,5 @@ body.trip-purpose th.group {
 
 body.allocation-summary td {
   border: 1pt solid #DDDDDD;
+  padding: 5px;
 }

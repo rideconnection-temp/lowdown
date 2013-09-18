@@ -1417,4 +1417,5 @@ body.trip-purpose th.data {
 
 body.allocation-summary td {
   border: 1px solid gray;
+  padding: 5px;
 }
