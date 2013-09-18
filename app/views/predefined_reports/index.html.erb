@@ -237,9 +237,9 @@
           Selected groups
         </h3>
         <ul id="sortable-selected" class="connectedSortable">
-          <% @selected_groupings.each do |group| %>
-            <%= content_tag :li, :class => "sortable-item", "data-group" => group do %>
-              <%= FlexReport::GroupMappings[group] %>
+          <% @selected_groupings.each do |this_grouping| %>
+            <%= content_tag :li, :class => "sortable-item", "data-group" => this_grouping do %>
+              <%= FlexReport::GroupMappings[this_grouping] %>
             <% end %>
           <% end %>
         </ul>
