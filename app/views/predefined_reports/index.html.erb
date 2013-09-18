@@ -226,3 +226,39 @@
     </fieldset>
   <% end %>
 </div>
+
+<div class="predefined-report" data-name="monthly">
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :allocation_summary } do |f| %>
+    <fieldset>
+      <h2 class="report-header">Allocation Summary</h2>
+      <p></p>
+      <div class="sortable" >
+        <h3>
+          Selected groups
+        </h3>
+        <ul id="sortable-selected" class="connectedSortable">
+          <% @selected_groupings.each do |group| %>
+            <%= content_tag :li, :class => "sortable-item", "data-group" => group do %>
+              <%= FlexReport::GroupMappings[group] %>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+      <div class="sortable" >
+        <h3>
+          Unselected groups
+        </h3>
+        <ul id="sortable-unselected" class="connectedSortable">
+          <% FlexReport::GroupMappings.delete_if{|k,v| FlexReport::TimePeriods.include?(k) || @selected_groupings.include?(k) }.
+            sort_by{|k,v| v }.each do |k,v| %>
+            <%= content_tag :li, :class => "sortable-item", "data-group" => k do %>
+              <%= v %>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+      <%= f.hidden_field :group_by %>
+      <input type="submit" name="output" value="Report">
+    </fieldset>
+  <% end %>
+</div>

@@ -7,7 +7,7 @@
       <tr>
         <% @groupings.each do |group| %> 
           <th>
-            <%= group[0] %>
+            <%= group[1] %>
           </th>
         <% end %>
       </tr>
@@ -22,7 +22,7 @@
             <tr>
           <% end %>
           <%= content_tag :td, :rowspan => node[:member_count] do %>
-            <%= node[:allocation].send(@groupings[node[:level]][1]) || "(Blank)" %>
+            <%= node[:allocation].send(@groupings[node[:level]][0]) || "(Blank)" %>
           <% end %>
           <% previous_level = node[:level] %>
         <% end %>

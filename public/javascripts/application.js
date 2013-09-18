@@ -13,6 +13,25 @@ $(document).ready(function() {
     document.title = htmlDecode($("#page-header h1").html());
   }
 
+  var listItems = $("ul#sortable-selected li");
+  var listArray = [];
+  listItems.each(function(index) {
+    listArray.push($(this).data()["group"]);
+  });
+  $("#report_query_group_by").val(listArray.join());
+
+  $( "#sortable-selected, #sortable-unselected" ).sortable({
+    connectWith: ".connectedSortable",
+    stop: function(){
+      var listItems = $("ul#sortable-selected li");
+      var listArray = [];
+      listItems.each(function(index) {
+        listArray.push($(this).data()["group"]);
+      });
+      $("#report_query_group_by").val(listArray.join());
+    }
+  }).disableSelection();
+
   $("tr:odd").addClass("odd");
 
   $('#flash a.closer').click(function() {

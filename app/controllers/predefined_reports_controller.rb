@@ -2,7 +2,7 @@ class ReportQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :end_month, :after_end_date, :provider_id, :reporting_agency_id, :provider, :county
+  attr_accessor :start_date, :end_date, :end_month, :after_end_date, :provider_id, :reporting_agency_id, :provider, :county, :group_by
 
   def initialize(params = {})
     params = {} if params.nil?
@@ -56,6 +56,7 @@ class ReportQuery
     @provider_id = params[:provider_id].to_i                 if params[:provider_id].present?
     @county = params[:county]                                if params[:county].present?
     @reporting_agency_id = params[:reporting_agency_id].to_i if params[:reporting_agency_id].present?
+    @group_by = params[:group_by]                            if params[:group_by].present?
   end
 
   def persisted?
@@ -81,6 +82,7 @@ class PredefinedReportsController < ApplicationController
     @quarterly_query = ReportQuery.new(:date_range => :quarter)
     @fiscal_year_to_date_query = ReportQuery.new(:date_range => :fiscal_year_to_date)
     @semimonth_query = ReportQuery.new(:date_range => :semimonth)
+    @selected_groupings = ["funding_source","funding_subsource","project_number","project_name","program_name","reporting_agency_name"]
   end
 
   def premium_service_billing
@@ -347,15 +349,11 @@ class PredefinedReportsController < ApplicationController
   end
   
   def allocation_summary
-    @groupings = [ 
-      ["Funding Source",        "funding_source"],
-      ["Funding Subsource",     "funding_subsource"],
-      ["F.E. Number",           "project_number"],
-      ["F.E. Project Name",     "project_name"],
-      ["Program Name",          "program_name"],
-      ["Reporting Agency Name", "reporting_agency_name"]
-    ]
-    all_nodes = Allocation.group(@groupings.map{|x| x[1] }, Allocation.active_on(Date.today))
+    @query = ReportQuery.new(params[:report_query])
+    group_by = @query.group_by.split(",")
+    @groupings = group_by.map{|x| [x, FlexReport::GroupMappings[x]] }
+    allocations = Allocation.active_on(Date.today).includes(:program, :reporting_agency, :provider, :project => [:funding_source])
+    all_nodes = Allocation.group(@groupings.map{|x| x[0] }, allocations)
     @flattened_nodes = flatten_nodes([], all_nodes, 0)
   end
   

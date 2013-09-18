@@ -1374,6 +1374,38 @@ div.predefined-report form.run-report input[type="submit"]:hover {
     background: #009FFB;
 }
 
+#sortable-selected, #sortable-unselected { 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0 0 2.5em; 
+    float: left; 
+    margin-right: 10px; 
+    width: 240px;
+    border: 1px solid #bbb;
+    padding: 10px 5px 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#sortable-selected li, #sortable-unselected li { 
+    margin: 0 5px 5px 5px; 
+    padding: 2px; 
+    width: 220px; 
+}
+
+div.sortable {
+  float: left;
+}
+
+li.sortable-item {
+  border: 1px solid #BBBBBB;
+  background: #DDDDDD;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+ 
 /* 
  *
  * Predefined Reports
