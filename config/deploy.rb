@@ -10,7 +10,7 @@ require 'bundler/capistrano'
 
 #-----Basic Recipe-----
 set :application, "lowdown"
-set :repository,  "http://github.com/rideconnection/lowdown.git"
+set :repository,  "git://github.com/rideconnection/lowdown.git"
 set :deploy_to, "/home/deployer/rails/lowdown"
 
 set :scm, :git
