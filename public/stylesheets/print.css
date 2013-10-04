@@ -160,3 +160,7 @@ body.allocation-summary td {
   border: 1pt solid #DDDDDD;
   padding: 5px;
 }
+
+body.bpa-invoice table#trip-results td {
+  padding: 0 0.4em;
+}
