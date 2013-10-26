@@ -40,7 +40,7 @@ class FlexReportsController < ApplicationController
   def show
     @report = FlexReport.find params[:id]
     if params[:flex_report].present?
-      @report.attributes = params[:flex_report].slice("start_date(3i)","start_date(2i)","start_date(1i)","end_date(3i)","end_date(2i)","end_date(1i)","pending") 
+      @report.attributes = params[:flex_report].slice("start_date(3i)","start_date(2i)","start_date(1i)","end_month(3i)","end_month(2i)","end_month(1i)","pending") 
       @report.save
     end
     @report.attributes = params[:flex_report]
