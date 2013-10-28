@@ -13,7 +13,10 @@
       <h3>Program: <%= allocation.program.try(:name) || "Unspecified Program" %></h3>
       <h3>County: <%= allocation.county || "Unspecified County" %></h3>
       <h3>Funding Sources: <%= quarterly_report_funding_sources(allocation.reporting_agency_id,allocation.program_id,allocation.county) %></h3>
-      <%= render "flex_reports/report", :results => county_rows, :group_fields => @report.group_fields[3..-1] %>
+      <%= render "flex_reports/report", 
+          :results => county_rows, 
+          :group_fields => @report.group_fields[3..-1]
+      %>
       <hr style="page-break-after: always;"/>
     <% end %>
   <% end %>
@@ -23,5 +26,6 @@
   </h2>
   <%= render "flex_reports/report", 
       :results => @summary_report.results[reporting_agency], 
-      :group_fields => @summary_report.group_fields[1..-1] %>
+      :group_fields => @summary_report.group_fields[1..-1], 
+      :section => 'section-summary' %>
 <% end %>

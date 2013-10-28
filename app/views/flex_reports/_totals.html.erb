@@ -2,7 +2,8 @@
 <% row = ReportRow.sum(row, nil, @report.fields) %>
 <% totals_class = (group_fields.size >= 3 || (defined?(grand_total) && grand_total)) ? "sum-totals" : "totals" %>
 <% currency_precision = 0 if currency_precision.nil? %>
-<%= content_tag :tr, :class => "#{row_classes.join(' ')} #{totals_class} level-#{tree_map.size}"  do %>
+<% section = 'section-main' if section.nil? %>
+<%= content_tag :tr, :class => "#{row_classes.join(' ')} #{section} #{totals_class} level-#{tree_map.size}"  do %>
   <% if defined?(total_label) %>
     <%= content_tag :td, :colspan => group_fields.size + 1 do %>
       <%= total_label %>

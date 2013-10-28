@@ -1,16 +1,36 @@
+<% section = 'section-main' if section.nil? %>
 <div class="report-wrapper">
   <table>
     <%= render "flex_reports/header", :report_group_fields => group_fields %>
     <tbody>
       <% root_group_class = "row-group-0" %>
       <%= render 'flex_reports/group_header', 
-          :row => results, :report_group_fields => group_fields, :group_fields => group_fields, 
-          :root_header => true, :row_classes => [], :this_row_group_class => root_group_class, :tree_map => [] %>
-      <%= render "flex_reports/nested_rows", :rows => results, :report_group_fields => group_fields, 
-          :group_fields => group_fields, :row_classes => [root_group_class], :tree_map => [0] %>
+          :row                  => results, 
+          :report_group_fields  => group_fields, 
+          :group_fields         => group_fields, 
+          :row_classes          => [], 
+          :tree_map             => [],
+          :section              => section,
+          :this_row_group_class => root_group_class, 
+          :root_header          => true
+      %>
+      <%= render "flex_reports/nested_rows", 
+          :rows                 => results, 
+          :report_group_fields  => group_fields, 
+          :group_fields         => group_fields, 
+          :row_classes          => [root_group_class], 
+          :tree_map             => [0],
+          :section              => section
+      %>
       <%= render 'flex_reports/totals', 
-          :row=>results, :report_group_fields => group_fields, :group_fields=>group_fields, 
-          :grand_total => true, :row_classes => [], :tree_map => [] %>
+          :row                  => results, 
+          :report_group_fields  => group_fields, 
+          :group_fields         => group_fields, 
+          :row_classes          => [], 
+          :tree_map             => [],
+          :section              => section,
+          :grand_total          => true 
+      %>
     </tbody>
   </table>
 </div>

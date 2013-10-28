@@ -1,6 +1,8 @@
+<% section = 'section-main' if section.nil? %>
 <%= content_tag :tr, 
-  :class => (row_classes + %w(collapsible visible-group) + (root_header ? ['no-print'] : []) + ["level-#{tree_map.size}"]).join(' '), 
-  "data-group" => this_row_group_class do %>
+  :class => (row_classes + %w(collapsible visible-group) + (root_header ? ['no-print'] : []) + [section, "level-#{tree_map.size}"]).join(' '), 
+  "data-group" => this_row_group_class,
+  "data-section" => section do %>
   <% if root_header %>
     <%= content_tag :td, :class => "report-item toggleable", :colspan => (@report.fields.size + report_group_fields.size + 1) do %>
       All Data

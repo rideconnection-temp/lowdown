@@ -240,7 +240,10 @@ $(document).ready(function() {
   });
 
   $('#collapse-all').click(function() {
+    // Make all groups hidden
     $('.visible-group').toggleClass('hidden-group').toggleClass('visible-group');
+    // No go back and make the root group visible so the first level of groups are shown.
+    // (Per user user request, this is actually 'collapse all but first group level')
     $('.level-0.hidden-group').toggleClass('hidden-group').toggleClass('visible-group');
     resetFlexReportRowVisibility();
     return false;
@@ -255,11 +258,11 @@ $(document).ready(function() {
   function resetFlexReportRowVisibility() {
     // Go through every row that could possibly be visible, and make it so
     $('.visible-group').each(function(i, row) {
-      $('.' + $(row).data('group')).show();
+      $('.' + $(row).data('group') + '.' + $(row).data('section')).show();
     });
     // Now go through every row that needs to be hidden, and make it so
     $('.hidden-group').each(function(i, row) {
-      $('.' + $(row).data('group')).hide();
+      $('.' + $(row).data('group') + '.' + $(row).data('section')).hide();
     });
   }
 
