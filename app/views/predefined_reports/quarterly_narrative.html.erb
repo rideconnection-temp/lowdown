@@ -2,6 +2,7 @@
   <h1>Quarterly Narrative Report</h1>
 </div>
 
+<% i = -1 %>
 <% @report.results.sort_by {|k,v| row_sort(k.try(:name))}.each do |reporting_agency, reporting_agency_rows| %>
   <% reporting_agency_rows.sort_by {|k,v| row_sort(k.try(:name))}.each do |program, program_rows| %>
     <% program_rows.sort_by {|k,v| row_sort(k)}.each do |county, county_rows| %>
@@ -13,9 +14,11 @@
       <h3>Program: <%= allocation.program.try(:name) || "Unspecified Program" %></h3>
       <h3>County: <%= allocation.county || "Unspecified County" %></h3>
       <h3>Funding Sources: <%= quarterly_report_funding_sources(allocation.reporting_agency_id,allocation.program_id,allocation.county) %></h3>
+      <% i += 1 %>
       <%= render "flex_reports/report", 
-          :results => county_rows, 
-          :group_fields => @report.group_fields[3..-1]
+          :results      => county_rows, 
+          :group_fields => @report.group_fields[3..-1],
+          :section      => "section-#{i}"
       %>
       <hr style="page-break-after: always;"/>
     <% end %>
@@ -24,8 +27,10 @@
     <%= reporting_agency %> &mdash; 
     <%= report_month_range(@report.start_date, @report.after_end_date) %> &mdash; All Programs
   </h2>
+  <% i += 1 %>
   <%= render "flex_reports/report", 
-      :results => @summary_report.results[reporting_agency], 
+      :results      => @summary_report.results[reporting_agency], 
       :group_fields => @summary_report.group_fields[1..-1], 
-      :section => 'section-summary' %>
+      :section      => "section-#{i}"
+  %>
 <% end %>
