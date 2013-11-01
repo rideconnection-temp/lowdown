@@ -1,6 +1,6 @@
 <h2 id="result-count"><%= pluralize @summaries.total_entries, "summary" %> found.</h2>
 <% if @summaries.total_entries > 0 %>
-  <%= link_to 'Mark Data Entry Complete For All', { :action => :bulk_update, :summary_query => params[:summary_query] }, :class=>'mark-complete'  if current_user.is_admin %>
+  <%= link_to 'Mark Data Entry Complete For All', { :action => :bulk_update, :q => params[:q] }, :class=>'mark-complete'  if current_user.is_admin %>
   <div class="list-wrapper">
     <table id="summary-results">
       <thead>

@@ -22,7 +22,7 @@
       </li>
       <li>
         <label>Data Entry Complete:</label>
-        <%= f.select :complete, ['Yes','No'], :include_blank => true %>
+        <%= f.select :complete, ['Yes','No'], :include_blank => true, :selected => (@query.complete.nil? ? nil : (@query.complete ? 'Yes' : 'No')) %>
       </li>
     </ol>
     <ul class="search-scope">
