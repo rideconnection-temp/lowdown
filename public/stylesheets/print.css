@@ -1,4 +1,4 @@
-/*
+*
  *
  * Print Stylesheet
  *
@@ -161,6 +161,7 @@ body.allocation-summary td {
   padding: 5px;
 }
 
-body.bpa-invoice table#trip-results td {
+body.bpa-invoice  table#trip-results    td,
+body.trip-purpose table#purpose-results td {
   padding: 0 0.4em;
 }
