@@ -99,18 +99,24 @@ class PredefinedReportsController < ApplicationController
     else
       redirect_to :controller => :predefined_reports, :action => :index
     end
-    trips_billed_per_hour = trips.billed_per_hour
-    @trips_billed_per_trip = trips.billed_per_trip
-    all_trips = trips_billed_per_hour + @trips_billed_per_trip
-    @run_groups = trips_billed_per_hour.group_by(&:run)
+    trips_billed_per_hour           = trips.billed_per_hour
+    @trips_billed_per_trip          = trips.billed_per_trip
+    all_trips                       = trips_billed_per_hour + @trips_billed_per_trip
+    @run_groups                     = trips_billed_per_hour.group_by(&:run)
+    @grouped_trips_billed_per_hour  = Allocation.group(%w{provider run}, trips_billed_per_hour )
 
-    @total_taxi_cost      = all_trips.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
-    @total_partner_cost   = all_trips.reduce(0){|s,t| s + (t.ads_partner_cost || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_partner_cost}
-    @total_scheduling_fee = all_trips.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_scheduling_fee}
-    @total_cost           = all_trips.reduce(0){|s,t| s + (t.ads_total_cost || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_total_cost}
-    @total_billable_hours = @run_groups.keys.reduce(0){|s,r| s + r.ads_billable_hours}
-    @taxi_trip_count      = @trips_billed_per_trip.select{|t| t.bpa_provider?}.size
-    @partner_trip_count   = @trips_billed_per_trip.reject{|t| t.bpa_provider?}.size
+    @total_taxi_cost                = all_trips.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
+    @total_partner_cost             = all_trips.reduce(0){|s,t| s + (t.ads_partner_cost || 0)} + 
+                                      @run_groups.keys.reduce(0){|s,r| s + r.ads_partner_cost}
+    @total_scheduling_fee           = all_trips.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} + 
+                                      @run_groups.keys.reduce(0){|s,r| s + r.ads_scheduling_fee}
+    @total_cost                     = all_trips.reduce(0){|s,t| s + (t.ads_total_cost || 0)} + 
+                                      @run_groups.keys.reduce(0){|s,r| s + r.ads_total_cost}
+    @total_billable_hours           = @run_groups.keys.reduce(0){|s,r| s + r.ads_billable_hours}
+    @taxi_trips                     = @trips_billed_per_trip.select{|t| t.bpa_provider?}
+    @grouped_taxi_trips             = Allocation.group(['provider'],@taxi_trips)
+    @partner_trips                  = @trips_billed_per_trip.reject{|t| t.bpa_provider?}
+    @grouped_partner_trips          = Allocation.group(['provider'],@partner_trips)
 
     if params[:output] == 'CSV'
       @filename = "#{@title} #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"

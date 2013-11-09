@@ -146,6 +146,10 @@ class Trip < ActiveRecord::Base
     cost == 0 ? nil : BigDecimal.new(cost.to_s)
   end
 
+  def provider
+    allocation.try(:provider)
+  end
+
   memoize :customers_served
 
   def create_revision_with_known_attributes_without_callbacks(attrs)
