@@ -49,8 +49,8 @@ class Trip < ActiveRecord::Base
   scope :spd,             joins(:allocation => {:project => :funding_source}).where(:funding_sources => {:funding_source_name => 'SPD'})
   scope :multnomah_ads,   joins(:allocation => {:project => :funding_source}).where(:funding_sources => {:funding_source_name => 'Multnomah ADS'})
   scope :washington_davs, joins(:allocation => {:project => :funding_source}).where(:funding_sources => {:funding_source_name => 'Washington Co DAVS'})
-  scope :billed_per_hour, joins(:allocation).where("allocations.name ILIKE '%hourly%'")
-  scope :billed_per_trip, joins(:allocation).where("allocations.name NOT ILIKE '%hourly%'")
+  scope :billed_per_hour, where("allocations.name ILIKE '%hourly%'")
+  scope :billed_per_trip, where("allocations.name NOT ILIKE '%hourly%'")
   scope :for_allocation,                lambda {|allocation|    where(:allocation_id => allocation.id) }
   scope :for_allocation_id,             lambda {|allocation_id| where(:allocation_id => allocation_id) }
   scope :for_run,                       lambda {|run_id|        where(:run_id => run_id) }

@@ -87,7 +87,8 @@ class PredefinedReportsController < ApplicationController
 
   def premium_service_billing
     @query = ReportQuery.new(params[:report_query])
-    trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).includes(:customer,{:allocation => :provider},:pickup_address,:dropoff_address).default_order
+    trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).
+            includes(:customer,{:allocation => :provider},:pickup_address,:dropoff_address,:run).default_order
     trips = trips.for_provider(@query.provider_id) if @query.provider_id.present?
     case @query.county
     when "Multnomah"
@@ -102,7 +103,7 @@ class PredefinedReportsController < ApplicationController
     trips_billed_per_hour           = trips.billed_per_hour
     @trips_billed_per_trip          = trips.billed_per_trip
     all_trips                       = trips_billed_per_hour + @trips_billed_per_trip
-    @run_groups                     = trips_billed_per_hour.group_by(&:run)
+    @run_groups                     = Allocation.group(%w{run}, trips_billed_per_hour)
     @grouped_trips_billed_per_hour  = Allocation.group(%w{provider run}, trips_billed_per_hour )
 
     @total_taxi_cost                = all_trips.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
