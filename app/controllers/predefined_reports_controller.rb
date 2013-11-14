@@ -120,7 +120,7 @@ class PredefinedReportsController < ApplicationController
     @grouped_partner_trips          = Allocation.group(['provider'],@partner_trips)
 
     if params[:output] == 'CSV'
-      @filename = "#{@title} #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"
+      @filename = "#{@title} #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
       render "premium_service_billing.csv" 
     end
   end
@@ -194,7 +194,7 @@ class PredefinedReportsController < ApplicationController
       end
     end
     if params[:output] == 'CSV'
-      @filename = "SPD Report #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"
+      @filename = "SPD Report #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
       render "spd.csv" 
     end
   end
@@ -223,6 +223,10 @@ class PredefinedReportsController < ApplicationController
       end
     end
     @trip_purposes = TripPurposeRow.trip_purposes
+    if params[:output] == 'CSV'
+      @filename = "Trip Purpose Report #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
+      render "trip_purpose.csv" 
+    end
   end
 
   def quarterly_narrative
@@ -252,13 +256,13 @@ class PredefinedReportsController < ApplicationController
     if params[:output] == 'Audit'
       @report.group_by = "provider_name,allocation_name"
       template_name = "trimet_export_audit.csv"
-      @filename = "#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Audit Report.csv"
+      @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Audit Report.csv"
     else
       @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier"
       @report.county_names = [:none] # This has the effect of making sure only the allocations below are used.
       @report.allocations = Allocation.in_trimet_report_group.active_in_range(@report.start_date,@query.after_end_date).map{|a| a.id }
       template_name = "trimet_export.csv"
-      @filename = "#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Report.csv"
+      @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Report.csv"
     end
     @report.populate_results!
 

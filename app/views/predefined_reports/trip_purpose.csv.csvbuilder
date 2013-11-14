@@ -1,0 +1,55 @@
+# Header Row
+row = ['']
+for purpose in @trip_purposes
+  row << purpose.gsub(/([\/-])/,' \1 ')
+end
+csv << row
+
+@results.keys.sort.each do |county|
+  # County Group Row
+  csv << ["#{county} County"]
+
+  # Data (Provider) Row
+  @results[county].keys.sort_by{|provider| provider.try(:name) || "Unspecified" }.each do |provider|
+    row = []
+    row << provider.try(:name) || 'Unspecified'
+    for purpose in @trip_purposes 
+      row << number_with_delimiter(@results[county][provider].by_purpose[purpose])
+    end 
+    csv << row
+  end
+
+  # Totals
+  row = ["#{county} County Total"]
+  total = TripPurposeRow.sum(@results[county])
+  for purpose in @trip_purposes
+    row << number_with_delimiter(total.by_purpose[purpose])
+  end
+  csv << row
+
+  # Percentages
+  row = ['% of total county trips']
+  percentages = total.percentages
+  for purpose in @trip_purposes
+    row << "%.1f\%" % percentages[purpose] 
+  end
+  csv << row 
+end
+  
+# Grand Totals 
+csv << ['All Trips']
+
+row = ['Grand Total']
+total = TripPurposeRow.sum(@results)
+for purpose in @trip_purposes
+  row << number_with_delimiter(total.by_purpose[purpose])
+end
+csv << row
+
+# Grand Total Percentages 
+row = ['% of total trips']
+percentages = total.percentages
+for purpose in @trip_purposes 
+  row << "%.1f\%" % percentages[purpose] 
+end 
+csv << row
