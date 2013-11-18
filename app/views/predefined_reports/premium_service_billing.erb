@@ -81,15 +81,21 @@
       <th class="number"><%= number_to_currency(@total_cost) %></th>
       <th></th>
     </tr>
-    <% @grouped_trips_billed_per_hour.keys.sort_by{|a| a.name }.each do |provider| %>
-      <tr>
-        <td colspan="2"><%= provider %> Hours</td>
-        <td class="number"><%= @grouped_trips_billed_per_hour[provider].keys.reduce(0){|s,r| s + r.ads_billable_hours} %></td>
-      </tr>
-    <% end %>
     <tr>
       <th colspan="2" class="text">Total Billable Hours</th>
       <th class="number"><%= @total_billable_hours %></th>
+    </tr>
+    <% @grouped_trips_billed_per_hour.keys.sort_by{|a| a.name }.each do |provider| %>
+      <tr>
+        <td colspan="2"><%= provider %> Hours</td>
+        <td class="number">
+          <%= @grouped_trips_billed_per_hour[provider].keys.reduce(0){|s,r| s + r.ads_billable_hours} %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <th colspan="2" class="text">Total Taxi Trips</th>
+      <th class="number"><%= @taxi_trips.size %></th>
     </tr>
     <% @grouped_taxi_trips.keys.sort_by{|a| a.name }.each do |provider| %>
       <tr>
@@ -98,8 +104,8 @@
       </tr>
     <% end %>
     <tr>
-      <th colspan="2" class="text">Total Taxi Trips</th>
-      <th class="number"><%= @taxi_trips.size %></th>
+      <th colspan="2" class="text">Total Partner Trips</th>
+      <th class="number"><%= @partner_trips.size %></th>
     </tr>
     <% @grouped_partner_trips.keys.sort_by{|a| a.name }.each do |provider| %>
       <tr>
@@ -107,10 +113,6 @@
         <td class="number"><%= @grouped_partner_trips[provider].size %></td>
       </tr>
     <% end %>
-    <tr>
-      <th colspan="2" class="text">Total Partner Trips</th>
-      <th class="number"><%= @partner_trips.size %></th>
-    </tr>
   </tbody>
 </table>
 
