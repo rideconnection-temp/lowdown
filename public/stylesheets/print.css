@@ -98,7 +98,7 @@ th.text {
 tr.sub-header th {
 }
 td {
-  padding: 0.7em;
+  padding: 0.5em;
   border-top: 1pt solid #ddd;
 }
 td.number, th.number {
