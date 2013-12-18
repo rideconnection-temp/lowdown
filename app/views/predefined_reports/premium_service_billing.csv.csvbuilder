@@ -56,18 +56,3 @@ csv << [
   number_to_currency(@total_cost),
   nil
 ]
-csv << [
- "Total Billable Hours",
- @total_billable_hours,
- nil, nil, nil, nil, nil, nil, nil, nil, nil 
-]
-csv << [
- "Taxi Trips",
- @taxi_trip_count,
- nil, nil, nil, nil, nil, nil, nil, nil, nil 
-]
-csv << [
- "Partner Trips",
- @partner_trip_count,
- nil, nil, nil, nil, nil, nil, nil, nil, nil 
-]
