@@ -19,11 +19,6 @@
       </li>
       
       <li class="selfclear">
-        <%= form.label :group_trip %>
-        <%= form.check_box :group_trip %>
-      </li>
-      
-      <li class="selfclear">
         <%= form.label :program %>
         <%= form.collection_select :program_id, Program.default_order, :id, :name, :include_blank => true %>
         <%= link_to "Details", [:edit, @allocation.program], :class => :details if @allocation.program %>

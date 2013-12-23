@@ -1,6 +1,5 @@
 csv << [
   'Allocation Name',
-  'Group Trip',
   'Program Name',
   'Project Name',
   'Project Number',
@@ -32,7 +31,6 @@ csv << [
 @allocations.each do |a|
   csv << [
     a.name,
-    a.group_trip ? 'True' : 'False',
     a.program.try(:name),
     a.project.try(:name),
     a.project.try(:project_number),

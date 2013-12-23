@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130703225636) do
+ActiveRecord::Schema.define(:version => 20131223210041) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -31,7 +31,6 @@ ActiveRecord::Schema.define(:version => 20130703225636) do
 
   create_table "allocations", :force => true do |t|
     t.string  "name"
-    t.boolean "group_trip"
     t.integer "project_id"
     t.integer "provider_id"
     t.string  "county"
@@ -330,7 +329,5 @@ ActiveRecord::Schema.define(:version => 20130703225636) do
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
   add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
-
-  add_foreign_key "projects", ["funding_source_id"], "funding_sources", ["id"], :name => "projects_funding_source_id_fkey"
 
 end

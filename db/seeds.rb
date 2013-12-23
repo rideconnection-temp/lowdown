@@ -24,7 +24,6 @@ CSV.foreach(File.join(Rails.root,'db','seeds','allocations.csv'),headers: true) 
   prov = Provider.find_by_name(r['provider_name'])
   raise "No provider '#{r['provider_name']}'" if prov.nil?
   p.provider_id = prov.id
-  p.group_trip = true
   p.county = r['county']
   p.routematch_override = r['routematch_override']
   p.routematch_provider_code = r['routematch_provider_code']
