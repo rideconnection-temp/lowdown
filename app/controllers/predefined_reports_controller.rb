@@ -259,7 +259,8 @@ class PredefinedReportsController < ApplicationController
       @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Audit Report.csv"
     else
       @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier"
-      @report.county_names = [:none] # This has the effect of making sure only the allocations below are used.
+      # This has the effect of making sure only the allocations below are used.
+      @report.county_names = [:none] 
       @report.allocations = Allocation.in_trimet_report_group.active_in_range(@report.start_date,@query.after_end_date).map{|a| a.id }
       template_name = "trimet_export.csv"
       @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Report.csv"
