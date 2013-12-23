@@ -3,14 +3,14 @@
   
   <fieldset>
     <ol class="section">
+      <li class="selfclear">
+        <%= form.label :name, "Allocation name" %>
+        <%= form.text_field :name, :size => 60 %>
+      </li>
       <li>
         <h2>Reporting Attributes</h2>
         These attributes are used for grouping and filtering report data.
         <ol class="section">
-          <li class="selfclear">
-            <%= form.label :name %>
-            <%= form.text_field :name, :size => 60 %>
-          </li>
           <li class="selfclear">
             <%= form.label :program %>
             <%= form.collection_select :program_id, Program.default_order, :id, :name, :include_blank => true %>
