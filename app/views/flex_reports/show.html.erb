@@ -26,6 +26,7 @@
 <%= form_for @report, :html => {:class => 'run-report', :method => :get, :style => "display:none;"} do |f| %>
   <fieldset class="no-print">
     <%= render 'grouping' %>
+    <%= render 'filters' %>
     <%= render 'columns' %>
     <%= render 'date_range', :f => f %>
     <div class="actions">
