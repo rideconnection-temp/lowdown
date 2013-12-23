@@ -1,23 +1,11 @@
 <%= form_for(@allocation) do |form| %>
-  <% if @allocation.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@allocation.errors.count, "error") %> prohibited this allocation from being saved:</h2>
-
-      <ul>
-      <% @allocation.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/error_messages", :target => @allocation %>
   
   <fieldset>
     <ol class="section">
       <li>
-        <h2>
-          Reporting Attributes
-        </h2>
-        These attributes are used for grouping report data.
+        <h2>Reporting Attributes</h2>
+        These attributes are used for grouping and filtering report data.
         <ol class="section">
           <li class="selfclear">
             <%= form.label :name %>
@@ -51,9 +39,7 @@
       </li>
 
       <li>
-        <h2>
-          Data Collection Attributes
-        </h2>
+        <h2>Data Collection Attributes</h2>
         These attributes are used to tell the system where to look for different types of data
         <ol class="section">
           <li class="selfclear">
@@ -75,9 +61,7 @@
       </li>
 
       <li>
-        <h2>
-          Data Import Attributes
-        </h2>
+        <h2>Data Import Attributes</h2>
         These attributes are used to match imported trips with the proper allocations
         <ol class="section">
           <li class="selfclear">
@@ -93,9 +77,7 @@
       </li>
 
       <li>
-        <h2>
-          Special Allocation Flags
-        </h2>
+        <h2>Flags for Special Allocations</h2>
         These attributes are used to designate allocations that in some way do not get treated as your average service allocation
         <ol class="section">
           <li class="selfclear">
@@ -114,10 +96,8 @@
       </li>
 
       <li>
-        <h2>
-          TriMet E&D Report Attributes
-        </h2>
-        These attributes are used to solely for providing data for TriMet's Elderly and Disabled report
+        <h2>TriMet E&D Report Attributes</h2>
+        These attributes are used solely to provide data for TriMet's Elderly and Disabled report
         <ol class="section">
           <li class="selfclear">
             <%= form.label :eligibility, "Service eligibility" %>
