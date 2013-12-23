@@ -496,6 +496,13 @@ ol.section li.changed div.change {
     width: 14%;
     font-weight: bold;
 }
+ol.section ol.section {
+    background-color: #F6F6F6;
+    border: 1pt solid #BBBBBB;
+    border-radius: 5px;
+    padding: 10px 10px 0;
+    margin-bottom: 20px;
+}
 td.changed {
     background-color: #E5F2FF;
     border: 2px solid yellow !important;
