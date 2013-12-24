@@ -6,9 +6,14 @@
   <fieldset>
 
     <ol class="section first">
-      <li><label>Start Date:</label> <%= f.date_select( :start_date, :start_year => 2012, :end_year => Date.today.year, :order => [:month, :year] ) %></li>
-      <li><label>End Date:</label> <%= f.date_select( :end_date, :start_year => 2012, :end_year => Date.today.year, :order => [:month, :year] ) %></li>
-
+      <li>
+        <label>Start Date:</label>
+        <%= f.date_select( :start_date, :start_year => 2012, :end_year => Date.today.year, :order => [:month, :year] ) %>
+      </li>
+      <li>
+        <label>End Date:</label>
+        <%= f.date_select( :end_date, :start_year => 2012, :end_year => Date.today.year, :order => [:month, :year] ) %>
+      </li>
     </ol>
 
     <ol class="section fourth">
@@ -25,16 +30,16 @@
         <%= f.select :complete, ['Yes','No'], :include_blank => true, :selected => (@query.complete.nil? ? nil : (@query.complete ? 'Yes' : 'No')) %>
       </li>
     </ol>
-    <ul class="search-scope">
-      <% if @query.allocation_ids.present? %>
+    <% if @query.allocation_ids.present? %>
+      <ul class="search-scope">
         <h2>This search is limited to the following allocations:</h2>
         <% @allocations.where(:id => @query.allocation_ids).each do |allocation| %>
           <li>
             <%= link_to allocation.name, edit_allocation_url(allocation) %> 
           </li>
         <% end %>
-      <% end %>
-    </ul>
+      </ul>
+    <% end %>
 
     <div class="actions">
       <input id="summary-search" type="submit" value="Search" />

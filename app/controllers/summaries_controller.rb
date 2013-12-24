@@ -4,7 +4,7 @@ class SummaryQuery
 
   attr_accessor :start_date, :end_date, :after_end_date
   attr_accessor :provider, :reporting_agency, :complete
-  attr_accessor :allocation_id_list, :allocation_ids
+  attr_accessor :allocation_id_list, :allocation_ids, :adjustment_notes_contain
 
   def convert_date(obj, base)
     Date.new(obj["#{base}(1i)"].to_i, obj["#{base}(2i)"].to_i)
@@ -34,6 +34,7 @@ class SummaryQuery
     @complete             = true if params[:complete] == 'Yes'
     @complete             = false if params[:complete] == 'No'
     @allocation_ids       = @allocation_id_list.split.map{|al| al.to_i} if @allocation_id_list.present?
+    @adjustment_notes_contain = params[:adjustment_notes_contain] if params[:adjustment_notes_contain]
   end
 
   def persisted?
@@ -53,6 +54,7 @@ class SummaryQuery
     summaries = summaries.data_entry_complete if complete 
     summaries = summaries.data_entry_not_complete if complete == false
     summaries = summaries.for_allocation_id(allocation_ids) if allocation_ids.present?
+    summaries = summaries.adjustment_notes_contain(adjustment_notes_contain) if adjustment_notes_contain.present?
     summaries
   end
 
@@ -79,7 +81,12 @@ class SummariesController < ApplicationController
     @page_totals = {}
 
     @query = SummaryQuery.new(params[:q])
-    @filtered_summaries = @query.apply_conditions(Summary).current_versions.includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start')
+    @filtered_summaries = @query.
+        apply_conditions(Summary).
+        current_versions.
+        includes(:allocation,:summary_rows).
+        joins(:allocation).
+        order('allocations.name,summaries.period_start')
     @summaries = @filtered_summaries.paginate :page => params[:page]
     @allocations = Allocation.summary_collection_method.order(:name)
     attributes_to_sum.each do |attribute|
@@ -89,7 +96,13 @@ class SummariesController < ApplicationController
   end
 
   def adjustments
-    @summaries = Summary.revisions.order('summaries.valid_start DESC').includes(:allocation,:summary_rows).paginate :page => params[:page]
+    @query = SummaryQuery.new(params[:q])
+    @summaries = @query.
+        apply_conditions(Summary).
+        revisions.
+        includes(:allocation,:summary_rows).
+        order('summaries.valid_start DESC').
+        paginate :page => params[:page]
   end
 
   def new

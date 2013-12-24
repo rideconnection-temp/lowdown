@@ -86,6 +86,7 @@ class Summary < ActiveRecord::Base
   scope :for_reporting_agency, lambda {|provider_id| where("summaries.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",provider_id)}
   scope :with_no_reporting_agency, where("summaries.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id IS NULL)")
   scope :revisions, where("summaries.valid_start <> summaries.first_version_created_at")
+  scope :adjustment_notes_contain, lambda{|an| where("summaries.adjustment_notes LIKE ?","%#{an}%")}
 
   def created_by
     return first_version.updater
