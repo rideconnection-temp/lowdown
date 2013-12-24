@@ -768,9 +768,6 @@ div.list-wrapper table th.column-group {
     text-align: center;
     font-weight: bold;
 }
-table th:last-child {
-    border-right: 0;
-}
 table tr.sub-header th {
     border-top: 1px dotted #3674b3;
     vertical-align: bottom;

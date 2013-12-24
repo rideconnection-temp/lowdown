@@ -9,6 +9,7 @@
        <th rowspan="2">Allocation</th>
        <th rowspan="2">Month</th>
        <th colspan="9" class="column-group">Change Only</th>
+       <th rowspan="2">Adjustment Notes</th>
        <th rowspan="2">&nbsp;</th>
       </tr>
       <tr>
@@ -40,6 +41,7 @@
           <td class="number"><%= attribute_difference(summary, :driver_hours_volunteer) %></td>
           <td class="number"><%= attribute_difference(summary, :total_driver_hours) %></td>
           <td class="number"><%= attribute_difference(summary, :unduplicated_riders) %></td>
+          <td><%= summary.adjustment_notes %></td>
           <td><%= link_to 'Details', :action=>:edit, :id=>summary.id %></td>
         </tr>
       <% end %>
