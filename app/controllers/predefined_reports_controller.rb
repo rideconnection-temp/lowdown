@@ -256,24 +256,23 @@ class PredefinedReportsController < ApplicationController
     if params[:output] == 'Audit'
       @report.group_by = "provider_name,allocation_name"
       template_name = "trimet_export_audit.csv"
+      allocation_instance = Allocation.not_vehicle_maintenance_only
       @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Audit Report.csv"
     else
       @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier"
-      # This has the effect of making sure only the allocations below are used.
-      @report.county_names = [:none] 
-      @report.allocations = Allocation.in_trimet_report_group.active_in_range(@report.start_date,@query.after_end_date).map{|a| a.id }
       template_name = "trimet_export.csv"
+      allocation_instance = Allocation.in_trimet_report_group
       @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Report.csv"
     end
-    @report.populate_results!
+    @report.populate_results!(allocation_instance)
 
     render template_name
   end
 
   def age_and_ethnicity
     @query = ReportQuery.new(params[:report_query])
-    #we need new riders this month, where new means "first time this fy"
-    #so, for each trip this month, find the customer, then find out whether 
+    # We need new riders this month, where new means "first time this fy"
+    # so, for each trip this month, find the customer, then find out whether 
     # there was a previous trip for this customer this fy
 
     trip_customers = Trip.current_versions.select("DISTINCT customer_id").completed

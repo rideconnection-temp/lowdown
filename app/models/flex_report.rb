@@ -216,7 +216,7 @@ class FlexReport < ActiveRecord::Base
 
   # Based on the flex report definition, collect all the actual allocations for which data needs to be gathered.
   # If there are time periods, then take each allocation and break it into the requested time periods
-  def collect_allocation_objects!
+  def collect_allocation_objects!(allocation_instance = Allocation)
     where_strings = []
     where_params = []
 
@@ -260,7 +260,7 @@ class FlexReport < ActiveRecord::Base
         where_string = "allocations.id IN (?)"
         where_params << allocations
     end
-    results = Allocation.where(where_string, *where_params)
+    results = allocation_instance.where(where_string, *where_params)
 
     TimePeriods.each do |period|
       if group_fields.member? period
@@ -331,8 +331,8 @@ class FlexReport < ActiveRecord::Base
   end
 
   # Convenience function for running a flex report from a saved definition.
-  def populate_results!
-    collect_allocation_objects!
+  def populate_results!(allocation_instance = Allocation)
+    collect_allocation_objects!(allocation_instance)
     collect_report_data!
     group_report_rows!
   end
