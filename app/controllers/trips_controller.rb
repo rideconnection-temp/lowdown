@@ -176,11 +176,18 @@ class TripsController < ApplicationController
   end
 
   def show_import
-    @trip_imports = TripImport.order("trip_imports.created_at DESC").paginate :page => params[:page], :per_page => 30
+    @trip_imports = TripImport.order("trip_imports.created_at DESC").paginate(
+      :page => params[:page], 
+      :per_page => 30
+    )
   end
 
   def adjustments
-    @adjustments = Trip.grouped_by_adjustment.paginate :page => params[:page], :per_page => 30, :total_entries => Trip.version_group_count
+    @adjustments = Trip.grouped_by_adjustment.paginate(
+      :page          => params[:page], 
+      :per_page      => 30, 
+      :total_entries => Trip.version_group_count
+    )
   end
 
   def import
@@ -188,7 +195,11 @@ class TripsController < ApplicationController
       redirect_to :action=>:show_import and return
     end
     file = params['file-import'].tempfile
-    processed = TripImport.new(:file_path=>file,:file_name => params['file-import'].original_filename)
+    processed = TripImport.new(
+      :file_path => file,
+      :file_name => params['file-import'].original_filename,
+      :notes     => params['notes']
+    )
     if processed.save
       flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
       redirect_to :action => :show_import

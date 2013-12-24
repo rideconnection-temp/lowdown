@@ -11,7 +11,14 @@
     <fieldset>
 
       <ol class="section first">
-        <li><input id="file-import" name="file-import" type="file" value="" size="100" /></li>
+        <li>
+          <label for="file-import">Import file</label>
+          <input id="file-import" name="file-import" type="file" value="" size="100" />
+        </li>
+        <li>
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" rows="3" cols="60"></textarea>
+        </li>
       </ol>
 
       <div class="actions">
@@ -28,6 +35,7 @@
   <tr>
     <th>Imported At</th>
     <th>File Name</th>
+    <th>Notes</th>
     <th>Trip Count</th>
     <th></th>
   </tr>
@@ -38,6 +46,9 @@
       </td>
       <td>
         <%= trip_import.file_name || '<File name not recorded>' %>
+      </td>
+      <td>
+        <%= trip_import.notes %>
       </td>
       <td>
         <%= trip_import.trips.count %>
