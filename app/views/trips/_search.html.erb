@@ -1,4 +1,4 @@
-<%= form_for @query, :as => :q, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
+<%= form_for @query, :as => :q, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action => action} do |f| %>
   <fieldset>
     <ol class="section first">
       <li>
@@ -53,21 +53,23 @@
         <%= f.hidden_field :allocation_id_list %>
       </li>
     </ol>
-    <ul class="search-scope">
-      <% if @query.allocation_ids.present? %>
+    <% if @query.allocation_ids.present? %>
+      <ul class="search-scope">
         <h2>This search is limited to the following allocations:</h2>
         <% @allocations.where(:id => @query.allocation_ids).each do |allocation| %>
           <li>
             <%= link_to allocation.name, edit_allocation_url(allocation) %> 
           </li>
         <% end %>
-      <% end %>
-    </ul>
+      </ul>
+    <% end %>
 
     <div class="actions">
       <%= f.submit "Search", :id => "trip-search" %>
-      <%= f.submit "Download All Fields as CSV" %>
-      <%= f.submit "Download BPA Invoice Data" %>
+      <% if allow_csv %>
+        <%= f.submit "Download All Fields as CSV" %>
+        <%= f.submit "Download BPA Invoice Data" %>
+      <% end %>
     </div>
 
   </fieldset>

@@ -91,6 +91,9 @@ class Trip < ActiveRecord::Base
         includes(:pickup_address, :dropoff_address, :run, :customer, 
         :allocation => [:provider,{:project => :funding_source},:override]).
         joins(:allocation)
+  scope :grouped_revisions, 
+        select("DISTINCT valid_start, adjustment_notes").
+        where("valid_start <> imported_at")
 
   RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 

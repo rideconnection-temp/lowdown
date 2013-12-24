@@ -97,12 +97,8 @@ class TripsController < ApplicationController
   end
 
   def list
-    @query              = TripQuery.new params[:q], params[:commit]
-    @providers          = Provider.providers_in_allocations.default_order
-    @reporting_agencies = Provider.reporting_agencies.default_order
-    @allocations        = Allocation.trip_collection_method.order(:name)
-    @result_codes       = Trip::RESULT_CODES.sort
-
+    prep_search
+    @query = TripQuery.new params[:q], params[:commit]
     @trips = Trip.
         current_versions.
         index_includes.
@@ -204,10 +200,12 @@ class TripsController < ApplicationController
   end
 
   def adjustments
-    @adjustments = Trip.grouped_by_adjustment.paginate(
+    prep_search
+    @query = TripQuery.new(params[:q])
+    @adjustments = @query.apply_conditions(Trip).grouped_by_adjustment.paginate(
       :page          => params[:page], 
       :per_page      => 30, 
-      :total_entries => Trip.version_group_count
+      :total_entries => @query.apply_conditions(Trip).grouped_revisions.all.count
     )
   end
 
@@ -257,4 +255,12 @@ class TripsController < ApplicationController
     end
   end
 
+  private
+
+  def prep_search
+    @providers          = Provider.providers_in_allocations.default_order
+    @reporting_agencies = Provider.reporting_agencies.default_order
+    @allocations        = Allocation.trip_collection_method.order(:name)
+    @result_codes       = Trip::RESULT_CODES.sort
+  end
 end
