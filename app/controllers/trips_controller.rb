@@ -103,7 +103,10 @@ class TripsController < ApplicationController
     @allocations        = Allocation.trip_collection_method.order(:name)
     @result_codes       = Trip::RESULT_CODES.sort
 
-    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,{:project => :funding_source},:override]).joins(:allocation).order(:date,:trip_import_id)
+    @trips = Trip.
+        current_versions.
+        index_includes.
+        order(:date,:trip_import_id)
     @trips = @query.apply_conditions(@trips)
 
     if @query.format == 'general'
@@ -123,7 +126,12 @@ class TripsController < ApplicationController
     @providers   = Provider.order(:name).with_trip_data
     
     if @query.update_allocation?
-      @completed_trips_count = @query.apply_conditions(Trip).current_versions.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").completed.first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
+      @completed_trips_count = @query.
+          apply_conditions(Trip).
+          current_versions.
+          select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").
+          completed.
+          first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
       @completed_transfer_count = params[:transfer_count].try(:to_i) || 0
       @transfer_all = (params[:transfer_all] == '1' || params[:transfer_all] == true)
       @adjustment_notes = params[:adjustment_notes]
@@ -142,14 +150,22 @@ class TripsController < ApplicationController
             if rc == 'COMP' && !@transfer_all
               this_transfer_count = @completed_transfer_count
             else
-              this_transfer_count = ((@query.apply_conditions(Trip).select("COALESCE(SUM(guest_count),0) AS g, COALESCE(SUM(attendant_count),0) AS a, COUNT(*) AS c").current_versions.where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
+              this_transfer_count = ((@query.
+                  apply_conditions(Trip).
+                  current_versions.
+                  select("COALESCE(SUM(guest_count),0) AS g, COALESCE(SUM(attendant_count),0) AS a, COUNT(*) AS c").
+                  where(:result_code => rc).
+                  first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
             end
 
             trips_remaining = this_transfer_count
             @trips_transferred[rc] = 0
             # This is the maximum number of trips we'll need, if there are no guest or attendants. 
             # It may be fewer when guests & attendants are counted below
-            trips = @query.apply_conditions(Trip).where(:result_code => rc).current_versions.limit(this_transfer_count)
+            trips = @query.apply_conditions(Trip).
+                current_versions.
+                where(:result_code => rc).
+                limit(this_transfer_count)
             if trips.present?
               for trip in trips
                 passengers = (trip.guest_count || 0) + (trip.attendant_count || 0) + 1
@@ -171,7 +187,12 @@ class TripsController < ApplicationController
     end
     @trip_count = {}
     Trip::RESULT_CODES.values.each do |rc|
-      @trip_count[rc] = @query.apply_conditions(Trip).select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
+      @trip_count[rc] = @query.
+          apply_conditions(Trip).
+          current_versions.
+          select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").
+          where(:result_code => rc).
+          first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
     end
   end
 
@@ -217,7 +238,9 @@ class TripsController < ApplicationController
     @dropoff_address = @trip.dropoff_address
     @updated_by_user = @trip.updated_by_user
     @result_codes = Trip::RESULT_CODES
-    @result_codes[@trip.result_code] = (@trip.result_code) if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
+    if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
+      @result_codes[@trip.result_code] = (@trip.result_code) 
+    end
     @allocations = Allocation.order(:name).active_on(@trip.date)
     if @allocations.detect{|a| a.id == @trip.allocation_id}.nil?
       @allocations.unshift Allocation.find(@trip.allocation_id)
