@@ -559,6 +559,9 @@ fieldset ol.fourth {
 fieldset ol.section li input {
     max-width: 60%;
 }
+fieldset ol.section li input[type=file] {
+    max-width: inherit;
+}
 fieldset ol.section li label {
     float: left;
     width: 35%;
