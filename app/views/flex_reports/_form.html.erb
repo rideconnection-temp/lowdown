@@ -34,7 +34,7 @@
         <% action = @report.new_record? ? "Create" : "Update" %>
         <%= f.submit action %>
         <%= f.submit "#{action} and View", :name => "view" %>
-        <%= f.submit "#{action} and Export as CSV", :name => "csv" %>
+        <%= f.submit "#{action} and Export Data", :name => "csv" %>
       </div>
     <% end %>
 
