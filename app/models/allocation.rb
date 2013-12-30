@@ -184,6 +184,10 @@ class Allocation < ActiveRecord::Base
   def short_provider_name
     provider.try :short_name
   end
+
+  def provider_type
+    provider.try :provider_type
+  end
   
   def reporting_agency_name
     reporting_agency.try :name
