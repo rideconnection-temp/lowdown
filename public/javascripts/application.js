@@ -214,8 +214,8 @@ $(document).ready(function() {
   });
 
   // Hide the date fields if the user selects all dates
-  $('#trip_query_all_dates').change(function() {
-    if($('#trip_query_all_dates').attr("checked")) {
+  $('#q_all_dates').change(function() {
+    if($('#q_all_dates').attr("checked")) {
       $('#date_fields').slideUp();
     } else {
       $('#date_fields').slideDown();
