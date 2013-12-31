@@ -253,6 +253,16 @@ $(document).ready(function() {
     $(this).parent().find("select").show();
     $(this).parent().find("ul").hide();
   });
+  $("#expand-all-filters").click(function() {
+    $("#filters select").show();
+    $("#filters ul").hide();
+    return false;
+  });
+  $("#collapse-all-filters").click(function() {
+    $("#filters select").hide();
+    $("#filters ul").show();
+    return false;
+  });
 
   // Make flex report rows collapsible
   $('.collapsible').click(function() {

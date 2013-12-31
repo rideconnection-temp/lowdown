@@ -1162,17 +1162,43 @@ body.flex-reports h2 {
   margin: 10px 0 0 0;
 }
 body.flex-reports #filters {
-  margin: 0, 0, 0, 10px;
+  margin: 0, 0, 0, 0;
+  margin-left: 0;
+}
+body.flex-reports #filters div.section {
+  width: 100%;
+  float: left;
+  clear: left;
 }
 body.flex-reports #filters li.filter {
   list-style-type: none;
   float: left;
-  clear: left;
+  width: 25%;
 }
 body.flex-reports #filters h3 {
   margin: 10px 0 0 0;
   padding-right: 10px;
-  font-size: 15px;
+  font-size: 14px;
+  cursor: pointer;
+}
+body.flex-reports #filters select {
+  width: 100%;
+  margin-right: 10px;
+}
+body.flex-reports #filters ul.filter-list {
+  cursor: pointer;
+  list-style: none;
+  border: 1px solid #BBBBBB;
+  background-color: #FFFFFF;
+  padding: 0.25em;
+  margin-left: 0;
+  margin-right: 10px;
+}
+body.flex-reports #filters ul.filter-list li.blank {
+  color: #AAAAAA;
+}
+body.flex-reports #filters ul.filter-list li.not-blank {
+  font-weight: bold; 
 }
 body.flex-reports div.actions input[type=submit] {
   width: 200px;
