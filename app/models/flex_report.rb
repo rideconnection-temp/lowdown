@@ -38,6 +38,7 @@ class FlexReport < ActiveRecord::Base
     "provider_name"                 => "Provider Name",
     "provider_type"                 => "Provider Type",
     "reporting_agency_name"         => "Reporting Agency Name",
+    "reporting_agency_type"         => "Reporting Agency Type",
     "trimet_program_name"           => "TriMet Program Name",
     "trimet_program_identifier"     => "TriMet Program Identifier",
     "trimet_provider_name"          => "TriMet Provider Name",
