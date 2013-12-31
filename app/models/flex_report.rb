@@ -149,6 +149,22 @@ class FlexReport < ActiveRecord::Base
     end
   end
 
+  def reporting_agency_type_names
+    if reporting_agency_type_name_list.blank?
+      [""]
+    else
+      reporting_agency_type_name_list.split("|")
+    end
+  end
+
+  def reporting_agency_type_names=(list)
+    if list.blank? 
+      self.reporting_agency_type_name_list = nil
+    else
+      self.reporting_agency_type_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
+    end
+  end
+
   def reporting_agencies
     reporting_agency_list.blank? ? [] : Provider.find_all_by_id(reporting_agency_list.split(",").map(&:to_i))
   end
@@ -162,6 +178,22 @@ class FlexReport < ActiveRecord::Base
       self.reporting_agency_list = nil
     else
       self.reporting_agency_list = list.sort.map(&:to_s).join(",")
+    end
+  end
+
+  def provider_type_names
+    if provider_type_name_list.blank?
+      [""]
+    else
+      provider_type_name_list.split("|")
+    end
+  end
+
+  def provider_type_names=(list)
+    if list.blank? 
+      self.provider_type_name_list = nil
+    else
+      self.provider_type_name_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
     end
   end
 
@@ -186,7 +218,7 @@ class FlexReport < ActiveRecord::Base
   end
 
   def allocation_ids
-    allocation_list.blank? ? [] : allocation_list.split(",").map(&:to_i)
+    allocation_list.blank? ? [""] : allocation_list.split(",").map(&:to_i)
   end
 
   def allocations=(list)
@@ -228,7 +260,7 @@ class FlexReport < ActiveRecord::Base
     where_params.concat [start_date, after_end_date]
     
     if funding_source_list.present?
-      where_strings << "project_id IN (SELECT id FROM projects where funding_source_id IN (?))"
+      where_strings << "project_id IN (SELECT id FROM projects WHERE funding_source_id IN (?))"
       where_params << funding_source_ids
     end
     if project_list.present?
@@ -250,6 +282,14 @@ class FlexReport < ActiveRecord::Base
     if county_name_list.present?
       where_strings << "county IN (?)"
       where_params << county_names
+    end
+    if reporting_agency_type_name_list.present?
+      where_strings << "reporting_agency_id IN (SELECT id FROM providers WHERE provider_type IN (?))"
+      where_params << reporting_agency_type_names 
+    end
+    if provider_type_name_list.present?
+      where_strings << "provider_id IN (SELECT id FROM providers WHERE provider_type IN (?))"
+      where_params << provider_type_names 
     end
 
     if where_strings.present?

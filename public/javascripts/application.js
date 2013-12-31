@@ -231,6 +231,29 @@ $(document).ready(function() {
     }
   });
 
+  // Make the list of selected filter items match the select list in 
+  // flex report filters
+  $("li.filter select").change(function() {
+    var list = $(this).parent().find("ul.filter-list");
+    $(this).find("option").each(function() {
+      if($(this).is(":selected")) {
+        list.find("[data-value='" + $(this).val() + "']").show();
+      } else {
+        list.find("[data-value='" + $(this).val() + "']").hide();
+      }
+    });
+  });
+
+  // Toggle visibility of flex report filters and lists
+  $("li.filter h3").click(function() {
+    $(this).parent().find("select").toggle();
+    $(this).parent().find("ul").toggle();
+  });
+  $("li.filter ul").click(function() {
+    $(this).parent().find("select").show();
+    $(this).parent().find("ul").hide();
+  });
+
   // Make flex report rows collapsible
   $('.collapsible').click(function() {
     var t = $(this);

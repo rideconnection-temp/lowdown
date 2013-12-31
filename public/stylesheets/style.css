@@ -1158,16 +1158,21 @@ body.flex-reports fieldset.main-form ol.second {
 body.flex-reports hr {
   margin: 5px 0;
 }
-body.flex-reports #filters {
-  margin: 0;
-  clear: both;
-}
-body.flex-reports #filters li {
-  list-style-type: none;
-  float: left;
-}
 body.flex-reports h2 {
   margin: 10px 0 0 0;
+}
+body.flex-reports #filters {
+  margin: 0, 0, 0, 10px;
+}
+body.flex-reports #filters li.filter {
+  list-style-type: none;
+  float: left;
+  clear: left;
+}
+body.flex-reports #filters h3 {
+  margin: 10px 0 0 0;
+  padding-right: 10px;
+  font-size: 15px;
 }
 body.flex-reports div.actions input[type=submit] {
   width: 200px;

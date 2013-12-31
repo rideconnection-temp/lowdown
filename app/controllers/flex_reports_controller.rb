@@ -111,12 +111,14 @@ class FlexReportsController < ApplicationController
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
     end
-    @funding_sources          = [['<Select All>','']] + FundingSource.default_order.map {|x| [x.name, x.id]}
-    @projects                 = [['<Select All>','']] + Project.order(:project_number, :name).map {|x| [x.number_and_name, x.id]}
-    @providers                = [['<Select All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
-    @reporting_agencies       = [['<Select All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
-    @programs                 = [['<Select All>','']] + Program.default_order.map {|x| [x.name, x.id]}
-    @county_names             = [['<Select All>','']] + Allocation.county_names
+    @funding_sources          = [['<All>','']] + FundingSource.default_order.map {|x| [x.name, x.id]}
+    @projects                 = [['<All>','']] + Project.order(:project_number, :name).map {|x| [x.number_and_name, x.id]}
+    @providers                = [['<All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
+    @provider_types           = [['<All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.provider_type, x.provider_type]}.uniq.sort
+    @reporting_agencies       = [['<All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
+    @reporting_agency_types   = [['<All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.provider_type, x.provider_type]}.uniq.sort
+    @programs                 = [['<All>','']] + Program.default_order.map {|x| [x.name, x.id]}
+    @county_names             = [['<All>','']] + Allocation.county_names.map {|x| [x, x]}
     @grouped_allocations      = [] 
     Provider.order(:name).includes(:allocations).each do |p|
       @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]

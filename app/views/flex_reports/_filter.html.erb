@@ -1,0 +1,26 @@
+<% grouped_options = false unless defined?(grouped_options) %>
+<li class="filter">
+  <h3>
+    <%= title %>
+  </h3>
+  <select class="multi full" id="report_<%= name %>" multiple="multiple" name="flex_report[<%= name %>][]" style="display: none">
+    <% if grouped_options %>
+      <%= options_for_select([['<None>','']],(values.blank? ? [''] : [])) %> 
+      <%= grouped_options_for_select list_items, values %>
+    <% else %>
+      <%= options_for_select(list_items, values) %>
+    <% end %>
+  </select>
+  <ul class="filter-list">
+    <% if grouped_options %>
+      <% items = [['<None>','']] + list_items.reduce([]){|result, item| result + item[1] } %>
+    <% else %>
+      <% items = list_items %>
+    <% end %>
+    <% items.each do |x| %>
+      <li data-value="<%= x[1] %>" style="display: <%= (values.include?(x[1]))? 'list-item' : 'none' %>">
+        <%= x[0] %>
+      </li>
+    <% end %>
+  </ul>
+</li>

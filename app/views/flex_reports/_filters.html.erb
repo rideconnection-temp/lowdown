@@ -1,45 +1,58 @@
+<h2>Filters (Click filter to edit)</h2>
 <ol id="filters">
-  <li>
-    <h2>F.E. Projects</h2>
-    <select class="multi full" id="report_funding_sources" multiple="multiple" name="flex_report[projects][]">
-      <%= options_for_select(@projects, @report.project_ids) %>
-    </select>
-  </li>
-  <li>
-    <h2>Funding Sources</h2>
-    <select class="multi full" id="report_funding_sources" multiple="multiple" name="flex_report[funding_sources][]">
-      <%= options_for_select(@funding_sources, @report.funding_source_ids) %>
-    </select>
-  </li>
-  <li>
-    <h2>Reporting Agencies</h2>
-    <select class="multi full" id="report_reporting_agency_names" multiple="multiple" name="flex_report[reporting_agencies][]">
-      <%= options_for_select(@reporting_agencies, @report.reporting_agency_ids) %>
-    </select>
-  </li>
-  <li>
-    <h2>Providers</h2>
-    <select class="multi full" id="report_providers" multiple="multiple" name="flex_report[providers][]">
-      <%= options_for_select(@providers, @report.provider_ids) %>
-    </select>
-  </li>
-  <li>
-    <h2>Programs</h2>
-    <select class="multi full" id="report_program_names" multiple="multiple" name="flex_report[programs][]">
-      <%= options_for_select(@programs, @report.program_ids) %>
-    </select>
-  </li>
-  <li>
-    <h2>Counties</h2>
-    <select class="multi full" id="report_county_names" multiple="multiple" name="flex_report[county_names][]">
-      <%= options_for_select(@county_names, @report.county_names) %>
-    </select>
-  </li>
-  <li>
-    <h2>Individual Allocations</h2>
-    <select class="multi full" id="report_allocations" multiple="multiple" name="flex_report[allocations][]">
-      <%= options_for_select([['<Select None>','']],(@report.allocation_ids.blank? ? [''] : [])) %> 
-      <%= grouped_options_for_select @grouped_allocations, @report.allocation_ids %>
-    </select>
-  </li>
+  <%= render 'filter', 
+    :title => "F.E. Projects", 
+    :name => "projects",
+    :list_items => @projects,
+    :values => @report.project_ids
+  %>
+  <%= render 'filter', 
+    :title => "Funding Sources", 
+    :name => "funding_sources",
+    :list_items => @funding_sources,
+    :values => @report.funding_source_ids
+  %>
+  <%= render 'filter', 
+    :title => "Reporting Agency Types", 
+    :name => "reporting_agency_type_names",
+    :list_items => @reporting_agency_types,
+    :values => @report.reporting_agency_type_names
+  %>
+  <%= render 'filter', 
+    :title => "Reporting Agencies", 
+    :name => "reporting_agencies",
+    :list_items => @reporting_agencies,
+    :values => @report.reporting_agency_ids
+  %>
+  <%= render 'filter', 
+    :title => "Provider Types", 
+    :name => "provider_type_names",
+    :list_items => @provider_types,
+    :values => @report.provider_type_names
+  %>
+  <%= render 'filter', 
+    :title => "Providers", 
+    :name => "providers",
+    :list_items => @providers,
+    :values => @report.provider_ids
+  %>
+  <%= render 'filter', 
+    :title => "Programs", 
+    :name => "programs",
+    :list_items => @programs,
+    :values => @report.program_ids
+  %>
+  <%= render 'filter', 
+    :title => "Counties", 
+    :name => "county_names",
+    :list_items => @county_names,
+    :values => @report.county_names
+  %>
+  <%= render 'filter', 
+    :title => "Individual Allocations", 
+    :name => "allocations",
+    :list_items => @grouped_allocations,
+    :values => @report.allocation_ids,
+    :grouped_options => true
+  %>
 </ol>
