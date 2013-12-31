@@ -1194,6 +1194,10 @@ body.flex-reports #filters ul.filter-list {
   margin-left: 0;
   margin-right: 10px;
 }
+body.flex-reports #filters ul.filter-list li {
+  padding-left: 15px;
+  text-indent: -15px;
+}
 body.flex-reports #filters ul.filter-list li.blank {
   color: #AAAAAA;
 }
