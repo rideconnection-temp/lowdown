@@ -19,6 +19,10 @@ class Provider < ActiveRecord::Base
   scope :default_order, order(:name)
   scope :bpa_providers, where(:provider_type => 'BPA Provider')
 
+  def allocations_with_trip_data
+    Allocation.where(:provider_id => id).trip_collection_method
+  end
+
   def to_s
     name
   end

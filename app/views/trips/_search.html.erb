@@ -39,8 +39,8 @@
           <%= f.collection_select :allocation, Allocation.order(:name).where(:id => @query.allocation_ids), 
               :id, :name, :include_blank => true %>
         <% else %>
-          <%= f.grouped_collection_select :allocation, Provider.default_order.includes(:allocations).all, 
-              :allocations, :name, :id, :select_label, :include_blank => true %>
+          <%= f.grouped_collection_select :allocation, Provider.with_trip_data.default_order.includes(:allocations).all, 
+              :allocations_with_trip_data, :name, :id, :select_label, :include_blank => true %>
         <% end %>
       </li>
       <li>
