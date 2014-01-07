@@ -36,7 +36,7 @@
       <li>
         <%= f.label :allocation, "Allocation:" %> 
         <% if @query.allocation_ids.present? %>
-          <%= f.collection_select :allocation, Allocation.order(:name).where(:id => @query.allocation_ids), 
+          <%= f.collection_select :allocation, @allocations, 
               :id, :name, :include_blank => true %>
         <% else %>
           <%= f.grouped_collection_select :allocation, Provider.with_trip_data.default_order.includes(:allocations).all, 
@@ -56,7 +56,7 @@
     <% if @query.allocation_ids.present? %>
       <ul class="search-scope">
         <h2>This search is limited to the following allocations:</h2>
-        <% @allocations.where(:id => @query.allocation_ids).each do |allocation| %>
+        <% @allocations.each do |allocation| %>
           <li>
             <%= link_to allocation.name, edit_allocation_url(allocation) %> 
           </li>

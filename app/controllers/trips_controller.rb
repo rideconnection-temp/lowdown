@@ -97,8 +97,8 @@ class TripsController < ApplicationController
   end
 
   def list
-    prep_search
     @query = TripQuery.new params[:q], params[:commit]
+    prep_search
     @trips = Trip.
         current_versions.
         index_includes.
@@ -258,9 +258,11 @@ class TripsController < ApplicationController
   private
 
   def prep_search
-    @providers          = Provider.providers_in_allocations.default_order
-    @reporting_agencies = Provider.reporting_agencies.default_order
-    @allocations        = Allocation.trip_collection_method.order(:name)
+    @providers          = Provider.with_trip_data.default_order
+    @reporting_agencies = Provider.with_trip_data_as_reporting_agency.default_order
     @result_codes       = Trip::RESULT_CODES.sort
+    if @query.try(:allocation_ids).present?
+      @allocations        = Allocation.where(:id => @query.allocation_ids).order(:name)
+    end
   end
 end
