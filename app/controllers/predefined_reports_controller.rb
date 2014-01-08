@@ -70,10 +70,6 @@ class ReportQuery
   end
 end
 
-def bind(args)
-  return ActiveRecord::Base.__send__(:sanitize_sql_for_conditions, args, '')
-end
-
 class PredefinedReportsController < ApplicationController
   require 'csv'
 
