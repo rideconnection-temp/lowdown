@@ -3,11 +3,11 @@ def bind(args)
 end
 
 class ReportRow
-  @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :total_last_year, :administrative, :operations, :total_elderly_and_disabled_cost]
+  @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :administrative, :operations, :total_elderly_and_disabled_cost]
   attr_accessor *@@attrs
 
   def numeric_fields
-    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :total_last_year, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
+    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
   end
 
   def self.fields(requested_fields=nil)
@@ -222,7 +222,6 @@ class ReportRow
     
     @in_district_trips               += row.in_district_trips
     @out_of_district_trips           += row.out_of_district_trips
-    @total_last_year                 += row.total_last_year
     @customer_trips                  += row.customer_trips
     @guest_and_attendant_trips       += row.guest_and_attendant_trips
     @mileage                         += row.mileage
@@ -269,30 +268,6 @@ class ReportRow
     results = results.data_entry_complete unless options[:pending]
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
     add_results = results.current_versions.date_range(start_date, after_end_date).first.try(:attributes)
-
-    # Get the total number of new customers who haven't been served in prior months of this fiscal year (starting July 1). 
-    # Relies on custom Postgres functions fiscal_year and fiscal_month, which shift dates ahead by six months to make date
-    # filtering easier.
-    special_where = ""
-    special_where = "complete=true and " if options[:pending]
-    special_where = special_where + "customer_type='Honored' and " if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'
-    undup_riders_sql = %Q[
-        SELECT COUNT(*) AS undup_riders 
-        FROM (
-          SELECT customer_id, fiscal_year(date) AS year, MIN(fiscal_month(date)) AS month 
-          FROM trips 
-          WHERE #{special_where}allocation_id=? AND valid_end=? AND result_code = 'COMP'
-          GROUP BY customer_id, year) AS morx
-        WHERE date (year || '-' || month || '-' || 1) >= ? and date (year || '-' || month || '-' || 1) < ?
-      ]
-    row = ActiveRecord::Base.connection.select_one(bind([
-        undup_riders_sql, 
-        allocation['id'], 
-        Trip.end_of_time, 
-        start_date.advance(:months=>6), 
-        after_end_date.advance(:months=>6)
-      ]))
-    add_results['undup_riders'] = row['undup_riders'].to_i
 
     # Collect the total_general_public_trips only if we're dealing with a service that's 
     # not strictly for elderly and disabled customers.

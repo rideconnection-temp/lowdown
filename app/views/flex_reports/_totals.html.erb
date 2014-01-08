@@ -85,11 +85,6 @@
       <%= number_with_delimiter(row.total_trips.to_i) %>
     </td>
   <% end %>
-  <% if @report.fields.include? 'total_last_year' %>
-    <td class="number">
-      <%= number_with_delimiter(row.total_last_year.to_i) %>
-    </td>
-  <% end %>
   <% if @report.fields.include? 'mileage' %>
     <td class="number">
       <%= number_with_delimiter(row.mileage.round) %>
