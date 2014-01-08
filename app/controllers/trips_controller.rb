@@ -80,9 +80,9 @@ class TripQuery
 
   def format
     return if @commit.blank?
-    if @commit.downcase.include?("bpa")
+    if @commit == "Export BPA Invoice Data"
       "bpa"
-    elsif @commit.downcase.include?("csv")
+    elsif @commit == "Export All Data Fields"
       "general"
     end
   end
