@@ -21,9 +21,9 @@ class ReportQuery
       @start_date = Date.new(now.year, (now.month-1)/3*3+1,1) - 3.months
     elsif params[:date_range] == :fiscal_year_to_date
       if (now - 1.month).month > 6
-        @start_date = Date.new(now.year, 7, 1)
+        @start_date = Date.new((now - 1.month).year, 7, 1)
       else
-        @start_date = Date.new(now.year - 1, 7, 1)
+        @start_date = Date.new((now - 1.month).year - 1, 7, 1)
       end
     else
       @start_date = Date.new(now.year, now.month, 1).prev_month
