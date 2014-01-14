@@ -10,6 +10,22 @@ class ReportRow
     [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
   end
 
+  def self.trip_fields
+    [:in_district_trips, :out_of_district_trips, :total_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :total_general_public_trips, :cost_per_trip, :cost_per_customer, :miles_per_ride, :miles_per_customer]
+  end
+
+  def self.run_fields
+    [:mileage, :driver_paid_hours, :driver_volunteer_hours, :escort_volunteer_hours, :cost_per_hour, :cost_per_mile, :miles_per_ride, :miles_per_customer]
+  end
+
+  def self.cost_fields
+    [:funds, :agency_other, :donations, :total, :total_general_public_cost, :total_elderly_and_disabled_cost, :cost_per_hour, :cost_per_mile, :cost_per_trip, :cost_per_customer]
+  end
+
+  def self.operations_fields
+    [:operations, :administrative, :vehicle_maint, :admin_volunteer_hours]
+  end
+
   def self.fields(requested_fields=nil)
     if requested_fields.nil? || requested_fields.empty?
       fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip", "miles_per_ride", "cost_per_customer", "miles_per_customer"]

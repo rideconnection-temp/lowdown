@@ -16,6 +16,22 @@ class Trip < ActiveRecord::Base
     def completed_trip_count_for_valid_start(valid_start)
       Trip.select("COUNT(*) + SUM(guest_count) + SUM(attendant_count) AS count").completed.for_valid_start(valid_start).first['count'].to_i
     end
+
+    def exclude_customers_for_date_range(start_date, after_end_date, options)
+      special_where = ""
+      special_where << "AND complete=true " if options[:pending] 
+      special_where << "AND customer_type='Honored'" if options[:elderly_and_disabled_only]
+      where_clause = "NOT EXISTS (
+            SELECT id 
+            FROM trips AS t
+            WHERE result_code = 'COMP' AND 
+              date >= ? AND date < ? and 
+              valid_end = '9999-01-01 01:01:00.000000' AND
+              trips.allocation_id = t.allocation_id AND 
+              trips.customer_id = t.customer_id #{special_where}
+          )"
+      where(where_clause, start_date, after_end_date)
+    end
   end
 
   stampable :updater_attribute  => :updated_by,
