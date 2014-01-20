@@ -86,4 +86,14 @@ class PeriodAllocation
     end
     return @allocation.respond_to? method
   end
+  
+  def ==(other)
+    (
+      @allocation.id              == other.id &&
+      @period_start_date          == other.period_start_date &&
+      @period_after_end_date      == other.period_after_end_date &&
+      @collection_start_date      == other.collection_start_date &&
+      @collection_after_end_date  == other.collection_after_end_date
+    )
+  end
 end

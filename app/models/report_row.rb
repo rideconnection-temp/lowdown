@@ -216,6 +216,14 @@ class ReportRow
     allocation.name
   end
 
+  def diff(other)
+    unequal_fields = {}
+    numeric_fields.each do |fld| 
+      unequal_fields[fld] = (send(fld) - other.send(fld).to_f) unless send(fld) == other.send(fld) 
+    end
+    unequal_fields  
+  end
+
   def method_missing(method_name)
     if allocation.respond_to?(method_name)
       allocation.send(method_name) 
