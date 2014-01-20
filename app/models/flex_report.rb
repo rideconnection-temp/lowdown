@@ -463,7 +463,7 @@ class FlexReport < ActiveRecord::Base
     end
 
     if elderly_and_disabled_only
-      @report_rows.each {|rr| rr.calculate_total_elderly_and_disabled_cost }
+      @report_rows.values.each {|rr| rr.calculate_total_elderly_and_disabled_cost }
     end
   end
 
