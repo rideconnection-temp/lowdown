@@ -165,3 +165,7 @@ body.bpa-invoice  table#trip-results    td,
 body.trip-purpose table#purpose-results td {
   padding: 0 0.4em;
 }
+
+body.quarterly-narrative h2.all-programs {
+  margin: 14px 0px;
+}
