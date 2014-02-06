@@ -696,7 +696,11 @@ class FlexReport < ActiveRecord::Base
   # Convenience function for running a flex report from a saved definition.
   def populate_results!(allocation_instance = Allocation)
     collect_allocation_objects!(allocation_instance)
-    collect_report_data!
+    if APP_CONFIG[:flex_report_data_collection].present? && APP_CONFIG[:flex_report_data_collection] == 'quick'
+      collect_report_data_quickly!
+    else
+      collect_report_data!
+    end
     group_report_rows!
   end
 
