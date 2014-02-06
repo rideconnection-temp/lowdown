@@ -55,7 +55,7 @@ class PeriodAllocation
         period_start_date = period_start_date.advance(:months=>advance)
         period_after_end_date = period_after_end_date.advance(:months=>advance)
       end
-    end while period_after_end_date <= after_end_date
+    end while period_start_date < after_end_date
 
     periods
   end
