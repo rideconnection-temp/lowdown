@@ -19,7 +19,7 @@ csv << [
     report.subtitle,
     report.description,
     report.group_by.try(:titleize).try(:gsub,",",", "),
-    report.funding_subsource_names.join(', '),
+    report.funding_sources.map{|fs| fs.name }.join(', '),
     report.reporting_agencies.map{|ra| ra.name }.join(', '),
     report.providers.map{|p| p.name }.join(', '),
     report.programs.map{|p| p.name }.join(', '),

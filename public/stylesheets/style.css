@@ -496,6 +496,13 @@ ol.section li.changed div.change {
     width: 14%;
     font-weight: bold;
 }
+ol.section ol.section {
+    background-color: #F6F6F6;
+    border: 1pt solid #BBBBBB;
+    border-radius: 5px;
+    padding: 10px 10px 0;
+    margin-bottom: 20px;
+}
 td.changed {
     background-color: #E5F2FF;
     border: 2px solid yellow !important;
@@ -551,6 +558,9 @@ fieldset ol.fourth {
 }
 fieldset ol.section li input {
     max-width: 60%;
+}
+fieldset ol.section li input[type=file] {
+    max-width: inherit;
 }
 fieldset ol.section li label {
     float: left;
@@ -676,6 +686,12 @@ form div.actions {
     clear: both;
     margin: 0 0 10px;
 }
+form .search-scope {
+    border-top: 1px solid #bbb;
+    padding: 10px 0 0 15px;
+    clear: both;
+    margin: 0 0 10px;
+}
 form div.actions input[type="submit"] {
     padding: 0.5em 0.8em;
     background: #0081CC;
@@ -752,9 +768,6 @@ div.list-wrapper table th.column-group {
     text-align: center;
     font-weight: bold;
 }
-table th:last-child {
-    border-right: 0;
-}
 table tr.sub-header th {
     border-top: 1px dotted #3674b3;
     vertical-align: bottom;
@@ -809,13 +822,13 @@ div.report-wrapper tr.data .inner-most-field {
   padding-left  : 5px;
 }
 
-tr.visible-group td.report-item {
+tr.visible-group td.toggleable {
   background: url(images/toggle.png) left center no-repeat scroll;
   background-color: #E5F2FF;
   padding: 5px 0 5px 20px;
 }
 
-tr.hidden-group td.report-item {
+tr.hidden-group td.toggleable {
   background: url(images/toggle-expand.png) left center no-repeat scroll;
   background-color: #E5F2FF;
   padding: 5px 0 5px 20px;
@@ -1135,16 +1148,51 @@ body.flex-reports fieldset.main-form ol.second {
 body.flex-reports hr {
   margin: 5px 0;
 }
-body.flex-reports #filters {
-  margin: 0;
-  clear: both;
-}
-body.flex-reports #filters li {
-  list-style-type: none;
-  float: left;
-}
 body.flex-reports h2 {
   margin: 10px 0 0 0;
+}
+body.flex-reports #filters {
+  margin: 0, 0, 0, 0;
+  margin-left: 0;
+}
+body.flex-reports #filters div.section {
+  width: 100%;
+  float: left;
+  clear: left;
+}
+body.flex-reports #filters li.filter {
+  list-style-type: none;
+  float: left;
+  width: 25%;
+}
+body.flex-reports #filters h3 {
+  margin: 10px 0 0 0;
+  padding-right: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+body.flex-reports #filters select {
+  width: 100%;
+  margin-right: 10px;
+}
+body.flex-reports #filters ul.filter-list {
+  cursor: pointer;
+  list-style: none;
+  border: 1px solid #BBBBBB;
+  background-color: #FFFFFF;
+  padding: 0.25em;
+  margin-left: 0;
+  margin-right: 10px;
+}
+body.flex-reports #filters ul.filter-list li {
+  padding-left: 15px;
+  text-indent: -15px;
+}
+body.flex-reports #filters ul.filter-list li.blank {
+  color: #AAAAAA;
+}
+body.flex-reports #filters ul.filter-list li.not-blank {
+  font-weight: bold; 
 }
 body.flex-reports div.actions input[type=submit] {
   width: 200px;
@@ -1358,12 +1406,53 @@ div.predefined-report form.run-report input[type="submit"]:hover {
     background: #009FFB;
 }
 
+#sortable-selected, #sortable-unselected { 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0 0 2.5em; 
+    float: left; 
+    margin-right: 10px; 
+    width: 240px;
+    border: 1px solid #bbb;
+    padding: 10px 5px 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#sortable-selected li, #sortable-unselected li { 
+    margin: 0 5px 5px 5px; 
+    padding: 2px; 
+    width: 220px; 
+}
+
+div.sortable {
+  float: left;
+}
+
+li.sortable-item {
+  border: 1px solid #BBBBBB;
+  background: #DDDDDD;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+ 
 /* 
  *
  * Predefined Reports
  *
  */
-body.ride-purpose th.data {
+body.trip-purpose th.data {
     width: 8%;
 }
 
+body.allocation-summary td {
+  border: 1px solid gray;
+  padding: 5px;
+}
+
+body.bpa-invoice  table#trip-results    td,
+body.trip-purpose table#purpose-results td {
+  padding: 1px 5px;
+}

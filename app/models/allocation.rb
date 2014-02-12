@@ -12,7 +12,7 @@ class Allocation < ActiveRecord::Base
   
   DATA_OPTIONS = %w( Prohibited Required )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
-  ELIGIBILITIES = ['Elderly & Disabled','Low Income Commuter','Veteran, Spouse, or Widow','Unrestricted','Not Applicable']
+  ELIGIBILITIES = ['Elderly & Disabled','Unrestricted','Not Applicable']
 
   validates :name, :presence => true
   validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
@@ -35,12 +35,15 @@ class Allocation < ActiveRecord::Base
 
   scope :non_trip_collection_method, where( "trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips'" )
   scope :trip_collection_method, where( "trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips'" )
+  scope :summary_collection_method, where( "trip_collection_method = 'summary_rows' or run_collection_method = 'summary' or cost_collection_method = 'summary' or admin_ops_data = 'Required' or vehicle_maint_data = 'Required'" )
+  scope :not_vehicle_maintenance_only, where( "NOT (trip_collection_method = 'none' and run_collection_method = 'none' and cost_collection_method = 'none' and vehicle_maint_data = 'Required')" )
   scope :not_recently_inactivated, where( "inactivated_on is null or inactivated_on > current_date - interval '3 months'")
   scope :active_as_of, lambda{|date| where( "inactivated_on IS NULL OR inactivated_on > COALESCE(?,current_date - interval '3 months')", date) }
   scope :spd, includes(:project).where(:projects => {:funding_source => {:funding_source_name => 'SPD'}})
   scope :active_on, lambda{|date| where("activated_on <= ? AND (inactivated_on IS NULL OR inactivated_on > ?)",date,date)}
   scope :active_in_range, lambda{|start_date,after_end_date| where("(inactivated_on IS NULL OR inactivated_on > ?) AND activated_on < ?", start_date, after_end_date) }
   scope :in_trimet_report_group, where('trimet_report_group_id IS NOT NULL AND trimet_program_id IS NOT NULL AND trimet_provider_id IS NOT NULL')
+  scope :has_trimet_provider, where('trimet_provider_id IS NOT NULL')
   def self.for_import
     self.joins(:override).select("allocations.id,overrides.name,allocations.routematch_provider_code,allocations.activated_on,allocations.inactivated_on,allocations.run_collection_method")
   end
@@ -91,6 +94,30 @@ class Allocation < ActiveRecord::Base
       cur_group << record
     end
     return out
+  end
+
+  def self.member_allocation(a)
+    if a.is_a?(Array)
+      return a[0]
+    elsif a.nil?
+      return nil
+    else
+      Allocation.member_allocation(a[a.keys[0]])
+    end
+  end
+
+  def self.count_members(group, depth)
+    total = 0
+    if depth == 0
+      return 1
+    elsif depth == 1
+      return group.count
+    else
+      group.each do |k, v|
+        total = total + Allocation.count_members(v, depth - 1)
+      end
+      return total
+    end
   end
 
   def to_s
@@ -158,9 +185,17 @@ class Allocation < ActiveRecord::Base
   def short_provider_name
     provider.try :short_name
   end
+
+  def provider_type
+    provider.try :provider_type
+  end
   
   def reporting_agency_name
     reporting_agency.try :name
+  end
+
+  def reporting_agency_type
+    reporting_agency.try :provider_type
   end
 
   def short_reporting_agency_name

@@ -100,6 +100,7 @@
         </li>
       </ol>
       <input type="submit" name="report" value="Report">
+      <input type="submit" name="output" value="CSV">
     </fieldset>
   <% end %>
 </div>
@@ -115,8 +116,8 @@
           <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order=>[:month,:year] %>
         </li>
         <li>
-          <%= f.label :end_date %>
-          <%= f.date_select :end_date, :start_year => 2012, :end_year => Time.now.year, :order=>[:month,:year] %>
+          <%= f.label :end_month, "End date" %>
+          <%= f.date_select :end_month, :start_year => 2012, :end_year => Time.now.year, :order=>[:month,:year] %>
         </li>
         <li>
           <%= f.label :provider_id, 'Reporting Agency' %>
@@ -147,7 +148,8 @@
           <%= f.select :provider_id, options_for_select(Provider.bpa_providers.default_order.all.map { |p| [p.name, p.id] }) %>
         </li>
       </ol>
-      <input type="submit" name="report" value="Report">
+      <input type="submit" name="output" value="Summary">
+      <input type="submit" name="output" value="Details">
     </fieldset>
   <% end %>
 </div>
@@ -212,7 +214,7 @@
 <div class="predefined-report" data-name="monthly">
   <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :trimet_export } do |f| %>
     <fieldset>
-      <h2 class="report-header">TriMet E&D Export</h2>
+      <h2 class="report-header">TriMet E&D Reports</h2>
       <p></p>
       <ol>
         <li>
@@ -220,8 +222,45 @@
           <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
         </li>
       </ol>
-      <input type="submit" name="output" value="CSV">
+      <input type="submit" name="output" value="Data Entry Export">
       <input type="submit" name="output" value="Audit">
+    </fieldset>
+  <% end %>
+</div>
+
+<div class="predefined-report" data-name="monthly">
+  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :allocation_summary } do |f| %>
+    <fieldset>
+      <h2 class="report-header">Allocation Summary</h2>
+      <p></p>
+      <div class="sortable" >
+        <h3>
+          Selected groups
+          <a href="#" id="unselect-all">Unselect All</a>
+        </h3>
+        <ul id="sortable-selected" class="connectedSortable">
+          <% @selected_groupings.each do |this_grouping| %>
+            <%= content_tag :li, :class => "sortable-item", "data-group" => this_grouping do %>
+              <%= FlexReport::GroupMappings[this_grouping] %>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+      <div class="sortable" >
+        <h3>
+          Unselected groups
+        </h3>
+        <ul id="sortable-unselected" class="connectedSortable">
+          <% FlexReport::GroupMappings.reject{|k,v| FlexReport::TimePeriods.include?(k) || @selected_groupings.include?(k) }.
+            sort_by{|k,v| v }.each do |k,v| %>
+            <%= content_tag :li, :class => "sortable-item", "data-group" => k do %>
+              <%= v %>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+      <%= f.hidden_field :group_by %>
+      <input type="submit" name="output" value="Report">
     </fieldset>
   <% end %>
 </div>

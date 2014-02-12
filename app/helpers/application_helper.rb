@@ -27,8 +27,8 @@ module ApplicationHelper
     return flash_type(:notice) + flash_type(:alert)
   end
   
-  def report_month_range(start_date, end_date)
-    end_date = end_date - 1.month
+  def report_month_range(start_date, after_end_date)
+    end_date = after_end_date - 1.month
     if start_date.year == end_date.year && start_date.month == end_date.month
       start_date.strftime("%B %Y")
     else
@@ -86,7 +86,7 @@ module ApplicationHelper
         result = "#{start_date.strftime('%B')} to #{end_date.strftime('%B')}, #{end_date.year}"
         result += " (#{fiscal_quarter.ordinalize} Quarter of Fiscal Year #{describe_fiscal_year start_date})"
       elsif start_date + 12.months == end_date + 1.day && start_date.month == 7 # Full fiscal year
-        result = "Fiscal Year #{start_date.year} through #{end_date.strftime('%B, %Y')}"
+        result = "#{start_date.strftime('%B')} #{start_date.year} to #{end_date.strftime('%B')} #{end_date.year} (Fiscal Year #{describe_fiscal_year start_date})"
       elsif start_date + 12.months == end_date + 1.day && start_date.month == 1 # Full calendar year
         result = "Calendar Year #{start_date.year}"
       elsif start_date.year == end_date.year # Full months, all in the same calendar year
@@ -163,5 +163,27 @@ module ApplicationHelper
     return if record.previous.nil?
     change = (record.send(attribute) || 0) - (record.previous.send(attribute) || 0)
     change == 0 ? nil : change
+  end
+
+  def row_trip_link(report,row)
+    trip_allocations = (Allocation.trip_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}).sort
+    if trip_allocations != []
+      start_date = (row.start_date || report.start_date)
+      end_date   = (row.after_end_date || report.after_end_date) - 1.day
+      link_to "Trips", {:controller => :trips, :action => :list, 
+          :q => {:allocation_id_list => "#{trip_allocations.join(' ')}", 
+          :start_date => start_date, :end_date => end_date}}
+    end
+  end
+
+  def row_summary_link(report, row)
+    summary_allocations = (Allocation.summary_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}).sort
+    if summary_allocations != []
+      start_date = (row.start_date || report.start_date)
+      end_date   = (row.after_end_date || report.after_end_date) - 1.day
+      link_to "Summaries", {:controller => :summaries, 
+          :q => {:allocation_id_list => "#{summary_allocations.join(' ')}", 
+          :start_date => start_date, :end_date => end_date}}
+    end
   end
 end

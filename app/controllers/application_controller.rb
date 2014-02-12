@@ -4,7 +4,17 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   helper :all
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :allow_active_users_only
+
+  def allow_active_users_only
+    if user_signed_in? && !current_user.active?
+      scope = Devise::Mapping.find_scope!(current_user)
+      current_user = nil
+      warden.logout(scope)
+
+      return redirect_to root_url
+    end
+  end
 
   def require_admin_user
     if !user_signed_in? || !current_user.is_admin

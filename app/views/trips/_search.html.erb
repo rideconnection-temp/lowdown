@@ -1,4 +1,4 @@
-<%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
+<%= form_for @query, :as => :q, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action => action} do |f| %>
   <fieldset>
     <ol class="section first">
       <li>
@@ -35,7 +35,13 @@
       </li>
       <li>
         <%= f.label :allocation, "Allocation:" %> 
-        <%= f.grouped_collection_select :allocation, Provider.default_order.includes(:allocations).all, :allocations, :name, :id, :select_label, :include_blank => true %>
+        <% if @query.allocation_ids.present? %>
+          <%= f.collection_select :allocation, @allocations, 
+              :id, :name, :include_blank => true %>
+        <% else %>
+          <%= f.grouped_collection_select :allocation, Provider.with_trip_data.default_order.includes(:allocations).all, 
+              :allocations_with_trip_data, :name, :id, :select_label, :include_blank => true %>
+        <% end %>
       </li>
       <li>
         <%= f.label :result_code, "Result Code:" %> 
@@ -44,13 +50,26 @@
       <li>
         <%= f.label :original_override, "Original Override Contains:" %> 
         <%= f.text_field :original_override %>
+        <%= f.hidden_field :allocation_id_list %>
       </li>
     </ol>
+    <% if @query.allocation_ids.present? %>
+      <ul class="search-scope">
+        <h2>This search is limited to the following allocations:</h2>
+        <% @allocations.each do |allocation| %>
+          <li>
+            <%= link_to allocation.name, edit_allocation_url(allocation) %> 
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
 
     <div class="actions">
       <%= f.submit "Search", :id => "trip-search" %>
-      <%= f.submit "Download All Fields as CSV" %>
-      <%= f.submit "Download BPA Invoice Data" %>
+      <% if allow_csv %>
+        <%= f.submit "Export All Data Fields" %>
+        <%= f.submit "Export BPA Invoice Data" %>
+      <% end %>
     </div>
 
   </fieldset>

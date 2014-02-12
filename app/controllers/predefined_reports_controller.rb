@@ -2,7 +2,7 @@ class ReportQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :start_date, :end_date, :after_end_date, :provider_id, :reporting_agency_id, :provider, :county
+  attr_accessor :start_date, :end_date, :end_month, :after_end_date, :provider_id, :reporting_agency_id, :provider, :county, :group_by
 
   def initialize(params = {})
     params = {} if params.nil?
@@ -21,9 +21,9 @@ class ReportQuery
       @start_date = Date.new(now.year, (now.month-1)/3*3+1,1) - 3.months
     elsif params[:date_range] == :fiscal_year_to_date
       if (now - 1.month).month > 6
-        @start_date = Date.new(now.year, 7, 1)
+        @start_date = Date.new((now - 1.month).year, 7, 1)
       else
-        @start_date = Date.new(now.year - 1, 7, 1)
+        @start_date = Date.new((now - 1.month).year - 1, 7, 1)
       end
     else
       @start_date = Date.new(now.year, now.month, 1).prev_month
@@ -31,6 +31,9 @@ class ReportQuery
 
     if params[:end_date]
       @after_end_date = params[:end_date].to_date + 1.day
+    elsif params['end_month(1i)']
+      d = date_from_params(params,:end_month)
+      @after_end_date = Date.new(d.year,d.month,1) + 1.month
     elsif params['end_date(1i)']
       @after_end_date = date_from_params(params,:end_date) + 1.month
     elsif params[:date_range] == :semimonth
@@ -47,11 +50,13 @@ class ReportQuery
       @after_end_date = @start_date + 1.month
     end
     @end_date = @after_end_date - 1.day
+    @end_month = Date.new(@end_date.year,@end_date.month,1)
 
     @provider = params[:provider]                            if params[:provider].present?
     @provider_id = params[:provider_id].to_i                 if params[:provider_id].present?
     @county = params[:county]                                if params[:county].present?
     @reporting_agency_id = params[:reporting_agency_id].to_i if params[:reporting_agency_id].present?
+    @group_by = params[:group_by]                            if params[:group_by].present?
   end
 
   def persisted?
@@ -65,10 +70,6 @@ class ReportQuery
   end
 end
 
-def bind(args)
-  return ActiveRecord::Base.__send__(:sanitize_sql_for_conditions, args, '')
-end
-
 class PredefinedReportsController < ApplicationController
   require 'csv'
 
@@ -77,11 +78,13 @@ class PredefinedReportsController < ApplicationController
     @quarterly_query = ReportQuery.new(:date_range => :quarter)
     @fiscal_year_to_date_query = ReportQuery.new(:date_range => :fiscal_year_to_date)
     @semimonth_query = ReportQuery.new(:date_range => :semimonth)
+    @selected_groupings = ["funding_source","funding_subsource","project_number","project_name","program_name","reporting_agency_name"]
   end
 
   def premium_service_billing
     @query = ReportQuery.new(params[:report_query])
-    trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).includes(:customer,{:allocation => :provider},:pickup_address,:dropoff_address).default_order
+    trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).
+            includes(:customer,{:allocation => :provider},:pickup_address,:dropoff_address,:run).default_order
     trips = trips.for_provider(@query.provider_id) if @query.provider_id.present?
     case @query.county
     when "Multnomah"
@@ -93,21 +96,27 @@ class PredefinedReportsController < ApplicationController
     else
       redirect_to :controller => :predefined_reports, :action => :index
     end
-    trips_billed_per_hour = trips.billed_per_hour
-    @trips_billed_per_trip = trips.billed_per_trip
-    all_trips = trips_billed_per_hour + @trips_billed_per_trip
-    @run_groups = trips_billed_per_hour.group_by(&:run)
+    trips_billed_per_hour           = trips.billed_per_hour
+    @trips_billed_per_trip          = trips.billed_per_trip
+    all_trips                       = trips_billed_per_hour + @trips_billed_per_trip
+    @run_groups                     = Allocation.group(%w{run}, trips_billed_per_hour)
+    @grouped_trips_billed_per_hour  = Allocation.group(%w{provider run}, trips_billed_per_hour )
 
-    @total_taxi_cost      = all_trips.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
-    @total_partner_cost   = all_trips.reduce(0){|s,t| s + (t.ads_partner_cost || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_partner_cost}
-    @total_scheduling_fee = all_trips.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_scheduling_fee}
-    @total_cost           = all_trips.reduce(0){|s,t| s + (t.ads_total_cost || 0)} + @run_groups.keys.reduce(0){|s,r| s + r.ads_total_cost}
-    @total_billable_hours = @run_groups.keys.reduce(0){|s,r| s + r.ads_billable_hours}
-    @taxi_trip_count      = @trips_billed_per_trip.select{|t| t.bpa_provider?}.size
-    @partner_trip_count   = @trips_billed_per_trip.reject{|t| t.bpa_provider?}.size
+    @total_taxi_cost                = all_trips.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
+    @total_partner_cost             = all_trips.reduce(0){|s,t| s + (t.ads_partner_cost || 0)} + 
+                                      @run_groups.keys.reduce(0){|s,r| s + r.ads_partner_cost}
+    @total_scheduling_fee           = all_trips.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} + 
+                                      @run_groups.keys.reduce(0){|s,r| s + r.ads_scheduling_fee}
+    @total_cost                     = all_trips.reduce(0){|s,t| s + (t.ads_total_cost || 0)} + 
+                                      @run_groups.keys.reduce(0){|s,r| s + r.ads_total_cost}
+    @total_billable_hours           = @run_groups.keys.reduce(0){|s,r| s + r.ads_billable_hours}
+    @taxi_trips                     = @trips_billed_per_trip.select{|t| t.bpa_provider?}
+    @grouped_taxi_trips             = Allocation.group(['provider'],@taxi_trips)
+    @partner_trips                  = @trips_billed_per_trip.reject{|t| t.bpa_provider?}
+    @grouped_partner_trips          = Allocation.group(['provider'],@partner_trips)
 
     if params[:output] == 'CSV'
-      @filename = "#{@title} #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"
+      @filename = "#{@title} #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
       render "premium_service_billing.csv" 
     end
   end
@@ -181,7 +190,7 @@ class PredefinedReportsController < ApplicationController
       end
     end
     if params[:output] == 'CSV'
-      @filename = "SPD Report #{@query.start_date.strftime('%m-%d-%y')} - #{@query.end_date.strftime('%m-%d-%y')}.csv"
+      @filename = "SPD Report #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
       render "spd.csv" 
     end
   end
@@ -190,7 +199,8 @@ class PredefinedReportsController < ApplicationController
     @query = ReportQuery.new(params[:report_query])
 
     group_fields = ["county", "reporting_agency"]
-    a = Allocation.where("reporting_agency_id IS NOT NULL AND admin_ops_data <> 'Required'")
+    a = Allocation.active_in_range(@query.start_date,@query.after_end_date).
+                   where("reporting_agency_id IS NOT NULL AND admin_ops_data <> 'Required'")
     a = a.where(:reporting_agency_id => @query.reporting_agency_id) if @query.reporting_agency_id.present?
     grouped_allocations = Allocation.group(group_fields, a)
 
@@ -209,6 +219,10 @@ class PredefinedReportsController < ApplicationController
       end
     end
     @trip_purposes = TripPurposeRow.trip_purposes
+    if params[:output] == 'CSV'
+      @filename = "Trip Purpose Report #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
+      render "trip_purpose.csv" 
+    end
   end
 
   def quarterly_narrative
@@ -216,9 +230,31 @@ class PredefinedReportsController < ApplicationController
 
     @report = FlexReport.new
     @report.start_date = @query.start_date
-    @report.end_date = @query.after_end_date - 1.month
-    @report.reporting_agency_list =  params[:report_query][:provider_id] if params[:report_query].present? && params[:report_query][:provider_id].present?
-    @report.field_list = 'admin_volunteer_hours,agency_other,cost_per_hour,cost_per_mile,cost_per_trip,donations,driver_paid_hours,driver_total_hours,driver_volunteer_hours,escort_volunteer_hours,funds,in_district_trips,mileage,miles_per_ride,out_of_district_trips,total,total_trips,total_volunteer_hours,turn_downs,undup_riders,vehicle_maint'
+    @report.end_date = @query.end_date
+    @report.reporting_agency_list = @query.provider_id.to_s if @query.provider_id.present?
+    @report.fields = [
+      :admin_volunteer_hours,
+      :agency_other,
+      :cost_per_hour,
+      :cost_per_mile,
+      :cost_per_trip,
+      :donations,
+      :driver_paid_hours,
+      :driver_total_hours,
+      :driver_volunteer_hours,
+      :escort_volunteer_hours,
+      :funds,
+      :in_district_trips,
+      :mileage,
+      :miles_per_ride,
+      :out_of_district_trips,
+      :total,
+      :total_trips,
+      :total_volunteer_hours,
+      :turn_downs,
+      :undup_riders,
+      :vehicle_maint
+    ].map(&:to_s)
     @report.group_by = "reporting_agency,program,county,quarter,month"
     @report.populate_results!
 
@@ -233,28 +269,34 @@ class PredefinedReportsController < ApplicationController
 
     @report = FlexReport.new
     @report.start_date = @query.start_date
-    @report.end_date = @query.start_date # One month only
+    @report.end_month = @query.start_date # One month only
+    @report.fields = [
+      :total_elderly_and_disabled_trips,
+      :mileage,
+      :total_elderly_and_disabled_cost,
+      :undup_riders
+    ].map(&:to_s)
     @report.elderly_and_disabled_only = true
     if params[:output] == 'Audit'
       @report.group_by = "provider_name,allocation_name"
       template_name = "trimet_export_audit.csv"
-      @filename = "#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Audit Report.csv"
+      allocation_instance = Allocation.not_vehicle_maintenance_only
+      @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Audit Report.csv"
     else
       @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier"
-      @report.county_names = [:none] # This has the effect of making sure only the allocations below are used.
-      @report.allocations = Allocation.in_trimet_report_group.active_in_range(@report.start_date,@query.after_end_date).map{|a| a.id }
       template_name = "trimet_export.csv"
-      @filename = "#{@report.start_date.strftime("%Y-%m")} Ride Connection E & D Performance Report.csv"
+      allocation_instance = Allocation.has_trimet_provider
+      @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Report.csv"
     end
-    @report.populate_results!
+    @report.populate_results!(allocation_instance)
 
     render template_name
   end
 
   def age_and_ethnicity
     @query = ReportQuery.new(params[:report_query])
-    #we need new riders this month, where new means "first time this fy"
-    #so, for each trip this month, find the customer, then find out whether 
+    # We need new riders this month, where new means "first time this fy"
+    # so, for each trip this month, find the customer, then find out whether 
     # there was a previous trip for this customer this fy
 
     trip_customers = Trip.current_versions.select("DISTINCT customer_id").completed
@@ -321,14 +363,61 @@ class PredefinedReportsController < ApplicationController
     @query = ReportQuery.new(params[:report_query])
     @report = FlexReport.new
     @report.start_date  = @query.start_date
-    @report.end_date    = @query.after_end_date
-    @report.group_by    = "project_number_and_name,funding_source_and_subsource,override_name"
-    @report.field_list  = 'funds,total_trips,mileage,driver_total_hours'
+    @report.end_date    = @query.end_date
+    @report.group_by    = "project_number_and_name,override_name"
+    @report.field_list  = 'funds,total_trips,mileage,driver_total_hours,cost_per_trip'
     @report.providers   = [@query.provider_id]
-    @report.populate_results!
+    if params[:output] == 'Summary'
+      @report.populate_results!
+    elsif params[:output] == 'Details'
+      @report.collect_allocation_objects! 
+      a_ids = @report.allocation_objects.map{|a| a.id }
+      @trips = Trip.current_versions.completed.for_allocation_id(a_ids).
+        for_date_range(@query.start_date,@query.after_end_date).
+        joins(:customer).includes(:customer, :allocation => [:project, :override]).
+        order("trips.start_at, customers.last_name")
+      @total_customers_served =     @trips.inject(0){|sum, t| sum + t.customers_served }
+      @total_apportioned_duration = @trips.inject(0){|sum, t| sum + t.apportioned_duration }
+      @total_apportioned_mileage =  @trips.inject(0){|sum, t| sum + t.apportioned_mileage }
+      @total_apportioned_fare =     @trips.inject(0){|sum, t| sum + t.apportioned_fare }
+      render "bpa_invoice_details.html"
+    end
+  end
+  
+  def allocation_summary
+    @query = ReportQuery.new(params[:report_query])
+    group_by = @query.group_by.split(",")
+    @groupings = group_by.map{|x| [x, FlexReport::GroupMappings[x]] }
+    allocations = Allocation.active_on(Date.today).includes(:program, :reporting_agency, :provider, :project => [:funding_source])
+    all_nodes = Allocation.group(@groupings.map{|x| x[0] }, allocations)
+    @flattened_nodes = flatten_nodes([], all_nodes, 0)
   end
   
   private
+
+  def flatten_nodes(node_list, node_in, level)
+    if node_in.is_a?(Hash) 
+      node_in.sort_by {|k,v| row_sort(k)}.each do |this_key, this_value|
+        this_node = {}
+        this_node[:level] = level
+        this_node[:allocation] = Allocation.member_allocation(this_value)
+        this_node[:member_count] = Allocation.count_members(this_value, @groupings.size - level - 1)
+        node_list << this_node
+        flatten_nodes node_list, this_value, level + 1 
+      end
+      node_list
+    end
+  end
+
+  def row_sort(k)
+    if k.blank?
+      [2, ""]
+    elsif k.class == Fixnum
+      [1, ("%04d" % k)]
+    else
+      [1, k.to_s.downcase]
+    end
+  end
 
   def fiscal_year_start_date(date)
     year = (date.month < 7 ? date.year - 1 : date.year)

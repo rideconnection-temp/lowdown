@@ -17,7 +17,6 @@
     <% if rf.include? 'customer_trips' %><th class="wrap number">Customers</th><% end %>
     <% if rf.include? 'guest_and_attendant_trips' %><th class="wrap number">Guests and Attendants</th><% end %>
     <% if rf.include? 'total_trips' %><th class="wrap number">Total Trips</th><% end %>
-    <% if rf.include? 'total_last_year' %><th class="wrap number">Total Trips Last Year</th><% end %>
     <% if rf.include? 'mileage' %><th rowspan="2" class="wrap number">Mileage</th><% end %>
     <% if rf.include? 'driver_volunteer_hours' %><th class="wrap number">Volunteer Driver Hours</th><% end %>
     <% if rf.include? 'driver_paid_hours' %><th class="wrap number">Paid Driver Hours</th><% end %>
@@ -33,5 +32,8 @@
     <% if rf.include? 'escort_volunteer_hours' %><th class="wrap number">Escort Volunteer Hours</th><% end %>
     <% if rf.include? 'admin_volunteer_hours' %><th class="wrap number">Admin Volunteer Hours</th><% end %>
     <% if rf.include? 'total_volunteer_hours' %><th class="wrap number">Total Volunteer Hours</th><% end %>
+    <th class="no-print">
+      Details
+    </th>
   </tr>
 </thead>

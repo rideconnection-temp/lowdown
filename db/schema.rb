@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20130708220556) do
+=======
+ActiveRecord::Schema.define(:version => 20131231010500) do
+>>>>>>> master
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -31,7 +35,6 @@ ActiveRecord::Schema.define(:version => 20130708220556) do
 
   create_table "allocations", :force => true do |t|
     t.string  "name"
-    t.boolean "group_trip"
     t.integer "project_id"
     t.integer "provider_id"
     t.string  "county"
@@ -98,10 +101,12 @@ ActiveRecord::Schema.define(:version => 20130708220556) do
     t.text    "reporting_agency_list"
     t.text    "subtitle"
     t.integer "report_category_id"
-    t.boolean "elderly_and_disabled_only",   :default => false, :null => false
+    t.boolean "elderly_and_disabled_only",       :default => false, :null => false
     t.text    "program_list"
     t.text    "funding_source_list"
     t.text    "project_list"
+    t.text    "reporting_agency_type_name_list"
+    t.text    "provider_type_name_list"
   end
 
   create_table "funding_sources", :force => true do |t|
@@ -227,6 +232,7 @@ ActiveRecord::Schema.define(:version => 20130708220556) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "notes"
   end
 
   create_table "trimet_providers", :force => true do |t|
@@ -247,6 +253,7 @@ ActiveRecord::Schema.define(:version => 20130708220556) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "file_name"
+    t.text     "notes"
   end
 
   create_table "trips", :force => true do |t|
@@ -329,4 +336,9 @@ ActiveRecord::Schema.define(:version => 20130708220556) do
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
+<<<<<<< HEAD
+=======
+  add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
+
+>>>>>>> master
 end

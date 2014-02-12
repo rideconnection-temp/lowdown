@@ -45,7 +45,8 @@ class TripImport < ActiveRecord::Base
 
   before_create :import_file, :apportion_imported_shared_rides 
   after_create :associate_records_with_trip_import, :mark_record_data_entry_complete
-private
+
+  private
 
   def import_file
 

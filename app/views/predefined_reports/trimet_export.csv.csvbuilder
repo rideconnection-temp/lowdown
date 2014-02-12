@@ -21,7 +21,7 @@ rows.sort_by{|k,v| k }.each do |key, row|
   csv_row << nil
   csv_row << row.total_elderly_and_disabled_trips
   csv_row << number_with_precision(row.total_elderly_and_disabled_cost, :precision => 2)
-  csv_row << nil
-  csv_row << nil
+  csv_row << @report.start_date.year
+  csv_row << @report.start_date.month
   csv << csv_row
 end

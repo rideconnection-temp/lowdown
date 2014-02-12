@@ -36,11 +36,22 @@ class FlexReportsController < ApplicationController
     end
   end
 
-  # the results of the report
+  # The results of the report. Save the date range to make it the new default, but
+  # don't save any other changes the user may make. Users get to fiddle with more 
+  # substantial report attributes here, but have to go to the edit page to keep 
+  # changes (if they have the rights to do so).
   def show
     @report = FlexReport.find params[:id]
     if params[:flex_report].present?
-      @report.attributes = params[:flex_report].slice("start_date(3i)","start_date(2i)","start_date(1i)","end_date(3i)","end_date(2i)","end_date(1i)","pending") 
+      @report.attributes = params[:flex_report].slice(
+        "start_date(3i)",
+        "start_date(2i)",
+        "start_date(1i)",
+        "end_month(3i)",
+        "end_month(2i)",
+        "end_month(1i)",
+        "pending"
+      ) 
       @report.save
     end
     @report.attributes = params[:flex_report]
@@ -49,7 +60,7 @@ class FlexReportsController < ApplicationController
     request.format = :csv if params[:csv].present?
     respond_to do |format|
       format.html do
-        prep_partial_edit
+        prep_edit
       end
       format.csv do 
         @filename = "#{@report.name.gsub('"','')}.csv"
@@ -95,21 +106,19 @@ class FlexReportsController < ApplicationController
 
   private
 
-  def prep_partial_edit
+  def prep_edit
     @group_bys = FlexReport::GroupBys.sort
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
     end
-  end
-
-  def prep_edit
-    prep_partial_edit
-    @funding_sources          = [['<Select All>','']] + FundingSource.default_order.map {|x| [x.name, x.id]}
-    @projects                 = [['<Select All>','']] + Project.order(:project_number, :name).map {|x| [x.number_and_name, x.id]}
-    @providers                = [['<Select All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
-    @reporting_agencies       = [['<Select All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
-    @programs                 = [['<Select All>','']] + Program.default_order.map {|x| [x.name, x.id]}
-    @county_names             = [['<Select All>','']] + Allocation.county_names
+    @funding_sources          = [['<All>','']] + FundingSource.default_order.map {|x| [x.name, x.id]}
+    @projects                 = [['<All>','']] + Project.order(:project_number, :name).map {|x| [x.number_and_name, x.id]}
+    @providers                = [['<All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
+    @provider_types           = [['<All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.provider_type, x.provider_type]}.uniq.sort
+    @reporting_agencies       = [['<All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
+    @reporting_agency_types   = [['<All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.provider_type, x.provider_type]}.uniq.sort
+    @programs                 = [['<All>','']] + Program.default_order.map {|x| [x.name, x.id]}
+    @county_names             = [['<All>','']] + Allocation.county_names.map {|x| [x, x]}
     @grouped_allocations      = [] 
     Provider.order(:name).includes(:allocations).each do |p|
       @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]

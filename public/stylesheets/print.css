@@ -1,4 +1,4 @@
-/*
+*
  *
  * Print Stylesheet
  *
@@ -98,7 +98,7 @@ th.text {
 tr.sub-header th {
 }
 td {
-  padding: 0.7em;
+  padding: 0.3em;
   border-top: 1pt solid #ddd;
 }
 td.number, th.number {
@@ -147,6 +147,25 @@ div.report-wrapper td.indent {
  * Predefined Reports
  *
  */
-body.ride-purpose th.data {
+body.trip-purpose th.data {
   width: 8%;
+}
+
+body.trip-purpose th.group {
+  border: 0;
+  border-bottom: 1pt solid black;
+}
+
+body.allocation-summary td {
+  border: 1pt solid #DDDDDD;
+  padding: 5px;
+}
+
+body.bpa-invoice  table#trip-results    td,
+body.trip-purpose table#purpose-results td {
+  padding: 0 0.4em;
+}
+
+body.quarterly-narrative h2.all-programs {
+  margin: 14px 0px;
 }

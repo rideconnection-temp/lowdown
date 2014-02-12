@@ -9,7 +9,7 @@
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Funding</th>
     <% end %>
-    <% column_count = (rf & %w{in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips total_trips total_last_year}).count %>
+    <% column_count = (rf & %w{in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips total_trips}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Trips</th>
     <% end %>
@@ -28,6 +28,9 @@
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Volunteer Hours</th>
     <% end %>
+    <th rowspan="2" class="no-print">
+      Details
+    </th>
   </tr>
   <tr>
     <% (report_group_fields.size).times do %>
@@ -45,7 +48,6 @@
     <% if rf.include? 'customer_trips' %><th class="wrap number">Customers</th><% end %>
     <% if rf.include? 'guest_and_attendant_trips' %><th class="wrap number">Guests and Attendants</th><% end %>
     <% if rf.include? 'total_trips' %><th class="wrap number">Total</th><% end %>
-    <% if rf.include? 'total_last_year' %><th class="wrap number">Total Last Year</th><% end %>
     <% if rf.include? 'driver_volunteer_hours' %><th class="wrap number">Volunteer</th><% end %>
     <% if rf.include? 'driver_paid_hours' %><th class="wrap number">Paid</th><% end %>
     <% if rf.include? 'driver_total_hours' %><th class="wrap number">Total</th><% end %>
