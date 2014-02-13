@@ -213,9 +213,8 @@ class TripsController < ApplicationController
     if ! params['file-import']
       redirect_to :action=>:show_import and return
     end
-    file = params['file-import'].tempfile
     processed = TripImport.new(
-      :file_path => file,
+      :file_path => params['file-import'].path,
       :file_name => params['file-import'].original_filename,
       :notes     => params['notes']
     )
