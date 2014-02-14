@@ -315,4 +315,6 @@ $(document).ready(function() {
     $('#report-checkbox-area input').attr('checked', true) 
     return false;
   });
+
+  $('.autosize').autosize();
 });
