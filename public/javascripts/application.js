@@ -316,5 +316,5 @@ $(document).ready(function() {
     return false;
   });
 
-  $('.autosize').autosize();
+  $('.autosize').autosize({append: "\n"});
 });

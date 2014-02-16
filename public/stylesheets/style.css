@@ -707,6 +707,12 @@ form div.actions input[type="submit"]:hover {
     background: #009FFB;
 }
 
+form textarea.autosize {
+    -webkit-transition: height 0.5s;
+    -moz-transition: height 0.5s;
+    transition: height 0.5s;
+}
+
 /* tables */
 table {
     font-size: 12px;
