@@ -306,7 +306,7 @@
     <% if !f.object.new_record? %>
       <li<%= mark_if_changed(@trip,:adjustment_notes) %>>
         <%= f.label :adjustment_notes, "Adjustment Notes:" %>
-        <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60} %>
+        <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60, :class=>:autosize} %>
       </li>
     <% end %>
   </ol>

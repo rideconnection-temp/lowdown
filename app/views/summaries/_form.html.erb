@@ -19,7 +19,7 @@
       <li<%= mark_if_changed(@summary,:adjustment_notes) %>>
         <% if !f.object.new_record? %>
           <%= f.label :adjustment_notes, "Adjustment Notes:" %><br/>
-          <%= f.text_area :adjustment_notes, {:rows=>3, :columns=>60, :tabindex=>1} %>
+          <%= f.text_area :adjustment_notes, {:rows=>3, :columns=>60, :tabindex=>1, :class=>:autosize} %>
         <% end %>
       </li>
     </ol>
