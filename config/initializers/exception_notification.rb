@@ -1,4 +1,4 @@
-if Rails.env.production? || true
+if Rails.env.production? 
   #Exception Notification
   Lowdown::Application.config.middleware.use ExceptionNotification::Rack,
     :email => {
