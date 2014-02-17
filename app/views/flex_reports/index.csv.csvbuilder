@@ -3,7 +3,13 @@ csv << [
   "Report Name",
   "Subtitle",
   "Description",
-  "Grouping"
+  "Grouping",
+  "Funding Sources",
+  "Reporting Agencies",
+  "Providers",
+  "Programs",
+  "Counties",
+  "Individual Allocations"
 ]
 
 @reports.sort_by{|r| "#{r.report_category.try(:name)}:#{r.name}"}.each do |report|
@@ -12,6 +18,12 @@ csv << [
     report.name,
     report.subtitle,
     report.description,
-    report.group_by.try(:titleize).try(:gsub,",",", ")
+    report.group_by.try(:titleize).try(:gsub,",",", "),
+    report.funding_sources.map{|fs| fs.name }.join(', '),
+    report.reporting_agencies.map{|ra| ra.name }.join(', '),
+    report.providers.map{|p| p.name }.join(', '),
+    report.programs.map{|p| p.name }.join(', '),
+    report.county_names.join(', '),
+    report.allocations.map{|a| a.name }.join(', ')
   ]
 end

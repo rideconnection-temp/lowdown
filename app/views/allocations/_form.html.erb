@@ -1,121 +1,124 @@
 <%= form_for(@allocation) do |form| %>
-  <% if @allocation.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@allocation.errors.count, "error") %> prohibited this allocation from being saved:</h2>
-
-      <ul>
-      <% @allocation.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "shared/error_messages", :target => @allocation %>
   
   <fieldset>
-    <ol class="section ">
+    <ol class="section">
       <li class="selfclear">
-        <%= form.label :name %>
+        <%= form.label :name, "Allocation name" %>
         <%= form.text_field :name, :size => 60 %>
       </li>
-      
-      <li class="selfclear">
-        <%= form.label :group_trip %>
-        <%= form.check_box :group_trip %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :program %>
-        <%= form.text_field :program, :size => 60 %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :project_id, "F.E. project" %>
-        <%= form.collection_select :project_id, Project.all, :id, :name, :include_blank => true %>
-        <%= link_to "Details", [:edit, @allocation.project], :class => :details if @allocation.project %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :reporting_agency_id %>
-        <%= form.collection_select :reporting_agency_id, Provider.partners_or_current(@allocation.reporting_agency).default_order, :id, :to_s, :include_blank => true %>
-        <%= link_to "Details", [:edit, @allocation.reporting_agency], :class => :details if @allocation.reporting_agency %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :provider_id %>
-        <%= form.collection_select :provider_id, Provider.default_order, :id, :to_s, :include_blank => true %>
-        <%= link_to "Details", [:edit, @allocation.provider], :class => :details if @allocation.provider %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :county %>
-        <%= form.text_field :county %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :eligibility %>
-        <%= form.select :eligibility, Allocation::ELIGIBILITIES, {:prompt => "<Select Option>"} %>
+      <li>
+        <h2>Reporting Attributes</h2>
+        These attributes are used for grouping and filtering report data
+        <ol class="section">
+          <li class="selfclear">
+            <%= form.label :program %>
+            <%= form.collection_select :program_id, Program.default_order, :id, :name, :include_blank => true %>
+            <%= link_to "Details", [:edit, @allocation.program], :class => :details if @allocation.program %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :project_id, "F.E. project" %>
+            <%= form.collection_select :project_id, Project.order(:project_number, :name), :id, :number_and_name, :include_blank => true %>
+            <%= link_to "Details", [:edit, @allocation.project], :class => :details if @allocation.project %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :reporting_agency_id %>
+            <%= form.collection_select :reporting_agency_id, Provider.default_order, :id, :to_s, :include_blank => true %>
+            <%= link_to "Details", [:edit, @allocation.reporting_agency], :class => :details if @allocation.reporting_agency %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :provider_id %>
+            <%= form.collection_select :provider_id, Provider.default_order, :id, :to_s, :include_blank => true %>
+            <%= link_to "Details", [:edit, @allocation.provider], :class => :details if @allocation.provider %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :county %>
+            <%= form.text_field :county %>
+          </li>
+        </ol>
       </li>
 
-      <li class="selfclear">
-        <%= form.label :do_not_show_on_flex_reports, "Do not show on flex reports (unless specified individually)" %>
-        <%= form.check_box :do_not_show_on_flex_reports %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :trip_collection_method %>
-        <%= form.select :trip_collection_method, 
-          options_for_select(@trip_collection_methods.map {|tcm| [tcm, tcm]}, @allocation.trip_collection_method) %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :run_collection_method %>
-        <%= form.select :run_collection_method, 
-          options_for_select(@run_collection_methods.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>      
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :cost_collection_method %>
-        <%= form.select :cost_collection_method, 
-          options_for_select(@cost_collection_methods.map {|ccm| [ccm, ccm]}, @allocation.cost_collection_method) %>      
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :override_id, "RouteMatch override code" %>
-        <%= form.collection_select :override_id, Override.default_order, :id, :name, :include_blank => true %>
-        <%= link_to "Details", [:edit, @allocation.override], :class => :details if @allocation.override %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :routematch_provider_code, "RouteMatch provider code" %>
-        <%= form.text_field :routematch_provider_code, :size => 5 %>      
+      <li>
+        <h2>Data Collection Attributes</h2>
+        These attributes are used to tell the system where to look for different types of data
+        <ol class="section">
+          <li class="selfclear">
+            <%= form.label :trip_collection_method %>
+            <%= form.select :trip_collection_method, 
+              options_for_select(@trip_collection_methods.map {|tcm| [tcm, tcm]}, @allocation.trip_collection_method) %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :run_collection_method %>
+            <%= form.select :run_collection_method, 
+              options_for_select(@run_collection_methods.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>      
+          </li>
+          <li class="selfclear">
+            <%= form.label :cost_collection_method %>
+            <%= form.select :cost_collection_method, 
+              options_for_select(@cost_collection_methods.map {|ccm| [ccm, ccm]}, @allocation.cost_collection_method) %>
+          </li>
+        </ol>
       </li>
 
-      <li class="selfclear">
-        <%= form.label :admin_ops_data, "Admin/ops data" %>
-        <%= form.select :admin_ops_data, Allocation::DATA_OPTIONS, {:prompt => "<Select Option>"} %>
+      <li>
+        <h2>Data Import Attributes</h2>
+        These attributes are used to match imported trips with the proper allocations
+        <ol class="section">
+          <li class="selfclear">
+            <%= form.label :override_id, "RouteMatch override code" %>
+            <%= form.collection_select :override_id, Override.default_order, :id, :name, :include_blank => true %>
+            <%= link_to "Details", [:edit, @allocation.override], :class => :details if @allocation.override %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :routematch_provider_code, "RouteMatch provider code" %>
+            <%= form.text_field :routematch_provider_code, :size => 5 %>      
+          </li>
+        </ol>
       </li>
 
-      <li class="selfclear">
-        <%= form.label :vehicle_maint_data, "Vehicle maintenance data" %>
-        <%= form.select :vehicle_maint_data, Allocation::DATA_OPTIONS, {:prompt => "<Select Option>"} %>
+      <li>
+        <h2>Flags for Special Allocations</h2>
+        These attributes are used to designate allocations that in some way do not get treated as your average service allocation
+        <ol class="section">
+          <li class="selfclear">
+            <%= form.label :admin_ops_data, "Admin/ops data" %>
+            <%= form.select :admin_ops_data, Allocation::DATA_OPTIONS, {:prompt => "<Select Option>"} %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :vehicle_maint_data, "Vehicle maintenance data" %>
+            <%= form.select :vehicle_maint_data, Allocation::DATA_OPTIONS, {:prompt => "<Select Option>"} %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :do_not_show_on_flex_reports, "Do not show on flex reports (unless specified individually)" %>
+            <%= form.check_box :do_not_show_on_flex_reports %>
+          </li>
+        </ol>
       </li>
 
-      <li class="selfclear">
-        <%= form.label :trimet_provider_id, "TriMet provider" %>
-        <%= form.collection_select :trimet_provider_id, @trimet_providers, :id, :name, {:include_blank => true} %>
-        <%= link_to "Details", [:edit, @allocation.trimet_provider], :class => :details if @allocation.trimet_provider %>
-      </li>
-
-      <li class="selfclear">
-        <%= form.label :trimet_program_id, "TriMet program" %>
-        <%= form.collection_select :trimet_program_id, @trimet_programs, :id, :name, {:include_blank => true} %>
-        <%= link_to "Details", [:edit, @allocation.trimet_program], :class => :details if @allocation.trimet_program %>
-      </li>
-
-      <li class="selfclear">
-        <%= form.label :trimet_report_group_id, "TriMet E&D report group" %>
-        <%= form.collection_select :trimet_report_group_id, @trimet_report_group, :id, :name, {:include_blank => true} %>
-        <%= link_to "Details", [:edit, @allocation.trimet_report_group], :class => :details if @allocation.trimet_report_group %>
+      <li>
+        <h2>TriMet E&D Report Attributes</h2>
+        These attributes are used solely to provide data for TriMet's Elderly and Disabled report
+        <ol class="section">
+          <li class="selfclear">
+            <%= form.label :eligibility, "Service eligibility" %>
+            <%= form.select :eligibility, Allocation::ELIGIBILITIES, {:prompt => "<Select Option>"} %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :trimet_provider_id, "TriMet provider" %>
+            <%= form.collection_select :trimet_provider_id, @trimet_providers, :id, :name, {:include_blank => true} %>
+            <%= link_to "Details", [:edit, @allocation.trimet_provider], :class => :details if @allocation.trimet_provider %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :trimet_program_id, "TriMet program" %>
+            <%= form.collection_select :trimet_program_id, @trimet_programs, :id, :name, {:include_blank => true} %>
+            <%= link_to "Details", [:edit, @allocation.trimet_program], :class => :details if @allocation.trimet_program %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :trimet_report_group_id, "TriMet E&D report group" %>
+            <%= form.collection_select :trimet_report_group_id, @trimet_report_group, :id, :name, {:include_blank => true} %>
+            <%= link_to "Details", [:edit, @allocation.trimet_report_group], :class => :details if @allocation.trimet_report_group %>
+          </li>
+        </ol>
       </li>
 
       <li class="selfclear">
@@ -130,7 +133,7 @@
 
       <li class="selfclear">
         <%= form.label :notes %>
-        <%= form.text_area :notes %>
+        <%= form.text_area :notes, :class => "autosize" %>
       </li>
     </ol>
     

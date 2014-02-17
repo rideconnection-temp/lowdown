@@ -1,10 +1,9 @@
 class ProjectsController < ApplicationController
   
   before_filter :require_admin_user, :except => [:index, :edit]
-  before_filter :get_drop_down_data, :only => [:new, :edit]
   
   def index
-    @projects = Project.paginate :page => params[:page]
+    @projects = Project.default_order.paginate :page => params[:page]
   end
   
   def new
@@ -44,10 +43,4 @@ class ProjectsController < ApplicationController
     redirect_to projects_url
   end
   
-  private
-  
-  def get_drop_down_data
-    @funding_subsources = Project.all.map(&:funding_subsource).uniq
-    @funding_sources    = Project.all.map(&:funding_source).uniq
-  end
 end

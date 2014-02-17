@@ -1,6 +1,6 @@
 #-----Get Capistrano working with RVM-----
 require "rvm/capistrano"  # Load RVM's capistrano plugin.    
-set :rvm_ruby_string, '1.9.2'
+set :rvm_ruby_string, '1.9.3-p125'
 set :rvm_type, :user  # Don't use system-wide RVM
 #---------------------------------------------
 
@@ -10,7 +10,7 @@ require 'bundler/capistrano'
 
 #-----Basic Recipe-----
 set :application, "lowdown"
-set :repository,  "http://github.com/rideconnection/lowdown.git"
+set :repository,  "git://github.com/rideconnection/lowdown.git"
 set :deploy_to, "/home/deployer/rails/lowdown"
 
 set :scm, :git
@@ -39,4 +39,4 @@ task :link_database_yml do
   run  "ln -nfs #{deploy_to}/shared/config/app_config.yml #{deploy_to}/current/config/app_config.yml"
 end
 
-after "deploy:symlink", :link_database_yml
+after "deploy:create_symlink", :link_database_yml

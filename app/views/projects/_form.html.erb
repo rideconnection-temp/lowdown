@@ -24,13 +24,9 @@
       </li>
       
       <li class="selfclear">
-        <%= form.label :funding_source %>
-        <%= form.text_field :funding_source %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :funding_subsource %>
-        <%= form.text_field :funding_subsource %>
+        <%= form.label :funding_source_id %>
+        <%= form.collection_select :funding_source_id, FundingSource.default_order, :id, :name, :include_blank => true %>
+        <%= link_to "Details", [:edit, @project.funding_source], :class => :details if @project.funding_source %>
       </li>
     </ol>
     

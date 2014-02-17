@@ -1,6 +1,7 @@
 module ReportsHelper
   
   def short_group_name(row,group_fields)
+    return unless group_fields.present?
     this_row = get_row(row) 
     short_attr_name = "short_#{group_fields[0]}"
     group = this_row.send(group_fields[0])

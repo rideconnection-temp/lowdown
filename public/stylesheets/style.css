@@ -319,8 +319,7 @@ body.predefined-reports #primary-nav li.predefined-reports a:link, body.predefin
 body.summaries #primary-nav li.summaries a:link, body.summaries #primary-nav li.summaries a:visited,
 body.trips #primary-nav li.trips a:link, body.trips #primary-nav li.trips a:visited,
 body.runs #primary-nav li.runs a:link, body.runs #primary-nav li.runs a:visited,
-body.admin #primary-nav li.admin a:link, body.admin #primary-nav li.admin a:visited,
-body.users #secondary-nav li.users a:link, body.users #secondary-nav li.users a:visited {
+body.admin #secondary-nav li.admin a:link, body.admin #secondary-nav li.admin a:visited {
     background: #fff;
     color: #009FFB;
 }
@@ -497,6 +496,13 @@ ol.section li.changed div.change {
     width: 14%;
     font-weight: bold;
 }
+ol.section ol.section {
+    background-color: #F6F6F6;
+    border: 1pt solid #BBBBBB;
+    border-radius: 5px;
+    padding: 10px 10px 0;
+    margin-bottom: 20px;
+}
 td.changed {
     background-color: #E5F2FF;
     border: 2px solid yellow !important;
@@ -552,6 +558,9 @@ fieldset ol.fourth {
 }
 fieldset ol.section li input {
     max-width: 60%;
+}
+fieldset ol.section li input[type=file] {
+    max-width: inherit;
 }
 fieldset ol.section li label {
     float: left;
@@ -630,9 +639,6 @@ fieldset select.full {
 fieldset ol.section li.passengers input {
     max-width: 3em;
 }
-fieldset ol.section li.timepicker input {
-    width: 10em;
-}
 fieldset ol.section li div {
     float: left;
     width: 60%;
@@ -680,6 +686,12 @@ form div.actions {
     clear: both;
     margin: 0 0 10px;
 }
+form .search-scope {
+    border-top: 1px solid #bbb;
+    padding: 10px 0 0 15px;
+    clear: both;
+    margin: 0 0 10px;
+}
 form div.actions input[type="submit"] {
     padding: 0.5em 0.8em;
     background: #0081CC;
@@ -693,6 +705,12 @@ form div.actions input[type="submit"] {
 }
 form div.actions input[type="submit"]:hover {
     background: #009FFB;
+}
+
+form textarea.autosize {
+    -webkit-transition: height 0.5s;
+    -moz-transition: height 0.5s;
+    transition: height 0.5s;
 }
 
 /* tables */
@@ -756,9 +774,6 @@ div.list-wrapper table th.column-group {
     text-align: center;
     font-weight: bold;
 }
-table th:last-child {
-    border-right: 0;
-}
 table tr.sub-header th {
     border-top: 1px dotted #3674b3;
     vertical-align: bottom;
@@ -794,22 +809,35 @@ div.report-wrapper .indent {
   border-bottom: 0;
 }
 
+div.report-wrapper th.indent,
 div.report-wrapper td.indent {
-  background: #E5F2FF;
-  width: 10px;
+  min-width: 10px;
   padding: 0;
 } 
 
 div.report-wrapper tr.data td.indent,
 div.report-wrapper tr.totals td.indent,
+div.report-wrapper tr.collapsible td.indent,
 div.report-wrapper tr.sum-totals td.indent   {
-  background: transparent;
+  background: white;
 }
 
 div.report-wrapper tr.data .inner-most-field {
   text-align    : left;
   padding-right : 0px;
   padding-left  : 5px;
+}
+
+tr.visible-group td.toggleable {
+  background: url(images/toggle.png) left center no-repeat scroll;
+  background-color: #E5F2FF;
+  padding: 5px 0 5px 20px;
+}
+
+tr.hidden-group td.toggleable {
+  background: url(images/toggle-expand.png) left center no-repeat scroll;
+  background-color: #E5F2FF;
+  padding: 5px 0 5px 20px;
 }
 
 div.report-wrapper, div.list-wrapper {
@@ -882,13 +910,6 @@ input.datepicker {
     color: #444;
     font-size: 11px;
 }
-.ui-timepicker-div .ui-widget-header{ margin-bottom: 8px; }
-.ui-timepicker-div dl{ text-align: left; }
-.ui-timepicker-div dl dt{ height: 25px; }
-.ui-timepicker-div dl dd{ margin: -25px 0 10px 65px; }
-.ui-timepicker-div td {  }
-.ui_tpicker_hour,
-.ui_tpicker_minute { font-size: 9px; }
   
 .ui-datepicker-trigger {
     margin: 0 5px;
@@ -919,6 +940,8 @@ a.move,
 a.import,
 a.history,
 a.change-password,
+a.collapse,
+a.expand,
 a.csv {
     padding: 5px 0 5px 20px;
     text-decoration: none;
@@ -961,6 +984,12 @@ a.change-password {
 }
 a.csv {
     background: url(images/document-excel-csv.png) left center no-repeat scroll;
+}
+a.collapse {
+    background: url(images/arrow-stop-090.png) left center no-repeat scroll;
+}
+a.expand {
+    background: url(images/arrow-stop-270.png) left center no-repeat scroll;
 }
 
 a.delete:hover,
@@ -1104,17 +1133,11 @@ body.users a.action-bttn {
 body.flex-reports a.action-bttn {
     background: #eee url(images/report--plus.png) 0.8em center no-repeat scroll;
 }
-body.flex-reports fieldset.main-form ol.section li input, 
+body.flex-reports fieldset.main-form ol.section li input[type=text] , 
 body.flex-reports fieldset.main-form ol.section li textarea {
   width: 100%;
   max-width: 100%;
 }
-body.flex-reports fieldset.main-form ol.section li input[type="checkbox"] {
-  float: left;
-  width: 5%;
-  text-align: left;
-}
-
 body.flex-reports fieldset.main-form ol.section li textarea {
   height: 6em;
 }
@@ -1131,20 +1154,77 @@ body.flex-reports fieldset.main-form ol.second {
 body.flex-reports hr {
   margin: 5px 0;
 }
-body.flex-reports #filters {
-  margin: 0;
-  clear: both;
-}
-body.flex-reports #filters li {
-  list-style-type: none;
-  float: left;
-}
 body.flex-reports h2 {
   margin: 10px 0 0 0;
+}
+body.flex-reports #filters {
+  margin: 0, 0, 0, 0;
+  margin-left: 0;
+}
+body.flex-reports #filters div.section {
+  width: 100%;
+  float: left;
+  clear: left;
+}
+body.flex-reports #filters li.filter {
+  list-style-type: none;
+  float: left;
+  width: 25%;
+}
+body.flex-reports #filters h3 {
+  margin: 10px 0 0 0;
+  padding-right: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+body.flex-reports #filters select {
+  width: 100%;
+  margin-right: 10px;
+}
+body.flex-reports #filters ul.filter-list {
+  cursor: pointer;
+  list-style: none;
+  border: 1px solid #BBBBBB;
+  background-color: #FFFFFF;
+  padding: 0.25em;
+  margin-left: 0;
+  margin-right: 10px;
+}
+body.flex-reports #filters ul.filter-list li {
+  padding-left: 15px;
+  text-indent: -15px;
+}
+body.flex-reports #filters ul.filter-list li.blank {
+  color: #AAAAAA;
+}
+body.flex-reports #filters ul.filter-list li.not-blank {
+  font-weight: bold; 
+}
+body.flex-reports div.actions input[type=submit] {
+  width: 200px;
 }
 #report-fields-to-include {
     clear: both;
     padding-top: 10px;
+}
+#date-range-header {
+    float: left;
+    clear: left;
+}
+div.column-select a {
+    margin: 0 3px;
+}
+div.column-select h2 {
+    display: inline;
+}
+#report-date-range-area {
+    float: left;
+    clear: left;
+    background: #f5f5f5;
+    border: 1px solid #bbb;
+    padding: 10px;
+    margin: 0 10px 10px 0;
+    width: 300px;
 }
 #report-checkbox-area {
     float: left;
@@ -1244,7 +1324,8 @@ li.flex-report form.run-report {
   clear: none;
 }
 
-li.flex-report a.edit {
+li.flex-report a.edit,
+li.flex-report a.details {
   float : right;
   display : block;
   font-size: 11px;
@@ -1269,7 +1350,7 @@ li.flex-report span.handle {
 
 li.flex-report ol {
     list-style: none;
-    margin: 0 0 10px;
+    margin: 10px 0 5px;
     float: left;
 }
 li.flex-report ol li {
@@ -1331,12 +1412,53 @@ div.predefined-report form.run-report input[type="submit"]:hover {
     background: #009FFB;
 }
 
+#sortable-selected, #sortable-unselected { 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0 0 2.5em; 
+    float: left; 
+    margin-right: 10px; 
+    width: 240px;
+    border: 1px solid #bbb;
+    padding: 10px 5px 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#sortable-selected li, #sortable-unselected li { 
+    margin: 0 5px 5px 5px; 
+    padding: 2px; 
+    width: 220px; 
+}
+
+div.sortable {
+  float: left;
+}
+
+li.sortable-item {
+  border: 1px solid #BBBBBB;
+  background: #DDDDDD;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+ 
 /* 
  *
  * Predefined Reports
  *
  */
-body.ride-purpose th.data {
+body.trip-purpose th.data {
     width: 8%;
 }
 
+body.allocation-summary td {
+  border: 1px solid gray;
+  padding: 5px;
+}
+
+body.bpa-invoice  table#trip-results    td,
+body.trip-purpose table#purpose-results td {
+  padding: 1px 5px;
+}

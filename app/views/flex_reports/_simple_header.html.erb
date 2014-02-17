@@ -1,0 +1,39 @@
+<% rf = @report.fields -%>
+<thead>
+  <tr>
+    <% (report_group_fields.size).times do %>
+      <th class="indent">&nbsp;</th>
+    <% end %>
+    <th rowspan="2" class="wrap text"><%= @report.group_fields[-1].sub("_id","").sub("_"," ").titleize %></th>
+    <% if rf.include? 'funds' %><th class="wrap number">RC Costs</th><% end %>
+    <% if rf.include? 'agency_other' %><th class="wrap number">Agency Other Costs</th><% end %>
+    <% if rf.include? 'vehicle_maint' %><th class="wrap number">Vehicle Maint. Costs</th><% end %>
+    <% if rf.include? 'administrative' %><th class="wrap number">Admin Costs</th><% end %>
+    <% if rf.include? 'operations' %><th class="wrap number">Operations Costs</th><% end %>
+    <% if rf.include? 'donations' %><th class="wrap number">Donations Costs</th><% end %>
+    <% if rf.include? 'total' %><th class="wrap number">Total Costs</th><% end %>
+    <% if rf.include? 'in_district_trips' %><th class="wrap number">In District Trips</th><% end %>
+    <% if rf.include? 'out_of_district_trips' %><th class="wrap number">Out of District Trips</th><% end %>
+    <% if rf.include? 'customer_trips' %><th class="wrap number">Customers</th><% end %>
+    <% if rf.include? 'guest_and_attendant_trips' %><th class="wrap number">Guests and Attendants</th><% end %>
+    <% if rf.include? 'total_trips' %><th class="wrap number">Total Trips</th><% end %>
+    <% if rf.include? 'mileage' %><th rowspan="2" class="wrap number">Mileage</th><% end %>
+    <% if rf.include? 'driver_volunteer_hours' %><th class="wrap number">Volunteer Driver Hours</th><% end %>
+    <% if rf.include? 'driver_paid_hours' %><th class="wrap number">Paid Driver Hours</th><% end %>
+    <% if rf.include? 'driver_total_hours' %><th class="wrap number">Total Driver Hours</th><% end %>
+    <% if rf.include? 'cost_per_trip' %><th class="wrap number">Cost Per Trip</th><% end %>
+    <% if rf.include? 'cost_per_customer' %><th class="wrap number">Cost Per Cust</th><% end %>
+    <% if rf.include? 'cost_per_mile' %><th class="wrap number">Cost Per Mile</th><% end %>
+    <% if rf.include? 'cost_per_hour' %><th class="wrap number">Cost Per Hour</th><% end %>
+    <% if rf.include? 'miles_per_ride' %><th class="wrap number">Miles Per Trip</th><% end %>
+    <% if rf.include? 'miles_per_customer' %><th class="wrap number">Miles Per Cust</th><% end %>
+    <% if rf.include? 'turn_downs' %><th rowspan="2" class="wrap number">Turn Downs</th><% end %>
+    <% if rf.include? 'undup_riders' %><th rowspan="2" class="wrap number">Undup Riders</th><% end %>
+    <% if rf.include? 'escort_volunteer_hours' %><th class="wrap number">Escort Volunteer Hours</th><% end %>
+    <% if rf.include? 'admin_volunteer_hours' %><th class="wrap number">Admin Volunteer Hours</th><% end %>
+    <% if rf.include? 'total_volunteer_hours' %><th class="wrap number">Total Volunteer Hours</th><% end %>
+    <th class="no-print">
+      Details
+    </th>
+  </tr>
+</thead>

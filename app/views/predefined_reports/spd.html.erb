@@ -14,9 +14,9 @@
         <th>Customer</th>
         <th>Prime Number</th>
         <th>Service End</th>
-        <th>Approved Rides</th>
-        <th>Billed Rides</th>
-        <th>Billable Mileage</th>
+        <th class="number">Approved Rides</th>
+        <th class="number">Billed Rides</th>
+        <th class="number">Billable Mileage</th>
       </tr>
     </thead>
     <tbody>
@@ -45,36 +45,39 @@
 <table id="active-rider-results" class="totals">
   <thead>
     <tr>
-      <th colspan="5">Mobility</th>
-      <th>Approved Rides</th>
-      <th>Billed Rides</th>
-      <th>Billable Mileage</th>
+      <th>Mobility</th>
+      <th class="number">Approved Rides</th>
+      <th class="number">Billed Rides</th>
+      <th class="number">Billable Mileage</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td colspan="5">Not Scooter or Wheelchair</td>
+      <td>Not Scooter or Wheelchair</td>
       <td class="number"></td>
       <td class="number"><%= @nonwc_billed_rides %></td>
       <td class="number"><%= "%.2f" % @nonwc_mileage %></td>
     </tr>
     <tr>
-      <td colspan="5">Scooter or Wheelchair</td>
+      <td>Scooter or Wheelchair</td>
       <td class="number"></td>
       <td class="number"><%= @wc_billed_rides %></td>
       <td class="number"><%= "%.2f" % @wc_mileage %></td>
     </tr>
     <tr>
-      <td colspan="5">Unknown Mobility</td>
+      <td>Unknown Mobility</td>
       <td class="number"></td>
       <td class="number"><%= @unknown_billed_rides %></td>
       <td class="number"><%= "%.2f" % @unknown_mileage %></td>
     </tr>
     <tr>
-      <td colspan="5">All Trips</td>
+      <td>All Trips</td>
       <td class="number"><%= @approved_rides %></td>
       <td class="number"><%= @all_billed_rides %></td>
       <td class="number"><%= "%.2f" % @all_mileage %></td>
+    </tr>
+    <tr>
+      <td colspan="4">Total Customer Count: <%= @customer_count %></td>
     </tr>
   </tbody>
 </table>

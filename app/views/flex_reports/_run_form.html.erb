@@ -1,11 +1,11 @@
   <ol class="<%= ol_class %>">
     <li>
       <%= f.label :start_date %>
-      <%= f.date_select :start_date, :end_year => Time.now.year, :order => [:month, :year] %>
+      <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
     </li>
     <li>
-      <%= f.label :end_date %>
-      <%= f.date_select :end_date, :end_year => Time.now.year, :order => [:month, :year] %>
+      <%= f.label :end_month, "End date" %>
+      <%= f.date_select :end_month, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
     </li>
     <li>
       <%= f.check_box :pending %>
@@ -15,6 +15,6 @@
       <%= f.submit "View Report" %>
     </li>
     <li>
-      <%= f.submit "Export as CSV", :name => "csv" %>
+      <%= f.submit "Export Data", :name => "csv" %>
     </li>
   </ol>

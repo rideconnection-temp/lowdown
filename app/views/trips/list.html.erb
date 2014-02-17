@@ -2,7 +2,7 @@
   <h1>View Trips</h1>
 </div>
 
-<%= render 'search' if @query.display_search_form %>
+<%= render('search', :allow_csv => true, :action => :list) if @query.display_search_form %>
 
 <h2 id="result-count">
   <%= pluralize @trips.total_entries, "record" %> found.

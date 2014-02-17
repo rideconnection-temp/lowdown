@@ -1,0 +1,59 @@
+<div class="column-select">
+  <h2>Filters</h2>
+  <a href="#" id="expand-all-filters">Expand All</a>
+  <a href="#" id="collapse-all-filters">Collapse All</a>
+</div>
+<ol id="filters">
+  <div class="section first">
+    <%= render 'filter', 
+      :title => "Reporting Agencies", 
+      :name => "reporting_agencies",
+      :list_items => @reporting_agencies,
+      :values => @report.reporting_agency_ids %>
+    <%= render 'filter', 
+      :title => "Providers", 
+      :name => "providers",
+      :list_items => @providers,
+      :values => @report.provider_ids %>
+    <%= render 'filter', 
+      :title => "Programs", 
+      :name => "programs",
+      :list_items => @programs,
+      :values => @report.program_ids %>
+    <%= render 'filter', 
+      :title => "Funding Sources", 
+      :name => "funding_sources",
+      :list_items => @funding_sources,
+      :values => @report.funding_source_ids %>
+  </div>
+  <div class="section second">
+    <%= render 'filter', 
+      :title => "Reporting Agency Types", 
+      :name => "reporting_agency_type_names",
+      :list_items => @reporting_agency_types,
+      :values => @report.reporting_agency_type_names %>
+    <%= render 'filter', 
+      :title => "Provider Types", 
+      :name => "provider_type_names",
+      :list_items => @provider_types,
+      :values => @report.provider_type_names %>
+    <%= render 'filter', 
+      :title => "Counties", 
+      :name => "county_names",
+      :list_items => @county_names,
+      :values => @report.county_names %>
+    <%= render 'filter', 
+      :title => "F.E. Projects", 
+      :name => "projects",
+      :list_items => @projects,
+      :values => @report.project_ids %>
+  </div>
+  <div class="section third">
+    <%= render 'filter', 
+      :title => "Individual Allocations", 
+      :name => "allocations",
+      :list_items => @grouped_allocations,
+      :values => @report.allocation_ids,
+      :grouped_options => true %>
+  </div>
+</ol>

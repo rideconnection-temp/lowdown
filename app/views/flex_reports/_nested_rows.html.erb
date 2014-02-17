@@ -1,23 +1,53 @@
+<% currency_precision = 0 if currency_precision.nil? %>
+<% section = 'section-main' if section.nil? %>
 <% if group_fields.size > 1 %>
-  <!-- an outer layer, print group headers with proper level of indentation -->
-  <% group_field_name = @report.group_fields[@report.groups.size - group_fields.size].titleize %>
+  <% # an outer layer, print group headers and footers with proper level of indentation -%>
+  <% i = 0 %>
   <% rows.sort_by {|k,v| row_sort(k)}.each do |group_name, row| %>
-    <tr> 
-      <% (@report.groups.size - group_fields.size).times do %>
-        <td class="indent">&nbsp;</td>
-      <% end %>
-      <td class="report-item" colspan="<%= @report.fields.size + @report.group_fields.size %>"><%= group_name(row,group_fields).present? ? group_name(row,group_fields) : "#{group_field_name} Not Specified" %></td>
-    </tr> 
-    <%= render "nested_rows", :rows => row, :group_fields => group_fields[1..-1] %>
-    <%= render 'totals', :row=>row, :group_fields=>group_fields[1..-1], :short_name => short_group_name(row,group_fields), :group_field_name => group_field_name %>
+    <% this_tree_map = tree_map + [i] %>
+    <% this_row_group_class = ["row-group-#{this_tree_map.join("-")}"] %>
+    <% i += 1 %>
+    <% next_level_row_group_classes = (row_classes + this_row_group_class) %>
+    <%= render 'flex_reports/group_header', 
+        :row                  => row, 
+        :report_group_fields  => report_group_fields, 
+        :group_fields         => group_fields, 
+        :row_classes          => row_classes, 
+        :tree_map             => tree_map,
+        :section              => section,
+        :this_row_group_class => this_row_group_class, 
+        :root_header          => false 
+    %>
+    <%= render 'flex_reports/nested_rows', 
+        :rows                 => row, 
+        :report_group_fields  => report_group_fields, 
+        :group_fields         => group_fields[1..-1], 
+        :row_classes          => next_level_row_group_classes, 
+        :tree_map             => this_tree_map,
+        :section              => section,
+        :currency_precision   => currency_precision 
+    %>
+    <%= render 'flex_reports/totals', 
+        :row                  => row, 
+        :report_group_fields  => report_group_fields, 
+        :group_fields         => group_fields, 
+        :row_classes          => row_classes, 
+        :tree_map             => tree_map,
+        :section              => section,
+        :currency_precision   => currency_precision 
+    %>
   <% end %>
 <% else %>  
-  <!-- innermost layer, render the data -->
+  <% # innermost layer, render the data -%>
   <% rows.sort_by {|k,v| row_sort(k)}.each do |group_name, row| %>
-    <%= render "row", :row => row, :label => row.send(group_fields[0]) %>
+    <%= render 'flex_reports/row', 
+        :row                  => row, 
+        :report_group_fields  => report_group_fields, 
+        :label                => row.send(group_fields[0]), 
+        :row_classes          => row_classes, 
+        :tree_map             => tree_map,
+        :section              => section,
+        :currency_precision   => currency_precision 
+    %>
   <% end %>
-<% end %>
-
-<% if group_fields.size == @report.group_fields.size %>
-  <%= render 'totals', :row=>rows, :group_fields=>group_fields, :name => "All" %>
 <% end %>

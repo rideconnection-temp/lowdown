@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130117070217) do
+ActiveRecord::Schema.define(:version => 20131231010500) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -31,17 +31,15 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
 
   create_table "allocations", :force => true do |t|
     t.string  "name"
-    t.boolean "group_trip"
     t.integer "project_id"
     t.integer "provider_id"
     t.string  "county"
     t.string  "trip_collection_method"
     t.string  "run_collection_method"
     t.string  "cost_collection_method"
-    t.string  "routematch_override"
     t.string  "routematch_provider_code"
     t.date    "inactivated_on"
-    t.string  "program"
+    t.string  "program_name"
     t.string  "admin_ops_data",              :limit => 15
     t.string  "vehicle_maint_data",          :limit => 15
     t.integer "trimet_program_id"
@@ -53,6 +51,7 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.text    "notes"
     t.boolean "do_not_show_on_flex_reports",               :default => false, :null => false
     t.string  "eligibility"
+    t.integer "program_id"
   end
 
   create_table "customers", :force => true do |t|
@@ -98,7 +97,20 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.text    "reporting_agency_list"
     t.text    "subtitle"
     t.integer "report_category_id"
-    t.boolean "elderly_and_disabled_only",   :default => false, :null => false
+    t.boolean "elderly_and_disabled_only",       :default => false, :null => false
+    t.text    "program_list"
+    t.text    "funding_source_list"
+    t.text    "project_list"
+    t.text    "reporting_agency_type_name_list"
+    t.text    "provider_type_name_list"
+  end
+
+  create_table "funding_sources", :force => true do |t|
+    t.string   "funding_source_name"
+    t.string   "funding_subsource_name"
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "mobilities", :force => true do |t|
@@ -113,20 +125,25 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.datetime "updated_at"
   end
 
+  create_table "programs", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "projects", :force => true do |t|
     t.string   "name"
-    t.string   "funding_source"
-    t.string   "funding_subsource"
+    t.string   "old_funding_source_name"
+    t.string   "old_funding_subsource_name"
     t.string   "project_number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "funding_source_id"
   end
 
   create_table "providers", :force => true do |t|
     t.string   "name",          :limit => 50
     t.string   "provider_type", :limit => 15
-    t.string   "agency",        :limit => 50
-    t.string   "branch",        :limit => 50
     t.string   "routematch_id", :limit => 10
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -211,6 +228,7 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "notes"
   end
 
   create_table "trimet_providers", :force => true do |t|
@@ -231,6 +249,7 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "file_name"
+    t.text     "notes"
   end
 
   create_table "trips", :force => true do |t|
@@ -293,13 +312,12 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
   add_index "trips", ["customer_id"], :name => "index_trips_on_customer_id"
 
   create_table "users", :force => true do |t|
-    t.string   "email",                               :default => "",   :null => false
-    t.string   "encrypted_password",   :limit => 128, :default => "",   :null => false
-    t.string   "password_salt",                       :default => "",   :null => false
+    t.string   "email",                                 :default => "",   :null => false
+    t.string   "encrypted_password",     :limit => 128, :default => "",   :null => false
+    t.string   "password_salt",                         :default => "",   :null => false
     t.string   "reset_password_token"
-    t.string   "remember_token"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                       :default => 0
+    t.integer  "sign_in_count",                         :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -307,12 +325,11 @@ ActiveRecord::Schema.define(:version => 20130117070217) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "level"
-    t.boolean  "active",                              :default => true, :null => false
+    t.boolean  "active",                                :default => true, :null => false
+    t.datetime "reset_password_sent_at"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-
-  add_foreign_key "customers", ["address_id"], "addresses", ["id"], :name => "customers_address_id_fkey"
 
 end

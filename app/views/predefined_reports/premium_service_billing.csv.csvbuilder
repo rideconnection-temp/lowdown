@@ -1,0 +1,58 @@
+headers = ["Customer","Service Date","Start Time","Pickup Address","Drop Off Address","District Center","Partner Cost","Taxi Cost","Scheduling Fee","Total Cost","Provider"]
+csv << headers
+
+@run_groups.keys.sort{|a,b| a.start_at <=> b.start_at}.each do |run|
+  csv << [
+    "Hourly Trip",
+    run.date.to_s(:mdy),
+    run.start_at.to_s(:time_only_csv),
+    pluralize(run.ads_billable_hours, "billable hour"),
+    nil,
+    nil,
+    number_to_currency(run.ads_partner_cost),
+    nil,
+    number_to_currency(run.ads_scheduling_fee),
+    number_to_currency(run.ads_total_cost),
+    run.trips.first.allocation.provider.name
+  ]
+  @run_groups[run].each do |t|
+    csv << [
+      t.customer.name,
+      t.date.to_s(:mdy),
+      t.start_at.to_s(:time_only_csv),
+      t.pickup_address.full_address,
+      t.dropoff_address.full_address,
+      t.case_manager_office,
+      number_to_currency(t.ads_partner_cost),
+      number_to_currency(t.ads_taxi_cost),
+      number_to_currency(t.ads_scheduling_fee),
+      number_to_currency(t.ads_total_cost),
+      t.allocation.provider.name
+    ]
+  end
+end
+
+@trips_billed_per_trip.sort{|a,b| a.customer.name <=> b.customer.name}.each do |t|
+  csv << [
+    t.customer.name,
+    t.date.to_s(:mdy),
+    t.start_at.to_s(:time_only_csv),
+    t.pickup_address.full_address,
+    t.dropoff_address.full_address,
+    t.case_manager_office,
+    number_to_currency(t.ads_partner_cost),
+    number_to_currency(t.ads_taxi_cost),
+    number_to_currency(t.ads_scheduling_fee),
+    number_to_currency(t.ads_total_cost),
+    t.allocation.provider.name
+  ]
+end
+
+csv << [
+  nil, nil, nil, nil, nil, nil,
+  number_to_currency(@total_partner_cost),
+  number_to_currency(@total_taxi_cost),
+  number_to_currency(@total_scheduling_fee),
+  number_to_currency(@total_cost),
+  nil
+]

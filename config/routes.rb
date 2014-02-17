@@ -6,11 +6,13 @@ Lowdown::Application.routes.draw do
   resources :customers, :only => [:show, :update]
   resources :providers
   resources :projects
+  resources :programs
   resources :runs
   resources :trimet_providers
   resources :trimet_programs
   resources :trimet_report_groups
   resources :overrides
+  resources :funding_sources
   resources :report_categories
   resources :allocations do
     collection do

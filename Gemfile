@@ -1,14 +1,18 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.19'
+gem 'rails', '3.1.12'
 gem 'pg'
 
-gem 'devise',               '~> 1.4.9'
+gem 'devise',               '~> 2.2.0'
 gem 'dynamic_form',         '~> 1.1.4'
 gem 'will_paginate',        '~> 3.0.2'
-gem 'userstamp',            '~> 2.0.1'
+# Using userstamp from git for now, because 2.0.2 (Rails 3.2 compatible) has
+# not been uploaded to rubygems as of this writing.
+gem "userstamp",
+  :git => "git://github.com/delynn/userstamp.git",
+  :ref => "777633a"
 gem 'validates_timeliness', '~> 3.0.7'
-gem 'jquery-rails',         '~> 1.0.12'
+gem "jquery-rails",         '>= 0.2.6'
 gem 'csv_builder',          '~> 2.1.0'
 gem 'point_in_time',        :git => 'git://github.com/rideconnection/point_in_time'
 
@@ -18,7 +22,11 @@ gem "capistrano-ext", :require => false # not a runtime dependency
 gem "rvm-capistrano", :require => false
 
 group :production do
-  gem 'exception_notification', '~> 3.0'
+  gem 'exception_notification', '~> 4.0'
+end
+
+group :development do
+  gem 'thin'
 end
 
 group :test, :development do
@@ -28,5 +36,4 @@ group :test, :development do
   gem 'capybara'
   gem 'fixjour'
   gem 'faker'
-  gem 'automatic_foreign_key'
 end

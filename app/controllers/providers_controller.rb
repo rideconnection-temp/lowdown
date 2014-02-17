@@ -47,6 +47,6 @@ class ProvidersController < ApplicationController
   private
   
   def get_drop_down_data
-    @provider_types = Provider.all.map(&:provider_type).uniq
+    @provider_types = Provider::PROVIDER_TYPES
   end
 end

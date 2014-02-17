@@ -4,17 +4,36 @@
 
 <div id="date-header">
   <span class="month-range">
-    <%= report_month_range @report.start_date, @report.query_end_date %>
+    <%= report_month_range @report.start_date, @report.after_end_date %>
   </span>
-  <span class="separator csv">|</span>
+  <span class="separator no-print">|</span>
   <%= link_to "CSV", params.merge({:format=>:csv}), :class=>"csv" %>
   <% if current_user.is_admin %>
-    <span class="separator edit">|</span>
+    <span class="separator no-print">|</span>
     <%= link_to "Edit Report", edit_flex_report_path(@report), :class => "edit" %>
   <% end %>
+  <span class="separator no-print">|</span>
+  <a href="#" id="collapse-all" class="collapse no-print">Collapse All</a>
+  <span class="separator no-print">|</span>
+  <a href="#" id="expand-all" class="expand no-print">Expand All</a>
+  <span class="separator no-print">|</span>
+  <a href="#" id="show-update-form" class="no-print">Update View</a>
 </div>
 
 <%= content_tag(:div, @report.subtitle, :id => "report-description") if @report.subtitle.present? %>
-<%= content_tag(:div, "Grouping: " << @report.group_fields.join(", ").titleize, :id => "grouping-description") if @report.group_fields.present? %>
+<%= content_tag(:div, "Grouping: #{group_by_label(@report.group_fields)}", :id => "grouping-description") if @report.group_fields.present? %>
 
-<%= render :partial=> "report", :locals=>{:results=>@report.results, :group_fields=>@report.group_fields} %>
+<%= form_for @report, :html => {:class => 'run-report', :method => :get, :style => "display:none;"} do |f| %>
+  <fieldset class="no-print">
+    <%= render 'grouping' %>
+    <%= render 'filters' %>
+    <%= render 'columns' %>
+    <%= render 'date_range', :f => f %>
+    <div class="actions">
+      <%= f.submit "Update View" %>
+      <%= f.submit "Export Data", :name => "csv" %>
+    </div>
+  </fieldset>
+<% end %>
+
+<%= render "report", :results => @report.results, :group_fields => @report.group_fields %>

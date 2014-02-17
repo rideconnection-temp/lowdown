@@ -22,22 +22,46 @@ class FlexReportsController < ApplicationController
     @report = FlexReport.new_from_params params
 
     if @report.save
-      flash[:notice] = "Saved #{@report.name}"
-      redirect_to edit_flex_report_path(@report)
+      if params[:view].present?
+        redirect_to flex_report_path(@report)
+      elsif params[:csv].present?
+        redirect_to flex_report_path(@report, :csv => true)
+      else
+        flash[:notice] = "Saved \"#{@report.name}\""
+        redirect_to edit_flex_report_path(@report.id)
+      end
     else
       prep_edit
       render :action => :new
     end
   end
 
-  # the results of the report
+  # The results of the report. Save the date range to make it the new default, but
+  # don't save any other changes the user may make. Users get to fiddle with more 
+  # substantial report attributes here, but have to go to the edit page to keep 
+  # changes (if they have the rights to do so).
   def show
     @report = FlexReport.find params[:id]
+    if params[:flex_report].present?
+      @report.attributes = params[:flex_report].slice(
+        "start_date(3i)",
+        "start_date(2i)",
+        "start_date(1i)",
+        "end_month(3i)",
+        "end_month(2i)",
+        "end_month(1i)",
+        "pending"
+      ) 
+      @report.save
+    end
     @report.attributes = params[:flex_report]
     @report.populate_results!
-    request.format = :csv if params[:csv]
+
+    request.format = :csv if params[:csv].present?
     respond_to do |format|
-      format.html
+      format.html do
+        prep_edit
+      end
       format.csv do 
         @filename = "#{@report.name.gsub('"','')}.csv"
       end
@@ -53,10 +77,12 @@ class FlexReportsController < ApplicationController
     @report = FlexReport.find params[:id]
 
     if @report.update_attributes params[:flex_report]
-      if params[:commit].downcase.match /view/
+      if params[:view].present?
         redirect_to flex_report_path(@report)
+      elsif params[:csv].present?
+        redirect_to flex_report_path(@report, :csv => true)
       else
-        flash[:notice] = "Saved #{@report.name}"
+        flash[:notice] = "Updated \"#{@report.name}\""
         redirect_to edit_flex_report_path(@report.id)
       end
     else
@@ -81,16 +107,19 @@ class FlexReportsController < ApplicationController
   private
 
   def prep_edit
-    @funding_subsource_names  = [['<Select All>','']] + Project.funding_subsource_names
-    @providers                = [['<Select All>','']] + Provider.default_order.map {|x| [x.to_s, x.id]}
-    @reporting_agencies       = [['<Select All>','']] + Provider.partners.default_order.map {|x| [x.to_s, x.id]}
-    @program_names            = [['<Select All>','']] + Allocation.program_names
-    @county_names             = [['<Select All>','']] + Allocation.county_names
     @group_bys = FlexReport::GroupBys.sort
     if @report.group_by.present?
       @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
     end
-    @grouped_allocations = [] 
+    @funding_sources          = [['<All>','']] + FundingSource.default_order.map {|x| [x.name, x.id]}
+    @projects                 = [['<All>','']] + Project.order(:project_number, :name).map {|x| [x.number_and_name, x.id]}
+    @providers                = [['<All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
+    @provider_types           = [['<All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.provider_type, x.provider_type]}.uniq.sort
+    @reporting_agencies       = [['<All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
+    @reporting_agency_types   = [['<All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.provider_type, x.provider_type]}.uniq.sort
+    @programs                 = [['<All>','']] + Program.default_order.map {|x| [x.name, x.id]}
+    @county_names             = [['<All>','']] + Allocation.county_names.map {|x| [x, x]}
+    @grouped_allocations      = [] 
     Provider.order(:name).includes(:allocations).each do |p|
       @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]
     end

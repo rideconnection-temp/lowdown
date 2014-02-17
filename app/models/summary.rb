@@ -80,11 +80,13 @@ class Summary < ActiveRecord::Base
   scope :data_entry_not_complete, where(:complete => false)
   scope :for_date_range, lambda {|start_date, end_date| where("summaries.period_start >= ? AND summaries.period_start < ?", start_date, end_date) }
   scope :for_allocation, lambda {|allocation| where(:allocation_id => allocation.id) }
+  scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
   scope :for_provider, lambda {|provider_id| where("summaries.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",provider_id)}
   scope :with_no_provider, where("summaries.allocation_id IN (SELECT id FROM allocations WHERE provider_id IS NULL)")
   scope :for_reporting_agency, lambda {|provider_id| where("summaries.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",provider_id)}
   scope :with_no_reporting_agency, where("summaries.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id IS NULL)")
   scope :revisions, where("summaries.valid_start <> summaries.first_version_created_at")
+  scope :adjustment_notes_contain, lambda{|an| where("summaries.adjustment_notes LIKE ?","%#{an}%")}
 
   def created_by
     return first_version.updater

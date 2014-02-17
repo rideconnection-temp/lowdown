@@ -1,7 +1,15 @@
 <% as_a ||= nil %>
-<h2>This record is used in the following allocations<%= " as a #{as_a}" if as_a.present? %>:</h2>
+<h2>
+  <% if target.present? %>
+    This record is used in the following allocations
+    <%= " as a #{as_a}" if as_a.present? %>:
+  <% else %>
+    This record is not used in any allocations
+    <%= " as a #{as_a}" if as_a.present? %>
+  <% end %>
+</h2>
 <ul>
-  <% target.each do |a| %>
+  <% target.sort_by{|x| x.name}.each do |a| %>
     <li><%= link_to a.name, [:edit, a] %></li>
   <% end %>
 </ul>

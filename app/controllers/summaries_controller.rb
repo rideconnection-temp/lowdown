@@ -4,6 +4,7 @@ class SummaryQuery
 
   attr_accessor :start_date, :end_date, :after_end_date
   attr_accessor :provider, :reporting_agency, :complete
+  attr_accessor :allocation_id_list, :allocation_ids, :adjustment_notes_contain
 
   def convert_date(obj, base)
     Date.new(obj["#{base}(1i)"].to_i, obj["#{base}(2i)"].to_i)
@@ -23,13 +24,17 @@ class SummaryQuery
     end
     if @start_date.blank? || @end_date.blank?
       @start_date   = Date.today - 1.month - Date.today.day + 1.day
-      @end_date     = @start_date + 1.month
+      @end_date     = @start_date
     end
-    @after_end_date = Date.new(@end_date.year,@end_date.month,1) + 1.month
-    @reporting_agency = params[:reporting_agency].to_i if params[:reporting_agency].present?
-    @provider         = params[:provider].to_i if params[:provider].present?
-    @complete         = true if params[:complete] == 'Yes'
-    @complete         = false if params[:complete] == 'No'
+    @after_end_date       = Date.new(@end_date.year,@end_date.month,1) + 1.month
+
+    @reporting_agency     = params[:reporting_agency].to_i  if params[:reporting_agency].present?
+    @allocation_id_list   = params[:allocation_id_list]     if params[:allocation_id_list].present?
+    @provider             = params[:provider].to_i          if params[:provider].present?
+    @complete             = true if params[:complete] == 'Yes'
+    @complete             = false if params[:complete] == 'No'
+    @allocation_ids       = @allocation_id_list.split.map{|al| al.to_i} if @allocation_id_list.present?
+    @adjustment_notes_contain = params[:adjustment_notes_contain] if params[:adjustment_notes_contain]
   end
 
   def persisted?
@@ -48,19 +53,21 @@ class SummaryQuery
     summaries = summaries.with_no_reporting_agency if reporting_agency == 0
     summaries = summaries.data_entry_complete if complete 
     summaries = summaries.data_entry_not_complete if complete == false
+    summaries = summaries.for_allocation_id(allocation_ids) if allocation_ids.present?
+    summaries = summaries.adjustment_notes_contain(adjustment_notes_contain) if adjustment_notes_contain.present?
     summaries
   end
 
   def providers
     na_provider = Provider.new(:name => "<Not Applicable>")
     na_provider.id = 0
-    [na_provider] + Provider.default_order
+    [na_provider] + Provider.providers_in_allocations.default_order
   end
 
   def reporting_agencies
     na_reporting_agency = Provider.new(:name => "<Not Applicable>")
     na_reporting_agency.id = 0
-    [na_reporting_agency] + Provider.partners.default_order
+    [na_reporting_agency] + Provider.reporting_agencies.default_order
   end
 end
 
@@ -73,9 +80,15 @@ class SummariesController < ApplicationController
     @grand_totals = {}
     @page_totals = {}
 
-    @query = SummaryQuery.new(params[:summary_query])
-    @filtered_summaries = @query.apply_conditions(Summary).current_versions.includes(:allocation,:summary_rows).joins(:allocation).order('allocations.name,summaries.period_start')
+    @query = SummaryQuery.new(params[:q])
+    @filtered_summaries = @query.
+        apply_conditions(Summary).
+        current_versions.
+        includes(:allocation,:summary_rows).
+        joins(:allocation).
+        order('allocations.name,summaries.period_start')
     @summaries = @filtered_summaries.paginate :page => params[:page]
+    @allocations = Allocation.summary_collection_method.order(:name)
     attributes_to_sum.each do |attribute|
       @grand_totals[attribute.to_sym] = @filtered_summaries.inject(0){|sum,item| sum + (item.send(attribute) || 0)}
       @page_totals[attribute.to_sym]  = @summaries.inject(0){|sum,item| sum + (item.send(attribute) || 0)}
@@ -83,7 +96,13 @@ class SummariesController < ApplicationController
   end
 
   def adjustments
-    @summaries = Summary.revisions.order('summaries.valid_start DESC').includes(:allocation,:summary_rows).paginate :page => params[:page]
+    @query = SummaryQuery.new(params[:q])
+    @summaries = @query.
+        apply_conditions(Summary).
+        revisions.
+        includes(:allocation,:summary_rows).
+        order('summaries.valid_start DESC').
+        paginate :page => params[:page]
   end
 
   def new
@@ -113,14 +132,14 @@ class SummariesController < ApplicationController
   def bulk_update
     updated = 0
 
-    @query = SummaryQuery.new(params[:summary_query])
+    @query = SummaryQuery.new(params[:q])
     unless @query.has_dates?
       flash[:alert] = "Cannot update without date range"
     else
       updated = @query.apply_conditions(Summary.current_versions.data_entry_not_complete).update_all(:complete => true)
       flash[:alert] = "Updated #{view_context.pluralize updated, "record"}"
     end
-    redirect_to :action => :index, :summary_query => params[:summary_query]
+    redirect_to :action => :index, :q => params[:q]
   end
 
   def edit
@@ -204,8 +223,8 @@ private
   def prep_edit
     @grouped_allocations = [] 
     Provider.with_summary_data.order(:name).each do |p|
-      @grouped_allocations << [p.name, p.active_non_trip_allocations.map {|a| [a.select_label,a.id]}]
+      @grouped_allocations << [p.name, p.active_non_trip_allocations_as_of(@summary.try :period_start).map {|a| [a.select_label,a.id]}]
     end
-    @grouped_allocations << ['<No provider>', Allocation.non_trip_collection_method.not_recently_inactivated.where(:provider_id => nil).map {|a| [a.name,a.id]}]
+    @grouped_allocations << ['<No provider>', Allocation.non_trip_collection_method.active_as_of(@summary.try :period_start).where(:provider_id => nil).map {|a| [a.name,a.id]}]
   end
 end

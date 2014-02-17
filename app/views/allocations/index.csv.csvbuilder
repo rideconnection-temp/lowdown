@@ -1,6 +1,5 @@
 csv << [
   'Allocation Name',
-  'Group Trip',
   'Program Name',
   'Project Name',
   'Project Number',
@@ -26,17 +25,17 @@ csv << [
   'TriMet Program',
   'TriMet E&D Report Group',
   'Activated Date',
-  'Inactivated Date'
+  'Inactivated Date',
+  'Notes'
 ]
 @allocations.each do |a|
   csv << [
     a.name,
-    a.group_trip ? 'True' : 'False',
-    a.program,
+    a.program.try(:name),
     a.project.try(:name),
     a.project.try(:project_number),
-    a.project.try(:funding_source),
-    a.project.try(:funding_subsource),
+    a.project.try(:funding_source).try(:funding_source_name),
+    a.project.try(:funding_source).try(:funding_subsource_name),
     a.reporting_agency.try(:name),
     a.reporting_agency.try(:short_name),
     a.reporting_agency.try(:provider_type),
@@ -57,6 +56,7 @@ csv << [
     a.trimet_program.try(:name),
     a.trimet_report_group.try(:name),
     a.activated_on,
-    a.inactivated_on
+    a.inactivated_on,
+    a.notes
   ]
 end
