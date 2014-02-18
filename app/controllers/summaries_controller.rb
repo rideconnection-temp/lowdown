@@ -156,7 +156,7 @@ class SummariesController < ApplicationController
     @versions = @summary.versions.reverse
 
     #gather up the old row objects
-    old_rows = @summary.summary_rows.map &:clone 
+    old_rows = @summary.summary_rows.map &:dup
     @summary.attributes = params[:summary]
 
     create_new_version = @summary.create_new_version?
