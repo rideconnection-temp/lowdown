@@ -57,7 +57,7 @@
       <p class="disabled-input">
         <% if @trip.trip_import_id %>
           <%= @trip.trip_import_id %>
-          <%= link_to "View All trips from this Import", {:action=>:list, "trip_query[trip_import_id]"=>@trip.trip_import_id}, :class => :details %>
+          <%= link_to "View All trips from this Import", {:action=>:list, "q[trip_import_id]"=>@trip.trip_import_id}, :class => :details %>
         <% else %>
           &mdash;
         <% end %>
@@ -68,7 +68,7 @@
       <p class="disabled-input">
         <% if @trip.routematch_share_id %>
           <%= @trip.routematch_share_id %>
-          <%= link_to "View All trips in this shared ride", {:action=>:list, "trip_query[share_id]"=>@trip.routematch_share_id}, :class => :details %>
+          <%= link_to "View All trips in this shared ride", {:action=>:list, "q[share_id]"=>@trip.routematch_share_id}, :class => :details %>
         <% else %>
           &mdash;
         <% end %>
@@ -79,7 +79,7 @@
       <p class="disabled-input">
         <% if @trip.run_id %>
           <%= link_to @trip.run.display_name, @trip.run %>
-          <%= link_to "View All Trips in this Run", {:action=>:list, "trip_query[run_id]"=>@trip.run_id}, :class => :details %>
+          <%= link_to "View All Trips in this Run", {:action=>:list, "q[run_id]"=>@trip.run_id}, :class => :details %>
         <% else %>
           &mdash;
         <% end %>
