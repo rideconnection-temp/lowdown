@@ -1,6 +1,5 @@
 class Trip < ActiveRecord::Base
   require 'bigdecimal'
-  extend ActiveSupport::Memoizable
 
   class << self
     def date_range(start_date, after_end_date)
@@ -193,8 +192,6 @@ class Trip < ActiveRecord::Base
   def provider
     allocation.try(:provider)
   end
-
-  memoize :customers_served
 
   def create_revision_with_known_attributes_without_callbacks(attrs)
     old_version = versions.build self.attributes.merge( attrs )
