@@ -6,9 +6,9 @@
   <fieldset>
     <ol class="section first">
       <li><%= f.label :email, "Email:" %><%= f.text_field :email %></li>
-      <li><%= f.label :password, "Password:" %><%= f.password_field :password %></li>
+      <li><%= f.label :password, "Password:" %><%= f.password_field :password, autocomplete: :off %></li>
       <% if devise_mapping.rememberable? %>
-      <li><%= f.label :remember_me, "Remember Me:" %><%= f.check_box :remember_me %></li>
+        <li><%= f.label :remember_me, "Remember Me:" %><%= f.check_box :remember_me %></li>
       <% end %>
     </ol>
 
