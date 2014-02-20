@@ -48,20 +48,20 @@ class Summary < ActiveRecord::Base
       if record.allocation.try(:trip_collection_method) == 'summary_rows' 
         unless row.in_district_trips.is_a? Numeric
           row.errors.add :in_district_trips, "is not a number" 
-          record.errors.add, :base, "#{row.purpose} in district trips is not a number" 
+          record.errors.add :base, "#{row.purpose} in district trips is not a number" 
         end
         unless row.out_of_district_trips.is_a? Numeric
           row.errors.add :out_of_district_trips, "is not a number" 
-          record.errors.add, :base, "#{row.purpose} out of district trips is not a number" 
+          record.errors.add :base, "#{row.purpose} out of district trips is not a number" 
         end
       else
         unless row.in_district_trips.blank?
           row.errors.add :in_district_trips, "should be blank" 
-          record.errors.add, :base, "#{row.purpose} in district trips should be blank" 
+          record.errors.add :base, "#{row.purpose} in district trips should be blank" 
         end
         unless row.out_of_district_trips.blank?
           row.errors.add :out_of_district_trips, "should be blank" 
-          record.errors.add, :base, "#{row.purpose} out of district trips should be blank" 
+          record.errors.add :base, "#{row.purpose} out of district trips should be blank" 
         end
       end
     end
