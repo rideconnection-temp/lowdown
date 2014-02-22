@@ -75,7 +75,10 @@ class TripQuery
   end
   
   def update_allocation?
-    @commit.try(:downcase) == "transfer trips" && @dest_allocation.present? && @dest_allocation != @allocation
+    @commit.try(:downcase) == "transfer trips" && 
+      @dest_allocation.present? && 
+      @dest_allocation != @allocation &&
+      Allocation.find(@allocation).try(:provider) == Allocation.find(@dest_allocation).try(:provider)
   end
 
   def format
