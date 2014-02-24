@@ -78,7 +78,7 @@ class PredefinedReportsController < ApplicationController
     @quarterly_query = ReportQuery.new(:date_range => :quarter)
     @fiscal_year_to_date_query = ReportQuery.new(:date_range => :fiscal_year_to_date)
     @semimonth_query = ReportQuery.new(:date_range => :semimonth)
-    @selected_groupings = ["funding_source","funding_subsource","project_number","project_name","program_name","reporting_agency_name"]
+    @selected_groupings = ["funding_source","funding_subsource","project_number_and_name","program_name","reporting_agency_name"]
   end
 
   def premium_service_billing
