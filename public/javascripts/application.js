@@ -317,4 +317,27 @@ $(document).ready(function() {
   });
 
   $('.autosize').autosize({append: "\n"});
+
+  // When moving trips in bulk from one allocation to another, only allow movement
+  // within a provider
+  function limitDestinationAllocationSelect() {
+    if ($('#q_allocation').val() == '') {
+      $('#q_dest_allocation').children().each(function(i,option) {
+        $(option).hide();
+      });
+    } else {
+      $('#q_dest_allocation').children().each(function(i,option) {
+        if ($(option).val() == $('#q_allocation').val() || $(option).data('provider-id') != $('#q_allocation option:selected').data('provider-id')) {
+          $(option).hide();
+          if ($('#q_dest_allocation').val() == $(option).val()) {
+            $('#q_dest_allocation').val('');
+          }
+        } else {
+          $(option).show();
+        }
+      });
+    }
+  }
+  limitDestinationAllocationSelect();
+  $('#q_allocation').first().change(limitDestinationAllocationSelect);
 });

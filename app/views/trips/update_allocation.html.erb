@@ -15,7 +15,11 @@
       </li>
       <li>
         <%= f.label :allocation, "Source Allocation" %>
-        <%= f.grouped_collection_select :allocation, @providers, :active_trip_allocations, :name, :id, :name, {:prompt => '<Select Allocation>'} %>
+        <%= f.select :allocation, 
+            Allocation.trip_collection_method.not_recently_inactivated.order(:name).map {|a|
+              [a.name, a.id, {"data-provider-id" => a.provider_id}]
+            } 
+        %>
       </li>
       <li>
         <input id="get-count" type="submit" value="Get Trip Count" name="commit"/>
@@ -29,7 +33,11 @@
       
       <li>
         <%= f.label :dest_allocation, "Destination Allocation" %>
-        <%= f.grouped_collection_select :dest_allocation, @providers, :active_trip_allocations, :name, :id, :name, {:prompt => '<Select Allocation>'} %>
+        <%= f.select :dest_allocation, 
+            Allocation.trip_collection_method.not_recently_inactivated.order(:name).map {|a|
+              [a.name, a.id, {"data-provider-id" => a.provider_id}]
+            }, include_blank: true 
+        %>
       </li>
       
       <li id="transfer_count">
