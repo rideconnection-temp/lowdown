@@ -17,8 +17,8 @@
     <li<%= mark_if_changed(@trip,:pickup_address) %>>
       <%= f.label :pickup_address, "Pickup Address:" %>
       <p class="disabled-input">
-        <% if @pickup_address.display_name %>
-          <%= @pickup_address.display_name %>
+        <% if @pickup_address.present? %>
+          <%= render "address", address: @pickup_address %>
         <% else %>
           &mdash;
         <% end %>
@@ -27,8 +27,8 @@
     <li<%= mark_if_changed(@trip,:dropoff_address) %>>
       <%= f.label :dropoff_address, "Dropoff Address:" %>
       <p class="disabled-input">
-        <% if @dropoff_address.display_name %>
-          <%= @dropoff_address.display_name %>
+        <% if @dropoff_address.present? %>
+          <%= render "address", address: @dropoff_address %>
         <% else %>
           &mdash;
         <% end %>

@@ -643,6 +643,9 @@ fieldset ol.section li div {
     float: left;
     width: 60%;
 }
+fieldset ol.section li div.address {
+    width: 100%;
+}
 fieldset ol.section li div input.full {
     width: 100%;
 }
