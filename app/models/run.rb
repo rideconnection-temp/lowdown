@@ -40,18 +40,24 @@ class Run < ActiveRecord::Base
   end
 
   def ads_partner_cost
-    return unless trips.present?
-    if trips.first.allocation.name =~ /hourly/i
-      BigDecimal.new("25.17") * ads_billable_hours 
+    if trips.present?
+      if trips.first.allocation.name =~ /hourly/i
+        BigDecimal.new("25.17") * ads_billable_hours 
+      else
+        BigDecimal.new("0")
+      end
     else
       BigDecimal.new("0")
     end
   end
 
   def ads_scheduling_fee
-    return unless trips.present?
-    if trips.first.allocation.name =~ /hourly/i
-      BigDecimal.new("8.61") * ads_billable_hours
+    if trips.present?
+      if trips.first.allocation.name =~ /hourly/i
+        BigDecimal.new("8.61") * ads_billable_hours
+      else
+        BigDecimal.new("0")
+      end
     else
       BigDecimal.new("0")
     end
