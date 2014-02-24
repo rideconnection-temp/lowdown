@@ -40,7 +40,7 @@ class Trip < ActiveRecord::Base
   belongs_to :dropoff_address, :class_name => "Address", :foreign_key => "dropoff_address_id"
   belongs_to :home_address, :class_name => "Address", :foreign_key => "home_address_id"
   belongs_to :allocation
-  belongs_to :run, :primary_key=>"base_id"
+  belongs_to :run
   belongs_to :customer
   belongs_to :trip_import
 
