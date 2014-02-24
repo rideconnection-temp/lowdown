@@ -69,7 +69,6 @@ jQuery.fn.sortElements = (function(){
 })();
 
 $(document).ready(function() {
-
   //*****************************************
   //
   // Application-wide 
@@ -146,7 +145,7 @@ $(document).ready(function() {
 
   // Hide the date fields if the user selects all dates
   $('#q_all_dates').change(function() {
-    if($('#q_all_dates').attr("checked")) {
+    if($('#q_all_dates').prop("checked")) {
       $('#date_fields').slideUp();
     } else {
       $('#date_fields').slideDown();
@@ -155,7 +154,7 @@ $(document).ready(function() {
   
   // In Move Trips, Hide the transfer count field if the user selects all trips
   $('#transfer_all').change(function() {
-    if($('#transfer_all').attr("checked")) {
+    if($('#transfer_all').prop("checked")) {
       $('#transfer_count').slideUp();
     } else {
       $('#transfer_count').slideDown();
@@ -287,11 +286,11 @@ $(document).ready(function() {
 
   // Select/unselect all column checkboxes in flex report form
   $('#unselect-all-columns').click(function() {
-    $('#report-checkbox-area input').attr('checked', false) 
+    $('#report-checkbox-area input').prop('checked', false) 
     return false;
   });
   $('#select-all-columns').click(function() {
-    $('#report-checkbox-area input').attr('checked', true) 
+    $('#report-checkbox-area input').prop('checked', true) 
     return false;
   });
 
