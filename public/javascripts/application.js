@@ -69,20 +69,22 @@ jQuery.fn.sortElements = (function(){
 })();
 
 $(document).ready(function() {
+  // helper code for setting the h1 page header
   function htmlEncode(value){
     //create a in-memory div, set it's inner text(which jQuery automatically encodes)
     //then grab the encoded contents back out.  The div never exists on the page.
     return $('<div/>').text(value).html();
   }
-
   function htmlDecode(value){
     return $('<div/>').html(value).text();
   }
 
+  // if the page has an h1 page header, make it the document title
   if ($("#page-header h1").html() != null) {
     document.title = htmlDecode($("#page-header h1").html());
   }
 
+  // Use placement drag-and-drop elements to update the hidden group_by field
   function setAllocationSummaryGroupBy(){
     var listItems = $("ul#sortable-selected li");
     var listArray = [];
@@ -91,9 +93,9 @@ $(document).ready(function() {
     });
     $("#report_query_group_by").val(listArray.join());
   }
-
   setAllocationSummaryGroupBy();
 
+  // Enable drag-and-drop functionality
   $( "ul#sortable-selected, ul#sortable-unselected" ).sortable({
     connectWith: ".connectedSortable",
     stop: function(){
@@ -101,6 +103,7 @@ $(document).ready(function() {
     }
   }).disableSelection();
 
+  // Add ability to move all drag-and-drop elements to the unselected area
   $('a#unselect-all').click(function() {
     $("ul#sortable-selected li").appendTo("ul#sortable-unselected")
     $("ul#sortable-unselected li").sortElements(function(a, b) {
@@ -109,14 +112,17 @@ $(document).ready(function() {
     setAllocationSummaryGroupBy();
   });
 
+  // Add zebra-striping of tables
   $("tr:odd").addClass("odd");
 
+  // Add ability for a flash message to be dismissed
   $('#flash a.closer').click(function() {
       $('#flash').animate({ height: 0, opacity: 0, marginTop: "-10px", marginBottom: "-10px" }, 'slow');
       $('#flash a.closer').hide();
       return false;
   });
 
+  // Make error messages, which are mostly hidden (shrunk) by default, expandable
   $('#error_explanation a.shrinker').click(function() {
     var errDiv = $('#error_explanation');
     if (errDiv.hasClass('shrinkable')) {
@@ -267,29 +273,6 @@ $(document).ready(function() {
   });
 
   // Make flex report rows collapsible
-  $('.collapsible').click(function() {
-    var t = $(this);
-    t.toggleClass('hidden-group');
-    t.toggleClass('visible-group');
-    resetFlexReportRowVisibility();
-  });
-
-  $('#collapse-all').click(function() {
-    // Make all groups hidden
-    $('.visible-group').toggleClass('hidden-group').toggleClass('visible-group');
-    // No go back and make the root group visible so the first level of groups are shown.
-    // (Per user user request, this is actually 'collapse all but first group level')
-    $('.level-0.hidden-group').toggleClass('hidden-group').toggleClass('visible-group');
-    resetFlexReportRowVisibility();
-    return false;
-  });
-
-  $('#expand-all').click(function() {
-    $('.hidden-group').toggleClass('hidden-group').toggleClass('visible-group');
-    resetFlexReportRowVisibility();
-    return false;
-  });
-
   function resetFlexReportRowVisibility() {
     // Go through every row that could possibly be visible, and make it so
     $('.visible-group').each(function(i, row) {
@@ -300,22 +283,46 @@ $(document).ready(function() {
       $('.' + $(row).data('group') + '.' + $(row).data('section')).hide();
     });
   }
+  // When user clicks on a header, toggle the visiblity of the rows that serve as its children
+  $('.collapsible').click(function() {
+    var t = $(this);
+    t.toggleClass('hidden-group');
+    t.toggleClass('visible-group');
+    resetFlexReportRowVisibility();
+  });
+  // Collapse all rows except for the first group level
+  $('#collapse-all').click(function() {
+    // Make all groups hidden
+    $('.visible-group').toggleClass('hidden-group').toggleClass('visible-group');
+    // No go back and make the root group visible so the first level of groups are shown.
+    $('.level-0.hidden-group').toggleClass('hidden-group').toggleClass('visible-group');
+    resetFlexReportRowVisibility();
+    return false;
+  });
+  // Expand all rows
+  $('#expand-all').click(function() {
+    $('.hidden-group').toggleClass('hidden-group').toggleClass('visible-group');
+    resetFlexReportRowVisibility();
+    return false;
+  });
 
+  // toggle the visibility of the form that updates a flex report in-place 
   $('#show-update-form').click(function() {
     $('.run-report').toggle('slow');
     return false;
   });
 
+  // Select/unselect all column checkboxes in flex report form
   $('#unselect-all-columns').click(function() {
     $('#report-checkbox-area input').attr('checked', false) 
     return false;
   });
-
   $('#select-all-columns').click(function() {
     $('#report-checkbox-area input').attr('checked', true) 
     return false;
   });
 
+  // make text areas grow with additional text
   $('.autosize').autosize({append: "\n"});
 
   // When moving trips in bulk from one allocation to another, only allow movement
