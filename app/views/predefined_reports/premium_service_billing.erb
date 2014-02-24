@@ -40,7 +40,7 @@
         <td></td>
         <td class="number"><%= number_to_currency(run.ads_scheduling_fee) %></td>
         <td class="number"><%= number_to_currency(run.ads_total_cost) %></td>
-        <td><%= run.trips.first.allocation.provider.name %></td>
+        <td><%= run.trips.first.allocation.provider.name unless run.trips.blank? %></td>
       </tr>
       <% @run_groups[run].each do |t| %>
         <tr>
