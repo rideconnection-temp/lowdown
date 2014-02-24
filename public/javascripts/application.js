@@ -327,7 +327,10 @@ $(document).ready(function() {
       });
     } else {
       $('#q_dest_allocation').children().each(function(i,option) {
-        if ($(option).val() == $('#q_allocation').val() || $(option).data('provider-id') != $('#q_allocation option:selected').data('provider-id')) {
+        if (
+          $(option).val() == $('#q_allocation').val() || 
+          $(option).data('provider-id') != $('#q_allocation option:selected').data('provider-id')
+        ) {
           $(option).hide();
           if ($('#q_dest_allocation').val() == $(option).val()) {
             $('#q_dest_allocation').val('');
@@ -339,5 +342,5 @@ $(document).ready(function() {
     }
   }
   limitDestinationAllocationSelect();
-  $('#q_allocation').first().change(limitDestinationAllocationSelect);
+  $('#q_allocation').change(limitDestinationAllocationSelect);
 });

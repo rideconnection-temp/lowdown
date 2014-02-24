@@ -18,7 +18,7 @@
         <%= f.select :allocation, 
             Allocation.trip_collection_method.not_recently_inactivated.order(:name).map {|a|
               [a.name, a.id, {"data-provider-id" => a.provider_id}]
-            } 
+            }, include_blank: true
         %>
       </li>
       <li>
