@@ -1,0 +1,25 @@
+<div>
+  <% if address.common_name.present? %>
+    <div class="address">
+      <%= address.common_name %>
+    </div>
+  <% end %>
+  <% if address.building_name.present? %>
+    <div class="address">
+      <%= address.building_name %>
+    </div>
+  <% end %>
+  <% if address.address_1.present? %>
+    <div class="address">
+      <%= address.address_1 %>
+    </div>
+  <% end %>
+  <% if address.address_2.present? %>
+    <div class="address">
+      <%= address.address_2 %>
+    </div>
+  <% end %>
+  <div class="address">
+    <%= address.city %> <%= address.state %> <%= address.postal_code %>
+  </div>
+</div>

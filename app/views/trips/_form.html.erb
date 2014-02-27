@@ -14,21 +14,11 @@
       <%= f.label :customer_type, "Customer Type (this trip only):" %>
       <%= f.select :customer_type, options_for_select(%w{Honored Adult Child}, @trip.customer_type), :include_blank => true %>
     </li>
-    <li<%= mark_if_changed(@trip,:home_address) %>>
-      <%= f.label :home_address, "Home Address:" %>
-      <p class="disabled-input">
-        <% if @home_address.display_name %>
-          <%= @home_address.display_name %>
-        <% else %>
-          &mdash;
-        <% end %>
-      </p>
-    </li>
     <li<%= mark_if_changed(@trip,:pickup_address) %>>
       <%= f.label :pickup_address, "Pickup Address:" %>
       <p class="disabled-input">
-        <% if @pickup_address.display_name %>
-          <%= @pickup_address.display_name %>
+        <% if @pickup_address.present? %>
+          <%= render "address", address: @pickup_address %>
         <% else %>
           &mdash;
         <% end %>
@@ -37,8 +27,8 @@
     <li<%= mark_if_changed(@trip,:dropoff_address) %>>
       <%= f.label :dropoff_address, "Dropoff Address:" %>
       <p class="disabled-input">
-        <% if @dropoff_address.display_name %>
-          <%= @dropoff_address.display_name %>
+        <% if @dropoff_address.present? %>
+          <%= render "address", address: @dropoff_address %>
         <% else %>
           &mdash;
         <% end %>
@@ -80,6 +70,16 @@
         <% if @trip.run_id %>
           <%= link_to @trip.run.display_name, @trip.run %>
           <%= link_to "View All Trips in this Run", {:action=>:list, "q[run_id]"=>@trip.run_id}, :class => :details %>
+        <% else %>
+          &mdash;
+        <% end %>
+      </p>
+    </li>
+    <li<%= mark_if_changed(@trip,:date) %>>
+      <%= f.label :date, "Trip Date:" %>
+      <p class="disabled-input">
+        <% if @trip.date %>
+          <%= @trip.date.to_s(:long) %>
         <% else %>
           &mdash;
         <% end %>
@@ -161,6 +161,16 @@
       <p class="disabled-input">
         <% if @trip.estimated_trip_distance_in_miles %>
           <%= @trip.estimated_trip_distance_in_miles %>
+        <% else %>
+          &mdash;
+        <% end %>
+      </p>
+    </li>
+    <li<%= mark_if_changed(@trip,:bpa_billing_distance) %>>
+      <%= f.label :bpa_billing_distance, "BPA Billing Distance:"  %>
+      <p class="disabled-input">
+        <% if @trip.bpa_billing_distance %>
+          <%= @trip.bpa_billing_distance %>
         <% else %>
           &mdash;
         <% end %>
