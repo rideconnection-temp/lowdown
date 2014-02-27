@@ -102,11 +102,14 @@ class TripsController < ApplicationController
   def list
     @query = TripQuery.new params[:q], params[:commit]
     prep_search
-    @trips = Trip.
+    @trips = @query.apply_conditions(Trip).
         current_versions.
         index_includes.
         order(:date,:trip_import_id)
-    @trips = @query.apply_conditions(@trips)
+    @trip_count = @query.apply_conditions(Trip).
+        current_versions.
+        trip_count.
+        first["trip_count"]
 
     if @query.format == 'general'
       @filename = 'trip_list.csv'

@@ -109,6 +109,7 @@ class Trip < ActiveRecord::Base
   scope :grouped_revisions, 
         select("DISTINCT valid_start, adjustment_notes").
         where("valid_start <> imported_at")
+  scope :trip_count, select("SUM(attendant_count) + SUM(guest_count) + COUNT(*) AS trip_count")
 
   RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
 
