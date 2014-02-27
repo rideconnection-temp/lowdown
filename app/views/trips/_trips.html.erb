@@ -10,11 +10,8 @@
           <th>Funding Source</th>
           <th>Pickup</th>
           <th>Dropoff</th>
-          <th>Google Route</th>
-          <th>Customers Served</th>
-          <th>Shared</th>
-          <th>Run Name</th>
-          <th>Fare</th>
+          <th class="number">Trip Count</th>
+          <th class="number">Fare</th>
           <th></th>
         </tr>
       </thead>
@@ -28,22 +25,7 @@
             <td><%= trip.allocation.project.funding_source.try(:name) if trip.allocation.project %></td>
             <td><%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
             <td><%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
-            <td><%= raw gmaps_route_link trip.pickup_address, trip.dropoff_address, "" %></td>
-            <td><%= trip.customers_served %></td>
-            <td>
-              <% if trip.shared? %>
-                <%= link_to "Yes", {:action=>:list, "trip_query[share_id]"=>trip.routematch_share_id}, {:title=>"View all trips in this share"} %>
-              <% else %>
-                No
-              <% end %>
-            </td>
-            <td>
-              <% if trip.run %>
-                <%= link_to_unless_current trip.run.display_name, trip.run, {:title=>"View all trips in this run"} %>
-              <% else %>
-                (no run)
-              <% end %>
-            </td>
+            <td class="number"><%= trip.customers_served %></td>
             <td class="number"><%= number_to_currency trip.fare %></td>
             <td>
               <%= link_to "Details", {:controller => :trips, :action=>:show, :id=>trip.id}, {:title=>"View details for this trip", :class => :details} %>

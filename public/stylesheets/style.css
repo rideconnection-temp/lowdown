@@ -793,7 +793,6 @@ td.number, th.number {
   text-align: right;
 }
 
-body.trips div.report-wrapper td,
 body.summaries.index div.report-wrapper td { 
   text-align : left; 
 }
