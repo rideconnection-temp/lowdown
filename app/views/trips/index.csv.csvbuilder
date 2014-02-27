@@ -13,5 +13,13 @@ header_row.map!{|column| column == 'Bpa Billing Distance' ? 'Provider Trip Dista
 csv << header_row
 
 for trip in @trips.includes(:home_address)
-  csv << good_columns.map {|x| trip.send(x)} + [trip.customer.name, trip.allocation.name, trip.run.try(:name)] + address_fields(trip.home_address) + address_fields(trip.pickup_address) + address_fields(trip.dropoff_address)
+  csv << good_columns.map {|x| trip.send(x)} + 
+    [
+      trip.customer.name, 
+      trip.allocation.name, 
+      trip.run.try(:name)
+    ] + 
+    address_fields(trip.home_address) +
+    address_fields(trip.pickup_address) + 
+    address_fields(trip.dropoff_address)
 end
