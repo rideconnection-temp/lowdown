@@ -46,6 +46,8 @@ class TripImport < ActiveRecord::Base
   before_create :import_file, :apportion_imported_shared_rides 
   after_create :associate_records_with_trip_import, :mark_record_data_entry_complete
 
+  scope :for_provider_id, lambda {|provider_id| where('id IN (SELECT trip_import_id FROM trips WHERE allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?))', provider_id)}
+
   private
 
   def import_file

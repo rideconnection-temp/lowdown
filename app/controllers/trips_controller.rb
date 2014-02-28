@@ -6,9 +6,8 @@ class TripQuery
 
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
       :allocation_id_list, :allocation, :allocation_ids, :customer_first_name, :customer_last_name, 
-      :dest_allocation, :commit, 
-      :trip_import_id, :adjustment_notes, :display_search_form, :run_id, :share_id, :valid_start, 
-      :result_code, :original_override
+      :dest_allocation, :commit, :trip_import_id, :adjustment_notes, :display_search_form, :run_id, 
+      :share_id, :valid_start, :result_code, :original_override
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -88,6 +87,20 @@ class TripQuery
     elsif @commit == "Export All Data Fields"
       "general"
     end
+  end
+end
+
+class TripImportQuery
+  attr_accessor :provider_id
+
+  def initialize(params)
+    params ||= {}
+    @provider_id = params[:provider_id].to_i if params[:provider_id].present? 
+  end
+
+  def apply_conditions(trip_imports)
+    trip_imports = trip_imports.for_provider_id(provider_id) if provider_id.present?
+    trip_imports
   end
 end
 
@@ -195,7 +208,10 @@ class TripsController < ApplicationController
   end
 
   def show_import
-    @trip_imports = TripImport.order("trip_imports.created_at DESC").paginate(
+    @query        = TripImportQuery.new params[:q]
+    @providers    = Provider.with_trip_data.default_order
+    @trip_imports = @query.apply_conditions(TripImport).
+      order("trip_imports.created_at DESC").paginate(
       :page => params[:page], 
       :per_page => 30
     )
