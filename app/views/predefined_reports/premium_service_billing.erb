@@ -25,6 +25,7 @@
       <th>Scheduling Fee</th>
       <th>Total Cost</th>
       <th>Provider</th>
+      <th class="no-print">Details</th>
     </tr>
   </thead>
   <tbody>
@@ -41,6 +42,7 @@
         <td class="number"><%= number_to_currency(run.ads_scheduling_fee) %></td>
         <td class="number"><%= number_to_currency(run.ads_total_cost) %></td>
         <td><%= run.trips.first.allocation.provider.name unless run.trips.blank? %></td>
+        <td class="no-print"><%= link_to "Run", run %></td>
       </tr>
       <% @run_groups[run].each do |t| %>
         <tr>
@@ -55,6 +57,7 @@
           <td class="number"><%= number_to_currency(t.ads_scheduling_fee) %></td>
           <td class="number"><%= number_to_currency(t.ads_total_cost) %></td>
           <td><%= t.allocation.provider.name %></td>
+          <td class="no-print"><%= link_to "Trip", t %></td>
         </tr>
       <% end %>
     <% end %>
@@ -71,6 +74,7 @@
         <td class="number"><%= number_to_currency(t.ads_scheduling_fee) %></td>
         <td class="number"><%= number_to_currency(t.ads_total_cost) %></td>
         <td><%= t.allocation.provider.name %></td>
+        <td class="no-print"><%= link_to "Trip", t %></td>
       </tr>
     <% end %>
     <tr>
