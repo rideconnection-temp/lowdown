@@ -8,7 +8,8 @@
           <th>Status</th>
           <th>Provider</th>
           <th>Funding Source</th>
-          <th>Purpose</th>
+          <th>Program</th>
+          <th>Trip Purpose</th>
           <th>Pickup</th>
           <th>Dropoff</th>
           <th class="number">Trip Count</th>
@@ -24,6 +25,7 @@
             <td><%= Trip::RESULT_CODES.invert[trip.result_code] %></td>
             <td><%= trip.allocation.provider.name if trip.allocation.provider %></td>
             <td><%= trip.allocation.project.funding_source.try(:name) if trip.allocation.project %></td>
+            <td><%= trip.allocation.program.name if trip.allocation.program %></td>
             <td><%= trip.purpose_type %></td>
             <td><%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
             <td><%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
