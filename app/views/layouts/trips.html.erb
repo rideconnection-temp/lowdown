@@ -1,11 +1,11 @@
 <% content_for :menu_bar do %>
   <ul id="subnav" class="selfclear">
-    <li><%= link_to "Trip Adjustment History", {:action=>:adjustments}, :class=>:history %></li>
+    <li><%= link_to "Trip Adjustment History", adjustments_trips_path, :class=>:history %></li>
     <% if current_user.is_admin %>
-      <li><%= link_to "Import Trips", {:action=>:show_import}, :class=>:import %></li>
-      <li><%= link_to "Move Trips", {:action=>:update_allocation}, :class=>:move %></li>
+      <li><%= link_to "Import Trips", show_import_trips_path, :class=>:import %></li>
+      <li><%= link_to "Move Trips", update_allocation_trips_path, :class=>:move %></li>
     <% else %>
-      <li><%= link_to "Trip Import History", {:action=>:show_import}, :class=>:import %></li>
+      <li><%= link_to "Trip Import History", show_import_trips_path, :class=>:import %></li>
     <% end %>
   </ul>
 <% end %>

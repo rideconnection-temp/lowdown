@@ -25,6 +25,7 @@ Lowdown::Application.routes.draw do
       get  :adjustments
       get  :show_import
       post :import
+      get  :update_allocation
     end
   end
   
