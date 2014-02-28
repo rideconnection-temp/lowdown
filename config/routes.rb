@@ -8,6 +8,7 @@ Lowdown::Application.routes.draw do
   resources :projects
   resources :programs
   resources :runs
+  resources :trips
   resources :trimet_providers
   resources :trimet_programs
   resources :trimet_report_groups
