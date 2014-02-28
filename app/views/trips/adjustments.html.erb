@@ -44,7 +44,7 @@
         <% if adjustment['cnt'] == '1' -%>
           <%= link_to "View", {:action => :show, :id => adjustment.id}, :class => :details %>
         <% else -%>
-          <%= link_to "View", {:action => :list, "trip_query[valid_start]" => adjustment.valid_start}, :class => :details %>
+          <%= link_to "View", trips_path("q[valid_start]" => adjustment.valid_start), :class => :details %>
         <% end -%>
       </td>
     </tr>

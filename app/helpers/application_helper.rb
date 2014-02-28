@@ -170,9 +170,8 @@ module ApplicationHelper
     if trip_allocations != []
       start_date = (row.start_date || report.start_date)
       end_date   = (row.after_end_date || report.after_end_date) - 1.day
-      link_to "Trips", {:controller => :trips, :action => :list, 
-          :q => {:allocation_id_list => "#{trip_allocations.join(' ')}", 
-          :start_date => start_date, :end_date => end_date}}
+      link_to "Trips", trips_path({:q => {:allocation_id_list => "#{trip_allocations.join(' ')}", 
+          :start_date => start_date, :end_date => end_date}})
     end
   end
 

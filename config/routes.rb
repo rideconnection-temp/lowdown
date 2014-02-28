@@ -8,7 +8,6 @@ Lowdown::Application.routes.draw do
   resources :projects
   resources :programs
   resources :runs
-  resources :trips
   resources :trimet_providers
   resources :trimet_programs
   resources :trimet_report_groups
@@ -18,6 +17,14 @@ Lowdown::Application.routes.draw do
   resources :allocations do
     collection do
       get :trimet_report_groups
+    end
+  end
+
+  resources :trips do
+    collection do
+      get  :adjustments
+      get  :show_import
+      post :import
     end
   end
   

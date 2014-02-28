@@ -96,10 +96,6 @@ class TripsController < ApplicationController
   before_filter :require_admin_user, :except=>[:index, :list, :show_import, :adjustments, :show]
 
   def index
-    redirect_to :action=>:list
-  end
-
-  def list
     @query = TripQuery.new params[:q], params[:commit]
     prep_search
     @trips = @query.apply_conditions(Trip).
