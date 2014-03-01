@@ -4,8 +4,8 @@ class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
-      :allocation_id_list, :allocation, :allocation_ids, :customer_first_name, :customer_last_name, 
+  attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider_id, :reporting_agency_id, 
+      :allocation_id_list, :allocation_id, :allocation_ids, :customer_first_name, :customer_last_name, 
       :dest_allocation, :commit, :trip_import_id, :adjustment_notes, :display_search_form, :run_id, 
       :share_id, :valid_start, :result_code, :original_override
 
@@ -40,11 +40,11 @@ class TripQuery
       end
     end
     @after_end_date      = @end_date + 1.day
-    @provider            = params[:provider].to_i         if params[:provider].present? 
-    @reporting_agency    = params[:reporting_agency].to_i if params[:reporting_agency].present? 
-    @dest_allocation     = params[:dest_allocation].to_i  if params[:dest_allocation].present? 
-    @allocation          = params[:allocation].to_i       if params[:allocation].present? 
-    @allocation_id_list  = params[:allocation_id_list]    if params[:allocation_id_list].present?
+    @provider_id         = params[:provider_id].to_i         if params[:provider_id].present? 
+    @reporting_agency_id = params[:reporting_agency_id].to_i if params[:reporting_agency_id].present? 
+    @dest_allocation     = params[:dest_allocation].to_i     if params[:dest_allocation].present? 
+    @allocation_id       = params[:allocation_id].to_i       if params[:allocation_id].present? 
+    @allocation_id_list  = params[:allocation_id_list]       if params[:allocation_id_list].present?
     @result_code         = params[:result_code]
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
@@ -57,19 +57,19 @@ class TripQuery
   end
 
   def apply_conditions(trips)
-    trips = trips.for_date_range(start_date,after_end_date) if !all_dates
-    trips = trips.for_provider(provider) if provider.present?
-    trips = trips.for_valid_start(valid_start) if valid_start.present?
-    trips = trips.for_reporting_agency(reporting_agency) if reporting_agency.present?
-    trips = trips.for_allocation_id(allocation) if allocation.present?
-    trips = trips.for_allocation_id(allocation_ids) if allocation_ids.present?
-    trips = trips.for_import(trip_import_id) if trip_import_id.present?
-    trips = trips.for_run(run_id) if run_id.present?
-    trips = trips.for_result_code(result_code) if result_code.present?
-    trips = trips.for_share(share_id) if share_id.present?
+    trips = trips.for_date_range(start_date,after_end_date)         if !all_dates
+    trips = trips.for_provider(provider_id)                         if provider_id.present?
+    trips = trips.for_valid_start(valid_start)                      if valid_start.present?
+    trips = trips.for_reporting_agency(reporting_agency_id)         if reporting_agency_id.present?
+    trips = trips.for_allocation_id(allocation_id)                  if allocation_id.present?
+    trips = trips.for_allocation_id(allocation_ids)                 if allocation_ids.present?
+    trips = trips.for_import(trip_import_id)                        if trip_import_id.present?
+    trips = trips.for_run(run_id)                                   if run_id.present?
+    trips = trips.for_result_code(result_code)                      if result_code.present?
+    trips = trips.for_share(share_id)                               if share_id.present?
     trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
-    trips = trips.for_customer_last_name_like(customer_last_name) if customer_last_name.present?
-    trips = trips.for_original_override_like(original_override) if original_override.present?
+    trips = trips.for_customer_last_name_like(customer_last_name)   if customer_last_name.present?
+    trips = trips.for_original_override_like(original_override)     if original_override.present?
     trips
   end
   

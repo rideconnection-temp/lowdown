@@ -26,20 +26,20 @@
 
     <ol class="section fourth">
       <li>
-        <%= f.label :provider, "Reporting Agency:" %> 
-        <%= f.collection_select :reporting_agency, @reporting_agencies, :id, :to_s, :include_blank => true %>
+        <%= f.label :reporting_agency_id, "Reporting Agency:" %> 
+        <%= f.collection_select :reporting_agency_id, @reporting_agencies, :id, :to_s, :include_blank => true %>
       </li>
       <li>
-        <%= f.label :provider, "Provider:" %> 
-        <%= f.collection_select :provider, @providers, :id, :to_s, :include_blank => true %>
+        <%= f.label :provider_id, "Provider:" %> 
+        <%= f.collection_select :provider_id, @providers, :id, :to_s, :include_blank => true %>
       </li>
       <li>
-        <%= f.label :allocation, "Allocation:" %> 
+        <%= f.label :allocation_id, "Allocation:" %> 
         <% if @query.allocation_ids.present? %>
-          <%= f.collection_select :allocation, @allocations, 
+          <%= f.collection_select :allocation_id, @allocations, 
               :id, :name, :include_blank => true %>
         <% else %>
-          <%= f.grouped_collection_select :allocation, Provider.with_trip_data.default_order.includes(:allocations).all, 
+          <%= f.grouped_collection_select :allocation_id, Provider.with_trip_data.default_order.includes(:allocations).all, 
               :allocations_with_trip_data, :name, :id, :select_label, :include_blank => true %>
         <% end %>
       </li>
