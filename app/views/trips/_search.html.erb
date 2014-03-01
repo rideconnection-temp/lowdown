@@ -34,6 +34,10 @@
         <%= f.collection_select :provider_id, @providers, :id, :to_s, :include_blank => true %>
       </li>
       <li>
+        <%= f.label :program_id, "Program:" %> 
+        <%= f.collection_select :program_id, @programs, :id, :name, :include_blank => true %>
+      </li>
+      <li>
         <%= f.label :allocation_id, "Allocation:" %> 
         <% if @query.allocation_ids.present? %>
           <%= f.collection_select :allocation_id, @allocations, 

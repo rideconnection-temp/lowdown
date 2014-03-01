@@ -7,7 +7,7 @@ class TripQuery
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider_id, :reporting_agency_id, 
       :allocation_id_list, :allocation_id, :allocation_ids, :customer_first_name, :customer_last_name, 
       :dest_allocation, :commit, :trip_import_id, :adjustment_notes, :display_search_form, :run_id, 
-      :share_id, :valid_start, :result_code, :original_override
+      :share_id, :valid_start, :result_code, :original_override, :program_id
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -41,6 +41,7 @@ class TripQuery
     end
     @after_end_date      = @end_date + 1.day
     @provider_id         = params[:provider_id].to_i         if params[:provider_id].present? 
+    @program_id          = params[:program_id].to_i          if params[:program_id].present? 
     @reporting_agency_id = params[:reporting_agency_id].to_i if params[:reporting_agency_id].present? 
     @dest_allocation     = params[:dest_allocation].to_i     if params[:dest_allocation].present? 
     @allocation_id       = params[:allocation_id].to_i       if params[:allocation_id].present? 
@@ -59,6 +60,7 @@ class TripQuery
   def apply_conditions(trips)
     trips = trips.for_date_range(start_date,after_end_date)         if !all_dates
     trips = trips.for_provider(provider_id)                         if provider_id.present?
+    trips = trips.for_program_id(program_id)                        if program_id.present?
     trips = trips.for_valid_start(valid_start)                      if valid_start.present?
     trips = trips.for_reporting_agency(reporting_agency_id)         if reporting_agency_id.present?
     trips = trips.for_allocation_id(allocation_id)                  if allocation_id.present?
@@ -276,6 +278,7 @@ class TripsController < ApplicationController
 
   def prep_search
     @providers          = Provider.with_trip_data.default_order
+    @programs           = Program.with_trip_data.default_order
     @reporting_agencies = Provider.with_trip_data_as_reporting_agency.default_order
     @result_codes       = Trip::RESULT_CODES.sort
     if @query.try(:allocation_ids).present?

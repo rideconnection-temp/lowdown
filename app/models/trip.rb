@@ -90,6 +90,9 @@ class Trip < ActiveRecord::Base
         "%#{name.downcase}%") }
   scope :for_original_override_like,
         lambda {|override| where("LOWER(trips.original_override) LIKE ?", "%#{override.downcase}%") }
+  scope :for_program_id,
+        lambda {|program_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE program_id = ?)",
+        program_id)}
   scope :for_provider,
         lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?)",
         provider_id)}
