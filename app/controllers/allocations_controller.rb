@@ -1,12 +1,12 @@
 class AllocationsController < ApplicationController
   
-  before_filter :require_admin_user, :except => [:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
   
   def index
     @allocations = Allocation.includes(:project, :provider, :override).order('providers.name, allocations.name')
     respond_to do |format|
       format.html do
-        @allocations = @allocations.paginate :page => params[:page]
+        @allocations = @allocations.paginate page: params[:page]
         @grouped_allocations = @allocations.group_by(&:provider_name)
       end
       format.csv do
@@ -24,10 +24,10 @@ class AllocationsController < ApplicationController
     @allocation = Allocation.new params[:allocation]
 
     if @allocation.save
-      redirect_to(allocations_path, :notice => 'Allocation was successfully created.')
+      redirect_to(allocations_path, notice: 'Allocation was successfully created.')
     else
-      get_drop_down_data
-      render :action => "new"
+      prep_edit
+      render :new
     end
   end
 
@@ -40,10 +40,10 @@ class AllocationsController < ApplicationController
     @allocation = Allocation.find(params[:id])
 
     if @allocation.update_attributes(params[:allocation])
-      redirect_to(edit_allocation_path(@allocation), :notice => 'Allocation was successfully updated.')
+      redirect_to(edit_allocation_path(@allocation), notice: 'Allocation was successfully updated.')
     else
       prep_edit
-      render :action => "edit"
+      render :edit
     end
   end
   
