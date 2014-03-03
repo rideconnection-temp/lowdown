@@ -6,7 +6,7 @@ class TripQuery
 
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider_id, :reporting_agency_id, 
       :allocation_id_list, :allocation_id, :allocation_ids, :customer_first_name, :customer_last_name, 
-      :dest_allocation, :commit, :trip_import_id, :adjustment_notes, :display_search_form, :run_id, 
+      :dest_allocation_id, :commit, :trip_import_id, :adjustment_notes, :display_search_form, :run_id, 
       :share_id, :valid_start, :result_code, :original_override, :program_id
 
   def initialize(params, commit = nil)
@@ -43,7 +43,7 @@ class TripQuery
     @provider_id         = params[:provider_id].to_i         if params[:provider_id].present? 
     @program_id          = params[:program_id].to_i          if params[:program_id].present? 
     @reporting_agency_id = params[:reporting_agency_id].to_i if params[:reporting_agency_id].present? 
-    @dest_allocation     = params[:dest_allocation].to_i     if params[:dest_allocation].present? 
+    @dest_allocation_id  = params[:dest_allocation_id].to_i  if params[:dest_allocation_id].present? 
     @allocation_id       = params[:allocation_id].to_i       if params[:allocation_id].present? 
     @allocation_id_list  = params[:allocation_id_list]       if params[:allocation_id_list].present?
     @result_code         = params[:result_code]
@@ -77,9 +77,9 @@ class TripQuery
   
   def update_allocation?
     @commit.try(:downcase) == "transfer trips" && 
-      @dest_allocation.present? && 
-      @dest_allocation != @allocation &&
-      Allocation.find(@allocation).try(:provider) == Allocation.find(@dest_allocation).try(:provider)
+      @dest_allocation_id.present? && 
+      @dest_allocation_id != @allocation_id &&
+      Allocation.find(@allocation_id).try(:provider) == Allocation.find(@dest_allocation_id).try(:provider)
   end
 
   def format
@@ -134,6 +134,39 @@ class TripsController < ApplicationController
     end
   end
   
+  def show
+    @trip = Trip.find(params[:id])
+    @customer = @trip.customer
+    @home_address = @trip.home_address
+    @pickup_address = @trip.pickup_address
+    @dropoff_address = @trip.dropoff_address
+    @updated_by_user = @trip.updated_by_user
+    @result_codes = Trip::RESULT_CODES
+    if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
+      @result_codes[@trip.result_code] = (@trip.result_code) 
+    end
+    @allocations = Allocation.order(:name).active_on(@trip.date)
+    if @allocations.detect{|a| a.id == @trip.allocation_id}.nil?
+      @allocations.unshift Allocation.find(@trip.allocation_id)
+    end
+  end
+  
+  def update
+    @trip = Trip.find(params[:trip][:id]).current_version
+    @trip.attributes = params[:trip]
+    if has_real_changes? @trip
+      @trip.save ? redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
+    else
+      redirect_to(:action=>:show, :id=>@trip)
+    end
+  end
+
+  def show_update_allocation
+    @query       = TripQuery.new params[:q], params[:commit]
+    @providers   = Provider.order(:name).with_trip_data
+    render :update_allocation
+  end
+
   def update_allocation
     @query       = TripQuery.new params[:q], params[:commit]
     @providers   = Provider.order(:name).with_trip_data
@@ -183,7 +216,7 @@ class TripsController < ApplicationController
               for trip in trips
                 passengers = (trip.guest_count || 0) + (trip.attendant_count || 0) + 1
                 if trips_remaining > 0 && passengers <= trips_remaining
-                  trip.allocation_id = @query.dest_allocation 
+                  trip.allocation_id = @query.dest_allocation_id 
                   trip.version_switchover_time = now
                   trip.adjustment_notes = @adjustment_notes if @adjustment_notes
                   trip.save!
@@ -195,7 +228,7 @@ class TripsController < ApplicationController
           end
         end
 
-        @allocation = Allocation.find @query.dest_allocation
+        @allocation = Allocation.find @query.dest_allocation_id
       end
     end
     @trip_count = {}
@@ -244,33 +277,6 @@ class TripsController < ApplicationController
     else
       flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
       redirect_to :action => :show_import
-    end
-  end
-
-  def show
-    @trip = Trip.find(params[:id])
-    @customer = @trip.customer
-    @home_address = @trip.home_address
-    @pickup_address = @trip.pickup_address
-    @dropoff_address = @trip.dropoff_address
-    @updated_by_user = @trip.updated_by_user
-    @result_codes = Trip::RESULT_CODES
-    if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
-      @result_codes[@trip.result_code] = (@trip.result_code) 
-    end
-    @allocations = Allocation.order(:name).active_on(@trip.date)
-    if @allocations.detect{|a| a.id == @trip.allocation_id}.nil?
-      @allocations.unshift Allocation.find(@trip.allocation_id)
-    end
-  end
-  
-  def update
-    @trip = Trip.find(params[:trip][:id]).current_version
-    @trip.attributes = params[:trip]
-    if has_real_changes? @trip
-      @trip.save ? redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
-    else
-      redirect_to(:action=>:show, :id=>@trip)
     end
   end
 

@@ -164,28 +164,32 @@ $(document).ready(function() {
   // When moving trips in bulk from one allocation to another, only allow movement
   // within a provider
   function limitDestinationAllocationSelect() {
-    if ($('#q_allocation').val() == '') {
-      $('#q_dest_allocation').children().each(function(i,option) {
+    var sourceAllocation = $('#q_allocation_id');
+    var selectedProvider = sourceAllocation.children(':selected').first().data('provider-id')
+    var destinationAllocation = $('#q_dest_allocation_id');
+
+    if (sourceAllocation.val() == '') {
+      destinationAllocation.children().each(function(i,option) {
         $(option).hide();
       });
     } else {
-      $('#q_dest_allocation').children().each(function(i,option) {
+      destinationAllocation.children().each(function(i,option) {
         if (
-          $(option).val() == $('#q_allocation').val() || 
-          $(option).data('provider-id') != $('#q_allocation option:selected').data('provider-id')
+          $(option).data('provider-id') == selectedProvider &&
+          $(option).val() != sourceAllocation.val()
         ) {
-          $(option).hide();
-          if ($('#q_dest_allocation').val() == $(option).val()) {
-            $('#q_dest_allocation').val('');
-          }
-        } else {
           $(option).show();
+        } else {
+          $(option).hide();
+          if (destinationAllocation.val() == $(option).val()) {
+            destinationAllocation.val('');
+          }
         }
       });
     }
   }
   limitDestinationAllocationSelect();
-  $('#q_allocation').change(limitDestinationAllocationSelect);
+  $('#q_allocation_id').change(limitDestinationAllocationSelect);
 
   //*****************************************
   //
