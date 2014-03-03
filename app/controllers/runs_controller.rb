@@ -38,10 +38,6 @@ class RunsController < ApplicationController
     @runs  = @query.apply_conditions(Run).current_versions.paginate :page => params[:page], :per_page => 30
   end
   
-  def create
-    @run = Run.new(params[:run])
-  end
-
   def show
     @run = Run.find(params[:id])
     @trips = @run.trips.current_versions.paginate :page => params[:page], :per_page => 30

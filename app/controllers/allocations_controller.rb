@@ -1,6 +1,5 @@
 class AllocationsController < ApplicationController
   
-  before_filter :get_drop_down_data, :only => [:new, :edit]
   before_filter :require_admin_user, :except => [:index, :edit]
   
   def index
@@ -14,6 +13,45 @@ class AllocationsController < ApplicationController
         @filename = 'allocations.csv'
       end
     end
+  end
+
+  def new
+    prep_edit
+    @allocation = Allocation.new
+  end
+  
+  def create
+    @allocation = Allocation.new params[:allocation]
+
+    if @allocation.save
+      redirect_to(allocations_path, :notice => 'Allocation was successfully created.')
+    else
+      get_drop_down_data
+      render :action => "new"
+    end
+  end
+
+  def edit
+    prep_edit
+    @allocation = Allocation.find params[:id]
+  end
+
+  def update
+    @allocation = Allocation.find(params[:id])
+
+    if @allocation.update_attributes(params[:allocation])
+      redirect_to(edit_allocation_path(@allocation), :notice => 'Allocation was successfully updated.')
+    else
+      prep_edit
+      render :action => "edit"
+    end
+  end
+  
+  def destroy
+    @allocation = Allocation.find params[:id]
+    @allocation.destroy if current_user.is_admin && !(@allocation.trips.exists? || @allocation.summaries.exists?)
+    
+    redirect_to allocations_url
   end
 
   def trimet_report_groups
@@ -31,46 +69,9 @@ class AllocationsController < ApplicationController
     end
   end
   
-  def new
-    @allocation = Allocation.new
-  end
-  
-  def create
-    @allocation = Allocation.new params[:allocation]
-
-    if @allocation.save
-      redirect_to(allocations_path, :notice => 'Allocation was successfully created.')
-    else
-      get_drop_down_data
-      render :action => "new"
-    end
-  end
-
-  def edit
-    @allocation = Allocation.find params[:id]
-  end
-
-  def update
-    @allocation = Allocation.find(params[:id])
-
-    if @allocation.update_attributes(params[:allocation])
-      redirect_to(edit_allocation_path(@allocation), :notice => 'Allocation was successfully updated.')
-    else
-      get_drop_down_data
-      render :action => "edit"
-    end
-  end
-  
-  def destroy
-    @allocation = Allocation.find params[:id]
-    @allocation.destroy if current_user.is_admin && !(@allocation.trips.exists? || @allocation.summaries.exists?)
-    
-    redirect_to allocations_url
-  end
-
   private
   
-  def get_drop_down_data
+  def prep_edit
     @trip_collection_methods   = TRIP_COLLECTION_METHODS
     @run_collection_methods    = RUN_COLLECTION_METHODS 
     @cost_collection_methods   = COST_COLLECTION_METHODS

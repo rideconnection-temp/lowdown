@@ -136,28 +136,21 @@ class TripsController < ApplicationController
   
   def show
     @trip = Trip.find(params[:id])
-    @customer = @trip.customer
-    @home_address = @trip.home_address
-    @pickup_address = @trip.pickup_address
-    @dropoff_address = @trip.dropoff_address
-    @updated_by_user = @trip.updated_by_user
-    @result_codes = Trip::RESULT_CODES
-    if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
-      @result_codes[@trip.result_code] = (@trip.result_code) 
-    end
-    @allocations = Allocation.order(:name).active_on(@trip.date)
-    if @allocations.detect{|a| a.id == @trip.allocation_id}.nil?
-      @allocations.unshift Allocation.find(@trip.allocation_id)
-    end
+    prep_edit
   end
   
   def update
     @trip = Trip.find(params[:trip][:id]).current_version
     @trip.attributes = params[:trip]
     if has_real_changes? @trip
-      @trip.save ? redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
+      if @trip.save  
+        redirect_to(@trip)
+      else
+        prep_edit
+        render :show
+      end
     else
-      redirect_to(:action=>:show, :id=>@trip)
+      redirect_to(@trip)
     end
   end
 
@@ -264,7 +257,7 @@ class TripsController < ApplicationController
 
   def import
     if ! params['file-import']
-      redirect_to :action=>:show_import and return
+      redirect_to show_import_trips_path and return
     end
     processed = TripImport.new(
       :file_path => params['file-import'].path,
@@ -273,10 +266,10 @@ class TripsController < ApplicationController
     )
     if processed.save
       flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
-      redirect_to :action => :show_import
+      redirect_to show_import_trips_path
     else
       flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
-      redirect_to :action => :show_import
+      redirect_to show_import_trips_path
     end
   end
 
@@ -289,6 +282,22 @@ class TripsController < ApplicationController
     @result_codes       = Trip::RESULT_CODES.sort
     if @query.try(:allocation_ids).present?
       @allocations        = Allocation.where(:id => @query.allocation_ids).order(:name)
+    end
+  end
+
+  def prep_edit
+    @customer = @trip.customer
+    @home_address = @trip.home_address
+    @pickup_address = @trip.pickup_address
+    @dropoff_address = @trip.dropoff_address
+    @updated_by_user = @trip.updated_by_user
+    @result_codes = Trip::RESULT_CODES
+    if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
+      @result_codes[@trip.result_code] = (@trip.result_code) 
+    end
+    @allocations = Allocation.order(:name).active_on(@trip.date)
+    if @allocations.detect{|a| a.id == @trip.allocation_id}.nil?
+      @allocations.unshift Allocation.find(@trip.allocation_id)
     end
   end
 end

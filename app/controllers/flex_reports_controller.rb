@@ -97,13 +97,6 @@ class FlexReportsController < ApplicationController
     redirect_to :action => :index
   end
   
-  def sort
-    params[:flex_reports].each do |id, index|
-      FlexReport.update_all(['position=?', index], ['id=?', id])
-    end
-    render :nothing => true
-  end
-
   private
 
   def prep_edit

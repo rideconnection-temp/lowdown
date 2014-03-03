@@ -388,7 +388,8 @@ class PredefinedReportsController < ApplicationController
     @query = ReportQuery.new(params[:report_query])
     group_by = @query.group_by.split(",")
     @groupings = group_by.map{|x| [x, FlexReport::GroupMappings[x]] }
-    allocations = Allocation.active_on(Date.today).includes(:program, :reporting_agency, :provider, :project => [:funding_source])
+    allocations = Allocation.active_on(Date.today).
+        includes(:program, :reporting_agency, :provider, :project => [:funding_source])
     all_nodes = Allocation.group(@groupings.map{|x| x[0] }, allocations)
     @flattened_nodes = flatten_nodes([], all_nodes, 0)
   end

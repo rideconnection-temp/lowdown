@@ -95,16 +95,6 @@ class SummariesController < ApplicationController
     end
   end
 
-  def adjustments
-    @query = SummaryQuery.new(params[:q])
-    @summaries = @query.
-        apply_conditions(Summary).
-        revisions.
-        includes(:allocation,:summary_rows).
-        order('summaries.valid_start DESC').
-        paginate :page => params[:page]
-  end
-
   def new
     @summary = Summary.new
     
@@ -127,19 +117,6 @@ class SummariesController < ApplicationController
     else
       render(:action => :new)
     end
-  end
-
-  def bulk_update
-    updated = 0
-
-    @query = SummaryQuery.new(params[:q])
-    unless @query.has_dates?
-      flash[:alert] = "Cannot update without date range"
-    else
-      updated = @query.apply_conditions(Summary.current_versions.data_entry_not_complete).update_all(:complete => true)
-      flash[:alert] = "Updated #{view_context.pluralize updated, "record"}"
-    end
-    redirect_to :action => :index, :q => params[:q]
   end
 
   def edit
@@ -216,6 +193,29 @@ class SummariesController < ApplicationController
     end
     
     redirect_to :action => :edit, :id => @summary.base_id
+  end
+
+  def bulk_update
+    updated = 0
+
+    @query = SummaryQuery.new(params[:q])
+    unless @query.has_dates?
+      flash[:alert] = "Cannot update without date range"
+    else
+      updated = @query.apply_conditions(Summary.current_versions.data_entry_not_complete).update_all(:complete => true)
+      flash[:alert] = "Updated #{view_context.pluralize updated, "record"}"
+    end
+    redirect_to :action => :index, :q => params[:q]
+  end
+
+  def adjustments
+    @query = SummaryQuery.new(params[:q])
+    @summaries = @query.
+        apply_conditions(Summary).
+        revisions.
+        includes(:allocation,:summary_rows).
+        order('summaries.valid_start DESC').
+        paginate :page => params[:page]
   end
 
 private
