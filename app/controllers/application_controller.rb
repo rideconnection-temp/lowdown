@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   private 
 
   def has_real_changes?(record)
-    record.changes.values.each {|change| return true unless change[0].blank? && change[1].blank? }
+    record.changes.values.each {|change| return true unless (change[0].blank? && change[1].blank?) || change[0] == change[1] }
     return false
   end
 
