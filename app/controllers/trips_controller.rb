@@ -120,6 +120,7 @@ class TripsController < ApplicationController
     @trip_count = @query.apply_conditions(Trip).
         current_versions.
         trip_count.
+        where(result_code: 'COMP').
         first["trip_count"]
 
     if @query.format == 'general'

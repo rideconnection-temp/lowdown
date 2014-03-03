@@ -5,7 +5,7 @@
 <%= render('search', :allow_csv => true, :action => :index) if @query.display_search_form %>
 
 <h2 id="result-count">
-  <%= pluralize @trips.total_entries, "record" %> found, <%= pluralize @trip_count, "trips" %>.
+  <%= pluralize @trips.total_entries, "record" %> found, with <%= pluralize @trip_count, "trip" %> completed.
 </h2>
 
 <%= render 'trips', :trips => @trips %>
