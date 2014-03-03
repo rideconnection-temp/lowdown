@@ -75,16 +75,16 @@ class PredefinedReportsController < ApplicationController
 
   def index
     @query = ReportQuery.new
-    @quarterly_query = ReportQuery.new(:date_range => :quarter)
-    @fiscal_year_to_date_query = ReportQuery.new(:date_range => :fiscal_year_to_date)
-    @semimonth_query = ReportQuery.new(:date_range => :semimonth)
+    @quarterly_query = ReportQuery.new(date_range: :quarter)
+    @fiscal_year_to_date_query = ReportQuery.new(date_range: :fiscal_year_to_date)
+    @semimonth_query = ReportQuery.new(date_range: :semimonth)
     @selected_groupings = ["funding_source","funding_subsource","project_number_and_name","program_name","reporting_agency_name"]
   end
 
   def premium_service_billing
     @query = ReportQuery.new(params[:report_query])
     trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).
-            includes(:customer,{:allocation => :provider},:pickup_address,:dropoff_address,:run).default_order
+            includes(:customer,{allocation: :provider},:pickup_address,:dropoff_address,:run).default_order
     trips = trips.for_provider(@query.provider_id) if @query.provider_id.present?
     case @query.county
     when "Multnomah"
@@ -94,7 +94,7 @@ class PredefinedReportsController < ApplicationController
       trips = trips.washington_davs
       @title = "Washington County DAVS Premium Service Report"
     else
-      redirect_to :controller => :predefined_reports, :action => :index
+      redirect_to controller: :predefined_reports, action: :index
     end
     trips_billed_per_hour           = trips.billed_per_hour
     @trips_billed_per_trip          = trips.billed_per_trip
@@ -153,14 +153,14 @@ class PredefinedReportsController < ApplicationController
         @offices[office_key][:customer_count] += 1
         @customer_count += 1
         @approved_rides += trip.approved_rides.to_i
-        row = {:customer          => trip.customer,
-               :billed_rides      => 0, 
-               :billable_mileage  => BigDecimal.new("0"), 
-               :mobility          => trip.wheelchair?,
-               :date_enrolled     => trip.date_enrolled,
-               :service_end       => trip.service_end,
-               :approved_rides    => trip.approved_rides,
-               :case_manager      => trip.case_manager}
+        row = {customer: trip.customer,
+               billed_rides: 0, 
+               billable_mileage: BigDecimal.new("0"), 
+               mobility: trip.wheelchair?,
+               date_enrolled: trip.date_enrolled,
+               service_end: trip.service_end,
+               approved_rides: trip.approved_rides,
+               case_manager: trip.case_manager}
         @customer_rows[office_key][row_key] = row
         row[:trips] = []
       end
@@ -168,10 +168,10 @@ class PredefinedReportsController < ApplicationController
       row[:billed_rides] += 1
       row[:billable_mileage] += trip.spd_mileage
       row[:mobility] = trip.wheelchair? if trip.wheelchair?
-      row[:trips] << {:date => trip.date,
-                      :estimated_mileage => trip.estimated_trip_distance_in_miles,
-                      :billable_mileage => trip.spd_mileage,
-                      :mobility => trip.wheelchair?}
+      row[:trips] << {date: trip.date,
+                      estimated_mileage: trip.estimated_trip_distance_in_miles,
+                      billable_mileage: trip.spd_mileage,
+                      mobility: trip.wheelchair?}
 
       @offices[office_key][:billed_rides] += 1
       @offices[office_key][:billable_mileage] += trip.spd_mileage
@@ -201,7 +201,7 @@ class PredefinedReportsController < ApplicationController
     group_fields = ["county", "reporting_agency"]
     a = Allocation.active_in_range(@query.start_date,@query.after_end_date).
                    where("reporting_agency_id IS NOT NULL AND admin_ops_data <> 'Required'")
-    a = a.where(:reporting_agency_id => @query.reporting_agency_id) if @query.reporting_agency_id.present?
+    a = a.where(reporting_agency_id: @query.reporting_agency_id) if @query.reporting_agency_id.present?
     grouped_allocations = Allocation.group(group_fields, a)
 
     @results = {}
@@ -302,11 +302,11 @@ class PredefinedReportsController < ApplicationController
     trip_customers = Trip.current_versions.select("DISTINCT customer_id").completed
     trip_customers = trip_customers.for_provider(@query.provider_id) if @query.provider_id.present?
     trip_customers = trip_customers.for_reporting_agency(@query.reporting_agency_id) if @query.reporting_agency_id.present?
-    prior_customers_in_fiscal_year = trip_customers.for_date_range(fiscal_year_start_date(@query.start_date), @query.start_date).map {|x| x.customer_id}
-    customers_this_period = trip_customers.for_date_range(@query.start_date, @query.after_end_date).map {|x| x.customer_id}
+    prior_customers_in_fiscal_year = trip_customers.for_date_range(fiscal_year_start_date(@query.start_date), @query.start_date).pluck(:customer_id)
+    customers_this_period = trip_customers.for_date_range(@query.start_date, @query.after_end_date).pluck(:customer_id)
 
-    new_customers = Customer.where(:id => (customers_this_period - prior_customers_in_fiscal_year))
-    earlier_customers = Customer.where(:id => prior_customers_in_fiscal_year)
+    new_customers = Customer.where(id: (customers_this_period - prior_customers_in_fiscal_year))
+    earlier_customers = Customer.where(id: prior_customers_in_fiscal_year)
 
     @this_month_unknown_age = 0
     @this_month_sixty_plus = 0
@@ -374,7 +374,7 @@ class PredefinedReportsController < ApplicationController
       a_ids = @report.allocation_objects.map{|a| a.id }
       @trips = Trip.current_versions.completed.for_allocation_id(a_ids).
         for_date_range(@query.start_date,@query.after_end_date).
-        joins(:customer).includes(:customer, :allocation => [:project, :override]).
+        joins(:customer).includes(:customer, allocation: [:project, :override]).
         order("trips.start_at, customers.last_name")
       @total_customers_served =     @trips.inject(0){|sum, t| sum + t.customers_served }
       @total_apportioned_duration = @trips.inject(0){|sum, t| sum + t.apportioned_duration }
@@ -389,7 +389,7 @@ class PredefinedReportsController < ApplicationController
     group_by = @query.group_by.split(",")
     @groupings = group_by.map{|x| [x, FlexReport::GroupMappings[x]] }
     allocations = Allocation.active_on(Date.today).
-        includes(:program, :reporting_agency, :provider, :project => [:funding_source])
+        includes(:program, :reporting_agency, :provider, project: [:funding_source])
     all_nodes = Allocation.group(@groupings.map{|x| x[0] }, allocations)
     @flattened_nodes = flatten_nodes([], all_nodes, 0)
   end
