@@ -114,7 +114,13 @@ class Trip < ActiveRecord::Base
         where("valid_start <> imported_at")
   scope :trip_count, select("SUM(attendant_count) + SUM(guest_count) + COUNT(*) AS trip_count")
 
-  RESULT_CODES = {'Completed' => 'COMP','Turned Down' => 'TD','No Show' => 'NS','Unmet Need' => 'UNMET','Cancelled' => 'CANC'}
+  RESULT_CODES = {
+    'Completed'   => 'COMP',
+    'Turned Down' => 'TD',
+    'No Show'     => 'NS',
+    'Unmet Need'  => 'UNMET',
+    'Cancelled'   => 'CANC'
+  }
 
   def created_by
     return first_version.updated_by
@@ -133,7 +139,7 @@ class Trip < ActiveRecord::Base
   end
   
   def updated_by_user
-    return (self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by)) #right now, imports run through the command line will have no user info
+    return (self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by)) 
   end
 
   def customers_served
@@ -248,7 +254,9 @@ private
 
       if routematch_share_id_changed?
         # previously shared, update old routematch_share rides
-        reapportion_trips_for_routematch_share_id( routematch_share_id_change.first ) if routematch_share_id_change.first.present?
+        if routematch_share_id_change.first.present?
+          reapportion_trips_for_routematch_share_id( routematch_share_id_change.first ) 
+        end
       end
     end
     return true
