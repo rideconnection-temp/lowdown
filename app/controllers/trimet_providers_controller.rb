@@ -1,9 +1,9 @@
 class TrimetProvidersController < ApplicationController
   
-  before_filter :require_admin_user, :except => [:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
 
   def index
-    @trimet_providers = TrimetProvider.default_order.paginate :page => params[:page]
+    @trimet_providers = TrimetProvider.default_order.paginate page: params[:page]
   end
   
   def new
@@ -14,9 +14,9 @@ class TrimetProvidersController < ApplicationController
     @trimet_provider = TrimetProvider.new params[:trimet_provider]
 
     if @trimet_provider.save
-      redirect_to(trimet_providers_path, :notice => 'Provider was successfully created.')
+      redirect_to(trimet_providers_path, notice: 'Provider was successfully created.')
     else
-      render :action => "new"
+      render :new
     end
   end
 
@@ -28,9 +28,9 @@ class TrimetProvidersController < ApplicationController
     @trimet_provider = TrimetProvider.find(params[:id])
 
     if @trimet_provider.update_attributes(params[:trimet_provider])
-      redirect_to(edit_trimet_provider_path(@trimet_provider), :notice => 'Provider was successfully updated.')
+      redirect_to(edit_trimet_provider_path(@trimet_provider), notice: 'Provider was successfully updated.')
     else
-      render :action => "edit"
+      render :edit
     end
   end
   

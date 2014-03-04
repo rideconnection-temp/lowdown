@@ -1,9 +1,9 @@
 class OverridesController < ApplicationController
 
-  before_filter :require_admin_user, :except => [:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
   
   def index
-    @overrides = Override.default_order.paginate :page => params[:page]
+    @overrides = Override.default_order.paginate page: params[:page]
   end
   
   def new
@@ -14,9 +14,9 @@ class OverridesController < ApplicationController
     @override = Override.new params[:override]
 
     if @override.save
-      redirect_to(overrides_path, :notice => 'Override was successfully created.')
+      redirect_to(overrides_path, notice: 'Override was successfully created.')
     else
-      render :action => "new"
+      render :new
     end
   end
 
@@ -28,15 +28,15 @@ class OverridesController < ApplicationController
     @override = Override.find(params[:id])
 
     if @override.update_attributes(params[:override])
-      redirect_to(edit_override_path(@override), :notice => 'Override was successfully updated.')
+      redirect_to(edit_override_path(@override), notice: 'Override was successfully updated.')
     else
-      render :action => "edit"
+      render :edit
     end
   end
   
   def destroy
     @override = Override.find params[:id]
-    @override.destroy
+    @override.destroy if @override.allocations.empty? 
     
     redirect_to overrides_url
   end

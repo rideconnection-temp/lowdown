@@ -31,25 +31,29 @@ class RunQuery
 end
 
 class RunsController < ApplicationController
-  before_filter :require_admin_user, :except=>[:index, :show]
+  before_filter :require_admin_user, except: [:index, :show]
   
   def index
     @query = RunQuery.new(params[:run_query])
-    @runs  = @query.apply_conditions(Run).current_versions.paginate :page => params[:page], :per_page => 30
+    @runs  = @query.apply_conditions(Run).current_versions.paginate page: params[:page], per_page: 30
   end
   
   def show
     @run = Run.find(params[:id])
-    @trips = @run.trips.current_versions.paginate :page => params[:page], :per_page => 30
+    @trips = @run.trips.current_versions.paginate page: params[:page], per_page: 30
   end
 
   def update
     @run = Run.find(params[:run][:id]).current_version
     @run.attributes = params[:run]
     if has_real_changes? @run
-      @run.update_attributes(params[:run]) ? redirect_to(:action=>:show, :id=>@run) : render(:action => :show)
+      if @run.update_attributes params[:run]
+        redirect_to @run
+      else
+        render :show
+      end
     else
-      redirect_to(:action=>:show, :id=>@run)
+      redirect_to @run
     end
   end
 end

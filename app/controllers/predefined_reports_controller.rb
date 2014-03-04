@@ -94,7 +94,7 @@ class PredefinedReportsController < ApplicationController
       trips = trips.washington_davs
       @title = "Washington County DAVS Premium Service Report"
     else
-      redirect_to controller: :predefined_reports, action: :index
+      redirect_to predefined_reports_path
     end
     trips_billed_per_hour           = trips.billed_per_hour
     @trips_billed_per_trip          = trips.billed_per_trip

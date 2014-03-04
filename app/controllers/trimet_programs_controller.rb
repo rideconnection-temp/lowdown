@@ -1,9 +1,9 @@
 class TrimetProgramsController < ApplicationController
   
-  before_filter :require_admin_user, :except => [:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
 
   def index
-    @trimet_programs = TrimetProgram.default_order.paginate :page => params[:page]
+    @trimet_programs = TrimetProgram.default_order.paginate page: params[:page]
   end
   
   def new
@@ -14,9 +14,9 @@ class TrimetProgramsController < ApplicationController
     @trimet_program = TrimetProgram.new params[:trimet_program]
 
     if @trimet_program.save
-      redirect_to(trimet_programs_path, :notice => 'Program was successfully created.')
+      redirect_to(trimet_programs_path, notice: 'Program was successfully created.')
     else
-      render :action => "new"
+      render :new
     end
   end
 
@@ -28,15 +28,15 @@ class TrimetProgramsController < ApplicationController
     @trimet_program = TrimetProgram.find(params[:id])
 
     if @trimet_program.update_attributes(params[:trimet_program])
-      redirect_to(edit_trimet_program_path(@trimet_program), :notice => 'Program was successfully updated.')
+      redirect_to(edit_trimet_program_path(@trimet_program), notice: 'Program was successfully updated.')
     else
-      render :action => "edit"
+      render :edit
     end
   end
   
   def destroy
     @trimet_program = TrimetProgram.find params[:id]
-    @trimet_program.destroy
+    @trimet_program.destroy if @trimet_program.allocations.empty? 
     
     redirect_to trimet_programs_url
   end

@@ -1,12 +1,12 @@
 class UsersController < Devise::SessionsController
-  before_filter :require_admin_user, :only=>[:index, :show_create, :create_user, :deactivate, :update]
+  before_filter :require_admin_user, only: [:index, :show_create, :create_user, :deactivate, :update]
 
   require 'new_user_mailer'
 
   def new
     #hooked up to sign_in
     if User.count == 0
-      return redirect_to :action=>:show_init
+      return redirect_to action: :show_init
     end
   end
 
@@ -14,21 +14,21 @@ class UsersController < Devise::SessionsController
   def show_init
     #create initial user
     if User.count > 0
-      return redirect_to :action=>:new
+      return redirect_to action: :new
     end
     @user = User.new
   end
 
   def init
     if User.count > 0
-      return redirect_to :action=>:new
+      return redirect_to action: :new
     end
     @user = User.new params[:user]
     @user.level = 100
     @user.save!
 
     flash[:notice] = "OK, now sign in"
-    redirect_to :action=>:new
+    redirect_to action: :new
   end
 
   def show_create
@@ -40,12 +40,12 @@ class UsersController < Devise::SessionsController
   end
 
   def change_password
-    if current_user.update_attributes(:password=>params[:user][:password], :password_confirmation=>params[:user][:password_confirmation])
+    if current_user.update_attributes(password: params[:user][:password], password_confirmation: params[:user][:password_confirmation])
       flash[:notice] = "Password changed"
-      redirect_to '/'
+      redirect_to root_url
     else
       flash.now[:alert] = "Error updating password"
-      render :action=>:show_change_password
+      render action: :show_change_password
     end
   end
 
@@ -61,7 +61,7 @@ class UsersController < Devise::SessionsController
     @user.save!
     NewUserMailer.new_user_email(@user, password).deliver
     flash[:notice] = "User #{@user.email} created"
-    redirect_to :action=>:index, :controller=>:users
+    redirect_to action: :index, controller: :users
   end
 
   
@@ -69,10 +69,10 @@ class UsersController < Devise::SessionsController
     @user = User.find(params[:id])
     if @user.update_attributes!(params[:user])
       flash[:notice] = "User %s updated" % @user.email
-      redirect_to :action=>:index
+      redirect_to action: :index
     else
       flash.now[:alert] = "Error: " + @user.errors
-      render :action=>:index      
+      render action: :index      
     end
   end
   
@@ -82,10 +82,10 @@ class UsersController < Devise::SessionsController
     current_user = nil
     warden.logout(scope)
 
-    return redirect_to "/"
+    return redirect_to root_url
   end
 
   def index
-    @users = User.order("level,email").all
+    @users = User.order(:active,:level,:email)
   end
 end

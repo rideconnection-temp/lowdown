@@ -1,9 +1,9 @@
 class ProgramsController < ApplicationController
   
-  before_filter :require_admin_user, :except => [:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
 
   def index
-    @programs = Program.default_order.paginate :page => params[:page]
+    @programs = Program.default_order.paginate page: params[:page]
   end
   
   def new
@@ -14,9 +14,9 @@ class ProgramsController < ApplicationController
     @program = Program.new params[:program]
 
     if @program.save
-      redirect_to(programs_path, :notice => 'Program was successfully created.')
+      redirect_to(programs_path, notice: 'Program was successfully created.')
     else
-      render :action => "new"
+      render :new
     end
   end
 
@@ -28,15 +28,15 @@ class ProgramsController < ApplicationController
     @program = Program.find(params[:id])
 
     if @program.update_attributes(params[:program])
-      redirect_to(edit_program_path(@program), :notice => 'Program was successfully updated.')
+      redirect_to(edit_program_path(@program), notice: 'Program was successfully updated.')
     else
-      render :action => "edit"
+      render :edit
     end
   end
   
   def destroy
     @program = Program.find params[:id]
-    @program.destroy
+    @program.destroy if @program.allocations.empty?
     
     redirect_to programs_url
   end

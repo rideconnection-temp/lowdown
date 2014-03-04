@@ -1,9 +1,9 @@
 class ProjectsController < ApplicationController
   
-  before_filter :require_admin_user, :except => [:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
   
   def index
-    @projects = Project.default_order.paginate :page => params[:page]
+    @projects = Project.default_order.paginate page: params[:page]
   end
   
   def new
@@ -14,10 +14,10 @@ class ProjectsController < ApplicationController
     @project = Project.new params[:project]
 
     if @project.save
-      redirect_to(projects_path, :notice => 'Project was successfully created.')
+      redirect_to(projects_path, notice: 'Project was successfully created.')
     else
       get_drop_down_data
-      render :action => "new"
+      render :new
     end
   end
 
@@ -29,16 +29,16 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
 
     if @project.update_attributes(params[:project])
-      redirect_to(edit_project_path(@project), :notice => 'Project was successfully updated.')
+      redirect_to(edit_project_path(@project), notice: 'Project was successfully updated.')
     else
       get_drop_down_data
-      render :action => "edit"
+      render :edit
     end
   end
   
   def destroy
     @project = Project.find params[:id]
-    @project.destroy
+    @project.destroy if @project.allocations.empty?
     
     redirect_to projects_url
   end

@@ -1,9 +1,9 @@
 class FundingSourcesController < ApplicationController
 
-  before_filter :require_admin_user, :except => [:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
   
   def index
-    @funding_sources = FundingSource.default_order.paginate :page => params[:page]
+    @funding_sources = FundingSource.default_order.paginate page: params[:page]
   end
   
   def new
@@ -14,9 +14,9 @@ class FundingSourcesController < ApplicationController
     @funding_source = FundingSource.new params[:funding_source]
 
     if @funding_source.save
-      redirect_to(funding_sources_path, :notice => 'Funding source was successfully created.')
+      redirect_to(funding_sources_path, notice: 'Funding source was successfully created.')
     else
-      render :action => "new"
+      render :new
     end
   end
 
@@ -28,9 +28,9 @@ class FundingSourcesController < ApplicationController
     @funding_source = FundingSource.find(params[:id])
 
     if @funding_source.update_attributes(params[:funding_source])
-      redirect_to(edit_funding_source_path(@funding_source), :notice => 'Funding source was successfully updated.')
+      redirect_to(edit_funding_source_path(@funding_source), notice: 'Funding source was successfully updated.')
     else
-      render :action => "edit"
+      render :edit
     end
   end
   

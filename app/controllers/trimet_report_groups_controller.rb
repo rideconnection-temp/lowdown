@@ -1,9 +1,9 @@
 class TrimetReportGroupsController < ApplicationController
   
-  before_filter :require_admin_user, :except => [:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
 
   def index
-    @trimet_report_groups = TrimetReportGroup.default_order.paginate :page => params[:page]
+    @trimet_report_groups = TrimetReportGroup.default_order.paginate page: params[:page]
   end
   
   def new
@@ -14,9 +14,9 @@ class TrimetReportGroupsController < ApplicationController
     @trimet_report_group = TrimetReportGroup.new params[:trimet_report_group]
 
     if @trimet_report_group.save
-      redirect_to(trimet_report_groups_path, :notice => 'Report group was successfully created.')
+      redirect_to(trimet_report_groups_path, notice: 'Report group was successfully created.')
     else
-      render :action => "new"
+      render :new
     end
   end
 
@@ -28,15 +28,15 @@ class TrimetReportGroupsController < ApplicationController
     @trimet_report_group = TrimetReportGroup.find(params[:id])
 
     if @trimet_report_group.update_attributes(params[:trimet_report_group])
-      redirect_to(edit_trimet_report_group_path(@trimet_report_group), :notice => 'Report group was successfully updated.')
+      redirect_to(edit_trimet_report_group_path(@trimet_report_group), notice: 'Report group was successfully updated.')
     else
-      render :action => "edit"
+      render :edit
     end
   end
   
   def destroy
     @trimet_report_group = TrimetReportGroup.find params[:id]
-    @trimet_report_group.destroy
+    @trimet_report_group.destroy if @trimet_report_group.allocations.empty? 
     
     redirect_to trimet_report_groups_url
   end

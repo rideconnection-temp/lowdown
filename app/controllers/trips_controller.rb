@@ -108,7 +108,7 @@ end
 
 class TripsController < ApplicationController
 
-  before_filter :require_admin_user, :except=>[:index, :list, :show_import, :adjustments, :show]
+  before_filter :require_admin_user, except: [:index, :list, :show_import, :adjustments, :show]
 
   def index
     @query = TripQuery.new params[:q], params[:commit]
@@ -131,7 +131,7 @@ class TripsController < ApplicationController
       @filename = 'bpa_index.csv'
       render "bpa_index.csv"
     else
-      @trips = @trips.paginate :page => params[:page], :per_page => 30
+      @trips = @trips.paginate page: params[:page], per_page: 30
     end
   end
   
@@ -194,7 +194,7 @@ class TripsController < ApplicationController
                   apply_conditions(Trip).
                   current_versions.
                   select("COALESCE(SUM(guest_count),0) AS g, COALESCE(SUM(attendant_count),0) AS a, COUNT(*) AS c").
-                  where(:result_code => rc).
+                  where(result_code: rc).
                   first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
             end
 
@@ -204,7 +204,7 @@ class TripsController < ApplicationController
             # It may be fewer when guests & attendants are counted below
             trips = @query.apply_conditions(Trip).
                 current_versions.
-                where(:result_code => rc).
+                where(result_code: rc).
                 limit(this_transfer_count)
             if trips.present?
               for trip in trips
@@ -231,7 +231,7 @@ class TripsController < ApplicationController
           apply_conditions(Trip).
           current_versions.
           select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").
-          where(:result_code => rc).
+          where(result_code: rc).
           first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
     end
   end
@@ -241,8 +241,8 @@ class TripsController < ApplicationController
     @providers    = Provider.with_trip_data.default_order
     @trip_imports = @query.apply_conditions(TripImport).
       order("trip_imports.created_at DESC").paginate(
-      :page => params[:page], 
-      :per_page => 30
+      page: params[:page], 
+      per_page: 30
     )
   end
 
@@ -250,28 +250,26 @@ class TripsController < ApplicationController
     prep_search
     @query = TripQuery.new(params[:q])
     @adjustments = @query.apply_conditions(Trip).grouped_by_adjustment.paginate(
-      :page          => params[:page], 
-      :per_page      => 30, 
-      :total_entries => @query.apply_conditions(Trip).grouped_revisions.all.count
+      page: params[:page], 
+      per_page: 30, 
+      total_entries: @query.apply_conditions(Trip).grouped_revisions.all.count
     )
   end
 
   def import
-    if ! params['file-import']
-      redirect_to show_import_trips_path and return
+    if params['file-import'].present?
+      processed = TripImport.new(
+        file_path: params['file-import'].path,
+        file_name: params['file-import'].original_filename,
+        notes: params['notes']
+      )
+      if processed.save
+        flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
+      else
+        flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
+      end
     end
-    processed = TripImport.new(
-      :file_path => params['file-import'].path,
-      :file_name => params['file-import'].original_filename,
-      :notes     => params['notes']
-    )
-    if processed.save
-      flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
-      redirect_to show_import_trips_path
-    else
-      flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
-      redirect_to show_import_trips_path
-    end
+    redirect_to show_import_trips_path
   end
 
   private
@@ -282,7 +280,7 @@ class TripsController < ApplicationController
     @reporting_agencies = Provider.with_trip_data_as_reporting_agency.default_order
     @result_codes       = Trip::RESULT_CODES.sort
     if @query.try(:allocation_ids).present?
-      @allocations        = Allocation.where(:id => @query.allocation_ids).order(:name)
+      @allocations        = Allocation.where(id: @query.allocation_ids).order(:name)
     end
   end
 

@@ -59,13 +59,13 @@ class SummaryQuery
   end
 
   def providers
-    na_provider = Provider.new(:name => "<Not Applicable>")
+    na_provider = Provider.new(name: "<Not Applicable>")
     na_provider.id = 0
     [na_provider] + Provider.providers_in_allocations.default_order
   end
 
   def reporting_agencies
-    na_reporting_agency = Provider.new(:name => "<Not Applicable>")
+    na_reporting_agency = Provider.new(name: "<Not Applicable>")
     na_reporting_agency.id = 0
     [na_reporting_agency] + Provider.reporting_agencies.default_order
   end
@@ -73,7 +73,7 @@ end
 
 class SummariesController < ApplicationController
 
-  before_filter :require_admin_user, :except=>[:index, :edit]
+  before_filter :require_admin_user, except: [:index, :edit]
 
   def index
     attributes_to_sum = %w{total_cost in_district_trips out_of_district_trips trips total_miles driver_hours_paid driver_hours_volunteer total_driver_hours}
@@ -87,7 +87,7 @@ class SummariesController < ApplicationController
         includes(:allocation,:summary_rows).
         joins(:allocation).
         order('allocations.name,summaries.period_start')
-    @summaries = @filtered_summaries.paginate :page => params[:page]
+    @summaries = @filtered_summaries.paginate page: params[:page]
     @allocations = Allocation.summary_collection_method.order(:name)
     attributes_to_sum.each do |attribute|
       @grand_totals[attribute.to_sym] = @filtered_summaries.inject(0){|sum,item| sum + (item.send(attribute) || 0)}
@@ -99,7 +99,7 @@ class SummariesController < ApplicationController
     @summary = Summary.new
     
     POSSIBLE_TRIP_PURPOSES.each do |purpose|
-      @summary.summary_rows.build(:purpose => purpose)
+      @summary.summary_rows.build(purpose: purpose)
     end
     prep_edit 
   end
@@ -108,14 +108,14 @@ class SummariesController < ApplicationController
     @summary = Summary.new(params[:summary])
     if ! @summary.summary_rows.size == POSSIBLE_TRIP_PURPOSES.size * 2
       flash.now[:alert] = "You must fill in all summary rows (even if just with zeros)"
-      render(:action => :new)
+      render :new
     end
     prep_edit
     if @summary.save
       flash[:alert] = "Successfully created summary for allocation \"#{@summary.allocation.name}\" for #{@summary.period_start.strftime('%B %Y')}"
-      redirect_to(:action=>:new)
+      redirect_to new_summary_path 
     else
-      render(:action => :new)
+      render :new
     end
   end
 
@@ -160,12 +160,12 @@ class SummariesController < ApplicationController
           end
         end
         if not found
-          SummaryRow.create(:summary_id=>@summary.id)
+          SummaryRow.create(summary_id: @summary.id)
         end
       end
-      redirect_to(:action=>:edit, :id=>@summary)
+      redirect_to edit_summary_path(@summary)
     else
-      render(:action => :edit)
+      render :edit
     end
   end
   
@@ -178,9 +178,9 @@ class SummariesController < ApplicationController
         @summary.delete # avoid callbacks or else delete will be halted
       end
     
-      redirect_to :action => :index, :notice => "Summary successfully deleted"
+      redirect_to summaries_path, notice: "Summary successfully deleted"
     else
-      render :action => :edit, :notice => "All previous versions must be deleted first"
+      render :edit, notice: "All previous versions must be deleted first"
     end 
   end
 
@@ -192,7 +192,7 @@ class SummariesController < ApplicationController
       @summary.delete # avoid callbacks or else delete will be halted
     end
     
-    redirect_to :action => :edit, :id => @summary.base_id
+    redirect_to edit_summary_path(@summary.base_id)
   end
 
   def bulk_update
@@ -202,10 +202,10 @@ class SummariesController < ApplicationController
     unless @query.has_dates?
       flash[:alert] = "Cannot update without date range"
     else
-      updated = @query.apply_conditions(Summary.current_versions.data_entry_not_complete).update_all(:complete => true)
+      updated = @query.apply_conditions(Summary.current_versions.data_entry_not_complete).update_all(complete: true)
       flash[:alert] = "Updated #{view_context.pluralize updated, "record"}"
     end
-    redirect_to :action => :index, :q => params[:q]
+    redirect_to summaries_path(q: params[:q])
   end
 
   def adjustments
@@ -215,7 +215,7 @@ class SummariesController < ApplicationController
         revisions.
         includes(:allocation,:summary_rows).
         order('summaries.valid_start DESC').
-        paginate :page => params[:page]
+        paginate page: params[:page]
   end
 
 private
@@ -225,6 +225,6 @@ private
     Provider.with_summary_data.order(:name).each do |p|
       @grouped_allocations << [p.name, p.active_non_trip_allocations_as_of(@summary.try :period_start).map {|a| [a.select_label,a.id]}]
     end
-    @grouped_allocations << ['<No provider>', Allocation.non_trip_collection_method.active_as_of(@summary.try :period_start).where(:provider_id => nil).map {|a| [a.name,a.id]}]
+    @grouped_allocations << ['<No provider>', Allocation.non_trip_collection_method.active_as_of(@summary.try :period_start).where(provider_id: nil).map {|a| [a.name,a.id]}]
   end
 end
