@@ -7,7 +7,7 @@
         <% if (version.id == @run.id) %>
           <%= time_ago_in_words(version.valid_start) %> ago
         <% else %>
-          <%= link_to "#{time_ago_in_words(version.valid_start)} ago", :action=>:show, :id=>version.id %>
+          <%= link_to "#{time_ago_in_words(version.valid_start)} ago", run_path(version.id) %>
         <% end %>
         <span class="update-user">(<%= version.updated_by_user.email %>)</span>
       </li>
@@ -21,9 +21,9 @@
 
   </div>
 <% end %>
-<%= form_for @run, :url=>{:action=>:update} do |f| %>
+<%= form_for @run do |f| %>
   <fieldset>
-    <%= render "form", :f => f %>
+    <%= render "form", f: f %>
     <% if @run.latest? && current_user.is_admin -%>
       <div class="actions">
         <%= submit_tag 'Update' %>
@@ -35,4 +35,4 @@
 <h2 id="result-count">
   <%= pluralize @trips.total_entries, "related trip record" %>
 </h2>
-<%= render 'trips/trips', :trips => @trips %>
+<%= render 'trips/trips', trips: @trips %>
