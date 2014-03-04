@@ -45,7 +45,7 @@
           <td class="number"><%= attribute_difference(summary, :total_driver_hours) %></td>
           <td class="number"><%= attribute_difference(summary, :unduplicated_riders) %></td>
           <td><%= summary.adjustment_notes %></td>
-          <td><%= link_to 'Details', :action=>:edit, :id=>summary.id %></td>
+          <td><%= link_to 'Details', edit_summary_path(summary.id) %></td>
         </tr>
       <% end %>
     </tbody>
