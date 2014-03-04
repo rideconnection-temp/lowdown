@@ -1,6 +1,6 @@
 <h2 id="result-count"><%= pluralize @summaries.total_entries, "summary" %> found.</h2>
 <% if @summaries.total_entries > 0 %>
-  <%= link_to 'Mark Data Entry Complete For All', { :action => :bulk_update, :q => params[:q] }, :class=>'mark-complete'  if current_user.is_admin %>
+  <%= link_to 'Mark Data Entry Complete For All', bulk_update_summaries_path(q: params[:q]), :class => 'mark-complete'  if current_user.is_admin %>
   <div class="list-wrapper">
     <table id="summary-results">
       <thead>
@@ -35,7 +35,7 @@
             <td class="number"><%= summary.driver_hours_volunteer %></td>
             <td class="number"><%= summary.total_driver_hours %></td>
             <td class="number"><%= summary.unduplicated_riders %></td>
-            <td><%= link_to 'Details', :action=>:edit, :id=>summary.id %></td>
+            <td><%= link_to 'Details', edit_summary_path(summary.id) %></td>
           </tr>
         <% end %>
         <% if @grand_totals[:total_cost] != @page_totals[:total_cost] -%>

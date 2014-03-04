@@ -1,28 +1,27 @@
 <%= form_for @query, 
-    :as   => :q, 
-    :html => {:id => "summary-filter", :method => :get}, 
-    :url  => {:action => action} do |f| %>
-  <fieldset>
+    as:   :q, 
+    html: {id: "summary-filter", method: :get}, 
+    url:  {action: action} do |f| %>
 
+  <fieldset>
     <ol class="section first">
       <li>
         <label>Start Date:</label>
-        <%= f.date_select( :start_date, :start_year => 2012, :end_year => Date.today.year, :order => [:month, :year] ) %>
+        <%= f.date_select( :start_date, start_year: 2012, end_year: Date.today.year, order: [:month, :year] ) %>
       </li>
       <li>
         <label>End Date:</label>
-        <%= f.date_select( :end_date, :start_year => 2012, :end_year => Date.today.year, :order => [:month, :year] ) %>
+        <%= f.date_select( :end_date, start_year: 2012, end_year: Date.today.year, order: [:month, :year] ) %>
       </li>
     </ol>
-
     <ol class="section fourth">
       <li>
         <label>Reporting Agencies:</label>
-        <%= f.collection_select :reporting_agency, @query.reporting_agencies, :id, :to_s, :include_blank => true %>
+        <%= f.collection_select :reporting_agency, @query.reporting_agencies, :id, :to_s, include_blank: true %>
       </li>
       <li>
         <label>Providers:</label>
-        <%= f.collection_select :provider, @query.providers, :id, :to_s, :include_blank => true %>
+        <%= f.collection_select :provider, @query.providers, :id, :to_s, include_blank: true %>
       </li>
       <li>
         <label>Adjustment notes contain:</label>
@@ -30,13 +29,13 @@
       </li>
       <li>
         <label>Data Entry Complete:</label>
-        <%= f.select :complete, ['Yes','No'], :include_blank => true, :selected => (@query.complete.nil? ? nil : (@query.complete ? 'Yes' : 'No')) %>
+        <%= f.select :complete, ['Yes','No'], include_blank: true, selected: (@query.complete.nil? ? nil : (@query.complete ? 'Yes' : 'No')) %>
       </li>
     </ol>
     <% if @query.allocation_ids.present? %>
       <ul class="search-scope">
         <h2>This search is limited to the following allocations:</h2>
-        <% @allocations.where(:id => @query.allocation_ids).each do |allocation| %>
+        <% @allocations.where(id: @query.allocation_ids).each do |allocation| %>
           <li>
             <%= link_to allocation.name, edit_allocation_url(allocation) %> 
           </li>
