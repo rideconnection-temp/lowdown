@@ -60,18 +60,18 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :spd } do |f| %>
+  <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: spd_predefined_reports_path do |f| %>
     <fieldset>
       <h2 class="report-header">SPD Report</h2>
       <p></p>
       <ol>
         <li>
           <label>Start date:</label>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :spd_start_date, :required => :required %>
+          <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :spd_start_date, required: :required %>
         </li>
         <li>
           <label>End date:</label>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :spd_end_date, :required => :required %>
+          <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :spd_end_date, required: :required %>
         </li>
       </ol>
       <input type="submit" name="report" value="Report">
@@ -81,18 +81,18 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :trip_purpose } do |f| %>
+  <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: trip_purpose_predefined_reports_path do |f| %>
     <fieldset>
       <h2 class="report-header">Trip Purpose Report</h2>
       <p></p>
       <ol>
         <li>
           <%= f.label :start_date %>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :purpose_start_date, :required => :required %>
+          <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :purpose_start_date, required: :required %>
         </li>
         <li>
           <%= f.label :end_date %>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :purpose_end_date, :required => :required %>
+          <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :purpose_end_date, required: :required %>
         </li>
         <li>
           <%= f.label :reporting_agency_id, 'Reporting Agency' %>
@@ -106,18 +106,18 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @fiscal_year_to_date_query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :quarterly_narrative } do |f| %>
+  <%= form_for @fiscal_year_to_date_query, html: { :class => "run-report", method: 'get' }, url: quarterly_narrative_predefined_reports_path do |f| %>
     <fieldset>
       <h2 class="report-header">Quarterly Narrative Report</h2>
       <p></p>
       <ol>
         <li>
           <%= f.label :start_date %>
-          <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order=>[:month,:year] %>
+          <%= f.date_select :start_date, start_year: 2012, end_year: Time.now.year, order: [:month,:year] %>
         </li>
         <li>
           <%= f.label :end_month, "End date" %>
-          <%= f.date_select :end_month, :start_year => 2012, :end_year => Time.now.year, :order=>[:month,:year] %>
+          <%= f.date_select :end_month, start_year: 2012, end_year: Time.now.year, order: [:month,:year] %>
         </li>
         <li>
           <%= f.label :provider_id, 'Reporting Agency' %>
@@ -130,18 +130,18 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @semimonth_query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :bpa_invoice } do |f| %>
+  <%= form_for @semimonth_query, html: { :class => "run-report", method: 'get' }, url: bpa_invoice_predefined_reports_path do |f| %>
     <fieldset>
       <h2 class="report-header">BPA Invoice</h2>
       <p></p>
       <ol>
         <li>
           <%= f.label :start_date %>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :bpa_invoice_start_date, :required => :required %>
+          <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :bpa_invoice_start_date, required: :required %>
         </li>
         <li>
           <%= f.label :end_date %>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :bpa_invoice_end_date, :required => :required %>
+          <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :bpa_invoice_end_date, required: :required %>
         </li>
         <li>
           <%= f.label :provider_id, 'Provider' %>
@@ -155,18 +155,18 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :age_and_ethnicity } do |f| %>
+  <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: age_and_ethnicity_predefined_reports_path do |f| %>
     <fieldset>
       <h2 class="report-header">Age & Ethnicity Report</h2>
       <p></p>
       <ol>
         <li>
           <%= f.label :start_date %>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :narrative_start_date, :required => :required %>
+          <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :narrative_start_date, required: :required %>
         </li>
         <li>
           <%= f.label :end_date %>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :narrative_end_date, :required => :required %>
+          <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :narrative_end_date, required: :required %>
         </li>
         <li>
           <%= f.label :provider %>
@@ -183,18 +183,18 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :premium_service_billing } do |f| %>
+  <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: premium_service_billing_predefined_reports_path do |f| %>
     <fieldset>
       <h2 class="report-header">Premium Service Billing Report</h2>
       <p></p>
       <ol>
         <li>
           <%= f.label :start_date %>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :ads_start_date, :required => :required %>
+          <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :ads_start_date, required: :required %>
         </li>
         <li>
           <%= f.label :end_date %>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :ads_end_date, :required => :required %>
+          <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :ads_end_date, required: :required %>
         </li>
         <li>
           <%= f.label :county %>
@@ -212,14 +212,14 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :trimet_export } do |f| %>
+  <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: trimet_export_predefined_reports_path do |f| %>
     <fieldset>
       <h2 class="report-header">TriMet E&D Reports</h2>
       <p></p>
       <ol>
         <li>
           <%= f.label :start_date, "Month" %>
-          <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
+          <%= f.date_select :start_date, start_year: 2012, end_year: Time.now.year, order: [:month, :year] %>
         </li>
       </ol>
       <input type="submit" name="output" value="Data Entry Export">
@@ -229,7 +229,7 @@
 </div>
 
 <div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report", :method => 'get' }, :url => { :action => :allocation_summary } do |f| %>
+  <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: allocation_summary_predefined_reports_path do |f| %>
     <fieldset>
       <h2 class="report-header">Allocation Summary</h2>
       <p></p>
