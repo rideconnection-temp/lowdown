@@ -11,7 +11,7 @@
         <% if (version.id == @trip.id) %>
           <%= version.valid_start.localtime.to_s(:full) %>
         <% else %>
-          <%= link_to version.valid_start.localtime.to_s(:full), :action=>:show, :id=>version.id %>
+          <%= link_to version.valid_start.localtime.to_s(:full), version %>
         <% end %>
         <span class="update-user">(<%= version.updated_by_user.email %>)</span>
       </li>
@@ -28,9 +28,10 @@
   </div>
 <% end %>
 
-<%= form_for @trip, :url=>{:action=>:update} do |f| %>
+<%= form_for @trip do |f| %>
   <fieldset>
-    <%= render :partial => "form", :locals=>{:f=>f} %>
+
+    <%= render 'form', f: f %>
 
     <% if @trip.latest? && current_user.is_admin -%>
       <div class="actions">

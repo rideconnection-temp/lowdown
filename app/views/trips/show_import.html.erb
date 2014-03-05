@@ -7,7 +7,7 @@
 </div>
 
 <% if current_user.is_admin %>
-  <%= form_tag url_for(:action=>:import), :method=>:post, :multipart => true %>
+  <%= form_tag import_trips_path, method: :post, multipart: true %>
     <fieldset>
 
       <ol class="section first">
@@ -31,16 +31,16 @@
   <h1>Past Imports</h1>
 <% end %>
 
-<%= form_for @query, :as => :q, :html=>{:id=>"trip-filter", :method=>:get}, :url=> show_import_trips_path do |f| %>
+<%= form_for @query, as: :q, html: {id: "trip-filter", method: :get}, url: show_import_trips_path do |f| %>
   <fieldset>
     <ol class="section first">
       <li>
         <%= f.label :provider_id, "Provider:" %> 
-        <%= f.collection_select :provider_id, @providers, :id, :to_s, :include_blank => true %>
+        <%= f.collection_select :provider_id, @providers, :id, :to_s, include_blank: true %>
       </li>
     </ol>
     <div class="actions">
-      <%= f.submit "Search", :id => "trip-search" %>
+      <%= f.submit "Search", id: "trip-search" %>
     </div>
   </fieldset>
 <% end %>

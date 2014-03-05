@@ -2,7 +2,7 @@
   <h1>Trip Adjustment History</h1>
 </div>
 
-<%= render('search', :allow_csv => false, :action => :adjustments) %>
+<%= render 'search', allow_csv: false, action: :adjustments %>
 
 <%= will_paginate @adjustments %>
 
@@ -42,7 +42,7 @@
       </td>
       <td>
         <% if adjustment['cnt'] == '1' -%>
-          <%= link_to "View", {:action => :show, :id => adjustment.id}, :class => :details %>
+          <%= link_to "View", adjustment, :class => :details %>
         <% else -%>
           <%= link_to "View", trips_path("q[valid_start]" => adjustment.valid_start), :class => :details %>
         <% end -%>
