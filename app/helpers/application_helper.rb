@@ -48,7 +48,7 @@ module ApplicationHelper
 
   def quarterly_report_funding_sources(reporting_agency_id,program_id,county)
     return if program_id.blank? || reporting_agency_id.blank? || county.blank?
-    a = Allocation.where(:program_id => program_id,:reporting_agency_id => reporting_agency_id,:county => county)
+    a = Allocation.where(program_id: program_id,reporting_agency_id: reporting_agency_id,county: county)
     a.map{|x| x.project.try(:funding_source).try(:name) }.compact.sort.uniq.join(", ")
   end
 
@@ -58,7 +58,7 @@ module ApplicationHelper
 
   def group_by_option_tag(value)
     fields     = group_by_label(value.split(","))
-    attributes = { :value => value }
+    attributes = { value: value }
     attributes[:selected] = "selected" if @report.group_by == value
     
     content_tag :option, fields, attributes
@@ -170,19 +170,19 @@ module ApplicationHelper
     if trip_allocations != []
       start_date = (row.start_date || report.start_date)
       end_date   = (row.after_end_date || report.after_end_date) - 1.day
-      link_to "Trips", trips_path({:q => {:allocation_id_list => "#{trip_allocations.join(' ')}", 
-          :start_date => start_date, :end_date => end_date}})
+      link_to "Trips", trips_path({q: {allocation_id_list: "#{trip_allocations.join(' ')}", 
+          start_date: start_date, end_date: end_date}})
     end
   end
 
   def row_summary_link(report, row)
     summary_allocations = (Allocation.summary_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}).sort
-    if summary_allocations != []
+    if summary_allocations.size > 0
       start_date = (row.start_date || report.start_date)
       end_date   = (row.after_end_date || report.after_end_date) - 1.day
-      link_to "Summaries", {:controller => :summaries, 
-          :q => {:allocation_id_list => "#{summary_allocations.join(' ')}", 
-          :start_date => start_date, :end_date => end_date}}
+      link_to "Summaries", summaries_path( 
+          q: {allocation_id_list: "#{summary_allocations.join(' ')}", 
+          start_date: start_date, end_date: end_date})
     end
   end
 end
