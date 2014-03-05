@@ -74,6 +74,11 @@ $(document).ready(function() {
   //*****************************************
 
   // Hide the date fields if the user selects all dates
+  if($('#q_all_dates').prop("checked")) {
+    $('#date_fields').hide();
+  } else {
+    $('#date_fields').show();
+  }
   $('#q_all_dates').change(function() {
     if($('#q_all_dates').prop("checked")) {
       $('#date_fields').slideUp();
