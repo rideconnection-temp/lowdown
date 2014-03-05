@@ -88,6 +88,8 @@ class TripQuery
       "bpa"
     elsif @commit == "Export All Data Fields"
       "general"
+    elsif @commit == "Export For Trip Analysis"
+      "analysis"
     end
   end
 end
@@ -117,20 +119,22 @@ class TripsController < ApplicationController
         current_versions.
         index_includes.
         order(:date,:trip_import_id)
-    @trip_count = @query.apply_conditions(Trip).
-        current_versions.
-        trip_count.
-        where(result_code: 'COMP').
-        first["trip_count"]
 
     if @query.format == 'general'
       @filename = 'trip_list.csv'
-      render "index.csv"
+      render 'index.csv'
     elsif @query.format == 'bpa'
       @trips = @trips.completed
       @filename = 'bpa_index.csv'
-      render "bpa_index.csv"
+      render 'bpa_index.csv'
+    elsif @query.format == 'analysis'
+      render 'analysis_index.csv'
     else
+      @trip_count = @query.apply_conditions(Trip).
+          current_versions.
+          trip_count.
+          where(result_code: 'COMP').
+          first['trip_count']
       @trips = @trips.paginate page: params[:page], per_page: 30
     end
   end
