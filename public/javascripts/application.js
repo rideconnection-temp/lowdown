@@ -47,6 +47,38 @@ $(document).ready(function() {
     selectOtherMonths: true
   });
 
+  // Menu functionality
+  function addMenu(itemSelector, menuTitle){
+    var $menu = $('<ul id="reports-menu">');
+    $('#page-header').after($menu);
+    
+    var $reports = $('#all-reports h1').sort(function(a, b){return $(a).text().toLowerCase() > $(b).text().toLowerCase() ? 1 : -1;});
+    $reports.each(function(){
+      $li = $('<li>');
+      $a = $('<a>');
+      $a.text($(this).text());
+      $a.data('target', $(this).closest(itemSelector));
+      $li.append($a)
+      $menu.append($li);
+      $li.click(function(){
+        $this = $(this).find('a');
+        $(itemSelector + ':visible').hide();
+        $('#reports-menu li').removeClass('selected');
+        $this.closest('li').addClass('selected');
+        $this.data('target').fadeIn('fast');
+      });
+    });
+    
+    $('.report-category').hide();
+    $menu.before('<h2>' + menuTitle + '</h2>');
+    $menu.find('li:first').addClass('selected').click();
+  }
+  if ($('body.flex-reports #all-reports').length > 0) {
+    addMenu('.report-category','Report Categories');
+  } else if ($('body.predefined-reports #all-reports').length > 0) {
+    addMenu('.predefined-report','Available Reports');
+  }
+
   //*****************************************
   //
   // Summaries

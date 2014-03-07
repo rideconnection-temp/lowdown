@@ -1128,6 +1128,51 @@ body.users a.action-bttn {
 
 /*
  *
+ * Reports Index
+ *
+ */
+
+body.predefined-reports .predefined-report fieldset,
+body.flex-reports .report-category {
+  clear: none;
+  float: left;
+}
+body.predefined-reports .predefined-report,
+body.flex-reports #all-reports {
+  margin-left: 235px;
+}
+body.predefined-reports ul#reports-menu,
+body.flex-reports ul#reports-menu {
+  float: left;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 215px;
+}
+body.predefined-reports ul#reports-menu li,
+body.flex-reports ul#reports-menu li {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #eee;
+  border: 1px solid #bbb;
+  margin: 4px 0;
+  padding: 5px;
+}
+body.predefined-reports ul#reports-menu li.selected,
+body.flex-reports ul#reports-menu li.selected {
+  background-color: #ccc;
+}
+body.predefined-reports ul#reports-menu li a,
+body.flex-reports ul#reports-menu li a {
+  color: #444 !important;
+  display: block;
+  font-weight: bold;
+}
+
+/*
+ *
  * Flex Reports form
  *
  */
