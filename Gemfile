@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.16'
+gem 'rails', '4.0.3'
 gem 'pg'
 
 gem 'devise',               '~> 3.0.0'
@@ -12,7 +12,6 @@ gem "userstamp",
   :git => "git://github.com/delynn/userstamp.git",
   :ref => "777633a"
 gem 'validates_timeliness', '~> 3.0.7'
-gem "jquery-rails",         '>= 0.2.6'
 gem 'csv_builder',          '~> 2.1.0'
 gem 'point_in_time',        :git => 'git://github.com/rideconnection/point_in_time'
 

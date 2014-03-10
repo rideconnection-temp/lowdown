@@ -23,7 +23,7 @@ class UsersController < Devise::SessionsController
     if User.count > 0
       return redirect_to action: :new
     end
-    @user = User.new params[:user]
+    @user = User.new user_params
     @user.level = 100
     @user.save!
 
@@ -56,7 +56,7 @@ class UsersController < Devise::SessionsController
     end
     password = ActiveSupport::SecureRandom.base64(6)
     params[:user][:password] = params[:user][:password_confirmation] = password
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
     @user.level = params[:user][:level]
     @user.save!
     NewUserMailer.new_user_email(@user, password).deliver
@@ -67,7 +67,7 @@ class UsersController < Devise::SessionsController
   
   def update
     @user = User.find(params[:id])
-    if @user.update_attributes!(params[:user])
+    if @user.update_attributes!(user_params)
       flash[:notice] = "User %s updated" % @user.email
       redirect_to action: :index
     else
@@ -87,5 +87,11 @@ class UsersController < Devise::SessionsController
 
   def index
     @users = User.order(:active,:level,:email)
+  end
+  
+private
+
+  def user_params
+    params.require(:email).permit(:password, :password_confirmation, :level, :active)
   end
 end
