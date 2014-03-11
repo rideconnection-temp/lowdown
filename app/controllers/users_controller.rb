@@ -54,7 +54,7 @@ class UsersController < Devise::SessionsController
       flash[:alert] = "You don't have permission to create users"
       return redirect_to root_path
     end
-    password = ActiveSupport::SecureRandom.base64(6)
+    password = SecureRandom.base64(6)
     params[:user][:password] = params[:user][:password_confirmation] = password
     @user = User.new(user_params)
     @user.level = params[:user][:level]
