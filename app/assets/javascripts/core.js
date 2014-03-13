@@ -265,12 +265,6 @@ $(document).ready(function() {
     return false;
   });
 
-  // Show report details when the user's pointer hovers over the report
-  $('body.flex-reports fieldset.report-form div.report-details').hide();
-  $('body.flex-reports li.flex-report').hover(function() {
-    $(this).find('div.report-details').slideToggle();
-  });
-
   //*****************************************
   //
   // Flex Report Rendering

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131231010500) do
+ActiveRecord::Schema.define(:version => 20140312232757) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "routematch_address_id"
@@ -113,12 +113,6 @@ ActiveRecord::Schema.define(:version => 20131231010500) do
     t.datetime "updated_at"
   end
 
-  create_table "mobilities", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "overrides", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -148,12 +142,6 @@ ActiveRecord::Schema.define(:version => 20131231010500) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "short_name",    :limit => 10
-  end
-
-  create_table "races", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "report_categories", :force => true do |t|
