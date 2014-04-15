@@ -52,16 +52,16 @@ Lowdown::Application.routes.draw do
 
   devise_for :users, controllers: {sessions: "users"}
   devise_scope :user do
-    get  "new_user" => "users#new_user"
-    get  "users/show_create" => "users#show_create"
+    get  "new_user" => "users#new_user", as: :new_user
+    get  "users/show_create" => "users#show_create", as: :create_user
     post "users/create_user" => "users#create_user"
     get  "init" => "users#show_init"
     post "init" => "users#init"
-    post "logout" => "users#sign_out"
-    get  "users/index" => "users#index"
-    get  "users/show_change_password" => "users#show_change_password"
-    post "users/change_password"  => "users#change_password"
-    post "users/update" => "users#update"
+    post "logout" => "users#sign_out", as: :logout
+    get  "users/index" => "users#index", as: :users
+    get  "users/change_password" => "users#show_change_password", as: :change_password
+    put  "users/change_password"  => "users#change_password"
+    post "users/update" => "users#update", as: :update_users
   end
 
   root to: 'dashboard#index'

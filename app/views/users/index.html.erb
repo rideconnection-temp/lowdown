@@ -17,11 +17,11 @@
   <s><%= user.email %></s>
 <% end %>
 <% if user == current_user %>
-<span class="separator">|</span> <%= link_to "Change Password", { :action=>"show_change_password" }, :class=>'change-password' %>
+<span class="separator">|</span> <%= link_to "Change Password", change_password_path, :class=>'change-password' %>
 <% end %>
 </td>
 <td>
-<%= form_tag users_update_path do %>
+<%= form_tag update_users_path do %>
 <%= hidden_field_tag :id, user.id %>
 <%= label_tag :user_level, "Level: " %> 
 <%= select_tag('user[level]', options_for_select([["Admin", 100], ["User", 0]], user.level)) %>
@@ -30,7 +30,7 @@
 </td>
 <td>
 
-<%= form_tag users_update_path do %>
+<%= form_tag update_users_path do %>
   <%= hidden_field_tag :id, user.id %>
   <% if user.active %> 
     <%= hidden_field_tag 'user[active]', 'false' %>
@@ -48,5 +48,5 @@
 <% if current_user.is_admin %>
 <hr/>
 
-<%= link_to "New user", { :action=>"show_create" }, :class=>'action-bttn' %>
+<%= link_to "New user", create_user_path, :class=>'action-bttn' %>
 <% end %>

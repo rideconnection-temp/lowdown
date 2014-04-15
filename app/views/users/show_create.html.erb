@@ -2,7 +2,7 @@
   <h1>Add New User</h1>
 </div>
 
-<%= form_for :user, :url=>{:action=>:create_user} do |f| %>
+<%= form_for :user, create_user_path do |f| %>
   <fieldset>
 
   <%= render :partial=>"form", :locals=>{:f => f}%>
