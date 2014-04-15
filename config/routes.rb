@@ -50,7 +50,8 @@ Lowdown::Application.routes.draw do
   resources :runs, only: [:index, :show, :update] 
   resources :customers, only: [:show, :update]
 
-  devise_for :users, controllers: {sessions: "users"} do
+  devise_for :users, controllers: {sessions: "users"}
+  devise_scope :user do
     get  "new_user" => "users#new_user"
     get  "users/show_create" => "users#show_create"
     post "users/create_user" => "users#create_user"
