@@ -10,7 +10,6 @@ class UsersController < Devise::SessionsController
     end
   end
 
-
   def show_init
     #create initial user
     if User.count > 0
@@ -40,7 +39,7 @@ class UsersController < Devise::SessionsController
   end
 
   def change_password
-    if current_user.update_attributes(password: params[:user][:password], password_confirmation: params[:user][:password_confirmation])
+    if current_user.update_attributes(password: params[:password], password_confirmation: params[:password_confirmation])
       flash[:notice] = "Password changed"
       redirect_to root_url
     else
