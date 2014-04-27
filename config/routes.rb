@@ -52,9 +52,8 @@ Lowdown::Application.routes.draw do
 
   devise_for :users, controllers: {sessions: "users"}
   devise_scope :user do
-    get  "new_user" => "users#new_user", as: :new_user
-    get  "users/show_create" => "users#show_create", as: :create_user
-    post "users/create_user" => "users#create_user"
+    get  "users/show_create" => "users#show_create", as: :new_user
+    post "users/create_user" => "users#create_user", as: :create_user
     get  "init" => "users#show_init"
     post "init" => "users#init"
     post "logout" => "users#sign_out", as: :logout

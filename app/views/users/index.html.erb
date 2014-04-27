@@ -3,50 +3,49 @@
 </div>
 
 <table>
-<tr>
-<th>Email</th>
-<th>Role</th>
-<th></th>
-</tr>
-<% for user in @users %>
-<tr>
-<td>
-<% if user.active %> 
-  <%= user.email %>
-<% else %>
-  <s><%= user.email %></s>
-<% end %>
-<% if user == current_user %>
-<span class="separator">|</span> <%= link_to "Change Password", change_password_path, :class=>'change-password' %>
-<% end %>
-</td>
-<td>
-<%= form_tag update_users_path do %>
-<%= hidden_field_tag :id, user.id %>
-<%= label_tag :user_level, "Level: " %> 
-<%= select_tag('user[level]', options_for_select([["Admin", 100], ["User", 0]], user.level)) %>
-<%= submit_tag "Change" %>
-<% end %>
-</td>
-<td>
-
-<%= form_tag update_users_path do %>
-  <%= hidden_field_tag :id, user.id %>
-  <% if user.active %> 
-    <%= hidden_field_tag 'user[active]', 'false' %>
-    <%= submit_tag "Deactivate" %>
-  <% else %>
-    <%= hidden_field_tag 'user[active]', 'true' %>
-    <%= submit_tag "Reactivate" %>
+  <tr>
+    <th>Email</th>
+    <th>Role</th>
+    <th></th>
+  </tr>
+  <% for user in @users %>
+    <tr>
+      <td>
+        <% if user.active %> 
+          <%= user.email %>
+        <% else %>
+          <s><%= user.email %></s>
+        <% end %>
+        <% if user == current_user %>
+          <span class="separator">|
+          </span> <%= link_to "Change Password", change_password_path, :class=>'change-password' %>
+        <% end %>
+      </td>
+      <td>
+        <%= form_tag update_users_path do %>
+          <%= hidden_field_tag :id, user.id %>
+          <%= label_tag :user_level, "Level: " %> 
+          <%= select_tag('user[level]', options_for_select([["Admin", 100], ["User", 0]], user.level)) %>
+          <%= submit_tag "Change" %>
+        <% end %>
+      </td>
+      <td>
+        <%= form_tag update_users_path do %>
+          <%= hidden_field_tag :id, user.id %>
+          <% if user.active %> 
+            <%= hidden_field_tag 'user[active]', 'false' %>
+            <%= submit_tag "Deactivate" %>
+          <% else %>
+            <%= hidden_field_tag 'user[active]', 'true' %>
+            <%= submit_tag "Reactivate" %>
+          <% end %>
+        <% end %>
+      </td>
+    </tr>
   <% end %>
-<% end %>
-</td>
-</tr>
-<% end %>
 </table>
 
 <% if current_user.is_admin %>
-<hr/>
-
-<%= link_to "New user", create_user_path, :class=>'action-bttn' %>
+  <hr/>
+  <%= link_to "New user", new_user_path, :class=>'action-bttn' %>
 <% end %>
