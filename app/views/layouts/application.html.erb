@@ -5,6 +5,8 @@
   <%= csrf_meta_tag %>
   <%= content_for?(:head) ? yield(:head) : '' %>
   <%= favicon_link_tag "favicon.ico" %>
+  <%= stylesheet_link_tag "application", media: "screen, projection" %>
+  <%= stylesheet_link_tag "application-print", media: "print" %>
 </head>
 <body class="<%= bodytag_class %>">
   <div id="header">
