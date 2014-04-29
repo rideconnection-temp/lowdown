@@ -7,9 +7,9 @@ GIT
 
 GIT
   remote: git://github.com/rideconnection/point_in_time
-  revision: 80f6b7361095f01bacd7dcacbb2951b836360b41
+  revision: 2982d1c248d08c456e517d81452cf54a7e2b53de
   specs:
-    point_in_time (1.0.0)
+    point_in_time (1.1.0)
 
 GEM
   remote: http://rubygems.org/
