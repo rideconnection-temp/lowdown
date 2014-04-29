@@ -52,7 +52,9 @@ $(document).ready(function() {
     var $menu = $('<ul id="reports-menu">');
     $('#page-header').after($menu);
     
-    var $reports = $('#all-reports h1').sort(function(a, b){return $(a).text().toLowerCase() > $(b).text().toLowerCase() ? 1 : -1;});
+    var $reports = $('#all-reports h1').sort(function(a, b){
+      return $(a).text().toLowerCase() > $(b).text().toLowerCase() ? 1 : -1;
+    });
     $reports.each(function(){
       $li = $('<li>');
       $a = $('<a>');

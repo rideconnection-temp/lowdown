@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '4.0.3'
 gem 'pg'
 
+gem 'jquery-ui-rails',      '~> 4.2.1'
 gem 'devise',               '~> 3.0.0'
 gem 'dynamic_form',         '~> 1.1.4'
 gem 'will_paginate',        '~> 3.0.2'

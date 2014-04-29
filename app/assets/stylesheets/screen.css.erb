@@ -409,7 +409,7 @@ body.admin #secondary-nav li.admin a:link, body.admin #secondary-nav li.admin a:
     text-decoration: none;
     font-size: 11px;
     line-height: 16px;
-    background: url(images/cross-button.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'cross-button.png' %>) left center no-repeat scroll;
     color: #ffffc6;
     float: right;
 }
@@ -454,10 +454,10 @@ div#error_explanation a.shrinker {
     float: right;
 }
 div#error_explanation.shrinkable a.shrinker {
-    background: url(images/toggle.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'toggle.png' %>) left center no-repeat scroll;
 }
 div#error_explanation.expandable a.shrinker {
-    background: url(images/toggle-expand.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'toggle-expand.png' %>) left center no-repeat scroll;
 }
 
 body.admin div#main li {
@@ -831,13 +831,13 @@ div.report-wrapper tr.data .inner-most-field {
 }
 
 tr.visible-group td.toggleable {
-  background: url(images/toggle.png) left center no-repeat scroll;
+  background: url(<%= asset_path 'toggle.png' %>) left center no-repeat scroll;
   background-color: #E5F2FF;
   padding: 5px 0 5px 20px;
 }
 
 tr.hidden-group td.toggleable {
-  background: url(images/toggle-expand.png) left center no-repeat scroll;
+  background: url(<%= asset_path 'toggle-expand.png' %>) left center no-repeat scroll;
   background-color: #E5F2FF;
   padding: 5px 0 5px 20px;
 }
@@ -916,7 +916,7 @@ input.datepicker {
 .ui-datepicker-trigger {
     margin: 0 5px;
     vertical-align: middle;
-    background: url(images/calendar.png) 0 0 no-repeat scroll;
+    background: url(<%= asset_path 'calendar.png' %>) 0 0 no-repeat scroll;
     border: 0;
     width: 16px;
     height: 16px; 
@@ -951,47 +951,47 @@ a.csv {
     line-height: 16px;
 }
 a.edit {
-    background: url(images/card--pencil.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'card--pencil.png' %>) left center no-repeat scroll;
 }
 a.details {
-    background: url(images/document-search-result.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'document-search-result.png' %>) left center no-repeat scroll;
 }
 a.new-trip {
-    background: url(images/plus-button.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'plus-button.png' %>) left center no-repeat scroll;
 }
 a.delete {
-    background: url(images/cross-button.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'cross-button.png' %>) left center no-repeat scroll;
     color: #e5004d;
 }
 a.mark-complete {
-    background: url(images/tick.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'tick.png' %>) left center no-repeat scroll;
 }
 body.summaries a.mark-complete {
     float: right;
 }
 a.history {
-    background: url(images/clock-history.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'clock-history.png' %>) left center no-repeat scroll;
 }
 a.move {
-    background: url(images/truck.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'truck.png' %>) left center no-repeat scroll;
 }
 a.import {
-    background: url(images/application-import.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'application-import.png' %>) left center no-repeat scroll;
 }
 a.add {
-    background: url(images/plus-button.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'plus-button.png' %>) left center no-repeat scroll;
 }
 a.change-password {
-    background: url(images/lock.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'lock.png' %>) left center no-repeat scroll;
 }
 a.csv {
-    background: url(images/document-excel-csv.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'document-excel-csv.png' %>) left center no-repeat scroll;
 }
 a.collapse {
-    background: url(images/arrow-stop-090.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'arrow-stop-090.png' %>) left center no-repeat scroll;
 }
 a.expand {
-    background: url(images/arrow-stop-270.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'arrow-stop-270.png' %>) left center no-repeat scroll;
 }
 
 a.delete:hover,
@@ -1015,12 +1015,12 @@ a.cancel {
     text-decoration: none;
     font-size: 11px;
     line-height: 16px;
-    background: url(images/cross-button.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'cross-button.png' %>) left center no-repeat scroll;
     color: #e5004d;
     float: right;
 }
 input.delete {
-    background: url(images/cross-button.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'cross-button.png' %>) left center no-repeat scroll;
     color: #e5004d;
     padding: 5px 0 5px 17px;
     text-decoration: none;
@@ -1099,7 +1099,7 @@ div.pagination span.next_page.disabled {
 a.action-bttn:link,
 a.action-bttn:visited {
     padding: 0.5em 0.8em 0.5em 2.25em;
-    background: #eee url(images/arrow-180.png) 0.8em center no-repeat scroll;
+    background: #eee url(<%= asset_path 'arrow-180.png' %>) 0.8em center no-repeat scroll;
     color: #0081CC;
     font-size: 15px;
     text-decoration: none;
@@ -1119,11 +1119,11 @@ a.action-bttn:active {
 .providers.index a.action-bttn:visited,
 .allocations.index a.action-bttn:link,
 .allocations.index a.action-bttn:visited {
-  background: #eee url(images/plus.png) 0.8em center no-repeat scroll;
+  background: #eee url(<%= asset_path 'plus.png' %>) 0.8em center no-repeat scroll;
 }
 /* trip */
 body.users a.action-bttn {
-    background: #eee url(images/user--plus.png) 0.8em center no-repeat scroll;
+    background: #eee url(<%= asset_path 'user--plus.png' %>) 0.8em center no-repeat scroll;
 }
 
 /*
@@ -1178,7 +1178,7 @@ body.flex-reports ul#reports-menu li a {
  */
 
 body.flex-reports a.action-bttn {
-    background: #eee url(images/report--plus.png) 0.8em center no-repeat scroll;
+    background: #eee url(<%= asset_path 'report--plus.png' %>) 0.8em center no-repeat scroll;
 }
 body.flex-reports fieldset.main-form ol.section li input[type=text] , 
 body.flex-reports fieldset.main-form ol.section li textarea {
@@ -1313,7 +1313,7 @@ ul.flex-reports li {
 ul.flex-reports li a {
     padding: 5px 0 5px 20px;
     text-decoration: none;
-    background: url(images/reports-stack.png) left center no-repeat scroll;
+    background: url(<%= asset_path 'reports-stack.png' %>) left center no-repeat scroll;
 }
 p input[type="checkbox"] { 
     vertical-align: middle; 
@@ -1323,7 +1323,7 @@ body.flex-reports span#group-by-custom-wrapper span {
 }
 
 body.flex-reports input.delete-report {
-  background: url(images/cross-button.png) left center no-repeat scroll;
+  background: url(<%= asset_path 'cross-button.png' %>) left center no-repeat scroll;
   float: right;
   color: #e5004d;
   text-decoration: none;

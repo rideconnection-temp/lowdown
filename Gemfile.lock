@@ -87,6 +87,8 @@ GEM
     highline (1.6.21)
     hike (1.2.3)
     i18n (0.6.9)
+    jquery-ui-rails (4.2.1)
+      railties (>= 3.2.16)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -182,6 +184,7 @@ DEPENDENCIES
   exception_notification (~> 4.0)
   faker
   fixjour
+  jquery-ui-rails (~> 4.2.1)
   pg
   point_in_time!
   rails (= 4.0.3)
