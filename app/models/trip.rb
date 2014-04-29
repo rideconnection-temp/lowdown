@@ -13,7 +13,7 @@ class Trip < ActiveRecord::Base
     end
 
     def completed_trip_count_for_valid_start(valid_start)
-      Trip.select("COUNT(*) + SUM(guest_count) + SUM(attendant_count) AS count").completed.for_valid_start(valid_start).first['count'].to_i
+      Trip.select("COUNT(*) + SUM(guest_count) + SUM(attendant_count) AS count").completed.for_valid_start(valid_start).reorder('').first['count'].to_i
     end
 
     def exclude_customers_for_date_range(start_date, after_end_date, options)
@@ -48,30 +48,30 @@ class Trip < ActiveRecord::Base
   after_save :apportion_shared_rides
   after_create :apportion_new_run_based_trips
 
-  attr_protected :apportioned_fare, :apportioned_mileage, :apportioned_duration
-  attr_protected :mileage, :duration
-
   attr_accessor :bulk_import, :secondary_update, :do_not_version
 
-  scope :default_order, order(:start_at)
-  scope :completed,                 where(:result_code => 'COMP')
-  scope :data_entry_complete,       where(:complete => true)
-  scope :data_entry_not_complete,   where(:complete => false)
-  scope :shared,                    where('trips.routematch_share_id IS NOT NULL')
-  scope :elderly_and_disabled_only, where(:customer_type => 'Honored')
-  scope :without_no_shows,          where("trips.result_code <> ?","NS")
-  scope :without_cancels,           where("trips.result_code <> ?","CANC")
-  scope :spd,
-        joins(:allocation => {:project => :funding_source}).
-        where(:funding_sources => {:funding_source_name => 'SPD'})
-  scope :multnomah_ads,
-        joins(:allocation => {:project => :funding_source}).
-        where(:funding_sources => {:funding_source_name => 'Multnomah ADS'})
-  scope :washington_davs, 
-        joins(:allocation => {:project => :funding_source}).
-        where(:funding_sources => {:funding_source_name => 'Washington Co DAVS'})
-  scope :billed_per_hour, where("allocations.name ILIKE '%hourly%'")
-  scope :billed_per_trip, where("allocations.name NOT ILIKE '%hourly%'")
+  scope :default_order,             -> { order :start_at }
+  scope :completed,                 -> { where :result_code => 'COMP' }
+  scope :data_entry_complete,       -> { where :complete => true }
+  scope :data_entry_not_complete,   -> { where :complete => false }
+  scope :shared,                    -> { where 'trips.routematch_share_id IS NOT NULL' }
+  scope :elderly_and_disabled_only, -> { where :customer_type => 'Honored' }
+  scope :without_no_shows,          -> { where "trips.result_code <> ?","NS" }
+  scope :without_cancels,           -> { where "trips.result_code <> ?","CANC" }
+  scope :spd, -> {
+          joins(:allocation => {:project => :funding_source}).
+          where(:funding_sources => {:funding_source_name => 'SPD'})
+        }
+  scope :multnomah_ads, -> {
+          joins(:allocation => {:project => :funding_source}).
+          where(:funding_sources => {:funding_source_name => 'Multnomah ADS'})
+        }
+  scope :washington_davs, -> {
+          joins(:allocation => {:project => :funding_source}).
+          where(:funding_sources => {:funding_source_name => 'Washington Co DAVS'})
+        }
+  scope :billed_per_hour, -> { where("allocations.name ILIKE '%hourly%'") }
+  scope :billed_per_trip, -> { where("allocations.name NOT ILIKE '%hourly%'") }
   scope :for_allocation,    lambda {|allocation|    where(:allocation_id => allocation.id) }
   scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
   scope :for_run,           lambda {|run_id|        where(:run_id => run_id) }
@@ -99,20 +99,23 @@ class Trip < ActiveRecord::Base
   scope :for_reporting_agency,
         lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",
         provider_id)}
-  scope :grouped_by_adjustment, 
-        select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, " + 
-        "MIN(date) as min_date, MAX(date) AS max_date, MIN(trips.id) as id").
-        group("trips.valid_start, trips.adjustment_notes").
-        order("trips.valid_start DESC").
-        where("valid_start <> imported_at")
-  scope :index_includes, 
-        includes(:pickup_address, :dropoff_address, :run, :customer, 
-        :allocation => [:provider,{:project => :funding_source},:override]).
-        joins(:allocation)
-  scope :grouped_revisions, 
-        select("DISTINCT valid_start, adjustment_notes").
-        where("valid_start <> imported_at")
-  scope :trip_count, select("SUM(attendant_count) + SUM(guest_count) + COUNT(*) AS trip_count")
+  scope :grouped_by_adjustment, -> {
+          select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, " + 
+          "MIN(date) as min_date, MAX(date) AS max_date, MIN(trips.id) as id").
+          group("trips.valid_start, trips.adjustment_notes").
+          order("trips.valid_start DESC").
+          where("valid_start <> imported_at")
+        }
+  scope :index_includes, -> {
+          includes(:pickup_address, :dropoff_address, :run, :customer, 
+          :allocation => [:provider,{:project => :funding_source},:override]).
+          joins(:allocation)
+        }
+  scope :grouped_revisions, -> {
+          select("DISTINCT valid_start, adjustment_notes").
+          where("valid_start <> imported_at")
+        }
+  scope :trip_count, -> { select("SUM(attendant_count) + SUM(guest_count) + COUNT(*) AS trip_count").reorder('') }
 
   RESULT_CODES = {
     'Completed'   => 'COMP',

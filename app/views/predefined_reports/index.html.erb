@@ -40,7 +40,7 @@
           </li>
           <li>
             <%= f.label :reporting_agency_id, 'Reporting Agency' %>
-            <%= f.select :reporting_agency_id, options_for_select([['<All Reporting Agencies>','']] + Provider.reporting_agencies.default_order.all.map { |p| [p.name, p.id] }) %>
+            <%= f.select :reporting_agency_id, options_for_select([['<All Reporting Agencies>','']] + Provider.reporting_agencies.default_order.to_a.map { |p| [p.name, p.id] }) %>
           </li>
         </ol>
         <input type="submit" name="report" value="Report">
@@ -65,7 +65,7 @@
           </li>
           <li>
             <%= f.label :provider_id, 'Reporting Agency' %>
-            <%= f.select :provider_id, options_for_select([['<All Reporting Agencies>','']] + Provider.reporting_agencies.default_order.all.map { |p| [p.name, p.id] }) %>
+            <%= f.select :provider_id, options_for_select([['<All Reporting Agencies>','']] + Provider.reporting_agencies.default_order.to_a.map { |p| [p.name, p.id] }) %>
           </li>
         </ol>
         <input type="submit" name="report" value="Report">
@@ -89,7 +89,7 @@
           </li>
           <li>
             <%= f.label :provider_id, 'Provider' %>
-            <%= f.select :provider_id, options_for_select(Provider.bpa_providers.default_order.all.map { |p| [p.name, p.id] }) %>
+            <%= f.select :provider_id, options_for_select(Provider.bpa_providers.default_order.to_a.map { |p| [p.name, p.id] }) %>
           </li>
         </ol>
         <input type="submit" name="output" value="Summary">

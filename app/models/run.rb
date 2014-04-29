@@ -8,12 +8,12 @@ class Run < ActiveRecord::Base
 
   attr_accessor :bulk_import, :do_not_version
 
-  scope :has_odometer_log, where('odometer_start IS NOT NULL and odometer_end IS NOT NULL')
-  scope :has_time_log, where('start_at IS NOT NULL and end_at IS NOT NULL')
-  scope :data_entry_complete, where(:complete => true)
-  scope :data_entry_not_complete, where(:complete => false)
-  scope :for_date_range, lambda {|start_date, end_date| where("date >= ? AND date < ?", start_date, end_date) }
-  scope :for_provider, lambda {|provider_id| where("runs.id IN (SELECT run_id FROM trips where allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?))",provider_id)}
+  scope :has_odometer_log,        -> { where('odometer_start IS NOT NULL and odometer_end IS NOT NULL') }
+  scope :has_time_log,            -> { where('start_at IS NOT NULL and end_at IS NOT NULL') }
+  scope :data_entry_complete,     -> { where(:complete => true) }
+  scope :data_entry_not_complete, -> { where(:complete => false) }
+  scope :for_date_range,    lambda {|start_date, end_date| where("date >= ? AND date < ?", start_date, end_date) }
+  scope :for_provider,      lambda {|provider_id| where("runs.id IN (SELECT run_id FROM trips where allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?))",provider_id)}
   scope :for_allocation_id, lambda {|allocation_id| where("runs.id IN (SELECT run_id FROM trips where allocation_id = ?)",allocation_id)}
 
   point_in_time

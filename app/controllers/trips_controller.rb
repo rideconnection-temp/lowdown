@@ -256,7 +256,7 @@ class TripsController < ApplicationController
     @adjustments = @query.apply_conditions(Trip).grouped_by_adjustment.paginate(
       page: params[:page], 
       per_page: 30, 
-      total_entries: @query.apply_conditions(Trip).grouped_revisions.all.count
+      total_entries: @query.apply_conditions(Trip).grouped_revisions.to_a.count
     )
   end
 

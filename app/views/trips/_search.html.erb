@@ -43,7 +43,7 @@
           <%= f.collection_select :allocation_id, @allocations, 
               :id, :name, :include_blank => true %>
         <% else %>
-          <%= f.grouped_collection_select :allocation_id, Provider.with_trip_data.default_order.includes(:allocations).all, 
+          <%= f.grouped_collection_select :allocation_id, Provider.with_trip_data.default_order.includes(:allocations), 
               :allocations_with_trip_data, :name, :id, :select_label, :include_blank => true %>
         <% end %>
       </li>
