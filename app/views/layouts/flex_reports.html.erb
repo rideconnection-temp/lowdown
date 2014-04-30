@@ -2,7 +2,7 @@
   <ul id="subnav" class="selfclear">
     <% if current_user.is_admin %>
       <li><%= link_to 'Flex Report List Export', flex_reports_path(:format => :csv), :class => :csv %></li>
-      <li><%= link_to 'Define New Flex Report', new_flex_report_path, :class => :add %></li>
+      <li><%= link_to 'Define New Flex Report', new_flex_report_path, :class => "add-report" %></li>
     <% end %>
   </ul>
 <% end %>
