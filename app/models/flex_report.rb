@@ -50,15 +50,6 @@ class FlexReport < ActiveRecord::Base
     "year"                          => "Year"
   }
 
-  def self.new_from_params(params)
-    report = self.new(params[:flex_report])
-
-    report.field_list      ||= ''
-    report.allocation_list ||= ''
-
-    report
-  end
-
   # Apply the specified block to the leaves of a nested hash (leaves
   # are defined as elements {depth} levels deep, so that hashes
   # can be leaves)

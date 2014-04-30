@@ -65,7 +65,9 @@ module ApplicationHelper
   end
   
   def checked?(field)
-    "checked" if @report.new_record? || @report.field_list.split(",").include?(field)
+    if @report.new_record? || @report.field_list.present?
+      "checked" if @report.new_record? || @report.field_list.split(",").include?(field)
+    end
   end
 
   def bodytag_class

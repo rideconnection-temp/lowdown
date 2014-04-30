@@ -17,8 +17,7 @@ class FlexReportsController < ApplicationController
   end
 
   def create
-    @report = FlexReport.new_from_params params
-
+    @report = FlexReport.new(safe_params)
     if @report.save
       if params[:view].present?
         redirect_to flex_report_path(@report)
@@ -41,28 +40,16 @@ class FlexReportsController < ApplicationController
   def show
     @report = FlexReport.find params[:id]
     if params[:flex_report].present?
-      @report.attributes = params[:flex_report].slice(
-        "start_date(3i)",
-        "start_date(2i)",
-        "start_date(1i)",
-        "end_month(3i)",
-        "end_month(2i)",
-        "end_month(1i)",
-        "pending"
-      ) 
+      @report.attributes = safe_params_for_show
       @report.save
+      @report.attributes = safe_params
     end
-    @report.attributes = params[:flex_report]
     @report.populate_results!
 
     request.format = :csv if params[:csv].present?
     respond_to do |format|
-      format.html do
-        prep_edit
-      end
-      format.csv do 
-        @filename = "#{@report.name.gsub('"','')}.csv"
-      end
+      format.html { prep_edit }
+      format.csv  { @filename = "#{@report.name.gsub('"','')}.csv" }
     end
   end
 
@@ -73,8 +60,7 @@ class FlexReportsController < ApplicationController
 
   def update
     @report = FlexReport.find params[:id]
-
-    if @report.update_attributes params[:flex_report]
+    if @report.update_attributes safe_params
       if params[:view].present?
         redirect_to flex_report_path(@report)
       elsif params[:csv].present?
@@ -96,24 +82,88 @@ class FlexReportsController < ApplicationController
   end
   
   private
+  
+    def safe_params_for_show
+      params.require(:flex_report).permit(
+        :start_date,
+        :end_month,
+        :pending
+      )
+    end
 
-  def prep_edit
-    @group_bys = FlexReport::GroupBys.sort
-    if @report.group_by.present?
-      @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
+    def safe_params
+      params.require(:flex_report).permit(
+        :name,
+        :description,
+        :subtitle,
+        :report_category_id,
+        :group_by,
+        :start_date,
+        :end_month,
+        :pending,
+        :allocations => [],
+        :funding_sources => [],
+        :programs => [],
+        :providers => [],
+        :projects => [],
+        :provider_type_names => [],
+        :reporting_agencies => [],
+        :reporting_agency_type_names => [],
+        :county_names => [],
+        :fields => [
+          :funds,
+          :agency_other,
+          :vehicle_maint,
+          :operations,
+          :administrative,
+          :donations,
+          :total,
+          :in_district_trips,
+          :out_of_district_trips,
+          :customer_trips,
+          :guest_and_attendant_trips,
+          :total_trips,
+          :mileage,
+          :driver_volunteer_hours,
+          :driver_paid_hours,
+          :driver_total_hours,
+          :cost_per_trip,
+          :cost_per_customer,
+          :cost_per_mile,
+          :cost_per_hour,
+          :miles_per_ride,
+          :miles_per_customer,
+          :turn_downs,
+          :undup_riders,
+          :escort_volunteer_hours,
+          :admin_volunteer_hours,
+          :total_volunteer_hours
+        ]
+      )
     end
-    @funding_sources          = [['<All>','']] + FundingSource.default_order.map {|x| [x.name, x.id]}
-    @projects                 = [['<All>','']] + Project.order(:project_number, :name).map {|x| [x.number_and_name, x.id]}
-    @providers                = [['<All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.to_s, x.id]}
-    @provider_types           = [['<All>','']] + Provider.providers_in_allocations.default_order.map {|x| [x.provider_type, x.provider_type]}.uniq.sort
-    @reporting_agencies       = [['<All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.to_s, x.id]}
-    @reporting_agency_types   = [['<All>','']] + Provider.reporting_agencies.default_order.map {|x| [x.provider_type, x.provider_type]}.uniq.sort
-    @programs                 = [['<All>','']] + Program.default_order.map {|x| [x.name, x.id]}
-    @county_names             = [['<All>','']] + Allocation.county_names.map {|x| [x, x]}
-    @grouped_allocations      = [] 
-    Provider.order(:name).includes(:allocations).each do |p|
-      @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]
+
+    def prep_edit
+      @group_bys = FlexReport::GroupBys.sort
+      if @report.group_by.present?
+        @group_bys = @group_bys << @report.group_by unless @group_bys.include? @report.group_by
+      end
+      @funding_sources          = [['<All>','']] + FundingSource.default_order.map {|x| [x.name, x.id]}
+      @projects                 = [['<All>','']] + Project.order(:project_number, :name).
+                                  map {|x| [x.number_and_name, x.id]}
+      @providers                = [['<All>','']] + Provider.providers_in_allocations.default_order.
+                                  map {|x| [x.to_s, x.id]}
+      @provider_types           = [['<All>','']] + Provider.providers_in_allocations.default_order.
+                                  map {|x| [x.provider_type, x.provider_type]}.uniq.sort
+      @reporting_agencies       = [['<All>','']] + Provider.reporting_agencies.default_order.
+                                  map {|x| [x.to_s, x.id]}
+      @reporting_agency_types   = [['<All>','']] + Provider.reporting_agencies.default_order.
+                                  map {|x| [x.provider_type, x.provider_type]}.uniq.sort
+      @programs                 = [['<All>','']] + Program.default_order.map {|x| [x.name, x.id]}
+      @county_names             = [['<All>','']] + Allocation.county_names.map {|x| [x, x]}
+      @grouped_allocations      = [] 
+      Provider.order(:name).includes(:allocations).each do |p|
+        @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]
+      end
+      @grouped_allocations << ['<No provider>', Allocation.where(provider_id: nil).map {|a| [a.name,a.id]}]
     end
-    @grouped_allocations << ['<No provider>', Allocation.where(provider_id: nil).map {|a| [a.name,a.id]}]
-  end
 end
