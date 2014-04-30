@@ -44,10 +44,10 @@ class RunsController < ApplicationController
   end
 
   def update
-    @run = Run.find(params[:run][:id]).current_version
-    @run.attributes = params[:run]
+    @run = Run.find(params[:id]).current_version
+    @run.attributes = safe_params
     if has_real_changes? @run
-      if @run.update_attributes params[:run]
+      if @run.update_attributes safe_params
         redirect_to @run
       else
         render :show
@@ -55,5 +55,18 @@ class RunsController < ApplicationController
     else
       redirect_to @run
     end
+  end
+
+  private
+
+  def safe_params
+    params.require(:run).permit(
+      :name,
+      :odometer_start,
+      :odometer_end,
+      :escort_count,
+      :complete,
+      :adjustment_notes
+    )
   end
 end
