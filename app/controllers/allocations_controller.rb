@@ -21,7 +21,7 @@ class AllocationsController < ApplicationController
   end
   
   def create
-    @allocation = Allocation.new params[:allocation]
+    @allocation = Allocation.new safe_params
 
     if @allocation.save
       redirect_to(allocations_path, notice: 'Allocation was successfully created.')
@@ -39,7 +39,7 @@ class AllocationsController < ApplicationController
   def update
     @allocation = Allocation.find(params[:id])
 
-    if @allocation.update_attributes(params[:allocation])
+    if @allocation.update_attributes(safe_params)
       redirect_to(edit_allocation_path(@allocation), notice: 'Allocation was successfully updated.')
     else
       prep_edit
@@ -70,13 +70,39 @@ class AllocationsController < ApplicationController
   end
   
   private
+
+    def safe_params
+      params.require(:allocation).permit(
+        :name,
+        :program_id,
+        :project_id,
+        :reporting_agency_id,
+        :provider_id,
+        :county,
+        :trip_collection_method,
+        :run_collection_method,
+        :cost_collection_method,
+        :override_id,
+        :routematch_provider_code,
+        :admin_ops_data,
+        :vehicle_maint_data,
+        :do_not_show_on_flex_reports,
+        :eligibility,
+        :trimet_provider_id,
+        :trimet_program_id,
+        :trimet_report_group_id,
+        :activated_on,
+        :inactivated_on,
+        :notes
+      )
+    end
   
-  def prep_edit
-    @trip_collection_methods   = TRIP_COLLECTION_METHODS
-    @run_collection_methods    = RUN_COLLECTION_METHODS 
-    @cost_collection_methods   = COST_COLLECTION_METHODS
-    @trimet_providers          = TrimetProvider.default_order
-    @trimet_programs           = TrimetProgram.default_order
-    @trimet_report_group       = TrimetReportGroup.default_order
-  end
+    def prep_edit
+      @trip_collection_methods   = TRIP_COLLECTION_METHODS
+      @run_collection_methods    = RUN_COLLECTION_METHODS 
+      @cost_collection_methods   = COST_COLLECTION_METHODS
+      @trimet_providers          = TrimetProvider.default_order
+      @trimet_programs           = TrimetProgram.default_order
+      @trimet_report_group       = TrimetReportGroup.default_order
+    end
 end
