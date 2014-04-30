@@ -11,7 +11,7 @@ class ReportCategoriesController < ApplicationController
   end
   
   def create
-    @report_category = ReportCategory.new params[:report_category]
+    @report_category = ReportCategory.new safe_params
 
     if @report_category.save
       redirect_to(report_categories_path, notice: 'Category was successfully created.')
@@ -27,7 +27,7 @@ class ReportCategoriesController < ApplicationController
   def update
     @report_category = ReportCategory.find(params[:id])
 
-    if @report_category.update_attributes(params[:report_category])
+    if @report_category.update_attributes(safe_params)
       redirect_to(edit_report_category_path(@report_category), notice: 'Category was successfully updated.')
     else
       render :edit
@@ -40,4 +40,10 @@ class ReportCategoriesController < ApplicationController
     
     redirect_to report_categories_url
   end
+
+  private
+
+    def safe_params
+      params.require(:report_category).permit(:name)
+    end
 end

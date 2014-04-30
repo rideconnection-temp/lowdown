@@ -11,7 +11,7 @@ class FundingSourcesController < ApplicationController
   end
   
   def create
-    @funding_source = FundingSource.new params[:funding_source]
+    @funding_source = FundingSource.new safe_params
 
     if @funding_source.save
       redirect_to(funding_sources_path, notice: 'Funding source was successfully created.')
@@ -27,7 +27,7 @@ class FundingSourcesController < ApplicationController
   def update
     @funding_source = FundingSource.find(params[:id])
 
-    if @funding_source.update_attributes(params[:funding_source])
+    if @funding_source.update_attributes(safe_params)
       redirect_to(edit_funding_source_path(@funding_source), notice: 'Funding source was successfully updated.')
     else
       render :edit
@@ -40,4 +40,10 @@ class FundingSourcesController < ApplicationController
     
     redirect_to funding_sources_url
   end
+
+  private
+
+    def safe_params
+      params.require(:funding_source).permit(:funding_source_name, :funding_subsource_name, :notes)
+    end
 end

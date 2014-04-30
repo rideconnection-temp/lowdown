@@ -11,12 +11,12 @@ class ProvidersController < ApplicationController
   end
   
   def create
-    @provider = Provider.new params[:provider]
+    @provider = Provider.new safe_params
 
     if @provider.save
       redirect_to(providers_path, notice: 'Provider was successfully created.')
     else
-      get_drop_down_data
+      prep_edit
       render action: "new"
     end
   end
@@ -29,7 +29,7 @@ class ProvidersController < ApplicationController
   def update
     @provider = Provider.find(params[:id])
 
-    if @provider.update_attributes(params[:provider])
+    if @provider.update_attributes(safe_params)
       redirect_to(edit_provider_path(@provider), notice: 'Provider was successfully updated.')
     else
       prep_edit
@@ -45,8 +45,12 @@ class ProvidersController < ApplicationController
   end
   
   private
+
+    def safe_params
+      params.require(:provider).permit(:name, :short_name, :provider_type)
+    end
   
-  def prep_edit
-    @provider_types = Provider::PROVIDER_TYPES
-  end
+    def prep_edit
+      @provider_types = Provider::PROVIDER_TYPES
+    end
 end

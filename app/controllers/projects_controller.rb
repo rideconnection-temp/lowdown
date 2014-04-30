@@ -11,12 +11,11 @@ class ProjectsController < ApplicationController
   end
   
   def create
-    @project = Project.new params[:project]
+    @project = Project.new safe_params
 
     if @project.save
       redirect_to(projects_path, notice: 'Project was successfully created.')
     else
-      get_drop_down_data
       render :new
     end
   end
@@ -28,10 +27,9 @@ class ProjectsController < ApplicationController
   def update
     @project = Project.find(params[:id])
 
-    if @project.update_attributes(params[:project])
+    if @project.update_attributes(safe_params)
       redirect_to(edit_project_path(@project), notice: 'Project was successfully updated.')
     else
-      get_drop_down_data
       render :edit
     end
   end
@@ -42,5 +40,10 @@ class ProjectsController < ApplicationController
     
     redirect_to projects_url
   end
-  
+ 
+  private
+
+    def safe_params
+      params.require(:project).permit(:name, :project_number, :funding_source_id)
+    end
 end

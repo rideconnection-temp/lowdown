@@ -11,7 +11,7 @@ class TrimetProgramsController < ApplicationController
   end
   
   def create
-    @trimet_program = TrimetProgram.new params[:trimet_program]
+    @trimet_program = TrimetProgram.new safe_params
 
     if @trimet_program.save
       redirect_to(trimet_programs_path, notice: 'Program was successfully created.')
@@ -27,7 +27,7 @@ class TrimetProgramsController < ApplicationController
   def update
     @trimet_program = TrimetProgram.find(params[:id])
 
-    if @trimet_program.update_attributes(params[:trimet_program])
+    if @trimet_program.update_attributes(safe_params)
       redirect_to(edit_trimet_program_path(@trimet_program), notice: 'Program was successfully updated.')
     else
       render :edit
@@ -40,4 +40,10 @@ class TrimetProgramsController < ApplicationController
     
     redirect_to trimet_programs_url
   end
+
+  private
+
+    def safe_params
+      params.require(:trimet_program).permit(:name, :trimet_identifier, :notes)
+    end
 end

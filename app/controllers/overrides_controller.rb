@@ -11,7 +11,7 @@ class OverridesController < ApplicationController
   end
   
   def create
-    @override = Override.new params[:override]
+    @override = Override.new safe_params
 
     if @override.save
       redirect_to(overrides_path, notice: 'Override was successfully created.')
@@ -27,7 +27,7 @@ class OverridesController < ApplicationController
   def update
     @override = Override.find(params[:id])
 
-    if @override.update_attributes(params[:override])
+    if @override.update_attributes(safe_params)
       redirect_to(edit_override_path(@override), notice: 'Override was successfully updated.')
     else
       render :edit
@@ -40,4 +40,10 @@ class OverridesController < ApplicationController
     
     redirect_to overrides_url
   end
+
+  private
+
+    def safe_params
+      params.require(:override).permit(:name)
+    end
 end

@@ -11,7 +11,7 @@ class TrimetReportGroupsController < ApplicationController
   end
   
   def create
-    @trimet_report_group = TrimetReportGroup.new params[:trimet_report_group]
+    @trimet_report_group = TrimetReportGroup.new safe_params
 
     if @trimet_report_group.save
       redirect_to(trimet_report_groups_path, notice: 'Report group was successfully created.')
@@ -27,7 +27,7 @@ class TrimetReportGroupsController < ApplicationController
   def update
     @trimet_report_group = TrimetReportGroup.find(params[:id])
 
-    if @trimet_report_group.update_attributes(params[:trimet_report_group])
+    if @trimet_report_group.update_attributes(safe_params)
       redirect_to(edit_trimet_report_group_path(@trimet_report_group), notice: 'Report group was successfully updated.')
     else
       render :edit
@@ -40,4 +40,10 @@ class TrimetReportGroupsController < ApplicationController
     
     redirect_to trimet_report_groups_url
   end
+
+  private
+
+    def safe_params
+      params.require(:trimet_report_group).permit(:name)
+    end
 end
