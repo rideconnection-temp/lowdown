@@ -145,8 +145,8 @@ class TripsController < ApplicationController
   end
   
   def update
-    @trip = Trip.find(params[:trip][:id]).current_version
-    @trip.attributes = params[:trip]
+    @trip = Trip.find(params[:id]).current_version
+    @trip.attributes = safe_params
     if has_real_changes? @trip
       if @trip.save  
         redirect_to(@trip)
@@ -277,6 +277,32 @@ class TripsController < ApplicationController
   end
 
   private
+
+  def safe_params
+    params.require(:trip).permit(
+      :customer_type,
+      :volunteer_trip, 
+      :in_trimet_district,
+      :case_manager,
+      :case_manager_office,
+      :date_enrolled,
+      :service_end,
+      :approved_rides,
+      :odometer_start,
+      :odometer_end,
+      :fare,
+      :purpose_type,
+      :guest_count,
+      :attendant_count,
+      :mobility,
+      :bpa_driver_name,
+      :result_code,
+      :allocation_id,
+      :customer_pay,
+      :complete,
+      :adjustment_notes
+    )
+  end
 
   def prep_search
     @providers          = Provider.with_trip_data.default_order
