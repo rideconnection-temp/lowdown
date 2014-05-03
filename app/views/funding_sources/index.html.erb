@@ -14,7 +14,7 @@
   <% @funding_sources.each do |funding_source| %>
     <tr>
       <td><%= link_to funding_source.name, edit_funding_source_path(funding_source) %></td>
-      <td><%= link_to "Delete", funding_source_url(funding_source), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this funding source?" if current_user.is_admin && funding_source.projects.empty? %></td>
+      <td><%= link_to "Delete", funding_source_url(funding_source), :class => "delete", :method => "delete", data: { confirm: "Are you sure you want to delete this funding source?" } if current_user.is_admin && funding_source.projects.empty? %></td>
     </tr>
   <% end %>
 </table>
