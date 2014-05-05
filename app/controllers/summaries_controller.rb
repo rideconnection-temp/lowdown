@@ -105,7 +105,7 @@ class SummariesController < ApplicationController
   end
 
   def create
-    @summary = Summary.new(params[:summary])
+    @summary = Summary.new(safe_params)
     if ! @summary.summary_rows.size == POSSIBLE_TRIP_PURPOSES.size * 2
       flash.now[:alert] = "You must fill in all summary rows (even if just with zeros)"
       render :new
@@ -134,7 +134,7 @@ class SummariesController < ApplicationController
 
     #gather up the old row objects
     old_rows = @summary.summary_rows.map &:dup
-    @summary.attributes = params[:summary]
+    @summary.attributes = safe_params
 
     create_new_version = @summary.create_new_version?
 
@@ -218,13 +218,41 @@ class SummariesController < ApplicationController
         paginate page: params[:page]
   end
 
-private
+  private
 
-  def prep_edit
-    @grouped_allocations = [] 
-    Provider.with_summary_data.order(:name).each do |p|
-      @grouped_allocations << [p.name, p.active_non_trip_allocations_as_of(@summary.try :period_start).map {|a| [a.select_label,a.id]}]
+    def safe_params
+      params.require(:summary).permit(
+        :allocation_id,
+        :period_start,
+        :adjustment_notes,
+        :total_miles,
+        :turn_downs,
+        :unduplicated_riders,
+        :driver_hours_paid,
+        :driver_hours_volunteer,
+        :escort_hours_volunteer,
+        :administrative_hours_volunteer,
+        :funds,
+        :donations,
+        :agency_other,
+        :administrative,
+        :operations,
+        :vehicle_maint,
+        :complete,
+        :summary_rows_attributes => [
+          :id,
+          :purpose,
+          :in_district_trips,
+          :out_of_district_trips
+        ]
+      )
     end
-    @grouped_allocations << ['<No provider>', Allocation.non_trip_collection_method.active_as_of(@summary.try :period_start).where(provider_id: nil).map {|a| [a.name,a.id]}]
-  end
+
+    def prep_edit
+      @grouped_allocations = [] 
+      Provider.with_summary_data.order(:name).each do |p|
+        @grouped_allocations << [p.name, p.active_non_trip_allocations_as_of(@summary.try :period_start).map {|a| [a.select_label,a.id]}]
+      end
+      @grouped_allocations << ['<No provider>', Allocation.non_trip_collection_method.active_as_of(@summary.try :period_start).where(provider_id: nil).map {|a| [a.name,a.id]}]
+    end
 end

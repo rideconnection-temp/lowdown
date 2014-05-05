@@ -14,7 +14,7 @@
   <% @trimet_report_groups.each do |trimet_report_group| %>
     <tr>
       <td><%= link_to trimet_report_group.name, edit_trimet_report_group_path(trimet_report_group) %></td>
-      <td><%= link_to "Delete", trimet_report_group_url(trimet_report_group), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this report group?" if current_user.is_admin && trimet_report_group.allocations.empty? %></td>
+      <td><%= link_to "Delete", trimet_report_group_url(trimet_report_group), :class => "delete", :method => "delete", data: { confirm: "Are you sure you want to delete this report group?" } if current_user.is_admin && trimet_report_group.allocations.empty? %></td>
     </tr>
   <% end %>
 </table>
