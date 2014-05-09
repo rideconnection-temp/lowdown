@@ -5,4 +5,5 @@
 //= require jquery.ui.datepicker
 //= require jquery.autosize.min
 //= require jquery.sortelements
+//= require jquery.floatThead.min
 //= require core

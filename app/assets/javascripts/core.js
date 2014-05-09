@@ -313,6 +313,8 @@ $(document).ready(function() {
     return false;
   });
 
+  $('body.flex-reports div.report-wrapper table').floatThead();
+
   //*****************************************
   //
   // Predefined Reports
