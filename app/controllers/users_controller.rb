@@ -91,6 +91,6 @@ class UsersController < Devise::SessionsController
 private
 
   def user_params
-    params.require(:email).permit(:password, :password_confirmation, :level, :active)
+    params.require(:user).permit(:email,:password, :password_confirmation, :level, :active)
   end
 end
