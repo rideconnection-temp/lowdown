@@ -313,7 +313,13 @@ $(document).ready(function() {
     return false;
   });
 
-  $('body.flex-reports div.report-wrapper table').floatThead();
+  // Float flex report header so it remains visible as the user scrolls down
+  // on long reports
+  $('body.flex-reports div.report-wrapper table').floatThead({
+    getSizingRow: function($table){ // this is only called when using IE 
+      return $table.find('tbody tr.data:first > *');
+    }
+  });
 
   //*****************************************
   //
