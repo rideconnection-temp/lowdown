@@ -63,7 +63,6 @@ class UsersController < Devise::SessionsController
     redirect_to action: :index, controller: :users
   end
 
-  
   def update
     @user = User.find(params[:id])
     if @user.update_attributes!(user_params)
@@ -74,7 +73,6 @@ class UsersController < Devise::SessionsController
       render action: :index      
     end
   end
-  
 
   def sign_out
     scope = Devise::Mapping.find_scope!(current_user)
@@ -87,7 +85,7 @@ class UsersController < Devise::SessionsController
   def index
     @users = User.order(:active,:level,:email)
   end
-  
+
 private
 
   def user_params
