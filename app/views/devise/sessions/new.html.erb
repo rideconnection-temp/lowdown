@@ -2,7 +2,7 @@
   <h1>Sign In</h1>
 </div>
 
-<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+<%= form_for(resource, :url => session_path(resource_name)) do |f| %>
   <fieldset>
     <ol class="section first">
       <li><%= f.label :email, "Email:" %><%= f.text_field :email %></li>

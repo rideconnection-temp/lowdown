@@ -74,14 +74,6 @@ class UsersController < Devise::SessionsController
     end
   end
 
-  def sign_out
-    scope = Devise::Mapping.find_scope!(current_user)
-    current_user = nil
-    warden.logout(scope)
-
-    return redirect_to root_url
-  end
-
   def index
     @users = User.order(:active,:level,:email)
   end
