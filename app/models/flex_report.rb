@@ -13,16 +13,9 @@ class FlexReport < ActiveRecord::Base
 
   TimePeriods = %w{semimonth month quarter year}
 
-  GroupBys = [
-    "county,quarter",
-    "funding_source,quarter",
-    "funding_source,funding_subsource,quarter",
-    "project_number,quarter",
-    "funding_source,reporting_agency_name",
-    "program_name,reporting_agency_name",
-    "reporting_agency_name,program_name",
-    "quarter,month"
-  ].sort
+  # Default group-by options would go here. Since every report is so different,
+  # the defaults have been removed
+  GroupBys = []
 
   GroupMappings = {
     "county"                        => "County",
