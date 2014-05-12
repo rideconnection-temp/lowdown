@@ -12,6 +12,7 @@ require 'bundler/capistrano'
 set :application, "lowdown"
 set :repository,  "git://github.com/rideconnection/lowdown.git"
 set :deploy_to, "/home/deployer/rails/lowdown"
+set :asset_env, "RAILS_RELATIVE_URL_ROOT=/service"
 
 set :scm, :git
 set :branch, "master"
@@ -34,9 +35,9 @@ end
 
 task :link_database_yml do
   puts "    (Link in database.yml file)"
-  run  "ln -nfs #{deploy_to}/shared/config/database.yml #{deploy_to}/current/config/database.yml"
+  run  "ln -nfs #{deploy_to}/shared/config/database.yml #{latest_release}/config/database.yml"
   puts "    Link in app_config.yml file"
-  run  "ln -nfs #{deploy_to}/shared/config/app_config.yml #{deploy_to}/current/config/app_config.yml"
+  run  "ln -nfs #{deploy_to}/shared/config/app_config.yml #{latest_release}/config/app_config.yml"
 end
 
-after "deploy:create_symlink", :link_database_yml
+before "deploy:assets:precompile", :link_database_yml
