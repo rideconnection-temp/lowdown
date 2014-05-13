@@ -175,6 +175,7 @@ class TripsController < ApplicationController
           current_versions.
           select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").
           completed.
+          reorder('').
           first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
       @completed_transfer_count = params[:transfer_count].try(:to_i) || 0
       @transfer_all = (params[:transfer_all] == '1' || params[:transfer_all] == true)
@@ -199,6 +200,7 @@ class TripsController < ApplicationController
                   current_versions.
                   select("COALESCE(SUM(guest_count),0) AS g, COALESCE(SUM(attendant_count),0) AS a, COUNT(*) AS c").
                   where(result_code: rc).
+                  reorder('').
                   first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
             end
 
@@ -236,6 +238,7 @@ class TripsController < ApplicationController
           current_versions.
           select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").
           where(result_code: rc).
+          reorder('').
           first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
     end
   end
