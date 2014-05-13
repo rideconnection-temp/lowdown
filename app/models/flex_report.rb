@@ -290,11 +290,11 @@ class FlexReport < ActiveRecord::Base
       where_string = where_strings.join(" AND ")
       if allocations.present?
         where_string = "(#{where_string}) OR allocations.id IN (?)"
-        where_params << allocations
+        where_params << allocation_ids
       end
     elsif allocations.present?
         where_string = "allocations.id IN (?)"
-        where_params << allocations
+        where_params << allocation_ids
     end
     results = allocation_instance.where(where_string, *where_params)
 
