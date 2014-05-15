@@ -105,12 +105,12 @@
           </li>
           <li class="selfclear">
             <%= form.label :trimet_provider_id, "TriMet provider" %>
-            <%= form.collection_select :trimet_provider_id, @trimet_providers, :id, :name, {:include_blank => true} %>
+            <%= form.collection_select :trimet_provider_id, @trimet_providers, :id, :name_and_identifier, {:include_blank => true} %>
             <%= link_to "Details", [:edit, @allocation.trimet_provider], :class => :details if @allocation.trimet_provider %>
           </li>
           <li class="selfclear">
             <%= form.label :trimet_program_id, "TriMet program" %>
-            <%= form.collection_select :trimet_program_id, @trimet_programs, :id, :name, {:include_blank => true} %>
+            <%= form.collection_select :trimet_program_id, @trimet_programs, :id, :name_and_identifier, {:include_blank => true} %>
             <%= link_to "Details", [:edit, @allocation.trimet_program], :class => :details if @allocation.trimet_program %>
           </li>
           <li class="selfclear">

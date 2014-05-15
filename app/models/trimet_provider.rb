@@ -5,4 +5,8 @@ class TrimetProvider < ActiveRecord::Base
   validates :trimet_identifier, :presence => true, :uniqueness => true
 
   scope :default_order, -> { order :name }
+
+  def name_and_identifier
+    "#{name} (#{trimet_identifier})"
+  end
 end
