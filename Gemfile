@@ -4,7 +4,7 @@ gem 'rails', '4.0.5'
 gem 'pg'
 
 gem 'jquery-ui-rails',      '~> 4.2.1'
-gem 'devise',               '~> 3.0.0'
+gem 'devise',               '~> 3.1.0'
 gem 'dynamic_form',         '~> 1.1.4'
 gem 'will_paginate',        '~> 3.0.2'
 # Using userstamp from git for now, because 2.0.2 (Rails 3.2 compatible) has

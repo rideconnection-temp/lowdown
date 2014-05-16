@@ -1,9 +1,8 @@
 Hi, <%= @user.email %><br/>
 <br/>
-You have been added as a user to the Ride Connection Service Database.  You can visit the site at<br/>
-<%= @url %><br/>
+You have been added as a user to the Ride Connection Service Database.  You can visit the site at
 <br/>
-You have been assigned the password <%= @password %><br/>
+<%= @url %>
 <br/>
-
-
+Please click here to request your initial password: <%= new_password_url(:user) %> 
+<br/>

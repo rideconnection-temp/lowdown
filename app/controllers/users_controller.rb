@@ -58,7 +58,7 @@ class UsersController < Devise::SessionsController
     @user = User.new(user_params)
     @user.level = params[:user][:level]
     @user.save!
-    NewUserMailer.new_user_email(@user, password).deliver
+    NewUserMailer.new_user_email(@user).deliver
     flash[:notice] = "User #{@user.email} created"
     redirect_to action: :index, controller: :users
   end
