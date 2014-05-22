@@ -75,7 +75,7 @@ class UsersController < Devise::SessionsController
   end
 
   def index
-    @users = User.order(:active,:level,:email)
+    @users = User.order(:email)
   end
 
 private
