@@ -1,5 +1,5 @@
 <ul id="subnav" class="selfclear">
-  <li><%= link_to 'TriMet Report Groups', trimet_report_groups_allocations_path(:format => :csv), :class => :csv %></li>
+  <li><%= link_to 'TriMet Report Groupings', trimet_groupings_allocations_path(:format => :csv), :class => :csv %></li>
   <li><%= link_to 'Allocations Export', allocations_path(:format => :csv), :class => :csv %></li>
   <li><%= link_to 'New Allocation', new_allocation_path, :class => :add if current_user.is_admin %></li>
 </ul>

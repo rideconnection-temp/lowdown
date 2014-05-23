@@ -36,7 +36,6 @@ class FlexReport < ActiveRecord::Base
     "trimet_program_identifier"     => "TriMet Program Identifier",
     "trimet_provider_name"          => "TriMet Provider Name",
     "trimet_provider_identifier"    => "TriMet Provider Identifier",
-    "trimet_report_group_name"      => "TriMet Report Group Name",
     "semimonth"                     => "Semi-month",
     "month"                         => "Month",
     "quarter"                       => "Quarter",

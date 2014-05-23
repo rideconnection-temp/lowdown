@@ -54,13 +54,13 @@ class AllocationsController < ApplicationController
     redirect_to allocations_url
   end
 
-  def trimet_report_groups
-    allocations = Allocation.in_trimet_report_group.includes(:trimet_report_group,:trimet_program,:trimet_provider)
+  def trimet_groupings
+    allocations = Allocation.in_trimet_groupings
 
     @trimet_groups = {}
     allocations.each do |a|
-      @trimet_groups[[a.trimet_report_group,a.trimet_program,a.trimet_provider]] ||= []
-      @trimet_groups[[a.trimet_report_group,a.trimet_program,a.trimet_provider]] << a
+      @trimet_groups[[a.trimet_program,a.trimet_provider]] ||= []
+      @trimet_groups[[a.trimet_program,a.trimet_provider]] << a
     end
     respond_to do |format|
       format.csv do
@@ -90,7 +90,6 @@ class AllocationsController < ApplicationController
         :eligibility,
         :trimet_provider_id,
         :trimet_program_id,
-        :trimet_report_group_id,
         :activated_on,
         :inactivated_on,
         :notes
@@ -103,6 +102,5 @@ class AllocationsController < ApplicationController
       @cost_collection_methods   = COST_COLLECTION_METHODS
       @trimet_providers          = TrimetProvider.default_order
       @trimet_programs           = TrimetProgram.default_order
-      @trimet_report_group       = TrimetReportGroup.default_order
     end
 end

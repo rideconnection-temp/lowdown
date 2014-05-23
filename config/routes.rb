@@ -9,13 +9,12 @@ Lowdown::Application.routes.draw do
   resources :programs,              only: [:index, :new, :create, :edit, :update, :destroy]
   resources :trimet_providers,      only: [:index, :new, :create, :edit, :update, :destroy]
   resources :trimet_programs,       only: [:index, :new, :create, :edit, :update, :destroy]
-  resources :trimet_report_groups,  only: [:index, :new, :create, :edit, :update, :destroy]
   resources :overrides,             only: [:index, :new, :create, :edit, :update, :destroy]
   resources :funding_sources,       only: [:index, :new, :create, :edit, :update, :destroy]
   resources :report_categories,     only: [:index, :new, :create, :edit, :update, :destroy]
 
   resources :allocations, only: [:index, :new, :create, :edit, :update, :destroy] do
-    get :trimet_report_groups, on: :collection
+    get :trimet_groupings, on: :collection
   end
 
   resources :flex_reports
