@@ -43,6 +43,8 @@ class Allocation < ActiveRecord::Base
   scope :active_in_range, lambda{|start_date,after_end_date| where("(inactivated_on IS NULL OR inactivated_on > ?) AND activated_on < ?", start_date, after_end_date) }
   scope :in_trimet_groupings, -> { where('trimet_program_id IS NOT NULL AND trimet_provider_id IS NOT NULL').includes(:trimet_program,:trimet_provider)}
   scope :has_trimet_provider, -> { where 'trimet_provider_id IS NOT NULL' }
+  scope :exclude_vehicle_maint_data_only, -> { where("NOT (trip_collection_method = 'none' AND run_collection_method = 'none' AND cost_collection_method = 'none' AND admin_ops_data = 'Prohibited' AND vehicle_maint_data = 'Required')") }
+  scope :exclude_admin_ops_data_only, -> { where("NOT (trip_collection_method = 'none' AND run_collection_method = 'none' AND cost_collection_method = 'none' AND admin_ops_data = 'Required' AND vehicle_maint_data = 'Prohibited')") }
   def self.for_import
     self.joins(:override).select("allocations.id,overrides.name,allocations.routematch_provider_code,allocations.activated_on,allocations.inactivated_on,allocations.run_collection_method")
   end

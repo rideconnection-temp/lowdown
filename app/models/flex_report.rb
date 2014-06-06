@@ -227,6 +227,18 @@ class FlexReport < ActiveRecord::Base
     self.field_list = list.sort.map(&:to_s).join(",")
   end
 
+  def uses_vehicle_maint_field?
+    fields.include?('vehicle_maint') ||
+      (fields.include?('total') &&
+      fields & %w{funds agency_other vehicle_maint administrative operations donations}  == [])
+  end
+
+  def uses_administrative_or_operations_fields?
+    fields.include?('administrative') || fields.include?('operations') ||
+      (fields.include?('total') &&
+      (fields & %w{funds agency_other vehicle_maint administrative operations donations})  == [])
+  end
+
   def group_fields
     group_by.split(",")
   end
@@ -295,6 +307,13 @@ class FlexReport < ActiveRecord::Base
         where_string = "allocations.id IN (?)"
         where_params << allocation_ids
     end
+
+    # There are allocations that are dedicated to only tracking certain data points:
+    # vehicle maintenance or admin/ops costs. If the use doesn't request the fields that would
+    # involve the related allocations, then filter out those allocations
+    allocation_instance = allocation_instance.exclude_vehicle_maint_data_only if !uses_vehicle_maint_field?
+    allocation_instance = allocation_instance.exclude_admin_ops_data_only if !uses_administrative_or_operations_fields?
+
     results = allocation_instance.where(where_string, *where_params)
 
     TimePeriods.each do |period|
