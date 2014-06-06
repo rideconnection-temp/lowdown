@@ -13,7 +13,9 @@
       </h2>
       <h3>Program: <%= allocation.program.try(:name) || "Unspecified Program" %></h3>
       <h3>County: <%= allocation.county || "Unspecified County" %></h3>
-      <h3>Funding Sources: <%= quarterly_report_funding_sources(allocation.reporting_agency_id,allocation.program_id,allocation.county) %></h3>
+      <h3>Funding Sources: 
+        <%= quarterly_report_funding_sources(allocation.reporting_agency_id,allocation.program_id,allocation.county,@report.start_date,@report.after_end_date) %>
+      </h3>
       <% i += 1 %>
       <%= render "flex_reports/report", 
           :results      => county_rows, 

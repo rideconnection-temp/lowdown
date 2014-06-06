@@ -46,9 +46,10 @@ module ApplicationHelper
     end
   end
 
-  def quarterly_report_funding_sources(reporting_agency_id,program_id,county)
+  def quarterly_report_funding_sources(reporting_agency_id,program_id,county,start_date,after_end_date)
     return if program_id.blank? || reporting_agency_id.blank? || county.blank?
-    a = Allocation.where(program_id: program_id,reporting_agency_id: reporting_agency_id,county: county)
+    a = Allocation.where(program_id: program_id,reporting_agency_id: reporting_agency_id,county: county).
+      active_in_range(start_date,after_end_date)
     a.map{|x| x.project.try(:funding_source).try(:name) }.compact.sort.uniq.join(", ")
   end
 
