@@ -18,6 +18,10 @@ class Run < ActiveRecord::Base
 
   point_in_time
 
+  def has_hourly_trip?
+    trips.joins(:allocation).where('allocations.name ilike ?',"%hourly%").count > 0 
+  end
+
   def created_by
     first_version.updated_by
   end
@@ -40,24 +44,16 @@ class Run < ActiveRecord::Base
   end
 
   def ads_partner_cost
-    if trips.first.present?
-      if trips.first.allocation.name =~ /hourly/i
-        BigDecimal.new("25.17") * ads_billable_hours 
-      else
-        BigDecimal.new("0")
-      end
+    if has_hourly_trip?
+      BigDecimal.new("25.17") * ads_billable_hours 
     else
       BigDecimal.new("0")
     end
   end
 
   def ads_scheduling_fee
-    if trips.first.present?
-      if trips.first.allocation.name =~ /hourly/i
-        BigDecimal.new("8.61") * ads_billable_hours
-      else
-        BigDecimal.new("0")
-      end
+    if has_hourly_trip?
+      BigDecimal.new("8.61") * ads_billable_hours
     else
       BigDecimal.new("0")
     end
