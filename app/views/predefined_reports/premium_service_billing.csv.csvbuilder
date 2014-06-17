@@ -1,4 +1,20 @@
-headers = ["Customer","Service Date","Start Time","Pickup Address","Drop Off Address","District Center","Partner Cost","Taxi Cost","Scheduling Fee","Total Cost","Provider"]
+headers = [
+  "Customer",
+  "Service Date",
+  "Start Time",
+  "Pickup Address",
+  "Drop Off Address",
+  "District Center",
+  "Partner Cost",
+  "Taxi Cost",
+  "Scheduling Fee",
+  "Total Cost",
+  "Provider",
+  "Customers",
+  "Guests",
+  "Attendants",
+  "Total Trips"
+]
 csv << headers
 
 @run_groups.keys.sort{|a,b| a.start_at <=> b.start_at}.each do |run|
@@ -27,7 +43,11 @@ csv << headers
       number_to_currency(t.ads_taxi_cost),
       number_to_currency(t.ads_scheduling_fee),
       number_to_currency(t.ads_total_cost),
-      t.allocation.provider.name
+      t.allocation.provider.name,
+      1,
+      t.guest_count,
+      t.attendant_count,
+      t.customers_served
     ]
   end
 end
@@ -44,7 +64,11 @@ end
     number_to_currency(t.ads_taxi_cost),
     number_to_currency(t.ads_scheduling_fee),
     number_to_currency(t.ads_total_cost),
-    t.allocation.provider.name
+    t.allocation.provider.name,
+    1,
+    t.guest_count,
+    t.attendant_count,
+    t.customers_served
   ]
 end
 
