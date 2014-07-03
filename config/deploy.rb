@@ -1,6 +1,6 @@
 #-----Get Capistrano working with RVM-----
 require "rvm/capistrano"  # Load RVM's capistrano plugin.    
-set :rvm_ruby_string, '1.9.3-p125'
+set :rvm_ruby_string, '1.9.3-p547'
 set :rvm_type, :user  # Don't use system-wide RVM
 #---------------------------------------------
 
