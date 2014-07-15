@@ -251,8 +251,8 @@ class SummariesController < ApplicationController
     def prep_edit
       @grouped_allocations = [] 
       Provider.with_summary_data.order(:name).each do |p|
-        @grouped_allocations << [p.name, p.active_non_trip_allocations_as_of(@summary.try :period_start).map {|a| [a.select_label,a.id]}]
+        @grouped_allocations << [p.name, p.active_summary_allocations_as_of(@summary.try :period_start).map {|a| [a.select_label,a.id]}]
       end
-      @grouped_allocations << ['<No provider>', Allocation.non_trip_collection_method.active_as_of(@summary.try :period_start).where(provider_id: nil).map {|a| [a.name,a.id]}]
+      @grouped_allocations << ['<No provider>', Allocation.summary_required.active_as_of(@summary.try :period_start).where(provider_id: nil).map {|a| [a.name,a.id]}]
     end
 end
