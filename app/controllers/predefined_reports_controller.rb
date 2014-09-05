@@ -250,7 +250,6 @@ class PredefinedReportsController < ApplicationController
       :out_of_district_trips,
       :total,
       :total_trips,
-      :total_volunteer_hours,
       :turn_downs,
       :undup_riders,
       :vehicle_maint
