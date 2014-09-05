@@ -5,10 +5,13 @@ csv << [
   "Description",
   "Grouping",
   "Funding Sources",
+  "Reporting Agency Types",
   "Reporting Agencies",
+  "Provider Types",
   "Providers",
   "Programs",
   "Counties",
+  "F.E. Projects",
   "Individual Allocations"
 ]
 
@@ -18,12 +21,15 @@ csv << [
     report.name,
     report.subtitle,
     report.description,
-    report.group_by.try(:titleize).try(:gsub,",",", "),
+    report.group_by.try(:titleize).try(:gsub,',',', '),
     report.funding_sources.map{|fs| fs.name }.join(', '),
+    report.reporting_agency_type_names.join(', '),
     report.reporting_agencies.map{|ra| ra.name }.join(', '),
+    report.provider_type_names.join(', '),
     report.providers.map{|p| p.name }.join(', '),
     report.programs.map{|p| p.name }.join(', '),
     report.county_names.join(', '),
+    report.projects.map{|p| p.number_and_name }.join(', '),
     report.allocations.map{|a| a.name }.join(', ')
   ]
 end
