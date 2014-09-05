@@ -11,7 +11,7 @@
   <% categorized_reports.keys.sort_by{|k| k || ''}.each do |category| %>
     <div class="report-category">
       <h1><%= category || "Unspecified Category" %></h1>
-      <% categorized_reports[category].sort_by{|r| r.name}.each do |report| %>
+      <% categorized_reports[category].sort_by{|r| r.name.downcase }.each do |report| %>
         <li class="flex-report">
           <% if current_user.is_admin %>
             <%= link_to "Edit Report", edit_flex_report_path(report), :class => "edit" %>
