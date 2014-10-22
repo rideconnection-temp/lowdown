@@ -3,15 +3,15 @@ def bind(args)
 end
 
 class ReportRow
-  @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :driver_volunteer_hours, :administrative, :operations, :total_elderly_and_disabled_cost]
+  @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :driver_volunteer_hours, :administrative, :operations, :total_elderly_and_disabled_cost]
   attr_accessor *@@attrs
 
   def numeric_fields
-    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :driver_volunteer_hours, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
+    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :driver_volunteer_hours, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
   end
 
   def self.trip_fields
-    [:in_district_trips, :out_of_district_trips, :total_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :undup_riders, :total_general_public_trips, :cost_per_trip, :cost_per_customer, :miles_per_ride, :miles_per_customer]
+    [:in_district_trips, :out_of_district_trips, :total_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :total_general_public_trips, :cost_per_trip, :cost_per_customer, :miles_per_ride, :miles_per_customer]
   end
 
   def self.run_fields
@@ -131,6 +131,10 @@ class ReportRow
 
   def total_trips
     @in_district_trips + @out_of_district_trips
+  end
+
+  def total_requests
+    total_trips + @no_shows + @cancellations + @unmet_need + @other_results
   end
 
   def cost_per_trip
@@ -254,6 +258,10 @@ class ReportRow
     @driver_paid_hours               += row.driver_paid_hours
 
     @turn_downs                      += row.turn_downs
+    @no_shows                        += row.no_shows
+    @cancellations                   += row.cancellations
+    @unmet_need                      += row.unmet_need
+    @other_results                   += row.other_results
     @undup_riders                    += row.undup_riders
     @escort_volunteer_hours          += row.escort_volunteer_hours
     @admin_volunteer_hours           += row.admin_volunteer_hours
@@ -287,7 +295,7 @@ class ReportRow
   end
 
   def collect_trips_by_trip(allocation, start_date, after_end_date, options = {})
-    results = Trip.select("sum(case when in_trimet_district=true and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as in_district_trips, sum(case when in_trimet_district=false and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips, sum(case when result_code = 'COMP' then 1 else 0 end) as customer_trips, sum(case when result_code = 'COMP' then guest_count + attendant_count else 0 end) as guest_and_attendant_trips, sum(case when result_code='TD' then 1 + guest_count + attendant_count else 0 end) as turn_downs")
+    results = Trip.select("sum(case when in_trimet_district=true and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as in_district_trips, sum(case when in_trimet_district=false and result_code = 'COMP' then 1 + guest_count + attendant_count else 0 end) as out_of_district_trips, sum(case when result_code = 'COMP' then 1 else 0 end) as customer_trips, sum(case when result_code = 'COMP' then guest_count + attendant_count else 0 end) as guest_and_attendant_trips, sum(case when result_code='TD' then 1 + guest_count + attendant_count else 0 end) as turn_downs, sum(case when result_code='NS' then 1 + guest_count + attendant_count else 0 end) as no_shows, sum(case when result_code='CANC' then 1 + guest_count + attendant_count else 0 end) as cancellations, sum(case when result_code='UNMET' then 1 + guest_count + attendant_count else 0 end) as unmet_need, sum(case when result_code NOT IN ('COMP','TD','NS','CANC','UNMET') OR result_code IS NULL then 1 + guest_count + attendant_count else 0 end) as other_results")
     results = results.where(:allocation_id => allocation['id'])
     results = results.data_entry_complete unless options[:pending]
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] && allocation.eligibility != 'Elderly & Disabled'

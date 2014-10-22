@@ -22,7 +22,10 @@
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Metrics</th>
     <% end %>
-    <% if rf.include? 'turn_downs' %><th rowspan="2" class="wrap number">Turn Downs</th><% end %>
+    <% column_count = (rf & %w{turn_downs no_shows cancellations unmet_need other_results total_requests}).count %>
+    <% if column_count > 0 %>
+      <th class="column-group" colspan="<%= column_count %>">Results</th>
+    <% end %>
     <% if rf.include? 'undup_riders' %><th rowspan="2" class="wrap number">Undup Riders</th><% end %>
     <% column_count = (rf & %w{escort_volunteer_hours admin_volunteer_hours total_volunteer_hours}).count %>
     <% if column_count > 0 %>
@@ -57,6 +60,12 @@
     <% if rf.include? 'cost_per_hour' %><th class="wrap number">Cost/Hour</th><% end %>
     <% if rf.include? 'miles_per_ride' %><th class="wrap number">Miles/Trip</th><% end %>
     <% if rf.include? 'miles_per_customer' %><th class="wrap number">Miles/Cust</th><% end %>
+    <% if rf.include? 'turn_downs' %><th class="wrap number">Turn Downs</th><% end %>
+    <% if rf.include? 'no_shows' %><th class="wrap number">No Shows</th><% end %>
+    <% if rf.include? 'cancellations' %><th class="wrap number">Cancel&shy;lations</th><% end %>
+    <% if rf.include? 'unmet_need' %><th class="wrap number">Unmet Need</th><% end %>
+    <% if rf.include? 'other_results' %><th class="wrap number">Other</th><% end %>
+    <% if rf.include? 'total_requests' %><th class="wrap number">Total Requests</th><% end %>
     <% if rf.include? 'escort_volunteer_hours' %><th class="wrap number">Escort</th><% end %>
     <% if rf.include? 'admin_volunteer_hours' %><th class="wrap number">Admin</th><% end %>
     <% if rf.include? 'total_volunteer_hours' %><th class="wrap number">Total</th><% end %>

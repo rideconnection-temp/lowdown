@@ -107,6 +107,28 @@
         <label for="turn_downs">Turn Downs</label>
       </li>
       <li>
+        <input type="checkbox" <%= checked?("no_shows") %> name="flex_report[fields[no_shows]]" id="no_shows" value="1" /> 
+        <label for="no_shows">No Shows</label>
+      </li>
+      <li>
+        <input type="checkbox" <%= checked?("cancellations") %> name="flex_report[fields[cancellations]]" id="cancellations" value="1" /> 
+        <label for="cancellations">Cancellations</label>
+      </li>
+      <li>
+        <input type="checkbox" <%= checked?("unmet_need") %> name="flex_report[fields[unmet_need]]" id="unmet_need" value="1" /> 
+        <label for="unmet_need">Unmet Need</label>
+      </li>
+      <li>
+        <input type="checkbox" <%= checked?("other_results") %> name="flex_report[fields[other_results]]" id="other_results" value="1" /> 
+        <label for="other_results">Other Result</label>
+      </li>
+      <li>
+        <input type="checkbox" <%= checked?("total_requests") %> name="flex_report[fields[total_requests]]" id="total_requests" value="1" /> 
+        <label for="total_requests">Total Requests</label>
+      </li>
+    </ol>
+    <ol>
+      <li>
         <input type="checkbox" <%= checked?("undup_riders") %> name="flex_report[fields[undup_riders]]" id="undup_riders" value="1" /> 
         <label for="undup_riders">Undup Riders</label>
       </li>

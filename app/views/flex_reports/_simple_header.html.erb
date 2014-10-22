@@ -28,6 +28,11 @@
     <% if rf.include? 'miles_per_ride' %><th class="wrap number">Miles Per Trip</th><% end %>
     <% if rf.include? 'miles_per_customer' %><th class="wrap number">Miles Per Cust</th><% end %>
     <% if rf.include? 'turn_downs' %><th rowspan="2" class="wrap number">Turn Downs</th><% end %>
+    <% if rf.include? 'no_shows' %><th class="wrap number">No Shows</th><% end %>
+    <% if rf.include? 'cancellations' %><th class="wrap number">Cancellations</th><% end %>
+    <% if rf.include? 'unmet_need' %><th class="wrap number">Unmet Need</th><% end %>
+    <% if rf.include? 'other_results' %><th class="wrap number">Other</th><% end %>
+    <% if rf.include? 'total_requests' %><th class="wrap number">Total Requests</th><% end %>
     <% if rf.include? 'undup_riders' %><th rowspan="2" class="wrap number">Undup Riders</th><% end %>
     <% if rf.include? 'escort_volunteer_hours' %><th class="wrap number">Escort Volunteer Hours</th><% end %>
     <% if rf.include? 'admin_volunteer_hours' %><th class="wrap number">Admin Volunteer Hours</th><% end %>

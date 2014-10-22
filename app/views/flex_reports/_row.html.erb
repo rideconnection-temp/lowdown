@@ -1,4 +1,5 @@
 <% currency_precision = 0 if currency_precision.nil? %>
+<% has_trips = ((Allocation.trip_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}) == []) %>
 <%= content_tag :tr, :class => (row_classes + [section, "data", "level-#{tree_map.size}"]).join(' ') do %>
   <% (report_group_fields.size).times do %>
     <td class="indent">&nbsp;</td>
@@ -54,12 +55,12 @@
   <% end %>
   <% if @report.fields.include? 'customer_trips' %>
     <td class="number">
-      <%= number_with_delimiter(row.customer_trips.to_i) %>
+      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.customer_trips.to_i) %>
     </td>
   <% end %>
   <% if @report.fields.include? 'guest_and_attendant_trips' %>
     <td class="number">
-      <%= number_with_delimiter(row.guest_and_attendant_trips.to_i) %>
+      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.guest_and_attendant_trips.to_i) %>
     </td>
   <% end %>
   <% if @report.fields.include? 'total_trips' %>
@@ -120,6 +121,31 @@
   <% if @report.fields.include? 'turn_downs' %>
     <td class="number">
       <%= number_with_delimiter(row.turn_downs.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'no_shows' %>
+    <td class="number">
+      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.no_shows.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'cancellations' %>
+    <td class="number">
+      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.cancellations.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'unmet_need' %>
+    <td class="number">
+      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.unmet_need.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'other_results' %>
+    <td class="number">
+      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.other_results.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'total_requests' %>
+    <td class="number">
+      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.total_requests.to_i) %>
     </td>
   <% end %>
   <% if @report.fields.include? 'undup_riders' %>

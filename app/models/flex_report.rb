@@ -513,7 +513,27 @@ class FlexReport < ActiveRecord::Base
         CASE WHEN result_code='TD' 
         THEN 1 + guest_count + attendant_count 
         ELSE 0 
-        END) AS turn_downs"
+        END) AS turn_downs,
+      SUM(
+        CASE WHEN result_code='NS' 
+        THEN 1 + guest_count + attendant_count 
+        ELSE 0 
+        END) AS no_shows, 
+      SUM(
+        CASE WHEN result_code='CANC'
+        THEN 1 + guest_count + attendant_count 
+        ELSE 0 
+        END) AS cancellations, 
+      SUM(
+        CASE WHEN result_code='UNMET' 
+        THEN 1 + guest_count + attendant_count 
+        ELSE 0 
+        END) AS unmet_need, 
+      SUM(
+        CASE WHEN result_code NOT IN ('COMP','TD','NS','CANC','UNMET') OR result_code IS NULL 
+        THEN 1 + guest_count + attendant_count 
+        ELSE 0 
+        END) AS other_results"
     results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only] 
     apply_results_to_report_rows(results, this_start_date, this_after_end_date)

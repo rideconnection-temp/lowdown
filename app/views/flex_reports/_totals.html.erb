@@ -140,6 +140,31 @@
       <%= number_with_delimiter(row.turn_downs.to_i) %>
     </td>
   <% end %>
+  <% if @report.fields.include? 'no_shows' %>
+    <td class="number">
+      <%= number_with_delimiter(row.no_shows.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'cancellations' %>
+    <td class="number">
+      <%= number_with_delimiter(row.cancellations.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'unmet_need' %>
+    <td class="number">
+      <%= number_with_delimiter(row.unmet_need.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'other_results' %>
+    <td class="number">
+      <%= number_with_delimiter(row.other_results.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'total_requests' %>
+    <td class="number">
+      <%= number_with_delimiter(row.total_requests.to_i) %>
+    </td>
+  <% end %>
   <% if @report.fields.include? 'undup_riders' %>
     <td class="number">
       <%= number_with_delimiter(row.undup_riders.to_i) %>
