@@ -134,7 +134,7 @@ class ReportRow
   end
 
   def total_requests
-    total_trips + @no_shows + @cancellations + @unmet_need + @other_results
+    total_trips + @turn_downs + @no_shows + @cancellations + @unmet_need + @other_results
   end
 
   def cost_per_trip

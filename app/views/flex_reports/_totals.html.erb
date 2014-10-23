@@ -85,6 +85,36 @@
       <%= number_with_delimiter(row.total_trips.to_i) %>
     </td>
   <% end %>
+  <% if @report.fields.include? 'turn_downs' %>
+    <td class="number">
+      <%= number_with_delimiter(row.turn_downs.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'no_shows' %>
+    <td class="number">
+      <%= number_with_delimiter(row.no_shows.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'cancellations' %>
+    <td class="number">
+      <%= number_with_delimiter(row.cancellations.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'unmet_need' %>
+    <td class="number">
+      <%= number_with_delimiter(row.unmet_need.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'other_results' %>
+    <td class="number">
+      <%= number_with_delimiter(row.other_results.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'total_requests' %>
+    <td class="number">
+      <%= number_with_delimiter(row.total_requests.to_i) %>
+    </td>
+  <% end %>
   <% if @report.fields.include? 'mileage' %>
     <td class="number">
       <%= number_with_delimiter(row.mileage.round) %>
@@ -133,36 +163,6 @@
   <% if @report.fields.include? 'miles_per_customer'%>
     <td class="number">
       <%= row.miles_per_customer.present? ? number_with_precision(row.miles_per_customer, :precision => 1, :delimiter => ",") : raw("&mdash;") %>
-    </td>
-  <% end %>
-  <% if @report.fields.include? 'turn_downs' %>
-    <td class="number">
-      <%= number_with_delimiter(row.turn_downs.to_i) %>
-    </td>
-  <% end %>
-  <% if @report.fields.include? 'no_shows' %>
-    <td class="number">
-      <%= number_with_delimiter(row.no_shows.to_i) %>
-    </td>
-  <% end %>
-  <% if @report.fields.include? 'cancellations' %>
-    <td class="number">
-      <%= number_with_delimiter(row.cancellations.to_i) %>
-    </td>
-  <% end %>
-  <% if @report.fields.include? 'unmet_need' %>
-    <td class="number">
-      <%= number_with_delimiter(row.unmet_need.to_i) %>
-    </td>
-  <% end %>
-  <% if @report.fields.include? 'other_results' %>
-    <td class="number">
-      <%= number_with_delimiter(row.other_results.to_i) %>
-    </td>
-  <% end %>
-  <% if @report.fields.include? 'total_requests' %>
-    <td class="number">
-      <%= number_with_delimiter(row.total_requests.to_i) %>
     </td>
   <% end %>
   <% if @report.fields.include? 'undup_riders' %>
