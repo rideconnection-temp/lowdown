@@ -22,7 +22,7 @@ TRIP_PURPOSE_TO_SUMMARY_PURPOSE = {
 nil => "Unspecified"
     }
 
-TRIP_COLLECTION_METHODS = %w{trips summary_rows none}
+TRIP_COLLECTION_METHODS = %w{trips summary none}
 RUN_COLLECTION_METHODS  = %w{runs summary trips none}
 COST_COLLECTION_METHODS = %w{summary trips none}
 
