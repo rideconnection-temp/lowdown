@@ -328,51 +328,6 @@ class FlexReport < ActiveRecord::Base
   
   # Gather the data for the selected allocations
   def collect_report_data!
-    @report_rows = {}
-    options = {}
-    options[:pending] = pending
-    options[:elderly_and_disabled_only] = elderly_and_disabled_only
-
-    @allocation_objects.each do |allocation_object|
-      if allocation_object.respond_to? :collection_start_date 
-        collection_start_date = allocation_object.collection_start_date
-        collection_after_end_date = allocation_object.collection_after_end_date
-      else
-        collection_start_date = start_date
-        collection_after_end_date = after_end_date
-      end
-
-      row = ReportRow.new fields, allocation_object
-
-      if allocation_object.trip_collection_method == 'trips'
-        row.collect_trips_by_trip(allocation_object, collection_start_date, collection_after_end_date, options)
-      else
-        row.collect_trips_by_summary(allocation_object, collection_start_date, collection_after_end_date, options)
-      end
-
-      if allocation_object.run_collection_method == 'trips' 
-        row.collect_runs_by_trip(allocation_object, collection_start_date, collection_after_end_date, options)
-      elsif allocation_object.run_collection_method == 'runs'
-        row.collect_runs_by_run(allocation_object, collection_start_date, collection_after_end_date, options)
-      else
-        row.collect_runs_by_summary(allocation_object, collection_start_date, collection_after_end_date, options)
-      end
-
-      if allocation_object.cost_collection_method == 'summary'
-        row.collect_costs_by_summary(allocation_object, collection_start_date, collection_after_end_date, options)
-      end
-      row.collect_costs_by_trip(allocation_object, collection_start_date, collection_after_end_date, options)
-
-      row.collect_operation_data_by_summary(allocation_object, collection_start_date, collection_after_end_date, options)
-
-      row.calculate_total_elderly_and_disabled_cost if elderly_and_disabled_only
-
-      @report_rows[allocation_object] = row
-    end
-  end
-
-  # Gather the data for the selected allocations
-  def collect_report_data_quickly!
     options = {}
     options[:pending] = pending
     
@@ -718,18 +673,7 @@ class FlexReport < ActiveRecord::Base
   # Convenience function for running a flex report from a saved definition.
   def populate_results!(allocation_instance = Allocation)
     collect_allocation_objects!(allocation_instance)
-    if APP_CONFIG[:flex_report_data_collection].present? && APP_CONFIG[:flex_report_data_collection] == 'quick'
-      collect_report_data_quickly!
-    else
-      collect_report_data!
-    end
-    group_report_rows!
-  end
-
-  # Convenience function for running a flex report from a saved definition.
-  def populate_results_quickly!(allocation_instance = Allocation)
-    collect_allocation_objects!(allocation_instance)
-    collect_report_data_quickly!
+    collect_report_data!
     group_report_rows!
   end
 end
