@@ -383,7 +383,7 @@ class FlexReport < ActiveRecord::Base
       if these_allocations.present?
         collect_all_trips_by_trip(these_allocations, this_start_date, this_after_end_date, options) 
       end
-      these_allocations = allocation_group.select{|ao| ao.trip_collection_method != 'trips'}
+      these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'summary'}
       if these_allocations.present?
         collect_all_trips_by_summary(these_allocations, this_start_date, this_after_end_date, options) 
       end
