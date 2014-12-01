@@ -45,7 +45,7 @@ class Summary < ActiveRecord::Base
       record.errors.add :allocation_id, "already in use in another summary for this month"
     end
     record.summary_rows.each do |row|
-      if record.allocation.try(:trip_collection_method) == 'summary_rows' 
+      if record.allocation.try(:trip_collection_method) == 'summary' 
         unless row.in_district_trips.is_a? Numeric
           row.errors.add :in_district_trips, "is not a number" 
           record.errors.add :base, "#{row.purpose} in district trips is not a number" 
@@ -68,7 +68,7 @@ class Summary < ActiveRecord::Base
   end
 
   validates_each *TripAttrs do |record, attr, value|
-    if record.allocation.try(:trip_collection_method) == 'summary_rows' 
+    if record.allocation.try(:trip_collection_method) == 'summary' 
       record.errors.add attr, "is not a number" unless value.is_a? Numeric
     else
       record.errors.add attr, "should be blank." unless value.blank?
