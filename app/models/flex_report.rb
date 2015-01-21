@@ -229,14 +229,12 @@ class FlexReport < ActiveRecord::Base
 
   def uses_vehicle_maint_field?
     fields.include?('vehicle_maint') ||
-      (fields.include?('total') &&
-      fields & %w{funds agency_other vehicle_maint administrative operations donations}  == [])
+      (fields.include?('total') && fields & %w{funds agency_other vehicle_maint administrative operations donations}  == [])
   end
 
   def uses_administrative_or_operations_fields?
     fields.include?('administrative') || fields.include?('operations') ||
-      (fields.include?('total') &&
-      (fields & %w{funds agency_other vehicle_maint administrative operations donations})  == [])
+      (fields.include?('total') && (fields & %w{funds agency_other vehicle_maint administrative operations donations})  == [])
   end
 
   def group_fields
@@ -309,7 +307,7 @@ class FlexReport < ActiveRecord::Base
     end
 
     # There are allocations that are dedicated to only tracking certain data points:
-    # vehicle maintenance or admin/ops costs. If the use doesn't request the fields that would
+    # vehicle maintenance or admin/ops costs. If the user doesn't request the fields that would
     # involve the related allocations, then filter out those allocations
     allocation_instance = allocation_instance.exclude_vehicle_maint_data_only if !uses_vehicle_maint_field?
     allocation_instance = allocation_instance.exclude_admin_ops_data_only if !uses_administrative_or_operations_fields?
@@ -415,7 +413,8 @@ class FlexReport < ActiveRecord::Base
     end
 
     # Collect operations data
-    if (fields & ReportRow.operations_fields.map{|f| f.to_s }).present?
+    if (fields & ReportRow.operations_fields.map{|f| f.to_s }).present? || 
+        uses_vehicle_maint_field? || uses_administrative_or_operations_fields?
       collect_all_operation_data_by_summary(allocation_group, this_start_date, this_after_end_date, options)
     end
 
