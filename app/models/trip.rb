@@ -31,6 +31,10 @@ class Trip < ActiveRecord::Base
           )"
       where(where_clause, start_date, after_end_date)
     end
+
+    def summary_purpose(trip_purpose)
+      TRIP_PURPOSE_TO_SUMMARY_PURPOSE.fetch(trip_purpose, trip_purpose)
+    end
   end
 
   stampable :updater_attribute  => :updated_by,
@@ -149,6 +153,10 @@ class Trip < ActiveRecord::Base
     guest_count + attendant_count + 1
   end
   
+  def summary_purpose
+    self.class.summary_purpose purpose_type
+  end
+
   def chronological_versions
     return self.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse
   end

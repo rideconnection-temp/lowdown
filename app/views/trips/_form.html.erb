@@ -39,11 +39,11 @@
       <%= raw gmaps_route_link @trip.pickup_address, @trip.dropoff_address, "" %>
     </li>
     <li<%= mark_if_changed(@trip,:volunteer_trip) %>>
-      <%= f.label :volunteer_trip, "Volunteer Trip:", :class => "checkbox" %> 
+      <%= f.label :volunteer_trip, "Volunteer Trip:", :class => "checkbox" %>
       <%= f.check_box :volunteer_trip %>
     </li>
     <li<%= mark_if_changed(@trip,:in_trimet_district) %>>
-      <%= f.label :in_trimet_district, "In Trimet District:" %> 
+      <%= f.label :in_trimet_district, "In Trimet District:" %>
       <%= f.check_box :in_trimet_district %>
     </li>
     <li<%= mark_if_changed(@trip,:trip_import_id) %>>
@@ -143,11 +143,11 @@
 
   <ol class="section second">
     <li<%= mark_if_changed(@trip,:odometer_start) %>>
-      <%= f.label :odometer_start, "Odometer Start:" %> 
+      <%= f.label :odometer_start, "Odometer Start:" %>
       <%= f.text_field :odometer_start, :size => 4 %>
     </li>
     <li<%= mark_if_changed(@trip,:odometer_end) %>>
-      <%= f.label :odometer_end, "Odometer End:" %> 
+      <%= f.label :odometer_end, "Odometer End:" %>
       <%= f.text_field :odometer_end, :size => 4 %>
     </li>
     <li<%= mark_if_changed(@trip,:mileage) %>>
@@ -181,7 +181,7 @@
       </p>
     </li>
     <li<%= mark_if_changed(@trip,:fare) %>>
-      <%= f.label :fare, "Fare:" %> 
+      <%= f.label :fare, "Fare:" %>
       <%= f.text_field :fare, :size => 4 %>
     </li>
     <li<%= mark_if_changed(@trip,:calculated_bpa_fare) %>>
@@ -205,23 +205,29 @@
       </p>
     </li>
     <li<%= mark_if_changed(@trip,:purpose_type) %>>
-      <%= f.label :purpose_type, "Purpose Type:" %> 
+      <%= f.label :purpose_type, "RM Trip Purpose:" %>
       <%= f.text_field :purpose_type %>
     </li>
+    <li>
+      <%= f.label :summary_purpose, "Trip Purpose:" %>
+      <p class="disabled-input">
+        <%= @trip.summary_purpose %>
+      </p>
+    </li>
     <li<%= mark_if_changed(@trip,:guest_count) %>>
-      <%= f.label :guest_count, "Guest Count:" %> 
+      <%= f.label :guest_count, "Guest Count:" %>
       <%= f.text_field :guest_count, :size => 3 %>
     </li>
     <li<%= mark_if_changed(@trip,:attendant_count) %>>
-      <%= f.label :attendant_count, "Attendant Count:" %> 
+      <%= f.label :attendant_count, "Attendant Count:" %>
       <%= f.text_field :attendant_count, :size => 3 %>
     </li>
     <li<%= mark_if_changed(@trip,:mobility) %>>
-      <%= f.label :mobility, "Mobility:" %> 
+      <%= f.label :mobility, "Mobility:" %>
       <%= f.text_field :mobility %>
     </li>
     <li<%= mark_if_changed(@trip,:bpa_driver_name) %>>
-      <%= f.label :bpa_driver_name, "BPA Driver Name:" %> 
+      <%= f.label :bpa_driver_name, "BPA Driver Name:" %>
       <%= f.text_field :bpa_driver_name %>
     </li>
   </ol>
@@ -258,16 +264,16 @@
       </p>
     </li>
     <li<%= mark_if_changed(@trip,:result_code) %>>
-      <%= f.label :result_code, "Result Code:" %> 
+      <%= f.label :result_code, "Result Code:" %>
       <%= f.select :result_code, @result_codes, :include_blank => true %>
     </li>
     <li<%= mark_if_changed(@trip,:allocation_id) %>>
-      <%= f.label :allocation, "Allocation:" %> 
+      <%= f.label :allocation, "Allocation:" %>
       <%= f.collection_select :allocation_id, @allocations, :id, :select_label %>
       <%= link_to "Details", [:edit, @trip.allocation], :class => :details if @trip.allocation %>
     </li>
     <li<%= mark_if_changed(@trip,:customer_pay) %>>
-      <%= f.label :customer_pay, "Customer Pay:" %> 
+      <%= f.label :customer_pay, "Customer Pay:" %>
       <%= f.text_field :customer_pay, :size => 4 %>
     </li>
     <li<%= mark_if_changed(@trip,:apportioned_duration) %>>
@@ -301,7 +307,7 @@
       </p>
     </li>
     <li>
-      <%= f.label :complete, "Data Entry Complete:" %> 
+      <%= f.label :complete, "Data Entry Complete:" %>
       <%= f.check_box :complete, :tabindex=>3 %>
     </li>
     <li>
