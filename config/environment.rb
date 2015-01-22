@@ -28,7 +28,7 @@ TRIP_PURPOSE_TO_SUMMARY_PURPOSE = {
   "Shopping"                  => "Shopping",
   "Supportive Services"       => "Personal/Support Services",
   "Volunteer Work"            => "Volunteer Work",
-  "WNMT Prescriptions"        => "Personal/Support Services"
+  "WNMT Prescriptions"        => "Personal/Support Services",
   ""                          => "Unspecified",
   nil                         => "Unspecified"
 }
