@@ -62,9 +62,13 @@ class Trip < ActiveRecord::Base
   scope :elderly_and_disabled_only, -> { where :customer_type => 'Honored' }
   scope :without_no_shows,          -> { where "trips.result_code <> ?","NS" }
   scope :without_cancels,           -> { where "trips.result_code <> ?","CANC" }
-  scope :spd, -> {
+  scope :washington_medicaid_nonmedical, -> {
           joins(:allocation => {:project => :funding_source}).
           where(:funding_sources => {:funding_source_name => 'SPD'})
+        }
+  scope :multnomah_medicaid_nonmedical, -> {
+          joins(:allocation => {:project => :funding_source}).
+          where(:projects => {:project_number => '1094'})
         }
   scope :multnomah_ads, -> {
           joins(:allocation => {:project => :funding_source}).
@@ -171,7 +175,7 @@ class Trip < ActiveRecord::Base
     end
   end 
 
-  def spd_mileage
+  def washington_medicaid_nonmedical_billable_mileage
     if self.estimated_trip_distance_in_miles < 5
       return BigDecimal("0")
     elsif self.estimated_trip_distance_in_miles < 20

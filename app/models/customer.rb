@@ -9,7 +9,7 @@ class Customer < ActiveRecord::Base
   validates_uniqueness_of :routematch_customer_id
 
   def name
-    return "#{last_name}, #{first_name} #{middle_initial}"
+    "#{last_name}, #{first_name.gsub(/\s*\(.*?\)/,"")} #{middle_initial}"
   end
   
   def age_in_years(as_of = Date.today)

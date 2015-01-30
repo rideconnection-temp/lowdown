@@ -21,7 +21,7 @@ Lowdown::Application.routes.draw do
   resources :predefined_reports, only: [:index] do
     collection do
       get :premium_service_billing
-      get :spd
+      get :medicaid_nonmedical
       get :trip_purpose
       get :quarterly_narrative
       get :trimet_export

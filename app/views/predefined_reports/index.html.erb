@@ -4,18 +4,22 @@
 
 <div id="all-reports">
   <div class="predefined-report" data-name="monthly">
-    <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: spd_predefined_reports_path do |f| %>
+    <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: medicaid_nonmedical_predefined_reports_path do |f| %>
       <fieldset>
-        <h1 class="report-header">SPD Report</h1>
+        <h1 class="report-header">Medicaid Waivered Nonmedical</h1>
         <p></p>
         <ol>
           <li>
-            <label>Start date:</label>
-            <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :spd_start_date, required: :required %>
+            <%= f.label :county %>
+            <%= f.select :county, %w(Multnomah Washington) %>
           </li>
           <li>
-            <label>End date:</label>
-            <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :spd_end_date, required: :required %>
+            <%= f.label :start_date, for: :medicaid_nonmedical_start_date %>
+            <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :medicaid_nonmedical_start_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :end_date, for: :medicaid_nonmedical_end_date %>
+            <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :medicaid_nonmedical_end_date, required: :required %>
           </li>
         </ol>
         <input type="submit" name="report" value="Report">
@@ -27,7 +31,7 @@
   <div class="predefined-report" data-name="monthly">
     <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: trip_purpose_predefined_reports_path do |f| %>
       <fieldset>
-        <h1 class="report-header">Trip Purpose Report</h1>
+        <h1 class="report-header">Trip Purposes</h1>
         <p></p>
         <ol>
           <li>
@@ -52,7 +56,7 @@
   <div class="predefined-report" data-name="monthly">
     <%= form_for @fiscal_year_to_date_query, html: { :class => "run-report", method: 'get' }, url: quarterly_narrative_predefined_reports_path do |f| %>
       <fieldset>
-        <h1 class="report-header">Quarterly Narrative Report</h1>
+        <h1 class="report-header">Quarterly Narrative</h1>
         <p></p>
         <ol>
           <li>
@@ -101,7 +105,7 @@
   <div class="predefined-report" data-name="monthly">
     <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: age_and_ethnicity_predefined_reports_path do |f| %>
       <fieldset>
-        <h1 class="report-header">Age & Ethnicity Report</h1>
+        <h1 class="report-header">Age & Ethnicity</h1>
         <p></p>
         <ol>
           <li>
@@ -129,7 +133,7 @@
   <div class="predefined-report" data-name="monthly">
     <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: premium_service_billing_predefined_reports_path do |f| %>
       <fieldset>
-        <h1 class="report-header">Premium Service Billing Report</h1>
+        <h1 class="report-header">Premium Service Billing</h1>
         <p></p>
         <ol>
           <li>
@@ -158,7 +162,7 @@
   <div class="predefined-report" data-name="monthly">
     <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: trimet_export_predefined_reports_path do |f| %>
       <fieldset>
-        <h1 class="report-header">TriMet E&D Reports</h1>
+        <h1 class="report-header">TriMet E&D</h1>
         <p></p>
         <ol>
           <li>

@@ -121,9 +121,14 @@ class PredefinedReportsController < ApplicationController
     end
   end
 
-  def spd
+  def medicaid_nonmedical
     @query = ReportQuery.new(params[:report_query])
-    trips = Trip.current_versions.completed.spd.date_range(@query.start_date,@query.after_end_date).includes(:customer).order("start_at DESC")
+    trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).includes(:customer).order("start_at DESC")
+    if @query.county == "Multnomah"
+      trips = trips.multnomah_medicaid_nonmedical
+    else
+      trips = trips.washington_medicaid_nonmedical
+    end
 
     @offices = {}
     @customer_rows = {}
@@ -137,7 +142,13 @@ class PredefinedReportsController < ApplicationController
       row_key = trip.customer_id
       # Use the most recent case_manager_office a customer has for all trips
       customer_office[trip.customer_id] = trip.case_manager_office if customer_office[trip.customer_id].nil?
-      office_key = (customer_office[trip.customer_id] || "Unspecified")
+      if @query.county == "Multnomah"
+        office_key = "Any"
+        mileage = trip.estimated_trip_distance_in_miles
+      else
+        office_key = (customer_office[trip.customer_id] || "Unspecified")
+        mileage = trip.washington_medicaid_nonmedical_billable_mileage
+      end
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
       unless @offices.has_key?(office_key)
         @offices[office_key] = {} 
@@ -166,32 +177,32 @@ class PredefinedReportsController < ApplicationController
       end
 
       row[:billed_rides] += 1
-      row[:billable_mileage] += trip.spd_mileage
+      row[:billable_mileage] += mileage
       row[:mobility] = trip.wheelchair? if trip.wheelchair?
       row[:trips] << {date: trip.date,
                       estimated_mileage: trip.estimated_trip_distance_in_miles,
-                      billable_mileage: trip.spd_mileage,
+                      billable_mileage: mileage,
                       mobility: trip.wheelchair?}
 
       @offices[office_key][:billed_rides] += 1
-      @offices[office_key][:billable_mileage] += trip.spd_mileage
+      @offices[office_key][:billable_mileage] += mileage
 
       @all_billed_rides += 1
-      @all_mileage += trip.spd_mileage
+      @all_mileage += mileage
       if trip.wheelchair?.nil?
         @unknown_billed_rides += 1
-        @unknown_mileage += trip.spd_mileage
+        @unknown_mileage += mileage
       elsif trip.wheelchair?
         @wc_billed_rides += 1
-        @wc_mileage += trip.spd_mileage
+        @wc_mileage += mileage
       else
         @nonwc_billed_rides += 1
-        @nonwc_mileage += trip.spd_mileage
+        @nonwc_mileage += mileage
       end
     end
     if params[:output] == 'CSV'
-      @filename = "SPD Report #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
-      render "spd.csv" 
+      @filename = "#{@query.county} Medicaid Nonmedical Report #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
+      render "medicaid_nonmedical.csv" 
     end
   end
 

@@ -1,6 +1,6 @@
 <% for office in @customer_rows.keys.sort %>
   <div id="page-header">
-    <h1>SPD Report</h1>
+    <h1><%= @query.county %> County Waivered Nonmedical Report</h1>
   </div>
 
   <h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
