@@ -143,10 +143,10 @@ class PredefinedReportsController < ApplicationController
       # Use the most recent case_manager_office a customer has for all trips
       customer_office[trip.customer_id] = trip.case_manager_office if customer_office[trip.customer_id].nil?
       if @query.county == "Multnomah"
-        office_key = "Any"
+        office_key = nil
         mileage = trip.estimated_trip_distance_in_miles
       else
-        office_key = (customer_office[trip.customer_id] || "Unspecified")
+        office_key = "#{(customer_office[trip.customer_id] || "Unspecified")} Office"
         mileage = trip.washington_medicaid_nonmedical_billable_mileage
       end
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
