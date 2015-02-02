@@ -3,13 +3,11 @@ class FlexReport < ActiveRecord::Base
 
   validates :name, :presence => true, :uniqueness => true
   validates_date :start_date, :end_date, :allow_blank => true
-  validates_date :end_month
 
   attr_accessor :is_new
   attr_accessor :allocation_objects
   attr_accessor :report_rows
   attr_reader   :results
-  columns_hash["end_month"] = ActiveRecord::ConnectionAdapters::Column.new("end_month", nil, "date")
 
   TimePeriods = %w{semimonth month quarter year}
 
@@ -61,7 +59,7 @@ class FlexReport < ActiveRecord::Base
   end
 
   def end_month=(value)
-    self.end_date = Date.new(value.year,value.month,1) + 1.month - 1.day
+    self.end_date = Date.new(value[1],value[2],1) + 1.month - 1.day
   end
 
   def after_end_date

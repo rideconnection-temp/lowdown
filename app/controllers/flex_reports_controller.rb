@@ -41,6 +41,7 @@ class FlexReportsController < ApplicationController
     @report = FlexReport.find params[:id]
     if params[:flex_report].present?
       @report.attributes = safe_params_for_show
+      byebug
       @report.save
       @report.attributes = safe_params
     end

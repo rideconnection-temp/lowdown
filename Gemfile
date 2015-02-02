@@ -12,7 +12,7 @@ gem 'will_paginate'
 gem "userstamp",
     git: 'https://github.com/stricte/userstamp.git',
     branch: 'rails4'
-gem 'validates_timeliness'
+gem 'jc-validates_timeliness'
 gem 'csv_builder'
 gem 'point_in_time',
     git: 'https://github.com/rideconnection/point_in_time'
