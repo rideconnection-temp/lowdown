@@ -2,7 +2,7 @@ class Allocation < ActiveRecord::Base
   has_many :trips
   has_many :summaries
   belongs_to :provider
-  belongs_to :reporting_agency, :class_name => "Provider", :foreign_key => :reporting_agency_id
+  belongs_to :reporting_agency, class_name: "Provider", foreign_key: :reporting_agency_id
   belongs_to :project
   belongs_to :trimet_provider
   belongs_to :trimet_program
@@ -13,20 +13,20 @@ class Allocation < ActiveRecord::Base
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
   ELIGIBILITIES = ['Elderly & Disabled','Unrestricted','Not Applicable']
 
-  validates :name, :presence => true
-  validates :admin_ops_data, :inclusion => { :in => DATA_OPTIONS }
-  validates :vehicle_maint_data, :inclusion => { :in => DATA_OPTIONS }
+  validates :name, presence: true
+  validates :admin_ops_data, inclusion: { in: DATA_OPTIONS }
+  validates :vehicle_maint_data, inclusion: { in: DATA_OPTIONS }
   validate  :require_consistent_trimet_fields
   validate  :require_consistent_provider_fields
   validates_date :activated_on
-  validates_date :inactivated_on, :allow_blank => true, :after => :activated_on, :after_message => "must be after the first day activated"
+  validates_date :inactivated_on, allow_blank: true, after: :activated_on, after_message: "must be after the first day activated"
   self.per_page = 30
   validate do |rec|
-    if Allocation.active_on(rec.activated_on).where("id<>?",rec.id || 0).where(:name => rec.name).exists?
+    if Allocation.active_on(rec.activated_on).where("id<>?",rec.id || 0).where(name: rec.name).exists?
       rec.errors.add :name, "has already been taken"
     end
     if rec.override_id.present? && rec.routematch_provider_code.present?
-      if Allocation.active_on(rec.activated_on).where("id<>?",rec.id || 0).where(:override_id => rec.override_id, :routematch_provider_code => rec.routematch_provider_code).exists?
+      if Allocation.active_on(rec.activated_on).where("id<>?",rec.id || 0).where(override_id: rec.override_id, routematch_provider_code: rec.routematch_provider_code).exists?
         rec.errors.add :override_id, "and provider code have already been taken"
       end
     end
@@ -38,7 +38,7 @@ class Allocation < ActiveRecord::Base
   scope :summary_required, -> { where "trip_collection_method = 'summary' OR run_collection_method = 'summary' OR cost_collection_method = 'summary' OR admin_ops_data = 'Required' or vehicle_maint_data = 'Required'" }
   scope :not_recently_inactivated, -> { where "inactivated_on is null or inactivated_on > current_date - interval '3 months'" }
   scope :active_as_of, lambda{|date| where "inactivated_on IS NULL OR inactivated_on > COALESCE(?,current_date - interval '3 months')", date }
-  scope :spd, -> { includes(:project).where(:projects => {:funding_source => {:funding_source_name => 'SPD'}}) }
+  scope :spd, -> { includes(:project).where(projects: {funding_source: {funding_source_name: 'SPD'}}) }
   scope :active_on, lambda{|date| where("activated_on <= ? AND (inactivated_on IS NULL OR inactivated_on > ?)",date,date)}
   scope :active_in_range, lambda{|start_date,after_end_date| where("(inactivated_on IS NULL OR inactivated_on > ?) AND activated_on < ?", start_date, after_end_date) }
   scope :in_trimet_groupings, -> { where('trimet_program_id IS NOT NULL AND trimet_provider_id IS NOT NULL').includes(:trimet_program,:trimet_provider)}

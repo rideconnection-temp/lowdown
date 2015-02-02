@@ -321,7 +321,7 @@ class TripImport < ActiveRecord::Base
 
   #This should trigger the apportion_shared_rides callback in the trips model.  
   def apportion_imported_shared_rides
-    trips = Trip.current_versions.where(:imported_at => self.import_start_time).completed.shared.order(:date,:routematch_share_id)
+    trips = Trip.current_versions.where(imported_at: self.import_start_time).completed.shared.order(:date,:routematch_share_id)
     trip_count = 0
     this_share_id = 0
     for trip in trips
@@ -338,7 +338,7 @@ class TripImport < ActiveRecord::Base
 
   # Not needed, as apportioning is handled prior to import.
   def apportion_imported_runs
-    runs = Run.current_versions.where(:imported_at => self.import_start_time).has_odometer_log.has_time_log
+    runs = Run.current_versions.where(imported_at: self.import_start_time).has_odometer_log.has_time_log
     run_count = 0
     for run in runs
       run.do_not_version = true
@@ -350,13 +350,13 @@ class TripImport < ActiveRecord::Base
 
   # Add the trip import id after the import is complete, once the id has been generated
   def associate_records_with_trip_import
-    Run.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
-    Trip.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
+    Run.where(imported_at: self.import_start_time).update_all trip_import_id: self.id
+    Trip.where(imported_at: self.import_start_time).update_all trip_import_id: self.id
   end
 
   def mark_record_data_entry_complete
-    Run.where(:imported_at => self.import_start_time).update_all :complete => true
-    Trip.where(:imported_at => self.import_start_time).update_all :complete => true
+    Run.where(imported_at: self.import_start_time).update_all complete: true
+    Trip.where(imported_at: self.import_start_time).update_all complete: true
   end
 
   # Source data can have 1 or -1 as true. 0 and nil are false

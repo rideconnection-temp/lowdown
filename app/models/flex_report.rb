@@ -1,8 +1,8 @@
 class FlexReport < ActiveRecord::Base
   belongs_to :report_category
 
-  validates :name, :presence => true, :uniqueness => true
-  validates_date :start_date, :end_date, :allow_blank => true
+  validates :name, presence: true, uniqueness: true
+  validates_date :start_date, :end_date, allow_blank: true
 
   attr_accessor :is_new
   attr_accessor :allocation_objects
@@ -335,23 +335,23 @@ class FlexReport < ActiveRecord::Base
 
     if elderly_and_disabled_only
       ed_handling_values = [
-        {:filter_trips_for_ed_only => false, :allocations => :ed}, 
-        {:filter_trips_for_ed_only => true,  :allocations => :non_ed}
+        {filter_trips_for_ed_only: false, allocations: :ed}, 
+        {filter_trips_for_ed_only: true,  allocations: :non_ed}
       ]
     else
       ed_handling_values = [
-        {:filter_trips_for_ed_only => false, :allocations => :all}
+        {filter_trips_for_ed_only: false, allocations: :all}
       ]
     end
 
     date_ranges = []
     if (TimePeriods & group_fields).size > 0
       @allocation_objects.each do |ao|
-        this_date_range = {:start_date => ao.collection_start_date, :after_end_date => ao.collection_after_end_date}
+        this_date_range = {start_date: ao.collection_start_date, after_end_date: ao.collection_after_end_date}
         date_ranges << this_date_range unless date_ranges.include?(this_date_range)
       end
     else
-      date_ranges << {:start_date => start_date, :after_end_date => after_end_date}
+      date_ranges << {start_date: start_date, after_end_date: after_end_date}
     end
 
     date_ranges.each do |date_range|
@@ -648,7 +648,7 @@ class FlexReport < ActiveRecord::Base
 
   def common_filters(model, select, allocations, this_start_date, this_after_end_date, options)
     results = model.select(select).group(:allocation_id)
-    results = results.where(:allocation_id => allocations.map{|a| a.id}.uniq)
+    results = results.where(allocation_id: allocations.map{|a| a.id}.uniq)
     results = results.current_versions.date_range(this_start_date, this_after_end_date)
     results = results.data_entry_complete unless options[:pending]
     results

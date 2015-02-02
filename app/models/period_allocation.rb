@@ -30,7 +30,7 @@ class PeriodAllocation
     if advance == 0.5
       period_after_end_date = period_start_date + 15
     else
-      period_after_end_date = period_start_date.advance(:months=>advance)
+      period_after_end_date = period_start_date.advance(months: advance)
     end
 
     periods = []
@@ -45,15 +45,15 @@ class PeriodAllocation
 
       if advance == 0.5
         if period_start_date.day == 1 
-          period_after_end_date = period_start_date.advance(:months=>1)
-          period_start_date = period_start_date.change(:day=>16)
+          period_after_end_date = period_start_date.advance(months: 1)
+          period_start_date = period_start_date.change(day: 16)
         else
           period_start_date = period_after_end_date
-          period_after_end_date = period_start_date.change(:day=>16)
+          period_after_end_date = period_start_date.change(day: 16)
         end
       else
-        period_start_date = period_start_date.advance(:months=>advance)
-        period_after_end_date = period_after_end_date.advance(:months=>advance)
+        period_start_date = period_start_date.advance(months: advance)
+        period_after_end_date = period_after_end_date.advance(months: advance)
       end
     end while period_start_date < after_end_date
 
