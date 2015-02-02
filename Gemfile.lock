@@ -1,15 +1,15 @@
 GIT
-  remote: https://github.com/delynn/userstamp.git
-  revision: 777633aa564f8457c999ddb96afa4c5ae18d319f
-  ref: 777633a
-  specs:
-    userstamp (2.0.2)
-
-GIT
   remote: https://github.com/rideconnection/point_in_time
   revision: 2982d1c248d08c456e517d81452cf54a7e2b53de
   specs:
     point_in_time (1.1.0)
+
+GIT
+  remote: https://github.com/stricte/userstamp.git
+  revision: bd0896164a82f7db93bf7b62690169c14b23718a
+  branch: rails4
+  specs:
+    userstamp (2.0.2)
 
 GEM
   remote: http://rubygems.org/

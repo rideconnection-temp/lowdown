@@ -1,8 +1,10 @@
 class Run < ActiveRecord::Base
   has_many :trips
   belongs_to :trip_import
-  stampable :updater_attribute  => :updated_by,
-            :creator_attribute  => :updated_by
+  stampable updater_attribute: :updated_by,
+            creator_attribute: :updated_by,
+            creator_association: :run_creator,
+            updater_association: :run_updater
 
   after_save :apportion_run_based_trips
 
@@ -10,8 +12,8 @@ class Run < ActiveRecord::Base
 
   scope :has_odometer_log,        -> { where('odometer_start IS NOT NULL and odometer_end IS NOT NULL') }
   scope :has_time_log,            -> { where('start_at IS NOT NULL and end_at IS NOT NULL') }
-  scope :data_entry_complete,     -> { where(:complete => true) }
-  scope :data_entry_not_complete, -> { where(:complete => false) }
+  scope :data_entry_complete,     -> { where(complete: true) }
+  scope :data_entry_not_complete, -> { where(complete: false) }
   scope :for_date_range,    lambda {|start_date, end_date| where("date >= ? AND date < ?", start_date, end_date) }
   scope :for_provider,      lambda {|provider_id| where("runs.id IN (SELECT run_id FROM trips where allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?))",provider_id)}
   scope :for_allocation_id, lambda {|allocation_id| where("runs.id IN (SELECT run_id FROM trips where allocation_id = ?)",allocation_id)}
@@ -74,7 +76,7 @@ class Run < ActiveRecord::Base
 
   def apportion_run_based_trips
     unless bulk_import
-      r = self.trips.current_versions.completed.includes(:allocation).where(:allocations => {:run_collection_method =>'runs'})
+      r = self.trips.current_versions.completed.includes(:allocation).where(allocations: {run_collection_method: 'runs'})
       trip_count = r.count 
       if trip_count > 0 
         ratio = 1 / trip_count.to_f

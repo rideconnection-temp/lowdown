@@ -10,16 +10,17 @@ gem 'will_paginate'
 # Using userstamp from git for now, because 2.0.2 (Rails 3.2 compatible) has
 # not been uploaded to rubygems as of this writing.
 gem "userstamp",
-  :git => "https://github.com/delynn/userstamp.git",
-  :ref => "777633a"
+    git: 'https://github.com/stricte/userstamp.git',
+    branch: 'rails4'
 gem 'validates_timeliness'
 gem 'csv_builder'
-gem 'point_in_time',        :git => 'https://github.com/rideconnection/point_in_time'
+gem 'point_in_time',
+    git: 'https://github.com/rideconnection/point_in_time'
 
 # Deploy with Capistrano
-gem "capistrano",     :require => false # We need it to be installed, but it's
-gem "capistrano-ext", :require => false # not a runtime dependency
-gem "rvm-capistrano", :require => false
+gem "capistrano",     require: false # We need it to be installed, but it's
+gem "capistrano-ext", require: false # not a runtime dependency
+gem "rvm-capistrano", require: false
 
 group :production do
   gem 'exception_notification'
@@ -30,7 +31,7 @@ group :development do
 end
 
 group :test, :development do
-  gem 'sqlite3', :require => 'sqlite3'
+  gem 'sqlite3', require: 'sqlite3'
   gem 'byebug'
   gem 'rspec-rails'
   gem 'capybara'
