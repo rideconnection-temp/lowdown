@@ -28,6 +28,7 @@ end
 
 group :development do
   gem 'thin'
+  gem 'spring'
 end
 
 group :test, :development do
