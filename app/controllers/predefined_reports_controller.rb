@@ -137,6 +137,7 @@ class PredefinedReportsController < ApplicationController
     @customer_count = 0
     @all_billed_rides = @wc_billed_rides = @nonwc_billed_rides = @unknown_billed_rides = 0
     @all_mileage = @wc_mileage = @nonwc_mileage = @unknown_mileage = BigDecimal("0")
+    @all_fares = @wc_fares = @nonwc_fares = @unknown_fares = BigDecimal("0")
 
     for trip in trips
       row_key = trip.customer_id
@@ -144,18 +145,17 @@ class PredefinedReportsController < ApplicationController
       customer_office[trip.customer_id] = trip.case_manager_office if customer_office[trip.customer_id].nil?
       if @query.county == "Multnomah"
         office_key = nil
-        mileage = trip.estimated_trip_distance_in_miles
       else
         office_key = "#{(customer_office[trip.customer_id] || "Unspecified")} Office"
-        mileage = trip.washington_medicaid_nonmedical_billable_mileage
       end
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
       unless @offices.has_key?(office_key)
         @offices[office_key] = {} 
-        @offices[office_key][:approved_rides] = 0
-        @offices[office_key][:billed_rides] = 0
+        @offices[office_key][:approved_rides]   = 0
+        @offices[office_key][:billed_rides]     = 0
         @offices[office_key][:billable_mileage] = BigDecimal.new("0")
-        @offices[office_key][:customer_count] = 0
+        @offices[office_key][:fare]             = BigDecimal.new("0")
+        @offices[office_key][:customer_count]   = 0
       end
 
       row = @customer_rows[office_key][row_key]
@@ -164,40 +164,48 @@ class PredefinedReportsController < ApplicationController
         @offices[office_key][:customer_count] += 1
         @customer_count += 1
         @approved_rides += trip.approved_rides.to_i
-        row = {customer: trip.customer,
-               billed_rides: 0, 
-               billable_mileage: BigDecimal.new("0"), 
-               mobility: trip.wheelchair?,
-               date_enrolled: trip.date_enrolled,
-               service_end: trip.service_end,
-               approved_rides: trip.approved_rides,
-               case_manager: trip.case_manager}
+        row = {customer:          trip.customer,
+               billed_rides:      0, 
+               billable_mileage:  BigDecimal.new("0"), 
+               fare:              BigDecimal.new("0"),
+               mobility:          trip.wheelchair?,
+               date_enrolled:     trip.date_enrolled,
+               service_end:       trip.service_end,
+               approved_rides:    trip.approved_rides,
+               case_manager:      trip.case_manager}
         @customer_rows[office_key][row_key] = row
         row[:trips] = []
       end
 
-      row[:billed_rides] += 1
-      row[:billable_mileage] += mileage
-      row[:mobility] = trip.wheelchair? if trip.wheelchair?
-      row[:trips] << {date: trip.date,
-                      estimated_mileage: trip.estimated_trip_distance_in_miles,
-                      billable_mileage: mileage,
-                      mobility: trip.wheelchair?}
+      row[:billed_rides]      += 1
+      row[:billable_mileage]  += trip.washington_medicaid_nonmedical_billable_mileage
+      row[:fare]              += trip.fare
+      row[:mobility]           = trip.wheelchair? if trip.wheelchair?
+      row[:trips]             << {date:               trip.date,
+                                  estimated_mileage:  trip.estimated_trip_distance_in_miles,
+                                  billable_mileage:   trip.washington_medicaid_nonmedical_billable_mileage,
+                                  fare:               trip.fare,
+                                  mobility:           trip.wheelchair?}
 
-      @offices[office_key][:billed_rides] += 1
-      @offices[office_key][:billable_mileage] += mileage
+      @offices[office_key][:billed_rides]     += 1
+      @offices[office_key][:billable_mileage] += trip.washington_medicaid_nonmedical_billable_mileage
+      @offices[office_key][:fare]             += trip.fare
 
-      @all_billed_rides += 1
-      @all_mileage += mileage
+      @all_billed_rides       += 1
+      @all_mileage            += trip.washington_medicaid_nonmedical_billable_mileage
+      @all_fares              += trip.fare
       if trip.wheelchair?.nil?
         @unknown_billed_rides += 1
-        @unknown_mileage += mileage
+        @unknown_mileage      += trip.washington_medicaid_nonmedical_billable_mileage
+        @unknown_fares        += trip.fare
       elsif trip.wheelchair?
-        @wc_billed_rides += 1
-        @wc_mileage += mileage
+        @wc_billed_rides      += 1
+        @wc_mileage           += trip.washington_medicaid_nonmedical_billable_mileage
+        @wc_fares             += trip.fare
       else
-        @nonwc_billed_rides += 1
-        @nonwc_mileage += mileage
+        @nonwc_billed_rides   += 1
+        @nonwc_mileage        += trip.washington_medicaid_nonmedical_billable_mileage
+        @nonwc_fares          += trip.fare
       end
     end
     if params[:output] == 'CSV'
