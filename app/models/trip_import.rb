@@ -119,7 +119,7 @@ class TripImport < ActiveRecord::Base
           if address_map.has_key?(record[:home_routematch_address_id])
             current_home_id = address_map[record[:home_routematch_address_id]]
           else
-            current_home = Address.find_or_initialize_by_routematch_address_id(record[:home_routematch_address_id])
+            current_home = Address.find_or_initialize_by(routematch_address_id: record[:home_routematch_address_id])
             current_home.routematch_address_id = record[:home_routematch_address_id]
             current_home.common_name = record[:home_common_name]
             current_home.building_name = record[:home_building_name]
@@ -142,7 +142,7 @@ class TripImport < ActiveRecord::Base
           if customer_map.has_key?(record[:routematch_customer_id])
             current_customer_id = customer_map[record[:routematch_customer_id]]
           else
-            current_customer = Customer.find_or_initialize_by_routematch_customer_id(record[:routematch_customer_id])
+            current_customer = Customer.find_or_initialize_by(routematch_customer_id: record[:routematch_customer_id])
             current_customer.routematch_customer_id = record[:routematch_customer_id]
             current_customer.last_name = record[:last_name]
             current_customer.first_name = record[:first_name]
@@ -172,7 +172,7 @@ class TripImport < ActiveRecord::Base
           if address_map.has_key?(record[:pickup_routematch_address_id])
             current_pickup_id = address_map[record[:pickup_routematch_address_id]]
           else
-            current_pickup = Address.find_or_initialize_by_routematch_address_id(record[:pickup_routematch_address_id])
+            current_pickup = Address.find_or_initialize_by(routematch_address_id: record[:pickup_routematch_address_id])
             current_pickup.routematch_address_id = record[:pickup_routematch_address_id]
             current_pickup.common_name = record[:pickup_common_name]
             current_pickup.building_name = record[:pickup_building_name]
@@ -193,7 +193,7 @@ class TripImport < ActiveRecord::Base
           if address_map.has_key?(record[:dropoff_routematch_address_id])
             current_dropoff_id = address_map[record[:dropoff_routematch_address_id]]
           else
-            current_dropoff = Address.find_or_initialize_by_routematch_address_id(record[:dropoff_routematch_address_id])
+            current_dropoff = Address.find_or_initialize_by(routematch_address_id: record[:dropoff_routematch_address_id])
             current_dropoff.routematch_address_id = record[:dropoff_routematch_address_id]
             current_dropoff.common_name = record[:dropoff_common_name]
             current_dropoff.building_name = record[:dropoff_building_name]
@@ -218,7 +218,7 @@ class TripImport < ActiveRecord::Base
                 if run_map.has_key?(record[:routematch_run_id])
                   current_run_id = run_map[record[:routematch_run_id]]
                 else
-                  current_run = Run.current_versions.find_or_initialize_by_routematch_id(record[:routematch_run_id])
+                  current_run = Run.current_versions.find_or_initialize_by(routematch_id: record[:routematch_run_id])
                   current_run.name = record[:run_name]
                   current_run.date = record[:date]
                   current_run.start_at = record[:run_start_at]
@@ -256,7 +256,7 @@ class TripImport < ActiveRecord::Base
               end
             end
 
-            current_trip = Trip.current_versions.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
+            current_trip = Trip.current_versions.find_or_initialize_by(routematch_trip_id: record[:routematch_trip_id])
             current_trip.routematch_trip_id = record[:routematch_trip_id]
             current_trip.date = record[:date]
             current_trip.result_code = record[:result_code]
