@@ -4,6 +4,8 @@ lock '3.3.3'
 set :application, 'lowdown'
 set :repo_url, 'git://github.com/rideconnection/lowdown.git'
 set :deploy_via, :remote_cache
+
+# Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/deployer/rails/lowdown'
 
 # RVM options
@@ -16,9 +18,6 @@ set :conditionally_migrate, false
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
-
-# Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, '/var/www/my_app_name'
 
 # Default value for :scm is :git
 # set :scm, :git
