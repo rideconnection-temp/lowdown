@@ -2,19 +2,26 @@ development:
   exception_recipients: [me@example.com]
   exception_email_prefix: '[Lowdown] '
   exception_sender_address: '"Error Notifier" <notifier@example.com>'
-  # Create your own unique secret using 'SecureRandom(64)' in IRB
-  secret_token: '526e98c3f4af6476a1bc4b40a48f0f87ee27ebb92b73ee0a9075aeeedabd5ed12a7ddc6d72fdebb387cc13ef7d2d62af14259b055146bb19ef78ccb81741b620'
+  mailer_host: 'dev.example.org/service'
+  devise_mailer_sender: 'me@example.com'
 
 test:
   exception_recipients: [me@example.com]
   exception_email_prefix: '[Lowdown] '
   exception_sender_address: '"Error Notifier" <notifier@example.com>'
-  # Create your own unique secret using 'SecureRandom(64)' in IRB
-  secret_token: '526e98c3f4af6476a1bc4b40a48f0f87ee27ebb92b73ee0a9075aeeedabd5ed12a7ddc6d72fdebb387cc13ef7d2d62af14259b055146bb19ef78ccb81741b620'
+  mailer_host: 'test.example.org/service'
+  devise_mailer_sender: 'me@example.com'
+
+staging:
+  exception_recipients: [me@example.com]
+  exception_email_prefix: '[Lowdown] '
+  exception_sender_address: '"Error Notifier" <notifier@example.com>'
+  mailer_host: 'staging.example.org/service'
+  devise_mailer_sender: 'me@example.com'
 
 production:
   exception_recipients: [me@example.com]
   exception_email_prefix: '[Lowdown] '
   exception_sender_address: '"Error Notifier" <notifier@example.com>'
-  # Create your own unique secret using 'SecureRandom(64)' in IRB
-  secret_token: '526e98c3f4af6476a1bc4b40a48f0f87ee27ebb92b73ee0a9075aeeedabd5ed12a7ddc6d72fdebb387cc13ef7d2d62af14259b055146bb19ef78ccb81741b620'
+  mailer_host: 'apps.example.org/service'
+  devise_mailer_sender: 'me@example.com'
