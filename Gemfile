@@ -17,18 +17,21 @@ gem 'csv_builder'
 gem 'point_in_time',
     git: 'https://github.com/rideconnection/point_in_time'
 
-# Deploy with Capistrano
-gem "capistrano",     require: false # We need it to be installed, but it's
-gem "capistrano-ext", require: false # not a runtime dependency
-gem "rvm-capistrano", require: false
-
-group :production do
+group :staging, :production do
   gem 'exception_notification'
+  gem 'therubyracer', platforms: :ruby
 end
 
 group :development do
   gem 'thin'
   gem 'spring'
+
+  # Use Capistrano for deployment
+  gem 'capistrano', '~> 3.3'
+  gem 'capistrano-rvm', '~> 0.1.2', require: false
+  gem 'capistrano-rails', '~> 1.1', require: false
+  gem 'capistrano-passenger', '~> 0.0.1', require: false
+  gem 'capistrano-secrets-yml', '~> 1.0.0', require: false
 end
 
 group :test, :development do
