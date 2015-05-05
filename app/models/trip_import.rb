@@ -272,14 +272,11 @@ class TripImport < ActiveRecord::Base
             current_trip.guest_count = record[:guest_count]
             current_trip.attendant_count = record[:attendant_count]
             current_trip.mobility = record[:trip_mobility]
-            if record[:calculated_bpa_fare] =~ /^\d+\.\d\d;\d+\.\d\d$/
-              fare_parts = record[:calculated_bpa_fare].split(";")
-              current_trip.calculated_bpa_fare = BigDecimal.new(fare_parts[0])
-              current_trip.estimated_individual_fare = BigDecimal.new(fare_parts[1])
-            else
-              current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
+            if match = record[:calculated_bpa_fare].to_s.match(/^\$?(\d+\.\d\d);\$?(\d+\.\d\d);(.*)$/)
+              current_trip.calculated_bpa_fare, current_trip.estimated_individual_fare, current_trip.bpa_driver_name = match.captures
+            elsif match = record[:calculated_bpa_fare].to_s.match(/^\$?(\d+\.\d\d)$/)
+              current_trip.calculated_bpa_fare = match.captures.first
             end
-            current_trip.bpa_driver_name = record[:bpa_driver_name]
             current_trip.volunteer_trip = make_boolean(record[:volunteer_trip])
             current_trip.in_trimet_district = make_boolean(record[:in_trimet_district])
             current_trip.bpa_billing_distance = record[:bpa_billing_distance]
