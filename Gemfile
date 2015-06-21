@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.0.12'
+gem 'rails', '4.0.13'
 gem 'pg'
 
 gem 'jquery-ui-rails',      '~> 4.2.1'
