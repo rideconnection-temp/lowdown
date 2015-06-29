@@ -3,7 +3,6 @@ lock '3.4.0'
 
 set :application, 'lowdown'
 set :repo_url, 'git://github.com/rideconnection/lowdown.git'
-set :branch, 'upgrade'
 set :deploy_via, :remote_cache
 
 # Default deploy_to directory is /var/www/my_app_name
