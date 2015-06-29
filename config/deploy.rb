@@ -1,8 +1,9 @@
 # config valid only for current version of Capistrano
-lock '3.3.3'
+lock '3.4.0'
 
 set :application, 'lowdown'
 set :repo_url, 'git://github.com/rideconnection/lowdown.git'
+set :branch, 'upgrade'
 set :deploy_via, :remote_cache
 
 # Default deploy_to directory is /var/www/my_app_name
@@ -10,7 +11,7 @@ set :deploy_to, '/home/deployer/rails/lowdown'
 
 # RVM options
 set :rvm_type, :user
-set :rvm_ruby_version, '2.2.0@lowdown'
+set :rvm_ruby_version, '2.2.2@lowdown'
 set :rvm_roles, [:app, :web]
 
 # Rails options
