@@ -4,14 +4,16 @@ lock '3.4.0'
 set :application, 'lowdown'
 set :repo_url, 'git://github.com/rideconnection/lowdown.git'
 set :deploy_via, :remote_cache
-
-# Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, '/home/deployer/rails/lowdown'
+set :default_env, { "RAILS_RELATIVE_URL_ROOT" => "/lowdown" }
 
 # RVM options
 set :rvm_type, :user
 set :rvm_ruby_version, '2.2.2@lowdown'
 set :rvm_roles, [:app, :web]
+
+# Passenger options
+set :passenger_rvm_ruby_version, '2.2.1@passenger'
 
 # Rails options
 set :conditionally_migrate, false
@@ -32,12 +34,11 @@ set :log_level, :info
 set :pty, true
 
 # Default value for :linked_files is []
-set :linked_files, fetch(:linked_files, []).push('config/database.yml')
-set :linked_files, fetch(:linked_files, []).push('config/app_config.yml')
+set :linked_files, fetch(:linked_files, []).push('config/database.yml','config/app_config.yml')
 
 # Default value for linked_dirs is []
 # set :linked_dirs, fetch(:linked_dirs, []).push('bin', 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
-set :linked_dirs, fetch(:linked_dirs, []).push('log')
+set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets')
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -46,5 +47,6 @@ set :linked_dirs, fetch(:linked_dirs, []).push('log')
 set :keep_releases, 20
 
 namespace :deploy do
-  after :migrate, :seed
+  #after :migrate, :seed
+  after :publishing, :restart
 end
