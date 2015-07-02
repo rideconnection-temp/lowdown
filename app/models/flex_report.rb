@@ -59,7 +59,11 @@ class FlexReport < ActiveRecord::Base
   end
 
   def end_month=(value)
-    self.end_date = Date.new(value[1],value[2],1) + 1.month - 1.day
+    if value.is_a?(Hash)
+      self.end_date = Date.new(value[1],value[2],1) + 1.month - 1.day
+    else
+      self.end_date = Date.new(value.year,value.month,1) + 1.month - 1.day
+    end
   end
 
   def after_end_date
