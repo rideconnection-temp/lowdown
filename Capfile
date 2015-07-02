@@ -8,7 +8,7 @@ require 'capistrano/deploy'
 require 'capistrano/rvm'
 require 'capistrano/bundler'
 require 'capistrano/rails'
-require 'capistrano/passenger'
+# require 'capistrano/passenger'
 require 'capistrano/secrets_yml'
 
 # Load custom tasks from `lib/capistrano/tasks' if you have any defined
