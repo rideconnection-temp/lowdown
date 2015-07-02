@@ -5,7 +5,6 @@ set :application, 'lowdown'
 set :repo_url, 'git://github.com/rideconnection/lowdown.git'
 set :deploy_via, :remote_cache
 set :deploy_to, '/home/deployer/rails/lowdown'
-set :default_env, { "RAILS_RELATIVE_URL_ROOT" => "/lowdown" }
 
 # RVM options
 set :rvm_type, :user
@@ -47,6 +46,6 @@ set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', '
 set :keep_releases, 20
 
 namespace :deploy do
-  #after :migrate, :seed
+  after :migrate, :seed
   after :publishing, :restart
 end
