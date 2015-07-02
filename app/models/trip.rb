@@ -284,11 +284,11 @@ private
     trip_count    = r.size
     ride_duration = (r.map(&:end_at).max - r.map(&:start_at).min).to_i
     ride_mileage  = r.map(&:odometer_end).max - r.map(&:odometer_start).min
-    ride_cost     = r.sum(&:fare)
-    all_est_miles = r.sum(&:estimated_trip_distance_in_miles)
+    ride_cost     = r.sum(:fare)
+    all_est_miles = r.sum(:estimated_trip_distance_in_miles)
     has_rate_data = !r.map(&:estimated_individual_fare).include?(nil) 
     if has_rate_data
-      all_estimated_individual_fares = r.sum(&:estimated_individual_fare)
+      all_estimated_individual_fares = r.sum(:estimated_individual_fare)
     end
 
     # Keep a tally of apportionments made so any remainder can be applied to the last trip.
