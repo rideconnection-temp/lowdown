@@ -19,7 +19,7 @@ class Trip < ActiveRecord::Base
     def exclude_customers_for_date_range(start_date, after_end_date, options)
       special_where = ""
       special_where << "AND complete=true " if options[:pending] 
-      special_where << "AND customer_type='Honored'" if options[:elderly_and_disabled_only]
+      special_where << "AND lower(customer_type)='honored'" if options[:elderly_and_disabled_only]
       where_clause = "NOT EXISTS (
             SELECT id 
             FROM trips AS t
@@ -61,7 +61,7 @@ class Trip < ActiveRecord::Base
   scope :data_entry_complete,       -> { where complete: true }
   scope :data_entry_not_complete,   -> { where complete: false }
   scope :shared,                    -> { where 'trips.routematch_share_id IS NOT NULL' }
-  scope :elderly_and_disabled_only, -> { where customer_type: 'Honored' }
+  scope :elderly_and_disabled_only, -> { where 'lower(customer_type) = ?', 'honored' }
   scope :without_no_shows,          -> { where "trips.result_code <> ?","NS" }
   scope :without_cancels,           -> { where "trips.result_code <> ?","CANC" }
   scope :washington_medicaid_nonmedical, -> {
