@@ -7,7 +7,7 @@ class TripQuery
   attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider_id, :reporting_agency_id, 
       :allocation_id_list, :allocation_id, :allocation_ids, :customer_first_name, :customer_last_name, 
       :dest_allocation_id, :commit, :trip_import_id, :adjustment_notes, :display_search_form, :run_id, 
-      :share_id, :valid_start, :result_code, :original_override, :program_id
+      :share_id, :valid_start, :result_code, :original_override, :program_id, :data_entry_complete
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -50,6 +50,7 @@ class TripQuery
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
     @original_override   = params[:original_override]
+    @data_entry_complete = (params[:data_entry_complete] == 'Yes' ? true : false) if params[:data_entry_complete].in?(%w{Yes No})
     @allocation_ids      = @allocation_id_list.split.map{|al| al.to_i} if @allocation_id_list.present?
   end
 
@@ -72,6 +73,7 @@ class TripQuery
     trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
     trips = trips.for_customer_last_name_like(customer_last_name)   if customer_last_name.present?
     trips = trips.for_original_override_like(original_override)     if original_override.present?
+    trips = trips.where(complete: data_entry_complete)              unless data_entry_complete.nil?
     trips
   end
   
