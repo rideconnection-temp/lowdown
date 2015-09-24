@@ -17,33 +17,33 @@ ActiveRecord::Schema.define(version: 20150131000107) do
   enable_extension "plpgsql"
   enable_extension "fuzzystrmatch"
 
-  create_table "addresses", force: true do |t|
+  create_table "addresses", force: :cascade do |t|
     t.integer  "routematch_address_id"
-    t.string   "common_name"
-    t.string   "building_name"
-    t.string   "address_1"
-    t.string   "address_2"
-    t.string   "city"
-    t.string   "state"
-    t.string   "postal_code"
-    t.string   "x_coordinate"
-    t.string   "y_coordinate"
+    t.string   "common_name",           limit: 255
+    t.string   "building_name",         limit: 255
+    t.string   "address_1",             limit: 255
+    t.string   "address_2",             limit: 255
+    t.string   "city",                  limit: 255
+    t.string   "state",                 limit: 255
+    t.string   "postal_code",           limit: 255
+    t.string   "x_coordinate",          limit: 255
+    t.string   "y_coordinate",          limit: 255
     t.boolean  "in_trimet_district"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "allocations", force: true do |t|
-    t.string  "name"
+  create_table "allocations", force: :cascade do |t|
+    t.string  "name",                        limit: 255
     t.integer "project_id"
     t.integer "provider_id"
-    t.string  "county"
-    t.string  "trip_collection_method"
-    t.string  "run_collection_method"
-    t.string  "cost_collection_method"
-    t.string  "routematch_provider_code"
+    t.string  "county",                      limit: 255
+    t.string  "trip_collection_method",      limit: 255
+    t.string  "run_collection_method",       limit: 255
+    t.string  "cost_collection_method",      limit: 255
+    t.string  "routematch_provider_code",    limit: 255
     t.date    "inactivated_on"
-    t.string  "program_name"
+    t.string  "program_name",                limit: 255
     t.string  "admin_ops_data",              limit: 15
     t.string  "vehicle_maint_data",          limit: 15
     t.integer "trimet_program_id"
@@ -52,42 +52,42 @@ ActiveRecord::Schema.define(version: 20150131000107) do
     t.date    "activated_on"
     t.integer "reporting_agency_id"
     t.text    "notes"
-    t.boolean "do_not_show_on_flex_reports",            default: false, null: false
-    t.string  "eligibility"
+    t.boolean "do_not_show_on_flex_reports",             default: false, null: false
+    t.string  "eligibility",                 limit: 255
     t.integer "program_id"
   end
 
-  create_table "customers", force: true do |t|
+  create_table "customers", force: :cascade do |t|
     t.integer  "routematch_customer_id"
-    t.string   "last_name"
-    t.string   "first_name"
-    t.string   "middle_initial"
-    t.string   "sex"
-    t.string   "race"
-    t.string   "mobility"
-    t.string   "telephone_primary"
-    t.string   "telephone_primary_extension"
-    t.string   "telephone_secondary"
-    t.string   "telephone_secondary_extension"
-    t.string   "language_preference"
+    t.string   "last_name",                     limit: 255
+    t.string   "first_name",                    limit: 255
+    t.string   "middle_initial",                limit: 255
+    t.string   "sex",                           limit: 255
+    t.string   "race",                          limit: 255
+    t.string   "mobility",                      limit: 255
+    t.string   "telephone_primary",             limit: 255
+    t.string   "telephone_primary_extension",   limit: 255
+    t.string   "telephone_secondary",           limit: 255
+    t.string   "telephone_secondary_extension", limit: 255
+    t.string   "language_preference",           limit: 255
     t.date     "birthdate"
-    t.string   "email"
-    t.string   "customer_type"
+    t.string   "email",                         limit: 255
+    t.string   "customer_type",                 limit: 255
     t.integer  "monthly_household_income"
     t.integer  "household_size"
     t.integer  "address_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "prime_number"
+    t.string   "prime_number",                  limit: 255
     t.boolean  "disabled"
-    t.string   "veteran_status"
+    t.string   "veteran_status",                limit: 255
   end
 
-  create_table "flex_reports", force: true do |t|
-    t.string  "name"
+  create_table "flex_reports", force: :cascade do |t|
+    t.string  "name",                            limit: 255
     t.date    "start_date"
     t.date    "end_date"
-    t.string  "group_by"
+    t.string  "group_by",                        limit: 255
     t.text    "allocation_list"
     t.text    "field_list"
     t.boolean "pending"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 20150131000107) do
     t.text    "reporting_agency_list"
     t.text    "subtitle"
     t.integer "report_category_id"
-    t.boolean "elderly_and_disabled_only",       default: false, null: false
+    t.boolean "elderly_and_disabled_only",                   default: false, null: false
     t.text    "program_list"
     t.text    "funding_source_list"
     t.text    "project_list"
@@ -108,37 +108,37 @@ ActiveRecord::Schema.define(version: 20150131000107) do
     t.text    "provider_type_name_list"
   end
 
-  create_table "funding_sources", force: true do |t|
-    t.string   "funding_source_name"
-    t.string   "funding_subsource_name"
+  create_table "funding_sources", force: :cascade do |t|
+    t.string   "funding_source_name",    limit: 255
+    t.string   "funding_subsource_name", limit: 255
     t.text     "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "overrides", force: true do |t|
-    t.string   "name"
+  create_table "overrides", force: :cascade do |t|
+    t.string   "name",       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "programs", force: true do |t|
-    t.string   "name"
+  create_table "programs", force: :cascade do |t|
+    t.string   "name",       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "projects", force: true do |t|
-    t.string   "name"
-    t.string   "old_funding_source_name"
-    t.string   "old_funding_subsource_name"
-    t.string   "project_number"
+  create_table "projects", force: :cascade do |t|
+    t.string   "name",                       limit: 255
+    t.string   "old_funding_source_name",    limit: 255
+    t.string   "old_funding_subsource_name", limit: 255
+    t.string   "project_number",             limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "funding_source_id"
   end
 
-  create_table "providers", force: true do |t|
+  create_table "providers", force: :cascade do |t|
     t.string   "name",          limit: 50
     t.string   "provider_type", limit: 15
     t.string   "routematch_id", limit: 10
@@ -147,18 +147,18 @@ ActiveRecord::Schema.define(version: 20150131000107) do
     t.string   "short_name",    limit: 10
   end
 
-  create_table "report_categories", force: true do |t|
-    t.string   "name"
+  create_table "report_categories", force: :cascade do |t|
+    t.string   "name",       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "runs", force: true do |t|
-    t.integer  "base_id",                          null: false
-    t.datetime "valid_start",                      null: false
-    t.datetime "valid_end",                        null: false
+  create_table "runs", force: :cascade do |t|
+    t.integer  "base_id",                                      null: false
+    t.datetime "valid_start",                                  null: false
+    t.datetime "valid_end",                                    null: false
     t.date     "date"
-    t.string   "name"
+    t.string   "name",             limit: 255
     t.integer  "routematch_id"
     t.datetime "start_at"
     t.datetime "end_at"
@@ -167,7 +167,7 @@ ActiveRecord::Schema.define(version: 20150131000107) do
     t.integer  "escort_count"
     t.integer  "trip_import_id"
     t.integer  "updated_by"
-    t.boolean  "complete",         default: false
+    t.boolean  "complete",                     default: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "imported_at"
@@ -176,7 +176,7 @@ ActiveRecord::Schema.define(version: 20150131000107) do
 
   add_index "runs", ["base_id"], name: "index_runs_on_base_id", using: :btree
 
-  create_table "summaries", force: true do |t|
+  create_table "summaries", force: :cascade do |t|
     t.integer  "base_id",                                                                 null: false
     t.datetime "valid_start",                                                             null: false
     t.datetime "valid_end",                                                               null: false
@@ -206,38 +206,38 @@ ActiveRecord::Schema.define(version: 20150131000107) do
 
   add_index "summaries", ["base_id"], name: "index_summaries_on_base_id", using: :btree
 
-  create_table "summary_rows", force: true do |t|
+  create_table "summary_rows", force: :cascade do |t|
     t.integer "summary_id"
-    t.string  "purpose"
+    t.string  "purpose",               limit: 255
     t.integer "in_district_trips"
     t.integer "out_of_district_trips"
     t.integer "updated_by"
   end
 
-  create_table "trimet_programs", force: true do |t|
+  create_table "trimet_programs", force: :cascade do |t|
     t.integer  "trimet_identifier"
-    t.string   "name"
+    t.string   "name",              limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "notes"
   end
 
-  create_table "trimet_providers", force: true do |t|
+  create_table "trimet_providers", force: :cascade do |t|
     t.integer  "trimet_identifier"
-    t.string   "name"
+    t.string   "name",              limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "trip_imports", force: true do |t|
-    t.string   "file_path"
+  create_table "trip_imports", force: :cascade do |t|
+    t.string   "file_path",  limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "file_name"
+    t.string   "file_name",  limit: 255
     t.text     "notes"
   end
 
-  create_table "trips", force: true do |t|
+  create_table "trips", force: :cascade do |t|
     t.integer  "base_id",                                                                               null: false
     t.datetime "valid_start",                                                                           null: false
     t.datetime "valid_end",                                                                             null: false
@@ -247,17 +247,17 @@ ActiveRecord::Schema.define(version: 20150131000107) do
     t.integer  "odometer_start"
     t.integer  "odometer_end"
     t.decimal  "fare",                                         precision: 10, scale: 2
-    t.string   "purpose_type"
+    t.string   "purpose_type",                     limit: 255
     t.integer  "guest_count"
     t.integer  "attendant_count"
-    t.string   "mobility"
+    t.string   "mobility",                         limit: 255
     t.decimal  "calculated_bpa_fare",                          precision: 10, scale: 2
-    t.string   "bpa_driver_name"
+    t.string   "bpa_driver_name",                  limit: 255
     t.boolean  "volunteer_trip"
     t.boolean  "in_trimet_district"
     t.float    "bpa_billing_distance"
     t.integer  "routematch_share_id"
-    t.string   "override"
+    t.string   "override",                         limit: 255
     t.float    "estimated_trip_distance_in_miles"
     t.integer  "pickup_address_id"
     t.integer  "routematch_pickup_address_id"
@@ -282,14 +282,14 @@ ActiveRecord::Schema.define(version: 20150131000107) do
     t.integer  "updated_by"
     t.datetime "imported_at"
     t.text     "adjustment_notes"
-    t.string   "case_manager"
+    t.string   "case_manager",                     limit: 255
     t.date     "date_enrolled"
     t.date     "service_end"
     t.integer  "approved_rides"
     t.string   "case_manager_office",              limit: 100
     t.boolean  "complete",                                                              default: false
-    t.string   "original_override"
-    t.string   "customer_type"
+    t.string   "original_override",                limit: 255
+    t.string   "customer_type",                    limit: 255
     t.decimal  "estimated_individual_fare",                    precision: 10, scale: 2
     t.string   "funding_source_customer_id",       limit: 50
   end
@@ -297,17 +297,17 @@ ActiveRecord::Schema.define(version: 20150131000107) do
   add_index "trips", ["base_id"], name: "index_trips_on_base_id", using: :btree
   add_index "trips", ["customer_id"], name: "index_trips_on_customer_id", using: :btree
 
-  create_table "users", force: true do |t|
-    t.string   "email",                              default: "",   null: false
+  create_table "users", force: :cascade do |t|
+    t.string   "email",                  limit: 255, default: "",   null: false
     t.string   "encrypted_password",     limit: 128, default: "",   null: false
-    t.string   "password_salt",                      default: "",   null: false
-    t.string   "reset_password_token"
+    t.string   "password_salt",          limit: 255, default: "",   null: false
+    t.string   "reset_password_token",   limit: 255
     t.datetime "remember_created_at"
     t.integer  "sign_in_count",                      default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
+    t.string   "current_sign_in_ip",     limit: 255
+    t.string   "last_sign_in_ip",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "level"
@@ -318,4 +318,5 @@ ActiveRecord::Schema.define(version: 20150131000107) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "customers", "addresses", name: "customers_address_id_fkey"
 end

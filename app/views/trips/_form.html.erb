@@ -12,7 +12,7 @@
     </li>
     <li<%= mark_if_changed(@trip,:customer_type) %>>
       <%= f.label :customer_type, "Customer Type (this trip only):" %>
-      <%= f.select :customer_type, options_for_select(%w{Honored Adult Child}, @trip.customer_type), :include_blank => true %>
+      <%= f.select :customer_type, options_for_select(['Honored','Adult','Child', @trip.customer_type].compact.uniq.sort, @trip.customer_type), :include_blank => true %>
     </li>
     <li<%= mark_if_changed(@trip,:pickup_address) %>>
       <%= f.label :pickup_address, "Pickup Address:" %>

@@ -9,8 +9,10 @@ class Summary < ActiveRecord::Base
   end
 
   point_in_time save_updater: true
-  stampable updater_attribute: :updated_by,
-            creator_attribute: :updated_by
+  stampable updater_attribute:   :updated_by,
+            creator_attribute:   :updated_by,
+            creator_association: :summary_creator,
+            updater_association: :summary_updater
 
   has_many :summary_rows, -> { order :purpose }
   belongs_to :allocation

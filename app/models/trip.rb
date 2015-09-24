@@ -19,7 +19,7 @@ class Trip < ActiveRecord::Base
     def exclude_customers_for_date_range(start_date, after_end_date, options)
       special_where = ""
       special_where << "AND complete=true " if options[:pending] 
-      special_where << "AND customer_type='Honored'" if options[:elderly_and_disabled_only]
+      special_where << "AND lower(customer_type)='honored'" if options[:elderly_and_disabled_only]
       where_clause = "NOT EXISTS (
             SELECT id 
             FROM trips AS t
@@ -37,12 +37,14 @@ class Trip < ActiveRecord::Base
     end
   end
 
-  stampable :updater_attribute  => :updated_by,
-            :creator_attribute  => :updated_by
+  stampable updater_attribute: :updated_by,
+            creator_attribute: :updated_by,
+            creator_association: :trip_creator,
+            updater_association: :trip_updater
   point_in_time
-  belongs_to :pickup_address, :class_name => "Address", :foreign_key => "pickup_address_id"
-  belongs_to :dropoff_address, :class_name => "Address", :foreign_key => "dropoff_address_id"
-  belongs_to :home_address, :class_name => "Address", :foreign_key => "home_address_id"
+  belongs_to :pickup_address, class_name: "Address", foreign_key: "pickup_address_id"
+  belongs_to :dropoff_address, class_name: "Address", foreign_key: "dropoff_address_id"
+  belongs_to :home_address, class_name: "Address", foreign_key: "home_address_id"
   belongs_to :allocation
   belongs_to :run
   belongs_to :customer
@@ -55,39 +57,39 @@ class Trip < ActiveRecord::Base
   attr_accessor :bulk_import, :secondary_update, :do_not_version
 
   scope :default_order,             -> { order :start_at }
-  scope :completed,                 -> { where :result_code => 'COMP' }
-  scope :data_entry_complete,       -> { where :complete => true }
-  scope :data_entry_not_complete,   -> { where :complete => false }
+  scope :completed,                 -> { where result_code: 'COMP' }
+  scope :data_entry_complete,       -> { where complete: true }
+  scope :data_entry_not_complete,   -> { where complete: false }
   scope :shared,                    -> { where 'trips.routematch_share_id IS NOT NULL' }
-  scope :elderly_and_disabled_only, -> { where :customer_type => 'Honored' }
+  scope :elderly_and_disabled_only, -> { where 'lower(customer_type) = ?', 'honored' }
   scope :without_no_shows,          -> { where "trips.result_code <> ?","NS" }
   scope :without_cancels,           -> { where "trips.result_code <> ?","CANC" }
   scope :washington_medicaid_nonmedical, -> {
-          joins(:allocation => {:project => :funding_source}).
-          where(:funding_sources => {:funding_source_name => 'SPD'})
+          joins(allocation: {project: :funding_source}).
+          where(funding_sources: {funding_source_name: 'SPD'})
         }
   scope :multnomah_medicaid_nonmedical, -> {
-          joins(:allocation => {:project => :funding_source}).
-          where(:projects => {:project_number => '1094'})
+          joins(allocation: {project: :funding_source}).
+          where(projects: {project_number: '1094'})
         }
   scope :multnomah_ads, -> {
-          joins(:allocation => {:project => :funding_source}).
-          where(:funding_sources => {:funding_source_name => 'Multnomah ADS'})
+          joins(allocation: {project: :funding_source}).
+          where(funding_sources: {funding_source_name: 'Multnomah ADS'})
         }
   scope :washington_davs, -> {
-          joins(:allocation => {:project => :funding_source}).
-          where(:funding_sources => {:funding_source_name => 'Washington Co DAVS'})
+          joins(allocation: {project: :funding_source}).
+          where(funding_sources: {funding_source_name: 'Washington Co DAVS'})
         }
   scope :billed_per_hour, -> { where("allocations.name ILIKE '%hourly%'") }
   scope :billed_per_trip, -> { where("allocations.name NOT ILIKE '%hourly%'") }
-  scope :for_allocation,    lambda {|allocation|    where(:allocation_id => allocation.id) }
-  scope :for_allocation_id, lambda {|allocation_id| where(:allocation_id => allocation_id) }
-  scope :for_run,           lambda {|run_id|        where(:run_id => run_id) }
-  scope :for_valid_start,   lambda {|valid_start|   where(:valid_start => valid_start) }
-  scope :for_share,         lambda {|share_id|      where(:routematch_share_id => share_id) }
-  scope :for_result_code,   lambda {|result_code|   where(:result_code => result_code) }
-  scope :for_import,        lambda {|import_id|     where(:trip_import_id=>import_id)}
-  scope :for_valid_start,   lambda {|valid_start|   where(:valid_start => valid_start) }
+  scope :for_allocation,    lambda {|allocation|    where(allocation_id: allocation.id) }
+  scope :for_allocation_id, lambda {|allocation_id| where(allocation_id: allocation_id) }
+  scope :for_run,           lambda {|run_id|        where(run_id: run_id) }
+  scope :for_valid_start,   lambda {|valid_start|   where(valid_start: valid_start) }
+  scope :for_share,         lambda {|share_id|      where(routematch_share_id: share_id) }
+  scope :for_result_code,   lambda {|result_code|   where(result_code: result_code) }
+  scope :for_import,        lambda {|import_id|     where(trip_import_id: import_id)}
+  scope :for_valid_start,   lambda {|valid_start|   where(valid_start: valid_start) }
   scope :for_date_range,
         lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
   scope :for_customer_last_name_like,   
@@ -116,7 +118,7 @@ class Trip < ActiveRecord::Base
         }
   scope :index_includes, -> {
           includes(:pickup_address, :dropoff_address, :run, :customer, 
-          :allocation => [:provider,{:project => :funding_source},:override]).
+          allocation: [:provider,{project: :funding_source},:override]).
           joins(:allocation)
         }
   scope :grouped_revisions, -> {
@@ -223,7 +225,7 @@ class Trip < ActiveRecord::Base
 
     old_version.valid_end = now_rounded
     old_version.should_run_callbacks = false
-    old_version.save!(:validate=>false)
+    old_version.save!(validate: false)
   end
 
 private
@@ -278,15 +280,15 @@ private
   end
   
   def reapportion_trips_for_routematch_share_id(rms_id)
-    r = Trip.current_versions.completed.where(:routematch_share_id=>rms_id, :date=>date).order(:end_at,:created_at).all
+    r = Trip.current_versions.completed.where(routematch_share_id: rms_id, date: date).order(:end_at,:created_at).all
     trip_count    = r.size
     ride_duration = (r.map(&:end_at).max - r.map(&:start_at).min).to_i
     ride_mileage  = r.map(&:odometer_end).max - r.map(&:odometer_start).min
-    ride_cost     = r.sum(&:fare)
-    all_est_miles = r.sum(&:estimated_trip_distance_in_miles)
+    ride_cost     = r.sum(:fare)
+    all_est_miles = r.sum(:estimated_trip_distance_in_miles)
     has_rate_data = !r.map(&:estimated_individual_fare).include?(nil) 
     if has_rate_data
-      all_estimated_individual_fares = r.sum(&:estimated_individual_fare)
+      all_estimated_individual_fares = r.sum(:estimated_individual_fare)
     end
 
     # Keep a tally of apportionments made so any remainder can be applied to the last trip.

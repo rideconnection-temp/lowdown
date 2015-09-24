@@ -3,15 +3,15 @@ class Provider < ActiveRecord::Base
   has_many :allocations_as_reporting_agency, 
     -> { order :name }, 
     {
-      :class_name => "Allocation", 
-      :foreign_key => :reporting_agency_id
+      class_name: "Allocation", 
+      foreign_key: :reporting_agency_id
     }
   has_many :summaries
 
   PROVIDER_TYPES = ["BPA Provider", "Partner", "Ride Connection"]
   
-  validates :name, :presence => true, :uniqueness => true
-  validates :short_name, :length => { :maximum => 10 }
+  validates :name, presence: true, uniqueness: true
+  validates :short_name, length: { maximum: 10 }
 
   scope :with_summary_data, -> { where "id in (SELECT provider_id FROM allocations WHERE trip_collection_method != 'trips' or run_collection_method != 'trips' or cost_collection_method != 'trips')" }
   scope :with_trip_data, -> { where "id in (SELECT provider_id FROM allocations WHERE trip_collection_method = 'trips' or run_collection_method = 'trips' or cost_collection_method = 'trips')" }
@@ -20,10 +20,10 @@ class Provider < ActiveRecord::Base
   scope :reporting_agencies,        -> { where "id in (SELECT reporting_agency_id from allocations)" }
   scope :providers_in_allocations,  -> { where "id in (SELECT provider_id from allocations)" }
   scope :default_order,             -> { order :name }
-  scope :bpa_providers,             -> { where :provider_type => 'BPA Provider' }
+  scope :bpa_providers,             -> { where provider_type: 'BPA Provider' }
 
   def allocations_with_trip_data
-    Allocation.where(:provider_id => id).trip_collection_method.order(:name)
+    Allocation.where(provider_id: id).trip_collection_method.order(:name)
   end
 
   def to_s

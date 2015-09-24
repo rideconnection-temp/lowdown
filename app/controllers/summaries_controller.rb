@@ -239,7 +239,7 @@ class SummariesController < ApplicationController
         :operations,
         :vehicle_maint,
         :complete,
-        :summary_rows_attributes => [
+        summary_rows_attributes: [
           :id,
           :purpose,
           :in_district_trips,

@@ -3,7 +3,7 @@
 Devise.setup do |config|
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in DeviseMailer.
-  config.mailer_sender = "admin@rideconnection.org"
+  config.mailer_sender = APP_CONFIG[:devise_mailer_sender]
 
   # Configure the class responsible to send e-mails.
   # config.mailer = "Devise::Mailer"
@@ -42,8 +42,7 @@ Devise.setup do |config|
   config.case_insensitive_keys = [:email]
 
   # Setup a pepper to generate the encrypted password.
-  config.pepper = "88e6b6fed39f52112e9954c6c6551fe5c56ac28e8e7d170ff2153563495565aa137c6962b97b8317fb0a79263d12927a6b23bc3972b88ecfe260d3a7dd9f0f63"
-  config.secret_key = APP_CONFIG[:devise_secret_key]
+  # config.secret_key = APP_CONFIG[:devise_secret_key]
 
   # ==> Configuration for :confirmable
   # The time you want to give your user to confirm his account. During this time

@@ -22,7 +22,7 @@ Lowdown::Application.configure do
   # just comment this out and Rails will serve the files
 
   # See everything in the log (default is :info)
-  config.log_level = :info
+  # config.log_level = :debug
 
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
@@ -50,9 +50,8 @@ Lowdown::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  config.action_mailer.default_url_options = { :host => 'apps.rideconnection.org' }
-
 end
 
 # Turn off auto TLS for e-mail
 ActionMailer::Base.smtp_settings[:enable_starttls_auto] = false
+

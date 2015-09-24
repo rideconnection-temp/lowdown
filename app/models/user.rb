@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   validates_confirmation_of :password
   validates_uniqueness_of :email
 
-  belongs_to :current_provider, :class_name=>"Provider", :foreign_key => :current_provider_id
+  belongs_to :current_provider, class_name: "Provider", foreign_key: :current_provider_id
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
