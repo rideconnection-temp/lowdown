@@ -82,6 +82,7 @@ class AllocationsController < ApplicationController
         :trip_collection_method,
         :run_collection_method,
         :cost_collection_method,
+        :volunteer_trip_collection_method,
         :override_id,
         :routematch_provider_code,
         :admin_ops_data,
@@ -97,9 +98,6 @@ class AllocationsController < ApplicationController
     end
   
     def prep_edit
-      @trip_collection_methods   = TRIP_COLLECTION_METHODS
-      @run_collection_methods    = RUN_COLLECTION_METHODS 
-      @cost_collection_methods   = COST_COLLECTION_METHODS
       @trimet_providers          = TrimetProvider.default_order
       @trimet_programs           = TrimetProgram.default_order
     end

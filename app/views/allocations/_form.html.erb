@@ -44,18 +44,23 @@
         <ol class="section">
           <li class="selfclear">
             <%= form.label :trip_collection_method %>
-            <%= form.select :trip_collection_method, 
-              options_for_select(@trip_collection_methods.map {|tcm| [tcm, tcm]}, @allocation.trip_collection_method) %>
+            <%= form.select :trip_collection_method,
+              options_for_select(TRIP_COLLECTION_METHODS.map {|tcm| [tcm, tcm]}, @allocation.trip_collection_method) %>
           </li>
           <li class="selfclear">
             <%= form.label :run_collection_method %>
-            <%= form.select :run_collection_method, 
-              options_for_select(@run_collection_methods.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>      
+            <%= form.select :run_collection_method,
+              options_for_select(RUN_COLLECTION_METHODS.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>
           </li>
           <li class="selfclear">
             <%= form.label :cost_collection_method %>
-            <%= form.select :cost_collection_method, 
-              options_for_select(@cost_collection_methods.map {|ccm| [ccm, ccm]}, @allocation.cost_collection_method) %>
+            <%= form.select :cost_collection_method,
+              options_for_select(COST_COLLECTION_METHODS.map {|ccm| [ccm, ccm]}, @allocation.cost_collection_method) %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :volunteer_trip_collection_method %>
+            <%= form.select :volunteer_trip_collection_method,
+              options_for_select(VOLUNTEER_TRIP_COLLECTION_METHODS.map {|ccm| [ccm, ccm]}, @allocation.volunteer_trip_collection_method) %>
           </li>
         </ol>
       </li>
