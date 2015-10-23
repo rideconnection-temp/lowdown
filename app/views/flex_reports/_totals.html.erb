@@ -80,6 +80,11 @@
       <%= number_with_delimiter(row.guest_and_attendant_trips.to_i) %>
     </td>
   <% end %>
+  <% if @report.fields.include? 'volunteer_trips' %>
+    <td class="number">
+      <%= number_with_delimiter(row.volunteer_trips.to_i) %>
+    </td>
+  <% end %>
   <% if @report.fields.include? 'total_trips' %>
     <td class="number">
       <%= number_with_delimiter(row.total_trips.to_i) %>

@@ -9,7 +9,7 @@
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Funding</th>
     <% end %>
-    <% column_count = (rf & %w{in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips total_trips turn_downs no_shows cancellations unmet_need other_results total_requests}).count %>
+    <% column_count = (rf & %w{in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips volunteer_trips total_trips turn_downs no_shows cancellations unmet_need other_results total_requests}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Trips</th>
     <% end %>
@@ -46,6 +46,7 @@
     <% if rf.include? 'out_of_district_trips' %><th class="wrap number">Out of District</th><% end %>
     <% if rf.include? 'customer_trips' %><th class="wrap number">Customers</th><% end %>
     <% if rf.include? 'guest_and_attendant_trips' %><th class="wrap number">Guests and Attendants</th><% end %>
+    <% if rf.include? 'volunteer_trips' %><th class="wrap number">Volunteer Trips</th><% end %>
     <% if rf.include? 'total_trips' %><th class="wrap number">Completed</th><% end %>
     <% if rf.include? 'turn_downs' %><th class="wrap number">Turn Downs</th><% end %>
     <% if rf.include? 'no_shows' %><th class="wrap number">No Shows</th><% end %>

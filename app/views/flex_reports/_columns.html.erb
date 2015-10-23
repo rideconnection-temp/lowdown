@@ -53,6 +53,10 @@
         <label for="guest_and_attendant_trips">Guest and Attendant Trips</label>
       </li>
       <li>
+        <input type="checkbox" <%= checked?("volunteer_trips") %> name="flex_report[fields[volunteer_trips]]" id="volunteer_trips" value="1" /> 
+        <label for="volunteer_trips">Volunteer Trips</label>
+      </li>
+      <li>
         <input type="checkbox" <%= checked?("total_trips") %> name="flex_report[fields[total_trips]]" id="total_trips" value="1" /> 
         <label for="total_trips">Total Trips</label>
       </li>

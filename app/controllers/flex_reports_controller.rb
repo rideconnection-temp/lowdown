@@ -122,6 +122,7 @@ class FlexReportsController < ApplicationController
           :out_of_district_trips,
           :customer_trips,
           :guest_and_attendant_trips,
+          :volunteer_trips,
           :total_trips,
           :mileage,
           :driver_volunteer_hours,

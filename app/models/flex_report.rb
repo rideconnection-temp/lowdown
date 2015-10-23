@@ -374,6 +374,11 @@ class FlexReport < ActiveRecord::Base
                                             options
       end
     end
+
+    # Now that all the data is in, perform final calculations for calculated row fields
+    @report_rows.each do |key, row|
+      row.calculate_fields!
+    end
   end
 
   def collect_report_results_by_data_type(allocation_group, this_start_date, this_after_end_date, options)
@@ -509,11 +514,13 @@ class FlexReport < ActiveRecord::Base
     end
 
     if fields.include?('volunteer_trips')
-      select = 'SUM(
-        CASE WHEN run_id IN (SELECT id FROM run_id WHERE volunteer_run = true)
-        THEN 1 + guest_count + attendant_count
-        ELSE 0
-        END) AS trips_marked_as_volunteer'
+      select = "
+        allocation_id,
+        SUM(
+          CASE WHEN result_code = 'COMP' AND run_id IN (SELECT id FROM runs WHERE volunteer_run = true)
+          THEN 1 + guest_count + attendant_count
+          ELSE 0
+          END) AS trips_marked_as_volunteer"
       results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
       results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
       apply_results_to_report_rows(results, this_start_date, this_after_end_date)

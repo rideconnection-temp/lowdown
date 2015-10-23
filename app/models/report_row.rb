@@ -129,17 +129,6 @@ class ReportRow
     escort_volunteer_hours + admin_volunteer_hours
   end
 
-  def volunteer_trips
-    case allocation.volunteer_trip_collection_method
-    when 'all'
-      total
-    when 'none'
-
-    when 'mixed'
-
-    end
-  end
-
   def total_trips
     @in_district_trips + @out_of_district_trips
   end
@@ -307,4 +296,39 @@ class ReportRow
       end
     end
   end
+
+  def calculate_fields!
+    calculate_volunteer_trips!
+  end
+
+  private
+
+  def calculate_volunteer_trips!
+    case allocation.volunteer_trip_collection_method
+    when 'all volunteer'
+      @volunteer_trips = @in_district_trips + @out_of_district_trips
+    when 'all paid'
+      @volunteer_trips = BigDecimal('0')
+    when 'mixed'
+      case trip_collection_method
+      when 'trips'
+        # For allocations with trip details that have both volunteer and paid drivers,
+        # rely on the 'volunteer_run' field of the runs table to tell us which trips
+        # are volunteer
+        @volunteer_trips = @trips_marked_as_volunteer
+      when 'summary'
+        # For summary allocations that have both volunteer and paid drivers,
+        # use the ratio of volunteer driver hours to total volunteer hours to give
+        # the best possible approximation
+        if driver_total_hours > 0
+          @volunteer_trips = (driver_volunteer_hours.fdiv(driver_total_hours) * (@in_district_trips + @out_of_district_trips)).to_i
+        else
+          @volunteer_trips =  BigDecimal('0')
+        end
+      when 'none'
+        @volunteer_trips =  BigDecimal('0')
+      end
+    end
+  end
+
 end
