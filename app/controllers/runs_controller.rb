@@ -66,7 +66,8 @@ class RunsController < ApplicationController
       :odometer_end,
       :escort_count,
       :complete,
-      :adjustment_notes
+      :adjustment_notes,
+      :volunteer_run
     )
   end
 end

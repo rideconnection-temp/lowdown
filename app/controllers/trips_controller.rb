@@ -286,7 +286,6 @@ class TripsController < ApplicationController
   def safe_params
     params.require(:trip).permit(
       :customer_type,
-      :volunteer_trip, 
       :in_trimet_district,
       :case_manager,
       :case_manager_office,
