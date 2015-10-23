@@ -38,10 +38,6 @@
       <%= f.label :dropoff_address, "Google Route:" %>
       <%= raw gmaps_route_link @trip.pickup_address, @trip.dropoff_address, "" %>
     </li>
-    <li<%= mark_if_changed(@trip,:volunteer_trip) %>>
-      <%= f.label :volunteer_trip, "Volunteer Trip:", :class => "checkbox" %>
-      <%= f.check_box :volunteer_trip %>
-    </li>
     <li<%= mark_if_changed(@trip,:in_trimet_district) %>>
       <%= f.label :in_trimet_district, "In Trimet District:" %>
       <%= f.check_box :in_trimet_district %>

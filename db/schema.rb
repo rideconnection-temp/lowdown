@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151016223430) do
+ActiveRecord::Schema.define(version: 20151022192611) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -173,6 +173,7 @@ ActiveRecord::Schema.define(version: 20151016223430) do
     t.datetime "updated_at"
     t.datetime "imported_at"
     t.text     "adjustment_notes"
+    t.boolean  "volunteer_run"
   end
 
   add_index "runs", ["base_id"], name: "index_runs_on_base_id", using: :btree

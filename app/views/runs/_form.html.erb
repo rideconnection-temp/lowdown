@@ -2,32 +2,44 @@
 
 <ol class="section first">
   <li<%= mark_if_changed(@run,:routematch_id) %>>
-    <%= f.label :routematch_id, 'Routematch ID' %><%= f.text_field :routematch_id, :disabled => true %>
+    <%= f.label :routematch_id, 'Routematch ID' %>
+    <%= f.text_field :routematch_id, :disabled => true %>
   </li>
   <li<%= mark_if_changed(@run,:name) %>>
-    <%= f.label :name %><%= f.text_field :name %>
+  <%= f.label :name %>
+    <%= f.text_field :name %>
   </li>
   <li<%= mark_if_changed(@run,:start_at) %>>
-    <%= f.label :start_at %> <%= f.text_field :start_at, :disabled => true  %>
+    <%= f.label :start_at %>
+    <%= f.text_field :start_at, :disabled => true  %>
   </li>
   <li<%= mark_if_changed(@run,:end_at) %>>
-    <%= f.label :end_at %> <%= f.text_field :end_at, :disabled => true  %>
+    <%= f.label :end_at %>
+    <%= f.text_field :end_at, :disabled => true  %>
+  </li>
+  <li<%= mark_if_changed(@run,:volunteer_run) %>>
+    <%= f.label :volunteer_run, :class => "checkbox" %>
+    <%= f.check_box :volunteer_run %>
   </li>
 </ol>
 <ol class="section second">
   <li<%= mark_if_changed(@run,:odometer_start) %>>
-    <%= f.label :odometer_start %><%= f.text_field :odometer_start, :size => 10 %>
+    <%= f.label :odometer_start %>
+    <%= f.text_field :odometer_start, :size => 10 %>
   </li>
   <li<%= mark_if_changed(@run,:odometer_end) %>>
-    <%= f.label :odometer_end %><%= f.text_field :odometer_end, :size => 10 %>
+    <%= f.label :odometer_end %>
+    <%= f.text_field :odometer_end, :size => 10 %>
   </li>
 </ol>
 <ol class="section third">
   <li<%= mark_if_changed(@run,:escort_count) %>>
-    <%= f.label :escort_count %><%= f.text_field :escort_count, :size => 3 %>
+    <%= f.label :escort_count %>
+    <%= f.text_field :escort_count, :size => 3 %>
   </li>
   <li<%= mark_if_changed(@run,:complete) %>>
-    <%= f.label :complete, :class => "checkbox" %> <%= f.check_box :complete %>
+    <%= f.label :complete, :class => "checkbox" %>
+    <%= f.check_box :complete %>
   </li>
 </ol>
 
