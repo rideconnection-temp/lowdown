@@ -3,15 +3,15 @@ def bind(args)
 end
 
 class ReportRow
-  @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :driver_volunteer_hours, :administrative, :operations, :total_elderly_and_disabled_cost]
+  @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :driver_volunteer_hours, :administrative, :operations, :total_elderly_and_disabled_cost]
   attr_accessor *@@attrs
 
   def numeric_fields
-    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :driver_volunteer_hours, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
+    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :driver_volunteer_hours, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
   end
 
   def self.trip_fields
-    [:in_district_trips, :out_of_district_trips, :total_trips, :customer_trips, :guest_and_attendant_trips, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :total_general_public_trips, :cost_per_trip, :cost_per_customer, :miles_per_ride, :miles_per_customer]
+    [:in_district_trips, :out_of_district_trips, :total_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :total_general_public_trips, :cost_per_trip, :cost_per_customer, :miles_per_ride, :miles_per_customer]
   end
 
   def self.run_fields
@@ -48,7 +48,7 @@ class ReportRow
     else
       out.include_row(rows)
     end
-    
+
     return out
   end
 
@@ -62,12 +62,12 @@ class ReportRow
     @allocations << allocation if allocation.present?
     if allocation.respond_to? "collection_start_date"
       @start_date = allocation.collection_start_date
-      @after_end_date   = allocation.collection_after_end_date 
+      @after_end_date   = allocation.collection_after_end_date
     end
   end
 
   def total
-    # Total cost is the sum of the user-selected constituent cost fields. If no constituent cost 
+    # Total cost is the sum of the user-selected constituent cost fields. If no constituent cost
     # fields are selected, then total cost is the sum of all the constituent cost fields.
     cost_fields = [:funds, :agency_other, :vehicle_maint, :donations, :administrative, :operations]
     cost_fields_to_use = @fields_to_show.map(&:to_sym) & cost_fields if @fields_to_show.present?
@@ -87,13 +87,13 @@ class ReportRow
     # total cost based on what portion of the trips are E&D. In this case, total_trips refers to
     # E&D trips only, while total_general_public_trips refers to entire pools of trips in the allocation.
 
-    if total_general_public_trips.present? && 
+    if total_general_public_trips.present? &&
         total_general_public_trips != 0 &&
         total_general_public_cost == 0
       if total_trips == total_general_public_trips
         @total_elderly_and_disabled_cost = total
       else
-        @total_elderly_and_disabled_cost = total * (total_trips.to_f / total_general_public_trips) 
+        @total_elderly_and_disabled_cost = total * (total_trips.to_f / total_general_public_trips)
       end
     else
       @total_elderly_and_disabled_cost = total
@@ -127,6 +127,17 @@ class ReportRow
 
   def total_volunteer_hours
     escort_volunteer_hours + admin_volunteer_hours
+  end
+
+  def volunteer_trips
+    case allocation.volunteer_trip_collection_method
+    when 'all'
+      total
+    when 'none'
+
+    when 'mixed'
+
+    end
   end
 
   def total_trips
@@ -222,15 +233,15 @@ class ReportRow
 
   def diff(other)
     unequal_fields = {}
-    numeric_fields.each do |fld| 
-      unequal_fields[fld] = (send(fld) - other.send(fld).to_f) unless send(fld) == other.send(fld) 
+    numeric_fields.each do |fld|
+      unequal_fields[fld] = (send(fld) - other.send(fld).to_f) unless send(fld) == other.send(fld)
     end
-    unequal_fields  
+    unequal_fields
   end
 
   def method_missing(method_name)
     if allocation.respond_to?(method_name)
-      allocation.send(method_name) 
+      allocation.send(method_name)
     else
       super
     end
@@ -247,11 +258,14 @@ class ReportRow
     @administrative                  += row.administrative
     @operations                      += row.operations
     @donations                       += row.donations
-    
+
     @in_district_trips               += row.in_district_trips
     @out_of_district_trips           += row.out_of_district_trips
     @customer_trips                  += row.customer_trips
     @guest_and_attendant_trips       += row.guest_and_attendant_trips
+    @trips_marked_as_volunteer       += row.trips_marked_as_volunteer
+    @volunteer_trips                 += row.volunteer_trips
+
     @mileage                         += row.mileage
 
     @driver_volunteer_hours          += row.driver_volunteer_hours
@@ -273,12 +287,12 @@ class ReportRow
     @allocations                      = (@allocations + row.allocations).uniq
     if @start_date.present?
       @start_date = row.start_date if row.start_date && @start_date > row.start_date
-    else 
+    else
       @start_date = row.start_date
     end
     if @after_end_date.present?
       @after_end_date = row.after_end_date if row.after_end_date && @after_end_date < row.after_end_date
-    else 
+    else
       @after_end_date = row.after_end_date
     end
   end
@@ -288,7 +302,7 @@ class ReportRow
       if add_result[field].present?
         var = "@#{field}"
         new = instance_variable_get var
-        new += BigDecimal(add_result[field].to_s) 
+        new += BigDecimal(add_result[field].to_s)
         instance_variable_set var, new
       end
     end
