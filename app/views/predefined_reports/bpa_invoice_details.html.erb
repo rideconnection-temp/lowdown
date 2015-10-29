@@ -48,7 +48,7 @@
         </tr>
       <% end %>
       <tr class="totals">
-        <td colspan="5" class="number">Total:</td>
+        <td colspan="4" class="number">Total:</td>
         <td class="number"><%= seconds_to_hours_colon_minutes_colon_seconds(@total_apportioned_duration) %></td>
         <td class="number"><%= number_with_precision(@total_apportioned_mileage, precision: 2, delimiter: ",") %></td>
         <td class="number"><%= number_to_currency(@total_apportioned_fare) %></td>
