@@ -45,6 +45,7 @@ class Allocation < ActiveRecord::Base
   scope :has_trimet_provider, -> { where 'trimet_provider_id IS NOT NULL' }
   scope :exclude_vehicle_maint_data_only, -> { where("NOT (trip_collection_method = 'none' AND run_collection_method = 'none' AND cost_collection_method = 'none' AND admin_ops_data = 'Prohibited' AND vehicle_maint_data = 'Required')") }
   scope :exclude_admin_ops_data_only, -> { where("NOT (trip_collection_method = 'none' AND run_collection_method = 'none' AND cost_collection_method = 'none' AND admin_ops_data = 'Required' AND vehicle_maint_data = 'Prohibited')") }
+  scope :provider_name_starts_with, lambda{|x| where("provider_id IN (SELECT id FROM providers WHERE name ILIKE ?)", "#{x}%") }
   def self.for_import
     self.joins(:override).select("allocations.id,overrides.name,allocations.routematch_provider_code,allocations.activated_on,allocations.inactivated_on,allocations.run_collection_method")
   end

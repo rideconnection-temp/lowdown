@@ -3,10 +3,12 @@ class AllocationsController < ApplicationController
   before_filter :require_admin_user, except: [:index, :edit]
   
   def index
-    @allocations = Allocation.includes(:project, :provider, :override).order('providers.name, allocations.name')
+    @provider_index = Provider.pluck(:name).map{|n| n[0].upcase }.uniq.sort
+    redirect_to allocations_path(filter: @provider_index[0]) if @provider_index != [] && params[:filter].blank?
+    @allocations = Allocation.includes(:project, :provider, :override).provider_name_starts_with(params[:filter]).order('providers.name, allocations.name')
     respond_to do |format|
       format.html do
-        @allocations = @allocations.paginate page: params[:page]
+        @allocations = @allocations
         @grouped_allocations = @allocations.group_by(&:provider_name)
       end
       format.csv do
