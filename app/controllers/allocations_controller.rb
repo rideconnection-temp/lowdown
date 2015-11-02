@@ -5,7 +5,8 @@ class AllocationsController < ApplicationController
   def index
     @provider_index = Provider.pluck(:name).map{|n| n[0].upcase }.uniq.sort
     redirect_to allocations_path(filter: @provider_index[0]) if @provider_index != [] && params[:filter].blank?
-    @allocations = Allocation.includes(:project, :provider, :override).provider_name_starts_with(params[:filter]).order('providers.name, allocations.name')
+    @allocations = Allocation.includes(:project, :provider, :override, :program).provider_name_starts_with(params[:filter]).order('providers.name, allocations.name')
+    @allocations_without_trips_or_summaries = Allocation.provider_name_starts_with(params[:filter]).without_trips_or_summaries.ids
     respond_to do |format|
       format.html do
         @allocations = @allocations
