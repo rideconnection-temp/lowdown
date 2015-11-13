@@ -46,6 +46,7 @@ class Allocation < ActiveRecord::Base
   scope :exclude_vehicle_maint_data_only, -> { where("NOT (trip_collection_method = 'none' AND run_collection_method = 'none' AND cost_collection_method = 'none' AND admin_ops_data = 'Prohibited' AND vehicle_maint_data = 'Required')") }
   scope :exclude_admin_ops_data_only, -> { where("NOT (trip_collection_method = 'none' AND run_collection_method = 'none' AND cost_collection_method = 'none' AND admin_ops_data = 'Required' AND vehicle_maint_data = 'Prohibited')") }
   scope :provider_name_starts_with, lambda{|x| where("provider_id IN (SELECT id FROM providers WHERE name ILIKE ?)", "#{x}%") }
+  scope :without_trips_or_summaries, -> { where "NOT EXISTS (SELECT id FROM trips WHERE allocation_id = allocations.id) AND NOT EXISTS (SELECT id FROM summaries WHERE allocation_id = allocations.id)" }
   def self.for_import
     self.joins(:override).select("allocations.id,overrides.name,allocations.routematch_provider_code,allocations.activated_on,allocations.inactivated_on,allocations.run_collection_method")
   end
