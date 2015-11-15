@@ -1,11 +1,14 @@
 <% section = 'section-main' if section.nil? %>
 <div class="report-wrapper">
   <table>
-    <%= render "flex_reports/header", :report_group_fields => group_fields %>
+    <%= render "flex_reports/header", 
+        :columns             => columns,
+        :report_group_fields => group_fields %>
     <tbody>
       <% root_group_class = "row-group-0" %>
       <%= render 'flex_reports/group_header', 
           :row                  => results, 
+          :columns              => columns,
           :report_group_fields  => group_fields, 
           :group_fields         => group_fields, 
           :row_classes          => [], 
@@ -16,6 +19,7 @@
       %>
       <%= render "flex_reports/nested_rows", 
           :rows                 => results, 
+          :columns              => columns,
           :report_group_fields  => group_fields, 
           :group_fields         => group_fields, 
           :row_classes          => [root_group_class], 
@@ -24,6 +28,7 @@
       %>
       <%= render 'flex_reports/totals', 
           :row                  => results, 
+          :columns              => columns,
           :report_group_fields  => group_fields, 
           :group_fields         => group_fields, 
           :row_classes          => [], 

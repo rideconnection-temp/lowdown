@@ -10,6 +10,7 @@
     <% next_level_row_group_classes = (row_classes + this_row_group_class) %>
     <%= render 'flex_reports/group_header', 
         :row                  => row, 
+        :columns              => columns,
         :report_group_fields  => report_group_fields, 
         :group_fields         => group_fields, 
         :row_classes          => row_classes, 
@@ -20,6 +21,7 @@
     %>
     <%= render 'flex_reports/nested_rows', 
         :rows                 => row, 
+        :columns              => columns,
         :report_group_fields  => report_group_fields, 
         :group_fields         => group_fields[1..-1], 
         :row_classes          => next_level_row_group_classes, 
@@ -29,6 +31,7 @@
     %>
     <%= render 'flex_reports/totals', 
         :row                  => row, 
+        :columns              => columns,
         :report_group_fields  => report_group_fields, 
         :group_fields         => group_fields, 
         :row_classes          => row_classes, 
@@ -42,6 +45,7 @@
   <% rows.sort_by {|k,v| row_sort(k)}.each do |group_name, row| %>
     <%= render 'flex_reports/row', 
         :row                  => row, 
+        :columns              => columns,
         :report_group_fields  => report_group_fields, 
         :label                => row.send(group_fields[0]), 
         :row_classes          => row_classes, 

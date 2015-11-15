@@ -247,6 +247,32 @@ class PredefinedReportsController < ApplicationController
     end
   end
 
+  def development_summary
+    @query = ReportQuery.new(params[:report_query])
+   
+    @report = FlexReport.new
+    @report.start_date = @query.start_date
+    @report.end_date = @query.end_date
+    @report.fields = ["total_trips"]
+    @report.group_by = "trip_collection_method_name,reporting_agency"
+    @report.trip_collection_methods = ["trips","summary"]
+    @report.populate_results!
+
+    @trip_requests_by_reporting_agency = FlexReport.new
+    @trip_requests_by_reporting_agency.start_date = @query.start_date
+    @trip_requests_by_reporting_agency.end_date = @query.end_date
+    @trip_requests_by_reporting_agency.fields = ["cancellations","total_trips","no_shows","turn_downs","unmet_need","total_requests"]
+    @trip_requests_by_reporting_agency.group_by = "reporting_agency"
+    @trip_requests_by_reporting_agency.trip_collection_methods = ["trips"]
+    @trip_requests_by_reporting_agency.populate_results!
+
+    @trip_requests_by_trip_purpose = FlexReport.new
+    @trip_requests_by_trip_purpose.start_date = @query.start_date
+    @trip_requests_by_trip_purpose.end_date = @query.end_date
+    @trip_requests_by_trip_purpose.fields = ["cancellations","total_trips","no_shows","turn_downs","unmet_need","total_requests"]
+    @trip_requests_by_trip_purpose.group_by = "trip_purpose"
+  end
+
   def quarterly_narrative
     @query = ReportQuery.new(params[:report_query])
 

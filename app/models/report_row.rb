@@ -297,7 +297,7 @@ class ReportRow
     end
   end
 
-  def calculate_fields!
+  def calculate_summable_calculated_fields!
     calculate_volunteer_trips!
   end
 

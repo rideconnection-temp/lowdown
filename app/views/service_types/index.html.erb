@@ -1,0 +1,22 @@
+<ul id="subnav" class="selfclear">
+  <li><%= link_to 'New Service Type', new_service_type_path, :class => :add if current_user.is_admin %></li>
+</ul>
+<div id="page-header">
+  <h1>Listing RouteMatch Service Types</h1>
+</div>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th></th>
+  </tr>
+
+  <% @service_types.each do |service_type| %>
+    <tr>
+      <td><%= link_to service_type.name, edit_service_type_path(service_type) %></td>
+      <td><%= link_to "Delete", service_type_url(service_type), :class => "delete", :method => "delete", data: { confirm: "Are you sure you want to delete this service type?" } if current_user.is_admin && service_type.allocations.empty? %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%= will_paginate @service_types %>

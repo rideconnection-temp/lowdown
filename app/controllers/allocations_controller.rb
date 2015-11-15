@@ -78,6 +78,7 @@ class AllocationsController < ApplicationController
       params.require(:allocation).permit(
         :name,
         :program_id,
+        :service_type_id,
         :project_id,
         :reporting_agency_id,
         :provider_id,

@@ -19,6 +19,7 @@
       <% i += 1 %>
       <%= render "flex_reports/report", 
           :results      => county_rows, 
+          :columns      => @report.fields,
           :group_fields => @report.group_fields[3..-1],
           :section      => "section-#{i}"
       %>
@@ -32,6 +33,7 @@
   <% i += 1 %>
   <%= render "flex_reports/report", 
       :results      => @summary_report.results[reporting_agency], 
+      :columns      => @report.fields,
       :group_fields => @summary_report.group_fields[1..-1], 
       :section      => "section-#{i}"
   %>

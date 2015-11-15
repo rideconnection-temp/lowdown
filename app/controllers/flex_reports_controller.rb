@@ -165,6 +165,7 @@ class FlexReportsController < ApplicationController
       @reporting_agency_types   = [['<All>','']] + Provider.reporting_agencies.default_order.
                                   map {|x| [x.provider_type, x.provider_type]}.uniq.sort
       @programs                 = [['<All>','']] + Program.default_order.map {|x| [x.name, x.id]}
+      @service_types            = [['<All>','']] + ServiceType.default_order.map {|x| [x.name, x.id]}
       @county_names             = [['<All>','']] + Allocation.county_names.map {|x| [x, x]}
       @grouped_allocations      = [] 
       Provider.order(:name).includes(:allocations).each do |p|

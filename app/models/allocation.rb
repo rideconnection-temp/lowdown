@@ -8,6 +8,7 @@ class Allocation < ActiveRecord::Base
   belongs_to :trimet_program
   belongs_to :override
   belongs_to :program
+  belongs_to :service_type
   
   DATA_OPTIONS = %w( Prohibited Required )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
@@ -131,6 +132,10 @@ class Allocation < ActiveRecord::Base
     name
   end
 
+  def trip_collection_method_name
+    trip_collection_method.split.map(&:capitalize).join(' ')
+  end
+
   def select_label
     if activated_on > Date.today then
       "#{name} (activating #{activated_on})"
@@ -223,6 +228,14 @@ class Allocation < ActiveRecord::Base
 
   def trimet_provider_identifier
     trimet_provider.try :trimet_identifier
+  end
+
+  def trip_purpose=(value)
+    @trip_purpose = value
+  end
+
+  def trip_purpose
+    @trip_purpose
   end
 
   private

@@ -4,6 +4,7 @@ Lowdown::Application.routes.draw do
   # first created -> highest priority.
   
   resources :admin,                 only: [:index]
+  resources :service_types,         only: [:index, :new, :create, :edit, :update, :destroy]
   resources :providers,             only: [:index, :new, :create, :edit, :update, :destroy]
   resources :projects,              only: [:index, :new, :create, :edit, :update, :destroy]
   resources :programs,              only: [:index, :new, :create, :edit, :update, :destroy]
@@ -27,6 +28,7 @@ Lowdown::Application.routes.draw do
       get :trimet_export
       get :age_and_ethnicity
       get :bpa_invoice
+      get :development_summary
       get :allocation_summary
     end
   end

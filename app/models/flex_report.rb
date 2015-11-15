@@ -16,6 +16,7 @@ class FlexReport < ActiveRecord::Base
   GroupBys = []
 
   GroupMappings = {
+    "trip_collection_method_name"   => "Trip Collection Method",
     "county"                        => "County",
     "funding_source"                => "Funding Source",
     "funding_subsource"             => "Funding Subsource",
@@ -23,6 +24,7 @@ class FlexReport < ActiveRecord::Base
     "override_name"                 => "Override Name",
     "allocation_name"               => "Allocation Name",
     "program_name"                  => "Program Name",
+    "service_type_name"             => "Service Type Name",
     "project_name"                  => "F.E. Project Name",
     "project_number"                => "F.E. Project Number",
     "project_number_and_name"       => "F.E. Project Number and Name",
@@ -70,6 +72,22 @@ class FlexReport < ActiveRecord::Base
     end_date + 1.day if end_date.present?
   end
 
+  def trip_collection_methods
+    if trip_collection_method_list.blank?
+      [""]
+    else
+      trip_collection_method_list.split("|")
+    end
+  end
+
+  def trip_collection_methods=(list)
+    if list.blank?
+      self.trip_collection_method_list = nil
+    else
+      self.trip_collection_method_list = list.reject {|x| x == ""}.sort.map(&:to_s).join("|")
+    end
+  end
+
   def projects
     project_list.blank? ? [] : Project.where(id: project_list.split(",").map(&:to_i))
   end
@@ -83,6 +101,22 @@ class FlexReport < ActiveRecord::Base
       self.project_list = nil
     else
       self.project_list = list.sort.map(&:to_s).join(",")
+    end
+  end
+
+  def service_types
+    service_type_list.blank? ? [] : ServiceType.where(id: service_type_list.split(",").map(&:to_i))
+  end
+
+  def service_type_ids
+    service_type_list.blank? ? [""] : service_type_list.split(",").map(&:to_i)
+  end
+
+  def service_types=(list)
+    if list.blank?
+      self.service_type_list = nil
+    else
+      self.service_type_list = list.sort.map(&:to_s).join(",")
     end
   end
 
@@ -284,9 +318,17 @@ class FlexReport < ActiveRecord::Base
       where_strings << "program_id IN (?)"
       where_params << program_ids
     end
+    if service_type_list.present?
+      where_strings << "service_type_id IN (?)"
+      where_params << service_type_ids
+    end
     if county_name_list.present?
       where_strings << "county IN (?)"
       where_params << county_names
+    end
+    if trip_collection_method_list.present?
+      where_strings << "trip_collection_method IN (?)"
+      where_params << trip_collection_methods
     end
     if reporting_agency_type_name_list.present?
       where_strings << "reporting_agency_id IN (SELECT id FROM providers WHERE provider_type IN (?))"
@@ -377,7 +419,7 @@ class FlexReport < ActiveRecord::Base
 
     # Now that all the data is in, perform final calculations for calculated row fields
     @report_rows.each do |key, row|
-      row.calculate_fields!
+      row.calculate_summable_calculated_fields!
     end
   end
 

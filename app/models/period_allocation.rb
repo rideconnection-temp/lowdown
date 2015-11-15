@@ -39,8 +39,7 @@ class PeriodAllocation
       collection_after_end_date = (after_end_date < period_after_end_date ? after_end_date : period_after_end_date)
 
       periods += allocations.map do |allocation|
-        PeriodAllocation.new allocation, period_start_date, period_after_end_date, 
-          collection_start_date, collection_after_end_date
+        PeriodAllocation.new allocation, period_start_date, period_after_end_date, collection_start_date, collection_after_end_date
       end
 
       if advance == 0.5

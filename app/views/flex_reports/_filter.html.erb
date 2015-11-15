@@ -8,7 +8,7 @@
   <h3>
     <%= title %>
   </h3>
-  <select class="multi" id="report_<%= name %>" multiple="multiple" name="flex_report[<%= name %>][]" size="<%= (items.size > 20) ? 20 : items.size %>" style="display: none">
+  <select class="multi" id="report_<%= name %>" multiple="multiple" name="flex_report[<%= name %>][]" size="<%= (items.try(:size) > 20) ? 20 : (items.try(:size) || 2)  %>" style="display: none">
     <% if grouped_options %>
       <%= options_for_select([['<None>','']],(values.blank? ? [''] : [])) %> 
       <%= grouped_options_for_select list_items, values %>

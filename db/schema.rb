@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151113180811) do
+ActiveRecord::Schema.define(version: 20151113210204) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 20151113180811) do
     t.string  "eligibility",                      limit: 255
     t.integer "program_id"
     t.string  "volunteer_trip_collection_method", limit: 255
+    t.integer "service_type_id"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -111,6 +112,8 @@ ActiveRecord::Schema.define(version: 20151113180811) do
     t.text    "project_list"
     t.text    "reporting_agency_type_name_list"
     t.text    "provider_type_name_list"
+    t.text    "trip_collection_method_list"
+    t.text    "service_type_list"
   end
 
   create_table "funding_sources", force: :cascade do |t|
@@ -181,6 +184,12 @@ ActiveRecord::Schema.define(version: 20151113180811) do
   end
 
   add_index "runs", ["base_id"], name: "index_runs_on_base_id", using: :btree
+
+  create_table "service_types", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "summaries", force: :cascade do |t|
     t.integer  "base_id",                                                                 null: false

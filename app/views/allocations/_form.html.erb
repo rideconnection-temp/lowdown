@@ -17,6 +17,11 @@
             <%= link_to "Details", [:edit, @allocation.program], :class => :details if @allocation.program %>
           </li>
           <li class="selfclear">
+            <%= form.label :service_type %>
+            <%= form.collection_select :service_type_id, ServiceType.default_order, :id, :name, :include_blank => true %>
+            <%= link_to "Details", [:edit, @allocation.service_type], :class => :details if @allocation.service_type %>
+          </li>
+          <li class="selfclear">
             <%= form.label :project_id, "F.E. project" %>
             <%= form.collection_select :project_id, Project.order(:project_number, :name), :id, :number_and_name, :include_blank => true %>
             <%= link_to "Details", [:edit, @allocation.project], :class => :details if @allocation.project %>

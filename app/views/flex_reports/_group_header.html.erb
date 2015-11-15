@@ -4,7 +4,7 @@
   "data-group" => this_row_group_class,
   "data-section" => section do %>
   <% if root_header %>
-    <%= content_tag :td, :class => "report-item toggleable", :colspan => (@report.fields.size + report_group_fields.size + 1) do %>
+    <%= content_tag :td, :class => "report-item toggleable", :colspan => (columns.size + report_group_fields.size + 1) do %>
       All Data
     <% end %>
     <td class="report-item no-print">
@@ -13,7 +13,7 @@
     <% (report_group_fields.size - group_fields.size + 1).times do %>
       <td class="indent">&nbsp;</td>
     <% end %>
-    <%= content_tag :td, :class => "report-item toggleable", :colspan => (@report.fields.size + group_fields.size) do %>
+    <%= content_tag :td, :class => "report-item toggleable", :colspan => (columns.size + group_fields.size) do %>
       <% if group_name(row,group_fields).present? %> 
         <%= group_name(row,group_fields) %>
       <% else %>

@@ -1,0 +1,13 @@
+  <%= render "flex_reports/report", 
+      :results      => @report.results, 
+      :columns      => @report.fields,
+      :group_fields => @report.group_fields,
+      :section      => "section-1"
+  %>
+
+  <%= render "flex_reports/report", 
+      :results      => @trip_requests_by_reporting_agency.results, 
+      :columns      => @trip_requests_by_reporting_agency.fields,
+      :group_fields => @trip_requests_by_reporting_agency.group_fields,
+      :section      => "section-2"
+  %>

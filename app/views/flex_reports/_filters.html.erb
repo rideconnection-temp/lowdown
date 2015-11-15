@@ -50,6 +50,11 @@
   </div>
   <div class="section third">
     <%= render 'filter', 
+      :title => "Service Types", 
+      :name => "service_types",
+      :list_items => @service_types,
+      :values => @report.service_type_ids %>
+    <%= render 'filter', 
       :title => "Individual Allocations", 
       :name => "allocations",
       :list_items => @grouped_allocations,
