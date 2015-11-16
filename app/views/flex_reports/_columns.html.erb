@@ -57,6 +57,10 @@
         <label for="volunteer_driver_trips">Volunteer Driver Trips (Beta)</label>
       </li>
       <li>
+        <input type="checkbox" <%= checked?("paid_driver_trips") %> name="flex_report[fields[paid_driver_trips]]" id="paid_driver_trips" value="1" /> 
+        <label for="paid_driver_trips">Paid Driver Trips (Beta)</label>
+      </li>
+      <li>
         <input type="checkbox" <%= checked?("total_trips") %> name="flex_report[fields[total_trips]]" id="total_trips" value="1" /> 
         <label for="total_trips">Total Trips</label>
       </li>

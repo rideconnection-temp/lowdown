@@ -377,7 +377,7 @@ class FlexReport < ActiveRecord::Base
 
     # Now that all the data is in, perform final calculations for calculated row fields
     @report_rows.each do |key, row|
-      row.calculate_fields!
+      row.calculate_summable_calculated_fields!
     end
   end
 
@@ -513,7 +513,7 @@ class FlexReport < ActiveRecord::Base
       apply_results_to_report_rows(results, this_start_date, this_after_end_date)
     end
 
-    if fields.include?('volunteer_driver_trips')
+    if (fields & %w{volunteer_driver_trips paid_driver_trips}).present?
       select = "
         allocation_id,
         SUM(

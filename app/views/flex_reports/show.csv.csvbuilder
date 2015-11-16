@@ -1,6 +1,6 @@
 header_row = @report.group_fields.map{|f| f.titleize}
 
-columns = %w{funds agency_other vehicle_maint administrative operations donations total in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips volunteer_driver_trips total_trips mileage driver_volunteer_hours driver_paid_hours driver_total_hours cost_per_trip cost_per_customer cost_per_mile cost_per_hour miles_per_ride miles_per_customer turn_downs undup_riders escort_volunteer_hours admin_volunteer_hours total_volunteer_hours}
+columns = %w{funds agency_other vehicle_maint administrative operations donations total in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips volunteer_driver_trips paid_driver_trips total_trips mileage driver_volunteer_hours driver_paid_hours driver_total_hours cost_per_trip cost_per_customer cost_per_mile cost_per_hour miles_per_ride miles_per_customer turn_downs undup_riders escort_volunteer_hours admin_volunteer_hours total_volunteer_hours}
 
 columns.each {|column| header_row << column.titleize if @report.fields.include? column }
 csv << header_row
@@ -54,6 +54,9 @@ rows.sort_by{|k,v| k }.each do |key, row|
   end
   if @report.fields.include? 'volunteer_driver_trips'
     csv_row << number_with_delimiter(row.volunteer_driver_trips.to_i)
+  end
+  if @report.fields.include? 'paid_driver_trips'
+    csv_row << number_with_delimiter(row.paid_driver_trips.to_i)
   end
   if @report.fields.include? 'total_trips'
     csv_row << number_with_delimiter(row.total_trips.to_i)
