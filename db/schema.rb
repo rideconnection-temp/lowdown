@@ -33,6 +33,8 @@ ActiveRecord::Schema.define(version: 20151116202122) do
     t.datetime "updated_at"
   end
 
+  add_index "addresses", ["routematch_address_id"], name: "index_addresses_on_routematch_address_id", unique: true, using: :btree
+
   create_table "allocations", force: :cascade do |t|
     t.string  "name",                          limit: 255
     t.integer "project_id"
@@ -83,6 +85,8 @@ ActiveRecord::Schema.define(version: 20151116202122) do
     t.boolean  "disabled"
     t.string   "veteran_status",                limit: 255
   end
+
+  add_index "customers", ["routematch_customer_id"], name: "index_customers_on_routematch_customer_id", unique: true, using: :btree
 
   create_table "flex_reports", force: :cascade do |t|
     t.string  "name",                            limit: 255
