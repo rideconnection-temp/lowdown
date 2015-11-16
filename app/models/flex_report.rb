@@ -513,7 +513,7 @@ class FlexReport < ActiveRecord::Base
       apply_results_to_report_rows(results, this_start_date, this_after_end_date)
     end
 
-    if fields.include?('volunteer_trips')
+    if fields.include?('volunteer_driver_trips')
       select = "
         allocation_id,
         SUM(

@@ -85,7 +85,7 @@ class AllocationsController < ApplicationController
         :trip_collection_method,
         :run_collection_method,
         :cost_collection_method,
-        :volunteer_trip_collection_method,
+        :driver_type_collection_method,
         :override_id,
         :routematch_provider_code,
         :admin_ops_data,

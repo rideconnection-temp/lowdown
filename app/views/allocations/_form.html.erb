@@ -58,9 +58,9 @@
               options_for_select(COST_COLLECTION_METHODS.map {|ccm| [ccm, ccm]}, @allocation.cost_collection_method) %>
           </li>
           <li class="selfclear">
-            <%= form.label :volunteer_trip_collection_method %>
-            <%= form.select :volunteer_trip_collection_method,
-              options_for_select(VOLUNTEER_TRIP_COLLECTION_METHODS.map {|ccm| [ccm, ccm]}, @allocation.volunteer_trip_collection_method) %>
+            <%= form.label :driver_type_collection_method %>
+            <%= form.select :driver_type_collection_method,
+              options_for_select(DRIVER_TYPE_COLLECTION_METHODS.map {|ccm| [ccm, ccm]}, @allocation.driver_type_collection_method) %>
           </li>
         </ol>
       </li>
