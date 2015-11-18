@@ -36,7 +36,7 @@ TRIP_PURPOSE_TO_SUMMARY_PURPOSE = {
 TRIP_COLLECTION_METHODS           = %w{summary trips none}
 RUN_COLLECTION_METHODS            = %w{runs summary trips none}
 COST_COLLECTION_METHODS           = %w{summary trips none}
-VOLUNTEER_TRIP_COLLECTION_METHODS = ['all paid', 'all volunteer', 'mixed']
+DRIVER_TYPE_COLLECTION_METHODS    = ['all paid', 'all volunteer', 'mixed']
 
 EMAIL_FROM = "no-reply@rideconnection.org"
 

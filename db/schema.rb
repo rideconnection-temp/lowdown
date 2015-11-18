@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151113210204) do
+ActiveRecord::Schema.define(version: 20151116202122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,28 +36,28 @@ ActiveRecord::Schema.define(version: 20151113210204) do
   add_index "addresses", ["routematch_address_id"], name: "index_addresses_on_routematch_address_id", unique: true, using: :btree
 
   create_table "allocations", force: :cascade do |t|
-    t.string  "name",                             limit: 255
+    t.string  "name",                          limit: 255
     t.integer "project_id"
     t.integer "provider_id"
-    t.string  "county",                           limit: 255
-    t.string  "trip_collection_method",           limit: 255
-    t.string  "run_collection_method",            limit: 255
-    t.string  "cost_collection_method",           limit: 255
-    t.string  "routematch_provider_code",         limit: 255
+    t.string  "county",                        limit: 255
+    t.string  "trip_collection_method",        limit: 255
+    t.string  "run_collection_method",         limit: 255
+    t.string  "cost_collection_method",        limit: 255
+    t.string  "routematch_provider_code",      limit: 255
     t.date    "inactivated_on"
-    t.string  "program_name",                     limit: 255
-    t.string  "admin_ops_data",                   limit: 15
-    t.string  "vehicle_maint_data",               limit: 15
+    t.string  "program_name",                  limit: 255
+    t.string  "admin_ops_data",                limit: 15
+    t.string  "vehicle_maint_data",            limit: 15
     t.integer "trimet_program_id"
     t.integer "trimet_provider_id"
     t.integer "override_id"
     t.date    "activated_on"
     t.integer "reporting_agency_id"
     t.text    "notes"
-    t.boolean "do_not_show_on_flex_reports",                  default: false, null: false
-    t.string  "eligibility",                      limit: 255
+    t.boolean "do_not_show_on_flex_reports",               default: false, null: false
+    t.string  "eligibility",                   limit: 255
     t.integer "program_id"
-    t.string  "volunteer_trip_collection_method", limit: 255
+    t.string  "driver_type_collection_method", limit: 255
     t.integer "service_type_id"
   end
 

@@ -580,7 +580,7 @@ class FlexReport < ActiveRecord::Base
       apply_results_to_report_rows(results, this_start_date, this_after_end_date)
     end
 
-    if fields.include?('volunteer_trips')
+    if (fields & %w{volunteer_driver_trips paid_driver_trips}).present?
       select = "
         allocation_id,
         SUM(

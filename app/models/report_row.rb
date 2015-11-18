@@ -3,15 +3,15 @@ def bind(args)
 end
 
 class ReportRow
-  @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :driver_volunteer_hours, :administrative, :operations, :total_elderly_and_disabled_cost]
+  @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_driver_trips, :paid_driver_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :driver_volunteer_hours, :administrative, :operations, :total_elderly_and_disabled_cost]
   attr_accessor *@@attrs
 
   def numeric_fields
-    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :driver_volunteer_hours, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
+    [:funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_driver_trips, :paid_driver_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :driver_volunteer_hours, :undup_riders, :administrative, :operations, :total_elderly_and_disabled_cost]
   end
 
   def self.trip_fields
-    [:in_district_trips, :out_of_district_trips, :total_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :total_general_public_trips, :cost_per_trip, :cost_per_customer, :miles_per_ride, :miles_per_customer]
+    [:in_district_trips, :out_of_district_trips, :total_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_driver_trips, :paid_driver_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :total_general_public_trips, :cost_per_trip, :cost_per_customer, :miles_per_ride, :miles_per_customer]
   end
 
   def self.run_fields
@@ -253,7 +253,8 @@ class ReportRow
     @customer_trips                  += row.customer_trips
     @guest_and_attendant_trips       += row.guest_and_attendant_trips
     @trips_marked_as_volunteer       += row.trips_marked_as_volunteer
-    @volunteer_trips                 += row.volunteer_trips
+    @volunteer_driver_trips          += row.volunteer_driver_trips
+    @paid_driver_trips               += row.paid_driver_trips
 
     @mileage                         += row.mileage
 
@@ -298,36 +299,47 @@ class ReportRow
   end
 
   def calculate_summable_calculated_fields!
-    calculate_volunteer_trips!
+    calculate_volunteer_and_paid_driver_trips!
   end
 
   private
 
-  def calculate_volunteer_trips!
-    case allocation.volunteer_trip_collection_method
+  def calculate_volunteer_and_paid_driver_trips!
+    case allocation.driver_type_collection_method
     when 'all volunteer'
-      @volunteer_trips = @in_district_trips + @out_of_district_trips
+      @volunteer_driver_trips = total_trips
+      @paid_driver_trips = BigDecimal('0')
     when 'all paid'
-      @volunteer_trips = BigDecimal('0')
+      @volunteer_driver_trips = BigDecimal('0')
+      @paid_driver_trips = total_trips
     when 'mixed'
       case trip_collection_method
       when 'trips'
         # For allocations with trip details that have both volunteer and paid drivers,
         # rely on the 'volunteer_run' field of the runs table to tell us which trips
         # are volunteer
-        @volunteer_trips = @trips_marked_as_volunteer
+        @volunteer_driver_trips = @trips_marked_as_volunteer
       when 'summary'
         # For summary allocations that have both volunteer and paid drivers,
         # use the ratio of volunteer driver hours to total volunteer hours to give
         # the best possible approximation
         if driver_total_hours > 0
-          @volunteer_trips = (driver_volunteer_hours.fdiv(driver_total_hours) * (@in_district_trips + @out_of_district_trips)).to_i
+          @volunteer_driver_trips = (driver_volunteer_hours.fdiv(driver_total_hours) * (total_trips)).to_i
         else
-          @volunteer_trips =  BigDecimal('0')
+          @volunteer_driver_trips =  BigDecimal('0')
         end
-      when 'none'
-        @volunteer_trips =  BigDecimal('0')
+      else
+        @paid_driver_trips = @volunteer_driver_trips = BigDecimal('0')
       end
+      @paid_driver_trips = total_trips - @volunteer_driver_trips
+    end
+  end
+
+  def calculate_paid_driver_trips!
+    case allocation.driver_type_collection_method
+    when 'all volunteer'
+    when 'all paid'
+    when 'mixed'
     end
   end
 

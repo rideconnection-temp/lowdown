@@ -63,9 +63,18 @@
       <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.guest_and_attendant_trips.to_i) %>
     </td>
   <% end %>
+<<<<<<< HEAD
   <% if columns.include? 'volunteer_trips' %>
+=======
+  <% if @report.fields.include? 'volunteer_driver_trips' %>
+>>>>>>> master
     <td class="number">
-      <%= number_with_delimiter(row.volunteer_trips.to_i) %>
+      <%= number_with_delimiter(row.volunteer_driver_trips.to_i) %>
+    </td>
+  <% end %>
+  <% if @report.fields.include? 'paid_driver_trips' %>
+    <td class="number">
+      <%= number_with_delimiter(row.paid_driver_trips.to_i) %>
     </td>
   <% end %>
   <% if columns.include? 'total_trips' %>
