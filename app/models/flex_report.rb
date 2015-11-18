@@ -372,6 +372,7 @@ class FlexReport < ActiveRecord::Base
   def collect_report_data!
     options = {}
     options[:pending] = pending
+    options[:trip_purpose] = group_fields.include?("trip_purpose")
 
     @report_rows = {}
     @allocation_objects.each do |ao|
@@ -423,52 +424,76 @@ class FlexReport < ActiveRecord::Base
     end
   end
 
+  # Group data into nested sets.  Merge report row objects at the finest group level.
+  def group_report_rows!
+    grouped_rows = Allocation.group(group_fields, @report_rows.keys)
+    FlexReport.apply_to_leaves! grouped_rows, group_fields.size do | allocationset |
+      row = ReportRow.new fields, allocationset[0]
+      allocationset.each do |allocation|
+        row.include_row(@report_rows[allocation])
+      end
+      row
+    end
+    @results = grouped_rows
+  end
+
+  # Convenience function for running a flex report from a saved definition.
+  def populate_results!(allocation_instance = Allocation)
+    collect_allocation_objects!(allocation_instance)
+    collect_report_data!
+    group_report_rows!
+  end
+
   def collect_report_results_by_data_type(allocation_group, this_start_date, this_after_end_date, options)
-    # Collect trip data
-    if (fields & ReportRow.trip_fields.map{|f| f.to_s }).present?
-      these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'trips'}
-      if these_allocations.present?
-        collect_all_trips_by_trip(these_allocations, this_start_date, this_after_end_date, options)
-      end
-      these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'summary'}
-      if these_allocations.present?
-        collect_all_trips_by_summary(these_allocations, this_start_date, this_after_end_date, options)
-      end
-    end
 
-    # Collect run data
-    if (fields & ReportRow.run_fields.map{|f| f.to_s }).present?
-      these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'trips'}
-      if these_allocations.present?
-        collect_all_runs_by_trip(these_allocations, this_start_date, this_after_end_date, options)
+    if options["trip_purpose"]
+    else
+      # Collect trip data
+      if (fields & ReportRow.trip_fields.map{|f| f.to_s }).present?
+        these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'trips'}
+        if these_allocations.present?
+          collect_all_trips_by_trip(these_allocations, this_start_date, this_after_end_date, options)
+        end
+        these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'summary'}
+        if these_allocations.present?
+          collect_all_trips_by_summary(these_allocations, this_start_date, this_after_end_date, options)
+        end
       end
-      these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'runs'}
-      if these_allocations.present?
-        collect_all_runs_by_run(these_allocations, this_start_date, this_after_end_date, options)
-      end
-      these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'summary'}
-      if these_allocations.present?
-        collect_all_runs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
-      end
-    end
 
-    # Collect cost data
-    if (fields & ReportRow.cost_fields.map{|f| f.to_s }).present?
-      these_allocations = allocation_group.select{|ao| ao.cost_collection_method == 'summary'}
-      if these_allocations.present?
-        collect_all_costs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
+      # Collect run data
+      if (fields & ReportRow.run_fields.map{|f| f.to_s }).present?
+        these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'trips'}
+        if these_allocations.present?
+          collect_all_runs_by_trip(these_allocations, this_start_date, this_after_end_date, options)
+        end
+        these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'runs'}
+        if these_allocations.present?
+          collect_all_runs_by_run(these_allocations, this_start_date, this_after_end_date, options)
+        end
+        these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'summary'}
+        if these_allocations.present?
+          collect_all_runs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
+        end
       end
-      collect_all_costs_by_trip(allocation_group, this_start_date, this_after_end_date, options)
-    end
 
-    # Collect operations data
-    if (fields & ReportRow.operations_fields.map{|f| f.to_s }).present? ||
-        uses_vehicle_maint_field? || uses_administrative_or_operations_fields?
-      collect_all_operation_data_by_summary(allocation_group, this_start_date, this_after_end_date, options)
-    end
+      # Collect cost data
+      if (fields & ReportRow.cost_fields.map{|f| f.to_s }).present?
+        these_allocations = allocation_group.select{|ao| ao.cost_collection_method == 'summary'}
+        if these_allocations.present?
+          collect_all_costs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
+        end
+        collect_all_costs_by_trip(allocation_group, this_start_date, this_after_end_date, options)
+      end
 
-    if elderly_and_disabled_only
-      @report_rows.values.each {|rr| rr.calculate_total_elderly_and_disabled_cost }
+      # Collect operations data
+      if (fields & ReportRow.operations_fields.map{|f| f.to_s }).present? ||
+          uses_vehicle_maint_field? || uses_administrative_or_operations_fields?
+        collect_all_operation_data_by_summary(allocation_group, this_start_date, this_after_end_date, options)
+      end
+
+      if elderly_and_disabled_only
+        @report_rows.values.each {|rr| rr.calculate_total_elderly_and_disabled_cost }
+      end
     end
   end
 
@@ -716,25 +741,5 @@ class FlexReport < ActiveRecord::Base
     results = results.current_versions.date_range(this_start_date, this_after_end_date)
     results = results.data_entry_complete unless options[:pending]
     results
-  end
-
-  # Group data into nested sets.  Merge report row objects at the finest group level.
-  def group_report_rows!
-    grouped_rows = Allocation.group(group_fields, @report_rows.keys)
-    FlexReport.apply_to_leaves! grouped_rows, group_fields.size do | allocationset |
-      row = ReportRow.new fields, allocationset[0]
-      allocationset.each do |allocation|
-        row.include_row(@report_rows[allocation])
-      end
-      row
-    end
-    @results = grouped_rows
-  end
-
-  # Convenience function for running a flex report from a saved definition.
-  def populate_results!(allocation_instance = Allocation)
-    collect_allocation_objects!(allocation_instance)
-    collect_report_data!
-    group_report_rows!
   end
 end
