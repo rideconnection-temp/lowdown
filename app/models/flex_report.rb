@@ -368,9 +368,10 @@ class FlexReport < ActiveRecord::Base
     end
 
     if group_fields.member? "trip_purpose"
-      results.each do |a|
+      results_before_trip_purposes = results.dup
+      results_before_trip_purposes.each do |a|
         POSSIBLE_TRIP_PURPOSES.each do |tp|
-          trip_purpose_allocation = a.clone
+          trip_purpose_allocation = a.dup
           trip_purpose_allocation.trip_purpose = tp
           results << trip_purpose_allocation
         end
@@ -508,8 +509,8 @@ class FlexReport < ActiveRecord::Base
     result_rows.each do |results|
       this_allocation = @allocation_objects.detect do |ao|
         if ao.trip_purpose.present?
-          if results.attributes["trip_purpose"].present?
-            mapped_trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["trip_purpose"]]
+          if results.attributes["purpose_type"].present?
+            mapped_trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["purpose_type"]]
           elsif results.attributes["purpose"].present?
             mapped_trip_purpose = results.attributes["purpose"]
           end
@@ -538,7 +539,7 @@ class FlexReport < ActiveRecord::Base
           end
         end
       end
-      @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k == 'allocation_id' })
+      @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k.in? %w(allocation_id purpose purpose_type) })
     end
   end
 
@@ -590,11 +591,9 @@ class FlexReport < ActiveRecord::Base
         THEN 1 + guest_count + attendant_count
         ELSE 0
         END) AS other_results"
-    if options[:trip_purpose]
-      select += ", trip_purpose"
-      results = results.group(:trip_purpose)
-    end
+    select += ", purpose_type" if options[:trip_purpose]
     results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
+    results = results.group(:purpose_type) if options[:trip_purpose]
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
     apply_results_to_report_rows(results, this_start_date, this_after_end_date)
 
