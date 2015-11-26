@@ -507,19 +507,21 @@ class FlexReport < ActiveRecord::Base
 
   def apply_results_to_report_rows(result_rows, this_start_date, this_after_end_date)
     result_rows.each do |results|
-      this_allocation = @allocation_objects.detect do |ao|
-        if ao.trip_purpose.present?
-          if results.attributes["purpose_type"].present?
-            mapped_trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["purpose_type"]]
-          elsif results.attributes["purpose"].present?
-            mapped_trip_purpose = results.attributes["purpose"]
-          end
+      if results.attributes["purpose_type"].present?
+        mapped_trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["purpose_type"]]
+      elsif results.attributes["purpose"].present?
+        mapped_trip_purpose = results.attributes["purpose"]
+      else
+        mapped_trip_purpose = nil
+      end
+      if mapped_trip_purpose.present?
+        this_allocation = @allocation_objects.detect do |ao|
           if ao.class == PeriodAllocation
             (
               ao.id                        == results['allocation_id'] &&
-              ao.trip_purpose              == mapped_trip_purpose
               ao.collection_start_date     == this_start_date &&
-              ao.collection_after_end_date == this_after_end_date
+              ao.collection_after_end_date == this_after_end_date &&
+              ao.trip_purpose              == mapped_trip_purpose
             )
           else
             (
@@ -527,18 +529,23 @@ class FlexReport < ActiveRecord::Base
               ao.trip_purpose == mapped_trip_purpose
             )
           end
-        else
+        end
+      else
+        this_allocation = @allocation_objects.detect do |ao|
           if ao.class == PeriodAllocation
             (
               ao.id                        == results['allocation_id'] &&
               ao.collection_start_date     == this_start_date &&
-              ao.collection_after_end_date == this_after_end_date
+              ao.collection_after_end_date == this_after_end_date &&
+              ao.trip_purpose.nil?
             )
           else
-            ao.id == results['allocation_id']
+            ao.id == results['allocation_id'] &&
+            ao.trip_purpose.nil?
           end
         end
       end
+      byebug if this_allocation.nil?
       @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k.in? %w(allocation_id purpose purpose_type) })
     end
   end
@@ -646,12 +653,10 @@ class FlexReport < ActiveRecord::Base
       select = "allocation_id,
                 SUM(in_district_trips) AS in_district_trips,
                 SUM(out_of_district_trips) AS out_of_district_trips"
+      select += ", purpose" if options[:trip_purpose]
       results = common_filters(Summary, select, allocations, this_start_date, this_after_end_date, options)
       results = results.joins(:summary_rows)
-      if options[:trip_purpose]
-        select += ", purpose"
-        results = results.group(:purpose)
-      end
+      results = results.group(:purpose) if options[:trip_purpose]
       apply_results_to_report_rows(results, this_start_date, this_after_end_date)
 
       if (fields & ['turn_downs', 'undup_riders']).present?
