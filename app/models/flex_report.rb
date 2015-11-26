@@ -36,6 +36,7 @@ class FlexReport < ActiveRecord::Base
     "trimet_program_identifier"     => "TriMet Program Identifier",
     "trimet_provider_name"          => "TriMet Provider Name",
     "trimet_provider_identifier"    => "TriMet Provider Identifier",
+    "trip_purpose"                  => "Trip Purpose",
     "semimonth"                     => "Semi-month",
     "month"                         => "Month",
     "quarter"                       => "Quarter",
@@ -367,11 +368,11 @@ class FlexReport < ActiveRecord::Base
     end
 
     if group_fields.member? "trip_purpose"
-      results.each |a|
+      results.each do |a|
         POSSIBLE_TRIP_PURPOSES.each do |tp|
           trip_purpose_allocation = a.clone
           trip_purpose_allocation.trip_purpose = tp
-          results += trip_purpose_allocation
+          results << trip_purpose_allocation
         end
       end
     end

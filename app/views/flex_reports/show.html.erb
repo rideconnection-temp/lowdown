@@ -37,7 +37,10 @@
 <% end %>
 
 <% if @report.results.present? %>
-  <%= render "report", :results => @report.results, :group_fields => @report.group_fields %>
+  <%= render "report",
+    :results      => @report.results,
+    :group_fields => @report.group_fields,
+    :columns      => @report.fields %>
 <% else %>
   <h2>No data to report.</h2>
 <% end %>
