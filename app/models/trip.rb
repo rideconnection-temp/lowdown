@@ -168,7 +168,7 @@ class Trip < ActiveRecord::Base
   end
 
   def wheelchair?
-    if mobility == "Ambulatory" 
+    if mobility == "Ambulatory" || (mobility =~ /can transfer/i)
       false
     elsif mobility.nil?
       nil
