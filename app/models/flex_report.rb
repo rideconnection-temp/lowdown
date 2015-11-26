@@ -365,6 +365,16 @@ class FlexReport < ActiveRecord::Base
         break
       end
     end
+
+    if group_fields.member? "trip_purpose"
+      results.each |a|
+        POSSIBLE_TRIP_PURPOSES.each do |tp|
+          trip_purpose_allocation = a.clone
+          trip_purpose_allocation.trip_purpose = tp
+          results += trip_purpose_allocation
+        end
+      end
+    end
     @allocation_objects = results
   end
 
@@ -445,69 +455,86 @@ class FlexReport < ActiveRecord::Base
   end
 
   def collect_report_results_by_data_type(allocation_group, this_start_date, this_after_end_date, options)
-
-    if options["trip_purpose"]
-    else
-      # Collect trip data
-      if (fields & ReportRow.trip_fields.map{|f| f.to_s }).present?
-        these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'trips'}
-        if these_allocations.present?
-          collect_all_trips_by_trip(these_allocations, this_start_date, this_after_end_date, options)
-        end
-        these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'summary'}
-        if these_allocations.present?
-          collect_all_trips_by_summary(these_allocations, this_start_date, this_after_end_date, options)
-        end
+    # Collect trip data
+    if (fields & ReportRow.trip_fields.map{|f| f.to_s }).present?
+      these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'trips'}
+      if these_allocations.present?
+        collect_all_trips_by_trip(these_allocations, this_start_date, this_after_end_date, options)
       end
-
-      # Collect run data
-      if (fields & ReportRow.run_fields.map{|f| f.to_s }).present?
-        these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'trips'}
-        if these_allocations.present?
-          collect_all_runs_by_trip(these_allocations, this_start_date, this_after_end_date, options)
-        end
-        these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'runs'}
-        if these_allocations.present?
-          collect_all_runs_by_run(these_allocations, this_start_date, this_after_end_date, options)
-        end
-        these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'summary'}
-        if these_allocations.present?
-          collect_all_runs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
-        end
+      these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'summary'}
+      if these_allocations.present?
+        collect_all_trips_by_summary(these_allocations, this_start_date, this_after_end_date, options)
       end
+    end
 
-      # Collect cost data
-      if (fields & ReportRow.cost_fields.map{|f| f.to_s }).present?
-        these_allocations = allocation_group.select{|ao| ao.cost_collection_method == 'summary'}
-        if these_allocations.present?
-          collect_all_costs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
-        end
-        collect_all_costs_by_trip(allocation_group, this_start_date, this_after_end_date, options)
+    # Collect run data
+    if (fields & ReportRow.run_fields.map{|f| f.to_s }).present?
+      these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'trips'}
+      if these_allocations.present?
+        collect_all_runs_by_trip(these_allocations, this_start_date, this_after_end_date, options)
       end
+      these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'runs'}
+      if these_allocations.present?
+        collect_all_runs_by_run(these_allocations, this_start_date, this_after_end_date, options)
+      end
+      these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'summary'}
+      if these_allocations.present?
+        collect_all_runs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
+      end
+    end
 
-      # Collect operations data
-      if (fields & ReportRow.operations_fields.map{|f| f.to_s }).present? ||
-          uses_vehicle_maint_field? || uses_administrative_or_operations_fields?
-        collect_all_operation_data_by_summary(allocation_group, this_start_date, this_after_end_date, options)
+    # Collect cost data
+    if (fields & ReportRow.cost_fields.map{|f| f.to_s }).present?
+      these_allocations = allocation_group.select{|ao| ao.cost_collection_method == 'summary'}
+      if these_allocations.present?
+        collect_all_costs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
       end
+      collect_all_costs_by_trip(allocation_group, this_start_date, this_after_end_date, options)
+    end
 
-      if elderly_and_disabled_only
-        @report_rows.values.each {|rr| rr.calculate_total_elderly_and_disabled_cost }
-      end
+    # Collect operations data
+    if (fields & ReportRow.operations_fields.map{|f| f.to_s }).present? ||
+        uses_vehicle_maint_field? || uses_administrative_or_operations_fields?
+      collect_all_operation_data_by_summary(allocation_group, this_start_date, this_after_end_date, options)
+    end
+
+    if elderly_and_disabled_only
+      @report_rows.values.each {|rr| rr.calculate_total_elderly_and_disabled_cost }
     end
   end
 
   def apply_results_to_report_rows(result_rows, this_start_date, this_after_end_date)
     result_rows.each do |results|
       this_allocation = @allocation_objects.detect do |ao|
-        if ao.class == PeriodAllocation
-          (
-            ao.id                        == results['allocation_id'] &&
-            ao.collection_start_date     == this_start_date &&
-            ao.collection_after_end_date == this_after_end_date
-          )
+        if ao.trip_purpose.present?
+          if results.attributes["trip_purpose"].present?
+            mapped_trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["trip_purpose"]]
+          elsif results.attributes["purpose"].present?
+            mapped_trip_purpose = results.attributes["purpose"]
+          end
+          if ao.class == PeriodAllocation
+            (
+              ao.id                        == results['allocation_id'] &&
+              ao.trip_purpose              == mapped_trip_purpose
+              ao.collection_start_date     == this_start_date &&
+              ao.collection_after_end_date == this_after_end_date
+            )
+          else
+            (
+              ao.id           == results['allocation_id'] &&
+              ao.trip_purpose == mapped_trip_purpose
+            )
+          end
         else
-          ao.id == results['allocation_id']
+          if ao.class == PeriodAllocation
+            (
+              ao.id                        == results['allocation_id'] &&
+              ao.collection_start_date     == this_start_date &&
+              ao.collection_after_end_date == this_after_end_date
+            )
+          else
+            ao.id == results['allocation_id']
+          end
         end
       end
       @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k == 'allocation_id' })
@@ -562,6 +589,10 @@ class FlexReport < ActiveRecord::Base
         THEN 1 + guest_count + attendant_count
         ELSE 0
         END) AS other_results"
+    if options[:trip_purpose]
+      select += ", trip_purpose"
+      results = results.group(:trip_purpose)
+    end
     results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
     apply_results_to_report_rows(results, this_start_date, this_after_end_date)
@@ -617,6 +648,10 @@ class FlexReport < ActiveRecord::Base
                 SUM(out_of_district_trips) AS out_of_district_trips"
       results = common_filters(Summary, select, allocations, this_start_date, this_after_end_date, options)
       results = results.joins(:summary_rows)
+      if options[:trip_purpose]
+        select += ", purpose"
+        results = results.group(:purpose)
+      end
       apply_results_to_report_rows(results, this_start_date, this_after_end_date)
 
       if (fields & ['turn_downs', 'undup_riders']).present?
