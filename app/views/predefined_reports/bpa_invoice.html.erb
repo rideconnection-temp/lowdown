@@ -2,26 +2,46 @@
   <h1>BPA Invoice</h1>
 </div>
 <h2>
-  <%= Provider.find(@query.provider_id).try(:name) %> &mdash; 
+  <%= Provider.find(@query.provider_id).try(:name) %> &mdash;
   <%= describe_date_range(@report.start_date, @report.end_date) %>
 </h2>
-<% results = @report.results %>
-<% group_fields = @report.group_fields %>
+<% results          = @report.results %>
+<% group_fields     = @report.group_fields %>
+<% columns          = @report.fields %>
+<% root_group_class = "row-group-0" %>
 <div class="report-wrapper">
   <table>
-    <%= render "flex_reports/simple_header", :report_group_fields => group_fields %>
+    <%= render "flex_reports/simple_header", report_group_fields: group_fields %>
     <tbody>
-      <% root_group_class = "row-group-0" %>
-      <%= render 'flex_reports/group_header', 
-          :row => results, :report_group_fields => group_fields, :group_fields => group_fields, 
-          :root_header => true, :row_classes => [], :this_row_group_class => root_group_class, :tree_map => [] %>
-      <%= render "flex_reports/nested_rows", :rows => results, :report_group_fields => group_fields, 
-          :group_fields => group_fields, :row_classes => [root_group_class], :tree_map => [0],
-          :currency_precision => 2 %>
-      <%= render 'flex_reports/totals', 
-          :row=>results, :report_group_fields => group_fields, :group_fields=>group_fields, 
-          :grand_total => true, :row_classes => [], :tree_map => [],
-          :currency_precision => 2 %>
+      <%= render 'flex_reports/group_header',
+        row:                  results,
+        report_group_fields:  group_fields,
+        group_fields:         group_fields,
+        columns:              columns,
+        root_header:          true,
+        row_classes:          [],
+        this_row_group_class: root_group_class,
+        tree_map:             []
+      %>
+      <%= render "flex_reports/nested_rows",
+        rows:                 results,
+        report_group_fields:  group_fields,
+        group_fields:         group_fields,
+        columns:              columns,
+        row_classes:          [root_group_class],
+        tree_map:             [0],
+        currency_precision:   2
+      %>
+      <%= render 'flex_reports/totals',
+        row:                  results,
+        report_group_fields:  group_fields,
+        group_fields:         group_fields,
+        columns:              columns,
+        grand_total:          true,
+        row_classes:          [],
+        tree_map:             [],
+        currency_precision:   2
+      %>
     </tbody>
   </table>
 </div>
