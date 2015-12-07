@@ -1,5 +1,13 @@
 class PeriodAllocation
-  attr_accessor :quarter, :year, :month, :semimonth, :period_start_date, :period_after_end_date, :collection_start_date, :collection_after_end_date
+  attr_accessor :year,
+                :quarter,
+                :month,
+                :semimonth,
+                :period_start_date,
+                :period_after_end_date,
+                :collection_start_date,
+                :collection_after_end_date,
+                :trip_purpose
 
   def self.apply_periods(allocations, start_date, after_end_date, period)
     # enumerate periods between start_date and after_end_date.
@@ -43,7 +51,7 @@ class PeriodAllocation
       end
 
       if advance == 0.5
-        if period_start_date.day == 1 
+        if period_start_date.day == 1
           period_after_end_date = period_start_date.advance(months: 1)
           period_start_date = period_start_date.change(day: 16)
         else
@@ -59,20 +67,34 @@ class PeriodAllocation
     periods
   end
 
-  def initialize(allocation, period_start_date, period_after_end_date, collection_start_date, collection_after_end_date)
-    @allocation = allocation
-    @period_start_date = period_start_date
-    @period_after_end_date = period_after_end_date
-    @collection_start_date = collection_start_date
-    @collection_after_end_date = collection_after_end_date
-    if period_start_date.month < 7
-      @year = period_start_date.year - 1
-    else
-      @year = period_start_date.year
+  def initialize(
+      allocation,
+      period_start_date:          nil,
+      period_after_end_date:      nil,
+      collection_start_date:      nil,
+      collection_after_end_date:  nil,
+      trip_purpose:               nil
+    )
+    @allocation                 = allocation
+    @period_start_date          = period_start_date
+    @period_after_end_date      = period_after_end_date
+    @collection_start_date      = collection_start_date
+    @collection_after_end_date  = collection_after_end_date
+    @trip_purpose               = trip_purpose
+    if period_start_date.present?
+      if period_start_date.month < 7
+        @year = period_start_date.year - 1
+      else
+        @year = period_start_date.year
+      end
+      @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
+      @month = period_start_date.year * 100 + period_start_date.month
+      @semimonth = period_start_date.year * 10000 + period_start_date.month * 100 + period_start_date.day
     end
-    @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
-    @month = period_start_date.year * 100 + period_start_date.month
-    @semimonth = period_start_date.year * 10000 + period_start_date.month * 100 + period_start_date.day
+  end
+
+  def is_period_allocation?
+    @period_start_date.present?
   end
 
   def method_missing(method_name, *args, &block)
@@ -85,14 +107,15 @@ class PeriodAllocation
     end
     return @allocation.respond_to? method
   end
-  
+
   def ==(other)
     (
       @allocation.id              == other.id &&
       @period_start_date          == other.period_start_date &&
       @period_after_end_date      == other.period_after_end_date &&
       @collection_start_date      == other.collection_start_date &&
-      @collection_after_end_date  == other.collection_after_end_date
+      @collection_after_end_date  == other.collection_after_end_date &&
+      @trip_purpose               == other.trip_purpose
     )
   end
 end

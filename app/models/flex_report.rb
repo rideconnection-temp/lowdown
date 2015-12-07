@@ -290,7 +290,7 @@ class FlexReport < ActiveRecord::Base
 
   # Based on the flex report definition, collect all the actual allocations for which data needs to be gathered.
   # If there are time periods, then take each allocation and break it into the requested time periods
-  def collect_allocation_objects!(allocation_instance = Allocation)
+  def collect_allocation_objects!(allocation_instance = PeriodAllocation)
     where_strings = []
     where_params = []
 
@@ -372,6 +372,7 @@ class FlexReport < ActiveRecord::Base
       results_before_trip_purposes.each do |a|
         POSSIBLE_TRIP_PURPOSES.each do |tp|
           trip_purpose_allocation = a.dup
+          trip_purpose_allocation.id = a.id
           trip_purpose_allocation.trip_purpose = tp
           results << trip_purpose_allocation
         end
@@ -450,7 +451,7 @@ class FlexReport < ActiveRecord::Base
   end
 
   # Convenience function for running a flex report from a saved definition.
-  def populate_results!(allocation_instance = Allocation)
+  def populate_results!(allocation_instance = PeriodAllocation)
     collect_allocation_objects!(allocation_instance)
     collect_report_data!
     group_report_rows!
@@ -514,38 +515,21 @@ class FlexReport < ActiveRecord::Base
       else
         mapped_trip_purpose = nil
       end
-      if mapped_trip_purpose.present?
-        this_allocation = @allocation_objects.detect do |ao|
-          if ao.class == PeriodAllocation
-            (
-              ao.id                        == results['allocation_id'] &&
-              ao.collection_start_date     == this_start_date &&
-              ao.collection_after_end_date == this_after_end_date &&
-              ao.trip_purpose              == mapped_trip_purpose
-            )
-          else
-            (
-              ao.id           == results['allocation_id'] &&
-              ao.trip_purpose == mapped_trip_purpose
-            )
-          end
-        end
-      else
-        this_allocation = @allocation_objects.detect do |ao|
-          if ao.class == PeriodAllocation
-            (
-              ao.id                        == results['allocation_id'] &&
-              ao.collection_start_date     == this_start_date &&
-              ao.collection_after_end_date == this_after_end_date &&
-              ao.trip_purpose.nil?
-            )
-          else
-            ao.id == results['allocation_id'] &&
-            ao.trip_purpose.nil?
-          end
+      this_allocation = @allocation_objects.detect do |ao|
+        if ao.is_period_allocation?
+          (
+            ao.id                        == results['allocation_id'] &&
+            ao.collection_start_date     == this_start_date &&
+            ao.collection_after_end_date == this_after_end_date &&
+            ao.trip_purpose              == mapped_trip_purpose
+          )
+        else
+          (
+            ao.id           == results['allocation_id'] &&
+            ao.trip_purpose == mapped_trip_purpose
+          )
         end
       end
-      byebug if this_allocation.nil?
       @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k.in? %w(allocation_id purpose purpose_type) })
     end
   end
