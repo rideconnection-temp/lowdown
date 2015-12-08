@@ -367,17 +367,8 @@ class FlexReport < ActiveRecord::Base
       end
     end
 
-    if group_fields.member? "trip_purpose"
-      results_before_trip_purposes = results.dup
-      results_before_trip_purposes.each do |a|
-        POSSIBLE_TRIP_PURPOSES.each do |tp|
-          trip_purpose_allocation = a.dup
-          trip_purpose_allocation.id = a.id
-          trip_purpose_allocation.trip_purpose = tp
-          results << trip_purpose_allocation
-        end
-      end
-    end
+    results = PeriodAllocation.apply_trip_purposes(results) if group_fields.member? "trip_purpose"
+
     @allocation_objects = results
   end
 

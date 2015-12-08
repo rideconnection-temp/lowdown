@@ -67,8 +67,25 @@ class PeriodAllocation
     periods
   end
 
+  def self.apply_trip_purposes(allocations)
+    allocations_before_trip_purposes = allocations.dup
+    allocations_before_trip_purposes.each do |a|
+      POSSIBLE_TRIP_PURPOSES.each do |this_trip_purpose|
+        allocations << PeriodAllocation.new(
+          allocation:                 a.allocation,
+          period_start_date:          a.period_start_date,
+          period_after_end_date:      a.period_after_end_date,
+          collection_start_date:      a.collection_start_date,
+          collection_after_end_date:  a.collection_after_end_date,
+          trip_purpose:               this_trip_purpose
+        )
+      end
+    end
+    allocations
+  end
+
   def initialize(
-      allocation,
+      allocation:                 nil,
       period_start_date:          nil,
       period_after_end_date:      nil,
       collection_start_date:      nil,
