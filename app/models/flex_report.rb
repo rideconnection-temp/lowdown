@@ -359,17 +359,20 @@ class FlexReport < ActiveRecord::Base
 
     results = allocation_instance.where(where_string, *where_params)
 
+    period_allocations = []
+    results.each {|a| period_allocations << PeriodAllocation.new(allocation: a)}
+
     TimePeriods.each do |period|
       if group_fields.member? period
         # only apply the shortest time period if there are multiple time period grouping levels
-        results = PeriodAllocation.apply_periods(results, start_date, after_end_date, period)
+        period_allocations = PeriodAllocation.apply_periods(results, start_date, after_end_date, period)
         break
       end
     end
 
-    results = PeriodAllocation.apply_trip_purposes(results) if group_fields.member? "trip_purpose"
+    period_allocations = PeriodAllocation.apply_trip_purposes(period_allocations) if group_fields.member? "trip_purpose"
 
-    @allocation_objects = results
+    @allocation_objects = period_allocations
   end
 
   # Gather the data for the selected allocations

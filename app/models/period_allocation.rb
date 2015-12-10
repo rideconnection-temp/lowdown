@@ -1,5 +1,6 @@
 class PeriodAllocation
-  attr_accessor :year,
+  attr_accessor :allocation,
+                :year,
                 :quarter,
                 :month,
                 :semimonth,
@@ -8,6 +9,10 @@ class PeriodAllocation
                 :collection_start_date,
                 :collection_after_end_date,
                 :trip_purpose
+
+  def self.method_missing(method_name, *args, &block)
+    Allocation.send method_name, *args, &block
+  end
 
   def self.apply_periods(allocations, start_date, after_end_date, period)
     # enumerate periods between start_date and after_end_date.
