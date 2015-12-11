@@ -290,7 +290,7 @@ class FlexReport < ActiveRecord::Base
 
   # Based on the flex report definition, collect all the actual allocations for which data needs to be gathered.
   # If there are time periods, then take each allocation and break it into the requested time periods
-  def collect_allocation_objects!(allocation_instance = PeriodAllocation)
+  def collect_allocation_objects!(allocation_instance = Allocation)
     where_strings = []
     where_params = []
 
@@ -360,17 +360,17 @@ class FlexReport < ActiveRecord::Base
     results = allocation_instance.where(where_string, *where_params)
 
     period_allocations = []
-    results.each {|a| period_allocations << PeriodAllocation.new(allocation: a)}
+    results.each {|a| period_allocations << RowAllocation.new(allocation: a)}
 
     TimePeriods.each do |period|
       if group_fields.member? period
         # only apply the shortest time period if there are multiple time period grouping levels
-        period_allocations = PeriodAllocation.apply_periods(results, start_date, after_end_date, period)
+        period_allocations = RowAllocation.apply_periods(results, start_date, after_end_date, period)
         break
       end
     end
 
-    period_allocations = PeriodAllocation.apply_trip_purposes(period_allocations) if group_fields.member? "trip_purpose"
+    period_allocations = RowAllocation.apply_trip_purposes(period_allocations) if group_fields.member? "trip_purpose"
 
     @allocation_objects = period_allocations
   end
@@ -445,7 +445,7 @@ class FlexReport < ActiveRecord::Base
   end
 
   # Convenience function for running a flex report from a saved definition.
-  def populate_results!(allocation_instance = PeriodAllocation)
+  def populate_results!(allocation_instance = Allocation)
     collect_allocation_objects!(allocation_instance)
     collect_report_data!
     group_report_rows!

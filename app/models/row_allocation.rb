@@ -1,4 +1,4 @@
-class PeriodAllocation
+class RowAllocation
   attr_accessor :allocation,
                 :year,
                 :quarter,
@@ -52,7 +52,7 @@ class PeriodAllocation
       collection_after_end_date = (after_end_date < period_after_end_date ? after_end_date : period_after_end_date)
 
       periods += allocations.map do |allocation|
-        PeriodAllocation.new allocation, period_start_date, period_after_end_date, collection_start_date, collection_after_end_date
+        RowAllocation.new allocation, period_start_date, period_after_end_date, collection_start_date, collection_after_end_date
       end
 
       if advance == 0.5
@@ -76,7 +76,7 @@ class PeriodAllocation
     allocations_before_trip_purposes = allocations.dup
     allocations_before_trip_purposes.each do |a|
       POSSIBLE_TRIP_PURPOSES.each do |this_trip_purpose|
-        allocations << PeriodAllocation.new(
+        allocations << RowAllocation.new(
           allocation:                 a.allocation,
           period_start_date:          a.period_start_date,
           period_after_end_date:      a.period_after_end_date,
