@@ -1,5 +1,5 @@
 <% currency_precision = 0 if currency_precision.nil? %>
-<% has_trips = ((Allocation.trip_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}) == []) %>
+<% has_trips = (Allocation.select_trip_collection_methods(row.allocations) == []) %>
 <%= content_tag :tr, :class => (row_classes + [section, "data", "level-#{tree_map.size}"]).join(' ') do %>
   <% (report_group_fields.size).times do %>
     <td class="indent">&nbsp;</td>

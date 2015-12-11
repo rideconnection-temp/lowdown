@@ -604,7 +604,9 @@ class FlexReport < ActiveRecord::Base
           THEN 1 + guest_count + attendant_count
           ELSE 0
           END) AS trips_marked_as_volunteer"
+      select += ", purpose_type" if options[:trip_purpose]
       results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
+      results = results.group(:purpose_type) if options[:trip_purpose]
       results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
       apply_results_to_report_rows(results, this_start_date, this_after_end_date)
     end

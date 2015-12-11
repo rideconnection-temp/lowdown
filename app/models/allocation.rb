@@ -9,7 +9,7 @@ class Allocation < ActiveRecord::Base
   belongs_to :override
   belongs_to :program
   belongs_to :service_type
-  
+
   DATA_OPTIONS = %w( Prohibited Required )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
   ELIGIBILITIES = ['Elderly & Disabled','Unrestricted','Not Applicable']
@@ -48,29 +48,48 @@ class Allocation < ActiveRecord::Base
   scope :exclude_admin_ops_data_only, -> { where("NOT (trip_collection_method = 'none' AND run_collection_method = 'none' AND cost_collection_method = 'none' AND admin_ops_data = 'Required' AND vehicle_maint_data = 'Prohibited')") }
   scope :provider_name_starts_with, lambda{|x| where("provider_id IN (SELECT id FROM providers WHERE name ILIKE ?)", "#{x}%") }
   scope :without_trips_or_summaries, -> { where "NOT EXISTS (SELECT id FROM trips WHERE allocation_id = allocations.id) AND NOT EXISTS (SELECT id FROM summaries WHERE allocation_id = allocations.id)" }
+
   def self.for_import
     self.joins(:override).select("allocations.id,overrides.name,allocations.routematch_provider_code,allocations.activated_on,allocations.inactivated_on,allocations.run_collection_method")
   end
 
   def self.program_names
-    select('DISTINCT program').where("COALESCE(program,'') <> ''").map {|x| x.program}.sort 
+    select('DISTINCT program').where("COALESCE(program,'') <> ''").map {|x| x.program}.sort
   end
 
   def self.county_names
-    select('DISTINCT county').where("COALESCE(county,'') <> ''").map {|x| x.county}.sort 
+    select('DISTINCT county').where("COALESCE(county,'') <> ''").map {|x| x.county}.sort
   end
 
-  # group a set of records by a list of fields.  
+  def self.select_trip_collection_methods(allocations)
+    return allocations.select do |a|
+      a.trip_collection_method == 'trips' ||
+      a.run_collection_method  == 'trips' ||
+      a.cost_collection_method == 'trips'
+    end
+  end
+
+  def self.select_summary_collection_methods(allocations)
+    return allocations.select do |a|
+      a.trip_collection_method == 'summary'  ||
+      a.run_collection_method  == 'summary'  ||
+      a.cost_collection_method == 'summary'  ||
+      a.admin_ops_data         == 'Required' ||
+      a.vehicle_maint_data     == 'Required'
+    end
+  end
+
+  # group a set of records by a list of fields.
   # groups is a list of fields to group by
   # records is a list of records
   # the output is a nested hash, with one level for each element of groups
   # for example,
   # groups = [kingdom, edible]
   # records = [platypus, cow, oak, apple, orange, shiitake]
-  # output = {'animal' => { 'no' => ['platypus'], 
-  #                         'yes' => ['cow'] 
-  #                       }, 
-  #           'plant' => { 'no' => ['oak'], 
+  # output = {'animal' => { 'no' => ['platypus'],
+  #                         'yes' => ['cow']
+  #                       },
+  #           'plant' => { 'no' => ['oak'],
   #                        'yes' => ['apple', 'orange']
   #                       }
   #           'fungus' => { 'yes' => ['shiitake'] }
@@ -83,7 +102,7 @@ class Allocation < ActiveRecord::Base
       cur_group = out
       for group in groups
         group_value = record.send(group)
-        group_value = nil if group_value.blank? 
+        group_value = nil if group_value.blank?
         if group == last_group
           if !cur_group.member? group_value
             cur_group[group_value] = []
@@ -197,7 +216,7 @@ class Allocation < ActiveRecord::Base
   def provider_type
     provider.try :provider_type
   end
-  
+
   def reporting_agency_name
     reporting_agency.try :name
   end
@@ -241,21 +260,21 @@ class Allocation < ActiveRecord::Base
   private
 
   def require_consistent_provider_fields
-    unless (provider.present? && reporting_agency.present?) || 
+    unless (provider.present? && reporting_agency.present?) ||
            (provider.nil? && reporting_agency.nil?)
       errors.add(:base, "The provider and reporting agency fields must both be filled or both left blank.")
     end
   end
 
   def require_consistent_trimet_fields
-    unless (trimet_provider_id.present? && trimet_program_id.present?) || 
+    unless (trimet_provider_id.present? && trimet_program_id.present?) ||
            (trimet_provider_id.nil? && trimet_program_id.nil?)
       errors.add(:base, "Either both TriMet fields must be filled or both must be left blank.")
     end
   end
 
   def require_consistent_trimet_fields
-    unless (trimet_provider_id.present? && trimet_program_id.present?) || 
+    unless (trimet_provider_id.present? && trimet_program_id.present?) ||
            (trimet_provider_id.nil? && trimet_program_id.nil?)
       errors.add(:base, "Either both TriMet fields must be filled or both must be left blank.")
     end

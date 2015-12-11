@@ -169,7 +169,7 @@ module ApplicationHelper
   end
 
   def row_trip_link(report,row)
-    trip_allocations = (Allocation.trip_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}).sort
+    trip_allocations = Allocation.select_trip_collection_methods(row.allocations).map{|a| a.id }.sort
     if trip_allocations != []
       start_date = (row.start_date || report.start_date)
       end_date   = (row.after_end_date || report.after_end_date) - 1.day
@@ -179,7 +179,7 @@ module ApplicationHelper
   end
 
   def row_summary_link(report, row)
-    summary_allocations = (Allocation.summary_collection_method.map{|a| a.id} & row.allocations.map{|a| a.id}).sort
+    summary_allocations = Allocation.select_summary_collection_methods(row.allocations).map{|a| a.id }.sort
     if summary_allocations.size > 0
       start_date = (row.start_date || report.start_date)
       end_date   = (row.after_end_date || report.after_end_date) - 1.day
