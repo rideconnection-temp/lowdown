@@ -35,6 +35,12 @@ class Trip < ActiveRecord::Base
     def summary_purpose(trip_purpose)
       TRIP_PURPOSE_TO_SUMMARY_PURPOSE.fetch(trip_purpose, trip_purpose)
     end
+
+    def trip_purposes_from_summary_purpose(summary_purpose)
+      result = []
+      TRIP_PURPOSE_TO_SUMMARY_PURPOSE.each {|k, v| result << k if v == summary_purpose }
+      result
+    end
   end
 
   stampable updater_attribute: :updated_by,
@@ -90,6 +96,7 @@ class Trip < ActiveRecord::Base
   scope :for_result_code,   lambda {|result_code|   where(result_code: result_code) }
   scope :for_import,        lambda {|import_id|     where(trip_import_id: import_id)}
   scope :for_valid_start,   lambda {|valid_start|   where(valid_start: valid_start) }
+  scope :for_trip_purpose,  lambda {|trip_purpose|  where(purpose_type: self.trip_purposes_from_summary_purpose(trip_purpose)) }
   scope :for_date_range,
         lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
   scope :for_customer_last_name_like,   

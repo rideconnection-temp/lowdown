@@ -110,6 +110,8 @@ class FlexReportsController < ApplicationController
         reporting_agencies: [],
         reporting_agency_type_names: [],
         county_names: [],
+        trip_collection_methods: [],
+        service_types: [],
         fields: [
           :funds,
           :agency_other,
@@ -168,6 +170,7 @@ class FlexReportsController < ApplicationController
       @programs                 = [['<All>','']] + Program.default_order.map {|x| [x.name, x.id]}
       @service_types            = [['<All>','']] + ServiceType.default_order.map {|x| [x.name, x.id]}
       @county_names             = [['<All>','']] + Allocation.county_names.map {|x| [x, x]}
+      @trip_collection_methods  = [['<All>','']] + TRIP_COLLECTION_METHODS.map {|x| [x.titleize, x]}
       @grouped_allocations      = [] 
       Provider.order(:name).includes(:allocations).each do |p|
         @grouped_allocations << [p.name, p.allocations.map {|a| [a.select_label,a.id]}]

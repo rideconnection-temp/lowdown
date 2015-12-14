@@ -48,6 +48,10 @@
         <% end %>
       </li>
       <li>
+        <%= f.label :trip_purpose, "Trip purpose:" %>
+        <%= f.select :trip_purpose, @trip_purposes, include_blank: true %>
+      </li>
+      <li>
         <%= f.label :result_code, "Result code:" %>
         <%= f.select :result_code, @result_codes, include_blank: true %>
       </li>
