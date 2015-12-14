@@ -4,23 +4,29 @@ class ReportRowAllocation
                 :quarter,
                 :month,
                 :semimonth,
+                :report_start_date,
+                :report_after_end_date,
                 :period_start_date,
                 :period_after_end_date,
                 :collection_start_date,
                 :collection_after_end_date,
-                :trip_purpose
+                :trip_purpose,
+                :is_trip_purpose_allocation
 
   def self.method_missing(method_name, *args, &block)
     Allocation.send method_name, *args, &block
   end
 
-  def self.apply_periods(allocations, start_date, after_end_date, period)
+  def self.apply_periods(allocations, period)
     # enumerate periods between start_date and after_end_date.
     # collection_*_date variables represent the date range we're going to collect data for.
     # period_*_date variables represent the entire period range (e.g. the full 12 months of the year).
     # collection date ranges will be a subset of the period range when the period range extends
     # before and/or after the date range requested by the user.
+    star_date = allocations.first.report_start_date
+    after_end_date = allocations.first.report_after_end
     year = start_date.year
+
     if period == 'year'
       if start_date.month < 7
         period_start_date = Date.new(year - 1, 7, 1)
@@ -52,7 +58,15 @@ class ReportRowAllocation
       collection_after_end_date = (after_end_date < period_after_end_date ? after_end_date : period_after_end_date)
 
       periods += allocations.map do |allocation|
-        ReportRowAllocation.new allocation, period_start_date, period_after_end_date, collection_start_date, collection_after_end_date
+        ReportRowAllocation.new(
+          report_start_date:          start_date,
+          report_after_end_date:      end_date,
+          allocation:                 allocation,
+          period_start_date:          period_start_date,
+          period_after_end_date:      period_after_end_date,
+          collection_start_date:      collection_start_date,
+          collection_after_end_date:  collection_after_end_date
+        )
       end
 
       if advance == 0.5
@@ -77,12 +91,15 @@ class ReportRowAllocation
     allocations_before_trip_purposes.each do |a|
       POSSIBLE_TRIP_PURPOSES.each do |this_trip_purpose|
         allocations << ReportRowAllocation.new(
+          report_start_date:          a.report_start_date,
+          report_after_end_date:      a.report_after_end_date,
           allocation:                 a.allocation,
           period_start_date:          a.period_start_date,
           period_after_end_date:      a.period_after_end_date,
           collection_start_date:      a.collection_start_date,
           collection_after_end_date:  a.collection_after_end_date,
-          trip_purpose:               this_trip_purpose
+          trip_purpose:               this_trip_purpose,
+          is_trip_purpose_allocation: true
         )
       end
     end
@@ -90,12 +107,15 @@ class ReportRowAllocation
   end
 
   def initialize(
+      report_start_date,
+      report_after_end_date,
       allocation:                 nil,
       period_start_date:          nil,
       period_after_end_date:      nil,
       collection_start_date:      nil,
       collection_after_end_date:  nil,
-      trip_purpose:               nil
+      trip_purpose:               nil,
+      is_trip_purpose_allocation: false
     )
     @allocation                 = allocation
     @period_start_date          = period_start_date
@@ -119,6 +139,10 @@ class ReportRowAllocation
     @period_start_date.present?
   end
 
+  def is_trip_purpose_allocation?
+    @is_trip_purpose_allocation
+  end
+
   def method_missing(method_name, *args, &block)
     @allocation.send method_name, *args, &block
   end
@@ -137,7 +161,8 @@ class ReportRowAllocation
       @period_after_end_date      == other.period_after_end_date &&
       @collection_start_date      == other.collection_start_date &&
       @collection_after_end_date  == other.collection_after_end_date &&
-      @trip_purpose               == other.trip_purpose
+      @trip_purpose               == other.trip_purpose &&
+      @is_trip_purpose_allocation == other.is_trip_purpose_allocation
     )
   end
 end
