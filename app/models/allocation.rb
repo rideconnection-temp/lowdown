@@ -61,24 +61,6 @@ class Allocation < ActiveRecord::Base
     select('DISTINCT county').where("COALESCE(county,'') <> ''").map {|x| x.county}.sort
   end
 
-  def self.select_trip_collection_methods(allocations)
-    return allocations.select do |a|
-      a.trip_collection_method == 'trips' ||
-      a.run_collection_method  == 'trips' ||
-      a.cost_collection_method == 'trips'
-    end
-  end
-
-  def self.select_summary_collection_methods(allocations)
-    return allocations.select do |a|
-      a.trip_collection_method == 'summary'  ||
-      a.run_collection_method  == 'summary'  ||
-      a.cost_collection_method == 'summary'  ||
-      a.admin_ops_data         == 'Required' ||
-      a.vehicle_maint_data     == 'Required'
-    end
-  end
-
   # group a set of records by a list of fields.
   # groups is a list of fields to group by
   # records is a list of records

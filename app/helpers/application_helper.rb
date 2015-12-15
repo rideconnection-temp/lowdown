@@ -169,24 +169,26 @@ module ApplicationHelper
   end
 
   def row_trip_link(row)
-    trip_allocations = Allocation.select_trip_collection_methods(row.allocations).map{|a| a.id }.sort
-    if trip_allocations != []
-      q_params   = {
-        allocation_id_list: "#{trip_allocations.join(' ')}",
+    trip_allocations = ReportRowAllocation.select_trip_collection_methods(row.allocations)
+    if trip_allocations.present?
+      q_params = {
+        allocation_id_list: "#{trip_allocations.map{|a| a.id }.sort.join(' ')}",
         start_date:         row.allocations.first.collection_start_date,
         end_date:           row.allocations.first.collection_after_end_date - 1.day
       }
-      q_params[:trip_purpose] = row.allocations.first.trip_purpose if row.allocations.first.is_trip_purpose_allocation?
+      if row.allocations.first.is_trip_purpose_allocation?
+        q_params[:trip_purpose] = row.allocations.first.trip_purpose
+      end
       link_to "Trips", trips_path({q: q_params})
     end
   end
 
   def row_summary_link(row)
-    summary_allocations = Allocation.select_summary_collection_methods(row.allocations).map{|a| a.id }.sort
-    if summary_allocations.size > 0
+    summary_allocations = ReportRowAllocation.select_summary_collection_methods(row.allocations)
+    if summary_allocations.present?
       link_to "Summaries", summaries_path(
         q: {
-          allocation_id_list: "#{summary_allocations.join(' ')}",
+          allocation_id_list: "#{summary_allocations.map{|a| a.id }.sort.join(' ')}",
           start_date:         row.allocations.first.collection_start_date,
           end_date:           row.allocations.first.collection_after_end_date - 1.day
         }

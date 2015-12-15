@@ -106,6 +106,43 @@ class ReportRowAllocation
     allocations
   end
 
+  def self.select_trip_collection_methods(allocations)
+    # If all the allocations being represented in the row are grouped
+    # by trip purpose, then all that matters is how the trips are
+    # collected, not runs or costs
+    if allocations.select{|a| !a.is_trip_purpose_allocation? } == []
+      return allocations.select do |a|
+        a.trip_collection_method == 'trips'
+      end
+    else
+      return allocations.select do |a|
+        a.trip_collection_method == 'trips' ||
+        a.run_collection_method  == 'trips' ||
+        a.cost_collection_method == 'trips'
+      end
+    end
+  end
+
+  def self.select_summary_collection_methods(allocations)
+    # If all the allocations being represented in the row are grouped
+    # by trip purpose, then all that matters is how the trips are
+    # collected, not runs or costs
+    if allocations.select{|a| !a.is_trip_purpose_allocation? } == []
+      return allocations.select do |a|
+        a.trip_collection_method == 'summary'
+      end
+    else
+      return allocations.select do |a|
+        a.trip_collection_method == 'summary'  ||
+        a.run_collection_method  == 'summary'  ||
+        a.cost_collection_method == 'summary'  ||
+        a.admin_ops_data         == 'Required' ||
+        a.vehicle_maint_data     == 'Required'
+      end
+    end
+  end
+
+
   def initialize(
       report_start_date:          nil,
       report_after_end_date:      nil,
