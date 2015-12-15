@@ -107,8 +107,8 @@ class ReportRowAllocation
   end
 
   def initialize(
-      report_start_date,
-      report_after_end_date,
+      report_start_date:          nil,
+      report_after_end_date:      nil,
       allocation:                 nil,
       period_start_date:          nil,
       period_after_end_date:      nil,
@@ -117,13 +117,16 @@ class ReportRowAllocation
       trip_purpose:               nil,
       is_trip_purpose_allocation: false
     )
+    @report_start_date          = report_start_date
+    @report_after_end_date      = report_after_end_date
     @allocation                 = allocation
     @period_start_date          = period_start_date
     @period_after_end_date      = period_after_end_date
-    @collection_start_date      = collection_start_date
-    @collection_after_end_date  = collection_after_end_date
     @trip_purpose               = trip_purpose
+    @is_trip_purpose_allocation = is_trip_purpose_allocation
     if period_start_date.present?
+      @collection_start_date      = collection_start_date
+      @collection_after_end_date  = collection_after_end_date
       if period_start_date.month < 7
         @year = period_start_date.year - 1
       else
@@ -132,6 +135,9 @@ class ReportRowAllocation
       @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
       @month = period_start_date.year * 100 + period_start_date.month
       @semimonth = period_start_date.year * 10000 + period_start_date.month * 100 + period_start_date.day
+    else
+      @collection_start_date     = @report_start_date
+      @collection_after_end_date = @report_after_end_date
     end
   end
 

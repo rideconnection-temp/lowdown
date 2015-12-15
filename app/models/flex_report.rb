@@ -361,7 +361,7 @@ class FlexReport < ActiveRecord::Base
 
     # Convert the final allocation list to report row allocations, which can track date groupings and trip purposes
     report_row_allocations = []
-    results.each {|a| report_row_allocations << ReportRowAllocation.new(start_date, after_end_date, a)}
+    results.each {|a| report_row_allocations << ReportRowAllocation.new(report_start_date: start_date, report_after_end_date: after_end_date, allocation: a)}
 
     TimePeriods.each do |period|
       if group_fields.member? period

@@ -1,14 +1,14 @@
 module ApplicationHelper
 
   def gmaps_address_link(address, klass)
-    escaped_address = URI.escape address.full_address 
-    
+    escaped_address = URI.escape address.full_address
+
     "<a class=\"#{klass}\" href=\"http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=#{escaped_address}&sll=#{address.y_coordinate},#{address.x_coordinate}&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=#{escaped_address}&t=h&z=16\" title=\"#{address.full_address}\">#{address.display_name}</a>"
   end
 
   def gmaps_route_link(start_address,end_address, klass)
-    escaped_start_address = URI.escape start_address.full_address 
-    escaped_end_address = URI.escape end_address.full_address 
+    escaped_start_address = URI.escape start_address.full_address
+    escaped_end_address = URI.escape end_address.full_address
     "<a class=\"#{klass}\" href=\"http://maps.google.com/maps?saddr=#{escaped_start_address}&daddr=#{escaped_end_address}\">Route</a>"
   end
 
@@ -16,7 +16,7 @@ module ApplicationHelper
    if flash[type]
       "<div id=\"flash\">
          <a class=\"closer\" href=\"#\">Close</a>
-         <div class=\"info\">#{flash[type]}</div>   
+         <div class=\"info\">#{flash[type]}</div>
       </div>"
     else
       ''
@@ -26,7 +26,7 @@ module ApplicationHelper
   def flash_messages
     return flash_type(:notice) + flash_type(:alert)
   end
-  
+
   def report_month_range(start_date, after_end_date)
     end_date = after_end_date - 1.month
     if start_date.year == end_date.year && start_date.month == end_date.month
@@ -35,7 +35,7 @@ module ApplicationHelper
       "#{start_date.strftime("%B %Y")} through #{end_date.strftime("%B %Y")}"
     end
   end
-  
+
   def row_sort(k)
     if k.blank?
       [2, ""]
@@ -61,10 +61,10 @@ module ApplicationHelper
     fields     = group_by_label(value.split(","))
     attributes = { value: value }
     attributes[:selected] = "selected" if @report.group_by == value
-    
+
     content_tag :option, fields, attributes
   end
-  
+
   def checked?(field)
     if @report.new_record? || @report.field_list.present?
       "checked" if @report.new_record? || @report.field_list.split(",").include?(field)
@@ -108,7 +108,7 @@ module ApplicationHelper
   end
 
   def describe_fiscal_year(date)
-    date += 1.year if date.month > 6 
+    date += 1.year if date.month > 6
     "#{date.year-1}-#{date.strftime('%y')}"
   end
 
@@ -118,7 +118,7 @@ module ApplicationHelper
       Date.new(date.year, date.month, 15)
     else
       d = date + 1.month
-      Date.new(d.year, d.month, 1) - 1.day   
+      Date.new(d.year, d.month, 1) - 1.day
     end
   end
 
@@ -168,24 +168,29 @@ module ApplicationHelper
     change == 0 ? nil : change
   end
 
-  def row_trip_link(report,row)
+  def row_trip_link(row)
     trip_allocations = Allocation.select_trip_collection_methods(row.allocations).map{|a| a.id }.sort
     if trip_allocations != []
-      start_date = (row.start_date || report.start_date)
-      end_date   = (row.after_end_date || report.after_end_date) - 1.day
-      link_to "Trips", trips_path({q: {allocation_id_list: "#{trip_allocations.join(' ')}", 
-          start_date: start_date, end_date: end_date}})
+      q_params   = {
+        allocation_id_list: "#{trip_allocations.join(' ')}",
+        start_date:         row.allocations.first.collection_start_date,
+        end_date:           row.allocations.first.collection_after_end_date - 1.day
+      }
+      q_params[:trip_purpose] = row.allocations.first.trip_purpose if row.allocations.first.is_trip_purpose_allocation?
+      link_to "Trips", trips_path({q: q_params})
     end
   end
 
-  def row_summary_link(report, row)
+  def row_summary_link(row)
     summary_allocations = Allocation.select_summary_collection_methods(row.allocations).map{|a| a.id }.sort
     if summary_allocations.size > 0
-      start_date = (row.start_date || report.start_date)
-      end_date   = (row.after_end_date || report.after_end_date) - 1.day
-      link_to "Summaries", summaries_path( 
-          q: {allocation_id_list: "#{summary_allocations.join(' ')}", 
-          start_date: start_date, end_date: end_date})
+      link_to "Summaries", summaries_path(
+        q: {
+          allocation_id_list: "#{summary_allocations.join(' ')}",
+          start_date:         row.allocations.first.collection_start_date,
+          end_date:           row.allocations.first.collection_after_end_date - 1.day
+        }
+      )
     end
   end
 end
