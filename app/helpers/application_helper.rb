@@ -172,9 +172,9 @@ module ApplicationHelper
     trip_allocations = ReportRowAllocation.select_trip_collection_methods(row.allocations)
     if trip_allocations.present?
       q_params = {
-        allocation_id_list: "#{trip_allocations.map{|a| a.id }.sort.join(' ')}",
-        start_date:         row.allocations.first.collection_start_date,
-        end_date:           row.allocations.first.collection_after_end_date - 1.day
+        allocation_id_list: "#{trip_allocations.map{|a| a.id }.uniq.sort.join(' ')}",
+        start_date:         row.start_date     || row.allocations.first.collection_start_date,
+        end_date:           row.after_end_date || row.allocations.first.collection_after_end_date - 1.day
       }
       if row.allocations.first.is_trip_purpose_allocation?
         q_params[:trip_purpose] = row.allocations.first.trip_purpose
@@ -188,9 +188,9 @@ module ApplicationHelper
     if summary_allocations.present?
       link_to "Summaries", summaries_path(
         q: {
-          allocation_id_list: "#{summary_allocations.map{|a| a.id }.sort.join(' ')}",
-          start_date:         row.allocations.first.collection_start_date,
-          end_date:           row.allocations.first.collection_after_end_date - 1.day
+          allocation_id_list: "#{summary_allocations.map{|a| a.id }.uniq.sort.join(' ')}",
+          start_date:         row.start_date     || row.allocations.first.collection_start_date,
+          end_date:           row.after_end_date || row.allocations.first.collection_after_end_date - 1.day
         }
       )
     end
