@@ -504,24 +504,25 @@ class FlexReport < ActiveRecord::Base
   def apply_results_to_report_rows(result_rows, this_start_date, this_after_end_date)
     result_rows.each do |results|
       if results.attributes["purpose_type"].present?
-        mapped_trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["purpose_type"]]
+        trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["purpose_type"]]
       elsif results.attributes["purpose"].present?
-        mapped_trip_purpose = results.attributes["purpose"]
+        trip_purpose = results.attributes["purpose"]
       else
-        mapped_trip_purpose = nil
+        trip_purpose = nil
       end
+
       this_allocation = @allocation_objects.detect do |ao|
         if ao.is_period_allocation?
           (
             ao.id                        == results['allocation_id'] &&
             ao.collection_start_date     == this_start_date &&
             ao.collection_after_end_date == this_after_end_date &&
-            ao.trip_purpose              == mapped_trip_purpose
+            ao.trip_purpose              == trip_purpose
           )
         else
           (
             ao.id           == results['allocation_id'] &&
-            ao.trip_purpose == mapped_trip_purpose
+            ao.trip_purpose == trip_purpose
           )
         end
       end
