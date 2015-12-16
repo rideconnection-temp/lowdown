@@ -37,7 +37,11 @@ module ApplicationHelper
   end
 
   def row_sort(k)
-    if k.blank?
+    if    k == 'N/A'
+      [3, ""]
+    elsif k.blank?
+      [2, ""]
+    elsif k == "Unspecified"
       [2, ""]
     elsif k.class == Fixnum
       [1, ("%04d" % k)]

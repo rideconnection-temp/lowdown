@@ -361,7 +361,14 @@ class FlexReport < ActiveRecord::Base
 
     # Convert the final allocation list to report row allocations, which can track date groupings and trip purposes
     report_row_allocations = []
-    results.each {|a| report_row_allocations << ReportRowAllocation.new(report_start_date: start_date, report_after_end_date: after_end_date, allocation: a)}
+    results.each do |a|
+      report_row_allocations << ReportRowAllocation.new(
+        report_start_date:      start_date,
+        report_after_end_date:  after_end_date,
+        allocation:             a,
+        trip_purpose:           'N/A'
+      )
+    end
 
     TimePeriods.each do |period|
       if group_fields.member? period
@@ -371,7 +378,9 @@ class FlexReport < ActiveRecord::Base
       end
     end
 
-    report_row_allocations = ReportRowAllocation.apply_trip_purposes(report_row_allocations) if group_fields.member? "trip_purpose"
+    if group_fields.member? "trip_purpose"
+      report_row_allocations = ReportRowAllocation.apply_trip_purposes(report_row_allocations)
+    end
 
     @allocation_objects = report_row_allocations
   end
@@ -503,12 +512,12 @@ class FlexReport < ActiveRecord::Base
 
   def apply_results_to_report_rows(result_rows, this_start_date, this_after_end_date)
     result_rows.each do |results|
-      if results.attributes["purpose_type"].present?
+      if results.attributes.has_key?("purpose_type")
         trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["purpose_type"]]
-      elsif results.attributes["purpose"].present?
+      elsif results.attributes.has_key?("purpose")
         trip_purpose = results.attributes["purpose"]
       else
-        trip_purpose = nil
+        trip_purpose = 'N/A'
       end
 
       this_allocation = @allocation_objects.detect do |ao|
@@ -526,6 +535,7 @@ class FlexReport < ActiveRecord::Base
           )
         end
       end
+      byebug if @report_rows[this_allocation].nil?
       @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k.in? %w(allocation_id purpose purpose_type) })
     end
   end

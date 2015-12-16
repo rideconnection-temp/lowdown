@@ -89,7 +89,7 @@ class ReportRowAllocation
   def self.apply_trip_purposes(allocations)
     allocations_before_trip_purposes = allocations.dup
     allocations_before_trip_purposes.each do |a|
-      POSSIBLE_TRIP_PURPOSES.each do |this_trip_purpose|
+      TRIP_PURPOSE_TO_SUMMARY_PURPOSE.values.uniq.each do |this_trip_purpose|
         allocations << ReportRowAllocation.new(
           report_start_date:          a.report_start_date,
           report_after_end_date:      a.report_after_end_date,
@@ -169,9 +169,9 @@ class ReportRowAllocation
       else
         @year = period_start_date.year
       end
-      @quarter = period_start_date.year * 10 + (period_start_date.month - 1) / 3 + 1
-      @month = period_start_date.year * 100 + period_start_date.month
-      @semimonth = period_start_date.year * 10000 + period_start_date.month * 100 + period_start_date.day
+      @quarter   = period_start_date.year * 10    + (period_start_date.month - 1) / 3 + 1
+      @month     = period_start_date.year * 100   +  period_start_date.month
+      @semimonth = period_start_date.year * 10000 +  period_start_date.month * 100 + period_start_date.day
     else
       @collection_start_date     = @report_start_date
       @collection_after_end_date = @report_after_end_date
@@ -199,13 +199,13 @@ class ReportRowAllocation
 
   def ==(other)
     (
-      @allocation.id              == other.id &&
-      @period_start_date          == other.period_start_date &&
-      @period_after_end_date      == other.period_after_end_date &&
-      @collection_start_date      == other.collection_start_date &&
-      @collection_after_end_date  == other.collection_after_end_date &&
-      @trip_purpose               == other.trip_purpose &&
-      @is_trip_purpose_allocation == other.is_trip_purpose_allocation
+      @allocation.id              == other.id                         &&
+      @period_start_date          == other.period_start_date          &&
+      @period_after_end_date      == other.period_after_end_date      &&
+      @collection_start_date      == other.collection_start_date      &&
+      @collection_after_end_date  == other.collection_after_end_date  &&
+      @trip_purpose               == other.trip_purpose               &&
+      @is_trip_purpose_allocation == other.is_trip_purpose_allocation?
     )
   end
 end

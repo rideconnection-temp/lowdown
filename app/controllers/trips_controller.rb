@@ -316,7 +316,7 @@ class TripsController < ApplicationController
     @programs           = Program.with_trip_data.default_order
     @reporting_agencies = Provider.with_trip_data_as_reporting_agency.default_order
     @result_codes       = Trip::RESULT_CODES.sort
-    @trip_purposes      = POSSIBLE_TRIP_PURPOSES.sort
+    @trip_purposes      = TRIP_PURPOSE_TO_SUMMARY_PURPOSE.values.uniq.sort
     if @query.try(:allocation_ids).present?
       @allocations        = Allocation.where(id: @query.allocation_ids).order(:name)
     end
