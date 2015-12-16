@@ -174,7 +174,7 @@ module ApplicationHelper
       q_params = {
         allocation_id_list: "#{trip_allocations.map{|a| a.id }.uniq.sort.join(' ')}",
         start_date:         row.start_date,
-        end_date:           row.after_end_date
+        end_date:           row.after_end_date - 1.day
       }
       if row.allocations.first.is_trip_purpose_allocation?
         q_params[:trip_purpose] = row.allocations.first.trip_purpose
@@ -190,7 +190,7 @@ module ApplicationHelper
         q: {
           allocation_id_list: "#{summary_allocations.map{|a| a.id }.uniq.sort.join(' ')}",
           start_date:         row.start_date,
-          end_date:           row.after_end_date
+          end_date:           row.after_end_date - 1.day
         }
       )
     end
