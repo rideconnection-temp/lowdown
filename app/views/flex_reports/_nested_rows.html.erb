@@ -8,50 +8,50 @@
     <% this_row_group_class = ["row-group-#{this_tree_map.join("-")}"] %>
     <% i += 1 %>
     <% next_level_row_group_classes = (row_classes + this_row_group_class) %>
-    <%= render 'flex_reports/group_header', 
-        :row                  => row, 
+    <%= render 'flex_reports/group_header',
+        :row                  => row,
         :columns              => columns,
-        :report_group_fields  => report_group_fields, 
-        :group_fields         => group_fields, 
-        :row_classes          => row_classes, 
+        :report_group_fields  => report_group_fields,
+        :group_fields         => group_fields,
+        :row_classes          => row_classes,
         :tree_map             => tree_map,
         :section              => section,
-        :this_row_group_class => this_row_group_class, 
-        :root_header          => false 
+        :this_row_group_class => this_row_group_class,
+        :root_header          => false
     %>
-    <%= render 'flex_reports/nested_rows', 
-        :rows                 => row, 
+    <%= render 'flex_reports/nested_rows',
+        :rows                 => row,
         :columns              => columns,
-        :report_group_fields  => report_group_fields, 
-        :group_fields         => group_fields[1..-1], 
-        :row_classes          => next_level_row_group_classes, 
+        :report_group_fields  => report_group_fields,
+        :group_fields         => group_fields[1..-1],
+        :row_classes          => next_level_row_group_classes,
         :tree_map             => this_tree_map,
         :section              => section,
-        :currency_precision   => currency_precision 
+        :currency_precision   => currency_precision
     %>
-    <%= render 'flex_reports/totals', 
-        :row                  => row, 
+    <%= render 'flex_reports/totals',
+        :row                  => row,
         :columns              => columns,
-        :report_group_fields  => report_group_fields, 
-        :group_fields         => group_fields, 
-        :row_classes          => row_classes, 
+        :report_group_fields  => report_group_fields,
+        :group_fields         => group_fields,
+        :row_classes          => row_classes,
         :tree_map             => tree_map,
         :section              => section,
-        :currency_precision   => currency_precision 
+        :currency_precision   => currency_precision
     %>
   <% end %>
-<% else %>  
+<% else %>
   <% # innermost layer, render the data -%>
   <% rows.sort_by {|k,v| row_sort(k)}.each do |group_name, row| %>
-    <%= render 'flex_reports/row', 
-        :row                  => row, 
+    <%= render 'flex_reports/row',
+        :row                  => row,
         :columns              => columns,
-        :report_group_fields  => report_group_fields, 
-        :label                => row.send(group_fields[0]), 
-        :row_classes          => row_classes, 
+        :report_group_fields  => report_group_fields,
+        :label                => row.send(group_fields[0]),
+        :row_classes          => row_classes,
         :tree_map             => tree_map,
         :section              => section,
-        :currency_precision   => currency_precision 
+        :currency_precision   => currency_precision
     %>
   <% end %>
 <% end %>

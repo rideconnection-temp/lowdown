@@ -38,18 +38,29 @@ class ReportRow
     fields
   end
 
-  def self.sum(rows, out=nil, results_fields=nil)
-    out ||= ReportRow.new(results_fields)
+  def self.sum(rows)
+    report_rows = get_report_rows_in_nested_hash(rows)
+    results = report_rows.shift
 
-    if rows.instance_of? Hash
-      rows.each do |key, row|
-        sum(row, out)
-      end
-    else
-      out.include_row(rows)
+    report_rows.each do |rr|
+      results.include_row(rr)
     end
 
-    return out
+    return results
+  end
+
+  def self.get_report_rows_in_nested_hash(nested_hash)
+    results = []
+
+    if nested_hash.instance_of? Hash
+      nested_hash.each do |k, v|
+        results += get_report_rows_in_nested_hash(v)
+      end
+    else
+      results << nested_hash
+    end
+
+    return results
   end
 
   def initialize(fields_to_show = nil, allocation = nil)
@@ -57,13 +68,11 @@ class ReportRow
       self.instance_variable_set("@#{field}", BigDecimal("0"))
     end
     @fields_to_show = fields_to_show
-    @allocations = []
-    @allocation = allocation
-    @allocations << allocation if allocation.present?
-    if allocation.respond_to? "collection_start_date"
-      @start_date = allocation.collection_start_date
-      @after_end_date   = allocation.collection_after_end_date
-    end
+    @allocation     = allocation
+    @allocations    = []
+    @allocations   << allocation if allocation.present?
+    @start_date     = allocation.collection_start_date
+    @after_end_date = allocation.collection_after_end_date
   end
 
   def total
@@ -274,6 +283,8 @@ class ReportRow
     @total_general_public_cost       += row.total_general_public_cost
     @total_elderly_and_disabled_cost += row.total_elderly_and_disabled_cost
 
+    # These variable keep information needed for the links to actual
+    # trips and summary records
     @allocations                      = (@allocations + row.allocations).uniq
     if @start_date.present?
       @start_date = row.start_date if row.start_date && @start_date > row.start_date
