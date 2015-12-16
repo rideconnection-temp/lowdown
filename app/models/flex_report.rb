@@ -514,6 +514,7 @@ class FlexReport < ActiveRecord::Base
     result_rows.each do |results|
       if results.attributes.has_key?("purpose_type")
         trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["purpose_type"]]
+        trip_purpose = "Unspecified" if trip_purpose.nil?
       elsif results.attributes.has_key?("purpose")
         trip_purpose = results.attributes["purpose"]
       else
@@ -521,21 +522,13 @@ class FlexReport < ActiveRecord::Base
       end
 
       this_allocation = @allocation_objects.detect do |ao|
-        if ao.is_period_allocation?
-          (
-            ao.id                        == results['allocation_id'] &&
-            ao.collection_start_date     == this_start_date &&
-            ao.collection_after_end_date == this_after_end_date &&
-            ao.trip_purpose              == trip_purpose
-          )
-        else
-          (
-            ao.id           == results['allocation_id'] &&
-            ao.trip_purpose == trip_purpose
-          )
-        end
+        (
+          ao.id                        == results['allocation_id'] &&
+          ao.collection_start_date     == this_start_date          &&
+          ao.collection_after_end_date == this_after_end_date      &&
+          ao.trip_purpose              == trip_purpose
+        )
       end
-      byebug if @report_rows[this_allocation].nil?
       @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k.in? %w(allocation_id purpose purpose_type) })
     end
   end
