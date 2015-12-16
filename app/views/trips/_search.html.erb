@@ -22,9 +22,6 @@
         <%= f.label :customer_last_name, "Customer last name contains:" %>
         <%= f.text_field :customer_last_name %>
       </li>
-    </ol>
-
-    <ol class="section fourth">
       <li>
         <%= f.label :reporting_agency_id, "Reporting agency:" %>
         <%= f.collection_select :reporting_agency_id, @reporting_agencies, :id, :to_s, include_blank: true %>
@@ -33,6 +30,9 @@
         <%= f.label :provider_id, "Provider:" %>
         <%= f.collection_select :provider_id, @providers, :id, :to_s, include_blank: true %>
       </li>
+    </ol>
+
+    <ol class="section fourth">
       <li>
         <%= f.label :program_id, "Program:" %>
         <%= f.collection_select :program_id, @programs, :id, :name, include_blank: true %>
