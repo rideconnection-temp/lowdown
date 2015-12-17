@@ -18,15 +18,15 @@ class Trip < ActiveRecord::Base
 
     def exclude_customers_for_date_range(start_date, after_end_date, options)
       special_where = ""
-      special_where << "AND complete=true " if options[:pending] 
+      special_where << "AND complete=true " if options[:pending]
       special_where << "AND lower(customer_type)='honored'" if options[:elderly_and_disabled_only]
       where_clause = "NOT EXISTS (
-            SELECT id 
+            SELECT id
             FROM trips AS t
-            WHERE result_code = 'COMP' AND 
-              date >= ? AND date < ? and 
+            WHERE result_code = 'COMP' AND
+              date >= ? AND date < ? and
               valid_end = '9999-01-01 01:01:00.000000' AND
-              trips.allocation_id = t.allocation_id AND 
+              trips.allocation_id = t.allocation_id AND
               trips.customer_id = t.customer_id #{special_where}
           )"
       where(where_clause, start_date, after_end_date)
@@ -40,6 +40,13 @@ class Trip < ActiveRecord::Base
       result = []
       TRIP_PURPOSE_TO_SUMMARY_PURPOSE.each {|k, v| result << k if v == summary_purpose }
       result
+    end
+
+    def for_date_ranges(date_ranges)
+      rows = ["('#{date_ranges.first[:start_date].to_s(:db)}'::date, '#{date_ranges.first[:after_end_date].to_s(:db)}'::date)"]
+      date_ranges[1..-1].each {|range| rows << "('#{range[:start_date].to_s(:db)}', '#{range[:after_end_date].to_s(:db)}')" }
+      join = "CROSS JOIN (VALUES #{rows.join(', ')}) AS ranges (start_date, after_end_date)"
+      joins(join).where("trips.date >= ranges.start_date AND trips.date < ranges.after_end_date")
     end
   end
 
@@ -99,7 +106,7 @@ class Trip < ActiveRecord::Base
   scope :for_trip_purpose,  lambda {|trip_purpose|  where(purpose_type: self.trip_purposes_from_summary_purpose(trip_purpose)) }
   scope :for_date_range,
         lambda {|start_date,after_end_date| where("date >= ? AND date < ?",start_date,after_end_date) }
-  scope :for_customer_last_name_like,   
+  scope :for_customer_last_name_like,
         lambda {|name| where("trips.customer_id IN (SELECT id FROM customers WHERE LOWER(last_name) LIKE ?)",
         "%#{name.downcase}%") }
   scope :for_customer_first_name_like,
@@ -117,14 +124,14 @@ class Trip < ActiveRecord::Base
         lambda {|provider_id| where("trips.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id = ?)",
         provider_id)}
   scope :grouped_by_adjustment, -> {
-          select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, " + 
+          select("trips.valid_start, trips.adjustment_notes, COUNT(*) AS cnt, " +
           "MIN(date) as min_date, MAX(date) AS max_date, MIN(trips.id) as id").
           group("trips.valid_start, trips.adjustment_notes").
           order("trips.valid_start DESC").
           where("valid_start <> imported_at")
         }
   scope :index_includes, -> {
-          includes(:pickup_address, :dropoff_address, :run, :customer, 
+          includes(:pickup_address, :dropoff_address, :run, :customer,
           allocation: [:provider,{project: :funding_source},:override]).
           joins(:allocation)
         }
@@ -133,13 +140,6 @@ class Trip < ActiveRecord::Base
           where("valid_start <> imported_at")
         }
   scope :trip_count, -> { select("SUM(attendant_count) + SUM(guest_count) + COUNT(*) AS trip_count").reorder('') }
-
-  def self.for_date_ranges(date_ranges)
-    rows = []
-    date_ranges.each {|range| rows << "('#{range[:start_date].to_s(:db)}'::date, '#{range[:after_end_date].to_s(:db)}'::date)" }
-    join = "CROSS JOIN (VALUES #{rows.join(', ')}) AS ranges (start_date, after_end_date)"
-    joins(join).where("trips.date >= ranges.start_date AND trips.date < ranges.after_end_date")
-  end
 
   RESULT_CODES = {
     'Completed'   => 'COMP',
@@ -164,15 +164,15 @@ class Trip < ActiveRecord::Base
   def bpa_provider?
     (allocation.provider.provider_type == "BPA Provider")
   end
-  
+
   def updated_by_user
-    return (self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by)) 
+    return (self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by))
   end
 
   def customers_served
     guest_count + attendant_count + 1
   end
-  
+
   def summary_purpose
     self.class.summary_purpose purpose_type
   end
@@ -189,7 +189,7 @@ class Trip < ActiveRecord::Base
     else
       true
     end
-  end 
+  end
 
   def washington_medicaid_nonmedical_billable_mileage
     if self.estimated_trip_distance_in_miles < 5
@@ -247,25 +247,25 @@ private
   def create_new_version?
     !do_not_version?
   end
-  
+
   def do_not_version?
     do_not_version == true || do_not_version.to_i == 1 || !complete || !complete_was
   end
 
   def set_duration_and_mileage
-    unless secondary_update 
+    unless secondary_update
       if completed? && (allocation.run_collection_method == 'trips')
         self.duration = (end_at - start_at).to_i unless end_at.nil? || start_at.nil?
         if odometer_end.nil? || odometer_start.nil? || odometer_start == 0
           if bpa_billing_distance && bpa_billing_distance > 0
             self.mileage = bpa_billing_distance
           elsif odometer_start == 0 && odometer_end && odometer_end > 0
-            self.mileage = odometer_end 
+            self.mileage = odometer_end
           else
             self.mileage = 0
-          end 
+          end
         else
-          self.mileage = odometer_end - odometer_start 
+          self.mileage = odometer_end - odometer_start
         end
         if routematch_share_id.blank?
           self.apportioned_fare = fare unless fare.nil?
@@ -281,18 +281,18 @@ private
       return if should_run_callbacks == false
 
       # currently shared, update new routematch_share rides
-      reapportion_trips_for_routematch_share_id( routematch_share_id ) if shared? 
+      reapportion_trips_for_routematch_share_id( routematch_share_id ) if shared?
 
       if routematch_share_id_changed?
         # previously shared, update old routematch_share rides
         if routematch_share_id_change.first.present?
-          reapportion_trips_for_routematch_share_id( routematch_share_id_change.first ) 
+          reapportion_trips_for_routematch_share_id( routematch_share_id_change.first )
         end
       end
     end
     return true
   end
-  
+
   def reapportion_trips_for_routematch_share_id(rms_id)
     r = Trip.current_versions.completed.where(routematch_share_id: rms_id, date: date).order(:end_at,:created_at).all
     trip_count    = r.size
@@ -300,7 +300,7 @@ private
     ride_mileage  = r.map(&:odometer_end).max - r.map(&:odometer_start).min
     ride_cost     = r.sum(:fare)
     all_est_miles = r.sum(:estimated_trip_distance_in_miles)
-    has_rate_data = !r.map(&:estimated_individual_fare).include?(nil) 
+    has_rate_data = !r.map(&:estimated_individual_fare).include?(nil)
     if has_rate_data
       all_estimated_individual_fares = r.sum(:estimated_individual_fare)
     end
@@ -309,7 +309,7 @@ private
     ride_duration_remaining = ride_duration
     ride_mileage_remaining = ride_mileage
     ride_cost_remaining = ride_cost
-        
+
     trip_position = 0
 
     for t in r
@@ -323,11 +323,11 @@ private
       ride_duration_remaining = (ride_duration_remaining - this_trip_duration)
       t.apportioned_duration = this_trip_duration + ( trip_position == trip_count ? ride_duration_remaining : 0 )
 
-      this_trip_mileage = (ride_mileage * this_mileage_ratio * 100).floor.to_f / 100 
+      this_trip_mileage = (ride_mileage * this_mileage_ratio * 100).floor.to_f / 100
       ride_mileage_remaining = (ride_mileage_remaining - this_trip_mileage).round(2)
       t.apportioned_mileage = this_trip_mileage + ( trip_position == trip_count ? ride_mileage_remaining : 0 )
 
-      if has_rate_data 
+      if has_rate_data
         this_fare_ratio = t.estimated_individual_fare / all_estimated_individual_fares
         this_trip_cost = (ride_cost * this_fare_ratio * 100).floor.to_f / 100
       else

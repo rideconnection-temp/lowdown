@@ -289,7 +289,8 @@ class FlexReport < ActiveRecord::Base
   end
 
   # Based on the flex report definition, collect all the actual allocations for which data needs to be gathered.
-  # If there are time periods, then take each allocation and break it into the requested time periods
+  # If there are time periods, then take each allocation and expand it into the requested time periods.
+  # If there is grouping by trip purpose, explode allocations by trip purposes.
   def collect_allocation_objects!(allocation_instance = Allocation)
     where_strings = []
     where_params = []
@@ -370,12 +371,11 @@ class FlexReport < ActiveRecord::Base
       )
     end
 
-    TimePeriods.each do |period|
-      if group_fields.member? period
-        # only apply the shortest time period if there are multiple time period grouping levels
-        report_row_allocations = ReportRowAllocation.apply_periods(report_row_allocations, period)
-        break
-      end
+    # TimePeriods are sorted shortest to longest
+    # Only apply the shortest time period if there are multiple time period grouping levels
+    period_group = (TimePeriods & group_fields).first
+    if period_group.present?
+      report_row_allocations = ReportRowAllocation.apply_periods(report_row_allocations, period_group)
     end
 
     if group_fields.member? "trip_purpose"
@@ -388,7 +388,7 @@ class FlexReport < ActiveRecord::Base
   # Gather the data for the selected allocations
   def collect_report_data!
     options = {}
-    options[:pending] = pending
+    options[:pending]      = pending
     options[:trip_purpose] = group_fields.include?("trip_purpose")
 
     @report_rows = {}
@@ -409,11 +409,11 @@ class FlexReport < ActiveRecord::Base
     end
 
     date_ranges = []
-    if (TimePeriods & group_fields).size > 0
+    if (TimePeriods & group_fields).present?
       @allocation_objects.each do |ao|
-        this_date_range = {start_date: ao.collection_start_date, after_end_date: ao.collection_after_end_date}
-        date_ranges << this_date_range unless date_ranges.include?(this_date_range)
+        date_ranges << {start_date: ao.collection_start_date, after_end_date: ao.collection_after_end_date}
       end
+      date_ranges.uniq!
     else
       date_ranges << {start_date: start_date, after_end_date: after_end_date}
     end

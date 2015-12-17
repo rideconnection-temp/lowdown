@@ -1,15 +1,15 @@
 class ServiceTypesController < ApplicationController
 
   before_filter :require_admin_user, except: [:index, :edit]
-  
+
   def index
     @service_types = ServiceType.default_order.paginate page: params[:page]
   end
-  
+
   def new
     @service_type = ServiceType.new
   end
-  
+
   def create
     @service_type = ServiceType.new safe_params
 
@@ -33,11 +33,11 @@ class ServiceTypesController < ApplicationController
       render :edit
     end
   end
-  
+
   def destroy
     @service_type = ServiceType.find params[:id]
-    @service_type.destroy if @service_type.allocations.empty? 
-    
+    @service_type.destroy if @service_type.allocations.empty?
+
     redirect_to service_types_url
   end
 

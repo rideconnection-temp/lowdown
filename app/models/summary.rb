@@ -1,10 +1,16 @@
 class Summary < ActiveRecord::Base
-#  update_user_on_save
   class << self
     def date_range(start_date, after_end_date)
       start_date = start_date.to_date
       after_end_date = after_end_date.to_date
       where("period_start >= ? and period_end < ?",start_date,after_end_date)
+    end
+
+    def for_date_ranges(date_ranges)
+      rows = ["('#{date_ranges.first[:start_date].to_s(:db)}'::date, '#{date_ranges.first[:after_end_date].to_s(:db)}'::date)"]
+      date_ranges[1..-1].each {|range| rows << "('#{range[:start_date].to_s(:db)}', '#{range[:after_end_date].to_s(:db)}')" }
+      join = "CROSS JOIN (VALUES #{rows.join(', ')}) AS ranges (start_date, after_end_date)"
+      joins(join).where("summaries.period_start >= ranges.start_date AND summaries.period_start < ranges.after_end_date")
     end
   end
 
@@ -24,21 +30,21 @@ class Summary < ActiveRecord::Base
   before_validation :fix_period_end
 
   TripAttrs = [:total_miles,:turn_downs,:unduplicated_riders,:driver_hours_paid,:driver_hours_volunteer,:escort_hours_volunteer]
-  
+
   validates :allocation_id, presence: true
   validates_numericality_of :administrative_hours_volunteer, unless: Proc.new {|rec| rec.allocation.try(:cost_collection_method) == 'none'}
   validates_numericality_of :funds,                          unless: Proc.new {|rec| rec.allocation.try(:cost_collection_method) == 'none'}
   validates_numericality_of :donations,                      unless: Proc.new {|rec| rec.allocation.try(:cost_collection_method) == 'none'}
   validates_numericality_of :agency_other,                   unless: Proc.new {|rec| rec.allocation.try(:cost_collection_method) == 'none'}
-  validates_numericality_of :administrative, if: Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'} 
-  validates_numericality_of :operations,     if: Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'} 
-  validates_numericality_of :vehicle_maint,  if: Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Required'} 
+  validates_numericality_of :administrative, if: Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'}
+  validates_numericality_of :operations,     if: Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Required'}
+  validates_numericality_of :vehicle_maint,  if: Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Required'}
   validates_size_of :administrative, is: 0, allow_nil: true, if: Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Prohibited'}, wrong_length: "should be blank"
   validates_size_of :operations, is: 0, allow_nil: true, if: Proc.new {|rec| rec.allocation.try(:admin_ops_data) == 'Prohibited'}, wrong_length: "should be blank"
   validates_size_of :vehicle_maint, is: 0, allow_nil: true, if: Proc.new {|rec| rec.allocation.try(:vehicle_maint_data) == 'Prohibited'}, wrong_length: "should be blank"
-  validates_date :period_start, 
-      on_or_after: lambda{|r| r.allocation.try(:activated_on)}, 
-      on_or_after_message: "is not valid for this allocation", 
+  validates_date :period_start,
+      on_or_after: lambda{|r| r.allocation.try(:activated_on)},
+      on_or_after_message: "is not valid for this allocation",
       before: lambda{|r| r.allocation.try(:inactivated_on)},
       before_message: "is not valid for this allocation"
 
@@ -47,37 +53,37 @@ class Summary < ActiveRecord::Base
       record.errors.add :allocation_id, "already in use in another summary for this month"
     end
     record.summary_rows.each do |row|
-      if record.allocation.try(:trip_collection_method) == 'summary' 
+      if record.allocation.try(:trip_collection_method) == 'summary'
         unless row.in_district_trips.is_a? Numeric
-          row.errors.add :in_district_trips, "is not a number" 
-          record.errors.add :base, "#{row.purpose} in district trips is not a number" 
+          row.errors.add :in_district_trips, "is not a number"
+          record.errors.add :base, "#{row.purpose} in district trips is not a number"
         end
         unless row.out_of_district_trips.is_a? Numeric
-          row.errors.add :out_of_district_trips, "is not a number" 
-          record.errors.add :base, "#{row.purpose} out of district trips is not a number" 
+          row.errors.add :out_of_district_trips, "is not a number"
+          record.errors.add :base, "#{row.purpose} out of district trips is not a number"
         end
       else
         unless row.in_district_trips.blank?
-          row.errors.add :in_district_trips, "should be blank" 
-          record.errors.add :base, "#{row.purpose} in district trips should be blank" 
+          row.errors.add :in_district_trips, "should be blank"
+          record.errors.add :base, "#{row.purpose} in district trips should be blank"
         end
         unless row.out_of_district_trips.blank?
-          row.errors.add :out_of_district_trips, "should be blank" 
-          record.errors.add :base, "#{row.purpose} out of district trips should be blank" 
+          row.errors.add :out_of_district_trips, "should be blank"
+          record.errors.add :base, "#{row.purpose} out of district trips should be blank"
         end
       end
     end
   end
 
   validates_each *TripAttrs do |record, attr, value|
-    if record.allocation.try(:trip_collection_method) == 'summary' 
+    if record.allocation.try(:trip_collection_method) == 'summary'
       record.errors.add attr, "is not a number" unless value.is_a? Numeric
     else
       record.errors.add attr, "should be blank." unless value.blank?
     end
   end
 
-  scope :valid_range, lambda{|start_date, end_date| where("summaries.valid_start <= ? and summaries.valid_end > ?",start_date,end_date) } 
+  scope :valid_range, lambda{|start_date, end_date| where("summaries.valid_start <= ? and summaries.valid_end > ?",start_date,end_date) }
   scope :data_entry_complete, -> { where complete: true }
   scope :data_entry_not_complete, -> { where complete: false }
   scope :for_date_range, lambda {|start_date, end_date| where("summaries.period_start >= ? AND summaries.period_start < ?", start_date, end_date) }
@@ -89,13 +95,6 @@ class Summary < ActiveRecord::Base
   scope :with_no_reporting_agency, -> { where "summaries.allocation_id IN (SELECT id FROM allocations WHERE reporting_agency_id IS NULL)" }
   scope :revisions, -> { where "summaries.valid_start <> summaries.first_version_created_at" }
   scope :adjustment_notes_contain, lambda{|an| where("summaries.adjustment_notes LIKE ?","%#{an}%")}
-
-  def self.for_date_ranges(date_ranges)
-    rows = []
-    date_ranges.each {|range| rows << "('#{range[:start_date].to_s(:db)}'::date, '#{range[:after_end_date].to_s(:db)}'::date)" }
-    join = "CROSS JOIN (VALUES #{rows.join(', ')}) AS ranges (start_date, after_end_date)"
-    joins(join).where("summaries.period_start >= ranges.start_date AND summaries.period_start < ranges.after_end_date")
-  end
 
   def created_by
     return first_version.updater
@@ -131,7 +130,7 @@ class Summary < ActiveRecord::Base
 
   def create_new_version?
     return false if do_not_version?
-    
+
     self.versioned_columns.detect {|a| __send__ "#{a}_changed?"} || self.summary_rows.detect {|a| a.changed? }
   end
 
@@ -143,7 +142,5 @@ private
   def fix_period_end
     self.period_end = self.period_start.next_month - 1.day
   end
-
-
 
 end
