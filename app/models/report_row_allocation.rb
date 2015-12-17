@@ -23,8 +23,8 @@ class ReportRowAllocation
     # period_*_date variables represent the entire period range (e.g. the full 12 months of the year).
     # collection date ranges will be a subset of the period range when the period range extends
     # before and/or after the date range requested by the user.
-    star_date = allocations.first.report_start_date
-    after_end_date = allocations.first.report_after_end
+    start_date = allocations.first.report_start_date
+    after_end_date = allocations.first.report_after_end_date
     year = start_date.year
 
     if period == 'year'
@@ -54,18 +54,20 @@ class ReportRowAllocation
 
     periods = []
     begin
-      collection_start_date = (start_date > period_start_date ? start_date : period_start_date)
+      collection_start_date     = (start_date     > period_start_date     ? start_date     : period_start_date)
       collection_after_end_date = (after_end_date < period_after_end_date ? after_end_date : period_after_end_date)
 
-      periods += allocations.map do |allocation|
+      periods += allocations.map do |a|
         ReportRowAllocation.new(
           report_start_date:          start_date,
-          report_after_end_date:      end_date,
-          allocation:                 allocation,
+          report_after_end_date:      after_end_date,
+          allocation:                 a.allocation,
           period_start_date:          period_start_date,
           period_after_end_date:      period_after_end_date,
           collection_start_date:      collection_start_date,
-          collection_after_end_date:  collection_after_end_date
+          collection_after_end_date:  collection_after_end_date,
+          trip_purpose:               a.trip_purpose,
+          is_trip_purpose_allocation: a.is_trip_purpose_allocation
         )
       end
 
