@@ -59,8 +59,8 @@ class ReportRowAllocation
 
       periods += allocations.map do |a|
         ReportRowAllocation.new(
-          report_start_date:          start_date,
-          report_after_end_date:      after_end_date,
+          report_start_date:          a.report_start_date,
+          report_after_end_date:      a.report_after_end_date,
           allocation:                 a.allocation,
           period_start_date:          period_start_date,
           period_after_end_date:      period_after_end_date,
