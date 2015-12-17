@@ -90,6 +90,13 @@ class Summary < ActiveRecord::Base
   scope :revisions, -> { where "summaries.valid_start <> summaries.first_version_created_at" }
   scope :adjustment_notes_contain, lambda{|an| where("summaries.adjustment_notes LIKE ?","%#{an}%")}
 
+  def self.for_date_ranges(date_ranges)
+    rows = []
+    date_ranges.each {|range| rows << "('#{range[:start_date].to_s(:db)}'::date, '#{range[:after_end_date].to_s(:db)}'::date)" }
+    join = "CROSS JOIN (VALUES #{rows.join(', ')}) AS ranges (start_date, after_end_date)"
+    joins(join).where("summaries.period_start >= ranges.start_date AND summaries.period_start < ranges.after_end_date")
+  end
+
   def created_by
     return first_version.updater
   end

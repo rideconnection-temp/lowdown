@@ -418,21 +418,18 @@ class FlexReport < ActiveRecord::Base
       date_ranges << {start_date: start_date, after_end_date: after_end_date}
     end
 
-    date_ranges.each do |date_range|
-      ed_handling_values.each do |ed_handling|
-        options[:elderly_and_disabled_only] = ed_handling[:filter_trips_for_ed_only]
-        if ed_handling[:allocations] == :ed
-          allocation_group = @allocation_objects.select{|ao| ao.eligibility == 'Elderly & Disabled'}
-        elsif ed_handling[:allocations] == :non_ed
-          allocation_group = @allocation_objects.select{|ao| ao.eligibility != 'Elderly & Disabled'}
-        else
-          allocation_group = @allocation_objects
-        end
-        collect_report_results_by_data_type allocation_group,
-                                            date_range[:start_date],
-                                            date_range[:after_end_date],
-                                            options
+    ed_handling_values.each do |ed_handling|
+      options[:elderly_and_disabled_only] = ed_handling[:filter_trips_for_ed_only]
+      if ed_handling[:allocations] == :ed
+        allocation_group = @allocation_objects.select{|ao| ao.eligibility == 'Elderly & Disabled'}
+      elsif ed_handling[:allocations] == :non_ed
+        allocation_group = @allocation_objects.select{|ao| ao.eligibility != 'Elderly & Disabled'}
+      else
+        allocation_group = @allocation_objects
       end
+      collect_report_results_by_data_type allocation_group,
+                                          date_ranges,
+                                          options
     end
 
     # Now that all the data is in, perform final calculations for calculated row fields
@@ -461,16 +458,16 @@ class FlexReport < ActiveRecord::Base
     group_report_rows!
   end
 
-  def collect_report_results_by_data_type(allocation_group, this_start_date, this_after_end_date, options)
+  def collect_report_results_by_data_type(allocation_group, these_date_ranges, options)
     # Collect trip data
     if (fields & ReportRow.trip_fields.map{|f| f.to_s }).present?
       these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'trips'}
       if these_allocations.present?
-        collect_all_trips_by_trip(these_allocations, this_start_date, this_after_end_date, options)
+        collect_all_trips_by_trip(these_allocations, these_date_ranges, options)
       end
       these_allocations = allocation_group.select{|ao| ao.trip_collection_method == 'summary'}
       if these_allocations.present?
-        collect_all_trips_by_summary(these_allocations, this_start_date, this_after_end_date, options)
+        collect_all_trips_by_summary(these_allocations, these_date_ranges, options)
       end
     end
 
@@ -478,15 +475,15 @@ class FlexReport < ActiveRecord::Base
     if (fields & ReportRow.run_fields.map{|f| f.to_s }).present?
       these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'trips'}
       if these_allocations.present?
-        collect_all_runs_by_trip(these_allocations, this_start_date, this_after_end_date, options)
+        collect_all_runs_by_trip(these_allocations, these_date_ranges, options)
       end
       these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'runs'}
       if these_allocations.present?
-        collect_all_runs_by_run(these_allocations, this_start_date, this_after_end_date, options)
+        collect_all_runs_by_run(these_allocations, these_date_ranges, options)
       end
       these_allocations = allocation_group.select{|ao| ao.run_collection_method == 'summary'}
       if these_allocations.present?
-        collect_all_runs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
+        collect_all_runs_by_summary(these_allocations, these_date_ranges, options)
       end
     end
 
@@ -494,15 +491,15 @@ class FlexReport < ActiveRecord::Base
     if (fields & ReportRow.cost_fields.map{|f| f.to_s }).present?
       these_allocations = allocation_group.select{|ao| ao.cost_collection_method == 'summary'}
       if these_allocations.present?
-        collect_all_costs_by_summary(these_allocations, this_start_date, this_after_end_date, options)
+        collect_all_costs_by_summary(these_allocations, these_date_ranges, options)
       end
-      collect_all_costs_by_trip(allocation_group, this_start_date, this_after_end_date, options)
+      collect_all_costs_by_trip(allocation_group, these_date_ranges, options)
     end
 
     # Collect operations data
     if (fields & ReportRow.operations_fields.map{|f| f.to_s }).present? ||
         uses_vehicle_maint_field? || uses_administrative_or_operations_fields?
-      collect_all_operation_data_by_summary(allocation_group, this_start_date, this_after_end_date, options)
+      collect_all_operation_data_by_summary(allocation_group, these_date_ranges, options)
     end
 
     if elderly_and_disabled_only
@@ -510,7 +507,7 @@ class FlexReport < ActiveRecord::Base
     end
   end
 
-  def apply_results_to_report_rows(result_rows, this_start_date, this_after_end_date)
+  def apply_results_to_report_rows(result_rows)
     result_rows.each do |results|
       if results.attributes.has_key?("purpose_type")
         trip_purpose = TRIP_PURPOSE_TO_SUMMARY_PURPOSE[results.attributes["purpose_type"]]
@@ -523,19 +520,18 @@ class FlexReport < ActiveRecord::Base
 
       this_allocation = @allocation_objects.detect do |ao|
         (
-          ao.id                        == results['allocation_id'] &&
-          ao.collection_start_date     == this_start_date          &&
-          ao.collection_after_end_date == this_after_end_date      &&
+          ao.id                        == results['allocation_id']  &&
+          ao.collection_start_date     == results['start_date']     &&
+          ao.collection_after_end_date == results['after_end_date'] &&
           ao.trip_purpose              == trip_purpose
         )
       end
-      @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k.in? %w(allocation_id purpose purpose_type) })
+      @report_rows[this_allocation].apply_results(results.attributes.reject{|k,v| k.in? %w(allocation_id start_date after_end_date purpose purpose_type) })
     end
   end
 
-  def collect_all_trips_by_trip(allocations, this_start_date, this_after_end_date, options = {})
+  def collect_all_trips_by_trip(allocations, these_date_ranges, options = {})
     select = "
-      allocation_id,
       SUM(
         CASE WHEN in_trimet_district=true AND result_code = 'COMP'
         THEN 1 + guest_count + attendant_count
@@ -582,38 +578,39 @@ class FlexReport < ActiveRecord::Base
         ELSE 0
         END) AS other_results"
     select += ", purpose_type" if options[:trip_purpose]
-    results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
+    results = common_filters(Trip, select, allocations, these_date_ranges, options)
     results = results.group(:purpose_type) if options[:trip_purpose]
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
-    apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+    apply_results_to_report_rows(results)
 
     if fields.include?('undup_riders')
-      # Collect unduplicated customer counts. If the date range doesn't start at the beginning
-      # of the fiscal year, exclude customers from prior in the fiscal year
-      fiscal_year_start = Date.new(this_start_date.month < 7 ? this_start_date.year - 1 : this_start_date.year, 7, 1)
-      select = "allocation_id, COUNT(DISTINCT customer_id) AS undup_riders"
-      results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
-      results = results.completed
-      results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
-      unless this_start_date == fiscal_year_start
-        results = results.exclude_customers_for_date_range(fiscal_year_start, this_start_date, options)
+      these_date_ranges.each do |date_range|
+        # Collect unduplicated customer counts. If the date range doesn't start at the beginning
+        # of the fiscal year, exclude customers from prior in the fiscal year
+        fiscal_year_start = Date.new(date_range[:start_date].month < 7 ? date_range[:start_date].year - 1 : date_range[:start_date].year, 7, 1)
+        select = "COUNT(DISTINCT customer_id) AS undup_riders"
+        results = common_filters(Trip, select, allocations, [date_range], options)
+        results = results.completed
+        results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
+        unless date_range[:start_date] == fiscal_year_start
+          results = results.exclude_customers_for_date_range(fiscal_year_start, date_range[:start_date], options)
+        end
+        apply_results_to_report_rows(results)
       end
-      apply_results_to_report_rows(results, this_start_date, this_after_end_date)
     end
 
     if (fields & %w{volunteer_driver_trips paid_driver_trips}).present?
       select = "
-        allocation_id,
         SUM(
           CASE WHEN result_code = 'COMP' AND run_id IN (SELECT id FROM runs WHERE volunteer_run = true)
           THEN 1 + guest_count + attendant_count
           ELSE 0
           END) AS trips_marked_as_volunteer"
       select += ", purpose_type" if options[:trip_purpose]
-      results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
+      results = common_filters(Trip, select, allocations, these_date_ranges, options)
       results = results.group(:purpose_type) if options[:trip_purpose]
       results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
-      apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+      apply_results_to_report_rows(results)
     end
 
     # Collect the total_general_public_trips only if we're dealing with a service that's
@@ -622,51 +619,46 @@ class FlexReport < ActiveRecord::Base
     # so that we can calculate costs for the TriMet E&D report.
     if options[:elderly_and_disabled_only]
       select = "
-        allocation_id,
         SUM(
           CASE WHEN result_code = 'COMP'
           THEN 1 + guest_count + attendant_count
           ELSE 0
           END) AS total_general_public_trips"
-      results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
-      apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+      results = common_filters(Trip, select, allocations, these_date_ranges, options)
+      apply_results_to_report_rows(results)
     end
   end
 
-  def collect_all_trips_by_summary(allocations, this_start_date, this_after_end_date, options = {})
+  def collect_all_trips_by_summary(allocations, these_date_ranges, options = {})
     unless options[:elderly_and_disabled_only]
-      select = "allocation_id,
-                SUM(in_district_trips) AS in_district_trips,
+      select = "SUM(in_district_trips) AS in_district_trips,
                 SUM(out_of_district_trips) AS out_of_district_trips"
       select += ", purpose" if options[:trip_purpose]
-      results = common_filters(Summary, select, allocations, this_start_date, this_after_end_date, options)
+      results = common_filters(Summary, select, allocations, these_date_ranges, options)
       results = results.joins(:summary_rows)
       results = results.group(:purpose) if options[:trip_purpose]
-      apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+      apply_results_to_report_rows(results)
 
       if (fields & ['turn_downs', 'undup_riders']).present?
-        select = "allocation_id,
-                  SUM(turn_downs) AS turn_downs,
+        select = "SUM(turn_downs) AS turn_downs,
                   SUM(unduplicated_riders) AS undup_riders"
-        results = common_filters(Summary, select, allocations, this_start_date, this_after_end_date, options)
-        apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+        results = common_filters(Summary, select, allocations, these_date_ranges, options)
+        apply_results_to_report_rows(results)
       end
     end
 
     # Collect the total_general_public_trips only if we're dealing with a service that's
     # not strictly for elderly and disabled customers.  This will be used in the E&D audit export
     if options[:elderly_and_disabled_only]
-      select = "allocation_id,
-                SUM(in_district_trips) + SUM(out_of_district_trips) AS total_general_public_trips"
-      results = common_filters(Summary, select, allocations, this_start_date, this_after_end_date, options)
+      select = "SUM(in_district_trips) + SUM(out_of_district_trips) AS total_general_public_trips"
+      results = common_filters(Summary, select, allocations, these_date_ranges, options)
       results = results.joins(:summary_rows)
-      apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+      apply_results_to_report_rows(results)
     end
   end
 
-  def collect_all_runs_by_trip(allocations, this_start_date, this_after_end_date, options = {})
-    select = "allocation_id,
-              SUM(apportioned_mileage) AS mileage,
+  def collect_all_runs_by_trip(allocations, these_date_ranges, options = {})
+    select = "SUM(apportioned_mileage) AS mileage,
               SUM(
                 CASE WHEN COALESCE(volunteer_trip,false)=false
                 THEN apportioned_duration
@@ -678,15 +670,14 @@ class FlexReport < ActiveRecord::Base
                 ELSE 0
                 END)/3600.0 AS driver_volunteer_hours,
               0 AS escort_volunteer_hours"
-    results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
+    results = common_filters(Trip, select, allocations, these_date_ranges, options)
     results = results.completed
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
-    apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+    apply_results_to_report_rows(results)
   end
 
-  def collect_all_runs_by_run(allocations, this_start_date, this_after_end_date, options = {})
-    select = "allocation_id,
-              SUM(apportioned_mileage) AS mileage,
+  def collect_all_runs_by_run(allocations, these_date_ranges, options = {})
+    select = "SUM(apportioned_mileage) AS mileage,
               SUM(
                 CASE WHEN COALESCE(volunteer_trip,false)=false
                 THEN apportioned_duration
@@ -702,68 +693,64 @@ class FlexReport < ActiveRecord::Base
                 FROM runs
                 WHERE id = trips.run_id
                 ),0) * apportioned_duration)/3600.0 AS escort_volunteer_hours"
-    results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
+    results = common_filters(Trip, select, allocations, these_date_ranges, options)
     results = results.completed
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
-    apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+    apply_results_to_report_rows(results)
   end
 
-  def collect_all_runs_by_summary(allocations, this_start_date, this_after_end_date, options = {})
+  def collect_all_runs_by_summary(allocations, these_date_ranges, options = {})
     unless options[:elderly_and_disabled_only]
-      select = "allocation_id,
-                SUM(total_miles) AS mileage,
+      select = "SUM(total_miles) AS mileage,
                 SUM(driver_hours_paid) AS driver_paid_hours,
                 SUM(driver_hours_volunteer) AS driver_volunteer_hours,
                 SUM(escort_hours_volunteer) AS escort_volunteer_hours"
-      results = common_filters(Summary, select, allocations, this_start_date, this_after_end_date, options)
-      apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+      results = common_filters(Summary, select, allocations, these_date_ranges, options)
+      apply_results_to_report_rows(results)
     end
   end
 
-  def collect_all_costs_by_trip(allocations, this_start_date, this_after_end_date, options = {})
-    select = "allocation_id,
-              SUM(apportioned_fare) AS funds,
+  def collect_all_costs_by_trip(allocations, these_date_ranges, options = {})
+    select = "SUM(apportioned_fare) AS funds,
               0 AS agency_other,
               0 AS donations"
-    results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
+    results = common_filters(Trip, select, allocations, these_date_ranges, options)
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
-    apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+    apply_results_to_report_rows(results)
 
     # Collect the total_general_public_cost only if we're dealing with a service that's
     # not strictly for elderly and disabled customers. This is used for audit purposes.
     if options[:elderly_and_disabled_only]
-      select = "allocation_id,
-                SUM(apportioned_fare) AS total_general_public_cost"
-      results = common_filters(Trip, select, allocations, this_start_date, this_after_end_date, options)
-      apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+      select = "SUM(apportioned_fare) AS total_general_public_cost"
+      results = common_filters(Trip, select, allocations, these_date_ranges, options)
+      apply_results_to_report_rows(results)
     end
   end
 
-  def collect_all_costs_by_summary(allocations, this_start_date, this_after_end_date, options = {})
-    select = "allocation_id,
-              SUM(funds) AS funds,
+  def collect_all_costs_by_summary(allocations, these_date_ranges, options = {})
+    select = "SUM(funds) AS funds,
               SUM(agency_other) AS agency_other,
               SUM(donations) AS donations"
-    results = common_filters(Summary, select, allocations, this_start_date, this_after_end_date, options)
-    apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+    results = common_filters(Summary, select, allocations, these_date_ranges, options)
+    apply_results_to_report_rows(results)
   end
 
-  def collect_all_operation_data_by_summary(allocations, this_start_date, this_after_end_date, options = {})
+  def collect_all_operation_data_by_summary(allocations, these_date_ranges, options = {})
     unless options[:elderly_and_disabled_only]
-      select = "allocation_id,
-                SUM(operations) AS operations,
+      select = "SUM(operations) AS operations,
                 SUM(administrative) AS administrative,
                 SUM(vehicle_maint) AS vehicle_maint,
                 SUM(administrative_hours_volunteer) AS admin_volunteer_hours"
-      results = common_filters(Summary, select, allocations, this_start_date, this_after_end_date, options)
-      apply_results_to_report_rows(results, this_start_date, this_after_end_date)
+      results = common_filters(Summary, select, allocations, these_date_ranges, options)
+      apply_results_to_report_rows(results)
     end
   end
 
-  def common_filters(model, select, allocations, this_start_date, this_after_end_date, options)
-    results = model.select(select).group(:allocation_id)
+  def common_filters(model, select, allocations, these_date_ranges, options)
+    select  = "allocation_id, ranges.start_date, ranges.after_end_date, #{select}"
+    results = model.select(select).group("allocation_id, ranges.start_date, ranges.after_end_date")
     results = results.where(allocation_id: allocations.map{|a| a.id}.uniq)
-    results = results.current_versions.date_range(this_start_date, this_after_end_date)
+    results = results.current_versions.for_date_ranges(these_date_ranges)
     results = results.data_entry_complete unless options[:pending]
     results
   end

@@ -134,6 +134,13 @@ class Trip < ActiveRecord::Base
         }
   scope :trip_count, -> { select("SUM(attendant_count) + SUM(guest_count) + COUNT(*) AS trip_count").reorder('') }
 
+  def self.for_date_ranges(date_ranges)
+    rows = []
+    date_ranges.each {|range| rows << "('#{range[:start_date].to_s(:db)}'::date, '#{range[:after_end_date].to_s(:db)}'::date)" }
+    join = "CROSS JOIN (VALUES #{rows.join(', ')}) AS ranges (start_date, after_end_date)"
+    joins(join).where("trips.date >= ranges.start_date AND trips.date < ranges.after_end_date")
+  end
+
   RESULT_CODES = {
     'Completed'   => 'COMP',
     'Turned Down' => 'TD',
