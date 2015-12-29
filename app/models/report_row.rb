@@ -40,9 +40,9 @@ class ReportRow
 
   def self.sum(rows)
     report_rows = get_report_rows_in_nested_hash(rows)
-    results = report_rows.shift
+    results = report_rows[0]
 
-    report_rows.each do |rr|
+    report_rows[1..-1].each do |rr|
       results.include_row(rr)
     end
 
