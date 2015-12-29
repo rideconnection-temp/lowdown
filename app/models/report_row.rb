@@ -40,7 +40,7 @@ class ReportRow
 
   def self.sum(rows)
     report_rows = get_report_rows_in_nested_hash(rows)
-    results = report_rows[0]
+    results = report_rows[0].dup
 
     report_rows[1..-1].each do |rr|
       results.include_row(rr)
