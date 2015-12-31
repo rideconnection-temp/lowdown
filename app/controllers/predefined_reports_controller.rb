@@ -72,6 +72,7 @@ end
 
 class PredefinedReportsController < ApplicationController
   require 'csv'
+  include FiscalYear
 
   def index
     @query = ReportQuery.new
@@ -465,11 +466,6 @@ class PredefinedReportsController < ApplicationController
     else
       [1, k.to_s.downcase]
     end
-  end
-
-  def fiscal_year_start_date(date)
-    year = (date.month < 7 ? date.year - 1 : date.year)
-    Date.new(year, 7, 1)
   end
 
 end

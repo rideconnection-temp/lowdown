@@ -584,19 +584,13 @@ class FlexReport < ActiveRecord::Base
     apply_results_to_report_rows(results)
 
     if fields.include?('undup_riders')
-      these_date_ranges.each do |date_range|
-        # Collect unduplicated customer counts. If the date range doesn't start at the beginning
-        # of the fiscal year, exclude customers from prior in the fiscal year
-        fiscal_year_start = Date.new(date_range[:start_date].month < 7 ? date_range[:start_date].year - 1 : date_range[:start_date].year, 7, 1)
-        select = "COUNT(DISTINCT customer_id) AS undup_riders"
-        results = common_filters(Trip, select, allocations, [date_range], options)
-        results = results.completed
-        results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
-        unless date_range[:start_date] == fiscal_year_start
-          results = results.exclude_customers_for_date_range(fiscal_year_start, date_range[:start_date], options)
-        end
-        apply_results_to_report_rows(results)
-      end
+      # Collect unduplicated customer counts. If the date range doesn't start at the beginning
+      # of the fiscal year, exclude customers from prior in the fiscal year
+      select = "COUNT(DISTINCT customer_id) AS undup_riders"
+      results = common_filters(Trip, select, allocations, these_date_ranges, options)
+      results = results.completed.exclude_customers_earlier_in_fiscal_year(options)
+      results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
+      apply_results_to_report_rows(results)
     end
 
     if (fields & %w{volunteer_driver_trips paid_driver_trips}).present?

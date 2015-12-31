@@ -1,7 +1,9 @@
 class Trip < ActiveRecord::Base
   require 'bigdecimal'
+  extend FiscalYear
 
   class << self
+
     def date_range(start_date, after_end_date)
       start_date = start_date.to_date
       after_end_date = after_end_date.to_date
@@ -16,7 +18,7 @@ class Trip < ActiveRecord::Base
       Trip.select("COUNT(*) + SUM(guest_count) + SUM(attendant_count) AS count").completed.for_valid_start(valid_start).reorder('').first['count'].to_i
     end
 
-    def exclude_customers_for_date_range(start_date, after_end_date, options)
+    def exclude_customers_earlier_in_fiscal_year(options)
       special_where = ""
       special_where << "AND complete=true " if options[:pending]
       special_where << "AND lower(customer_type)='honored'" if options[:elderly_and_disabled_only]
@@ -24,12 +26,12 @@ class Trip < ActiveRecord::Base
             SELECT id
             FROM trips AS t
             WHERE result_code = 'COMP' AND
-              date >= ? AND date < ? and
+              date >= ranges.fiscal_year_start_date AND date < ranges.start_date AND
               valid_end = '9999-01-01 01:01:00.000000' AND
               trips.allocation_id = t.allocation_id AND
               trips.customer_id = t.customer_id #{special_where}
           )"
-      where(where_clause, start_date, after_end_date)
+      where(where_clause)
     end
 
     def summary_purpose(trip_purpose)
@@ -43,9 +45,11 @@ class Trip < ActiveRecord::Base
     end
 
     def for_date_ranges(date_ranges)
-      rows = ["('#{date_ranges.first[:start_date].to_s(:db)}'::date, '#{date_ranges.first[:after_end_date].to_s(:db)}'::date)"]
-      date_ranges[1..-1].each {|range| rows << "('#{range[:start_date].to_s(:db)}', '#{range[:after_end_date].to_s(:db)}')" }
-      join = "CROSS JOIN (VALUES #{rows.join(', ')}) AS ranges (start_date, after_end_date)"
+      rows = ["('#{date_ranges.first[:start_date].to_s(:db)}'::date, '#{date_ranges.first[:after_end_date].to_s(:db)}'::date, '#{fiscal_year_start_date(date_ranges.first[:start_date]).to_s(:db)}'::date)"]
+      date_ranges[1..-1].each do |range|
+        rows << "('#{range[:start_date].to_s(:db)}', '#{range[:after_end_date].to_s(:db)}', '#{fiscal_year_start_date(range[:start_date]).to_s(:db)}')"
+      end
+      join = "CROSS JOIN (VALUES #{rows.join(', ')}) AS ranges (start_date, after_end_date, fiscal_year_start_date)"
       joins(join).where("trips.date >= ranges.start_date AND trips.date < ranges.after_end_date")
     end
   end
