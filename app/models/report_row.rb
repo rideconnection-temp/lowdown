@@ -1,7 +1,3 @@
-def bind(args)
-  return ActiveRecord::Base.__send__(:sanitize_sql_for_conditions, args, '')
-end
-
 class ReportRow
   @@attrs = [:allocation, :allocations, :start_date, :after_end_date, :funds, :agency_other, :vehicle_maint, :donations, :total_general_public_cost, :escort_volunteer_hours, :admin_volunteer_hours, :driver_paid_hours, :total_trips, :mileage, :in_district_trips, :out_of_district_trips, :total_general_public_trips, :customer_trips, :guest_and_attendant_trips, :volunteer_driver_trips, :paid_driver_trips, :trips_marked_as_volunteer, :turn_downs, :no_shows, :cancellations, :unmet_need, :other_results, :total_requests, :undup_riders, :driver_volunteer_hours, :administrative, :operations, :total_elderly_and_disabled_cost]
   attr_accessor *@@attrs
@@ -24,18 +20,6 @@ class ReportRow
 
   def self.operations_fields
     [:operations, :administrative, :vehicle_maint, :admin_volunteer_hours]
-  end
-
-  def self.fields(requested_fields=nil)
-    if requested_fields.nil? || requested_fields.empty?
-      fields = @@attrs.map { |x| x.to_s } + ["cost_per_hour", "cost_per_mile", "cost_per_trip", "miles_per_ride", "cost_per_customer", "miles_per_customer"]
-    else
-      all_fields = @@attrs.map { |x| x.to_s }
-      fields = all_fields & requested_fields
-    end
-    fields.delete 'driver_hours'
-    fields.delete 'volunteer_hours'
-    fields
   end
 
   def self.sum(rows)
@@ -343,14 +327,6 @@ class ReportRow
         @paid_driver_trips = @volunteer_driver_trips = BigDecimal('0')
       end
       @paid_driver_trips = total_trips - @volunteer_driver_trips
-    end
-  end
-
-  def calculate_paid_driver_trips!
-    case allocation.driver_type_collection_method
-    when 'all volunteer'
-    when 'all paid'
-    when 'mixed'
     end
   end
 
