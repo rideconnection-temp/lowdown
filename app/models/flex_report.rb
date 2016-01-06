@@ -391,6 +391,7 @@ class FlexReport < ActiveRecord::Base
     options[:pending]      = pending
     options[:trip_purpose] = group_fields.include?("trip_purpose")
 
+    # Create a report_row object for each report_row_allocation object
     @report_rows = {}
     @allocation_objects.each do |ao|
       row = ReportRow.new fields, ao
@@ -398,26 +399,30 @@ class FlexReport < ActiveRecord::Base
     end
 
     if elderly_and_disabled_only
+      # For the special case of filtering down to just E&D trips throughout the data set,
+      # set things up to collect data twice, in two different ways.
+      # First filter down to E&D only allocations and collect all their data,
+      # and then filter down to allocations that include non-E&D customers and
+      # within those allocations filter down to trips that were specifically
+      # marked as being for E&D customers.
       ed_handling_values = [
-        {filter_trips_for_ed_only: false, allocations: :ed},
-        {filter_trips_for_ed_only: true,  allocations: :non_ed}
+        {allocations: :ed,     filter_trips_for_ed_only: false},
+        {allocations: :non_ed, filter_trips_for_ed_only: true }
       ]
     else
       ed_handling_values = [
-        {filter_trips_for_ed_only: false, allocations: :all}
+        {allocations: :all,    filter_trips_for_ed_only: false}
       ]
     end
 
+    # Collect all the unique date ranges for this report
     date_ranges = []
-    if (TimePeriods & group_fields).present?
-      @allocation_objects.each do |ao|
-        date_ranges << {start_date: ao.collection_start_date, after_end_date: ao.collection_after_end_date}
-      end
-      date_ranges.uniq!
-    else
-      date_ranges << {start_date: start_date, after_end_date: after_end_date}
+    @allocation_objects.each do |ao|
+      this_date_range = {start_date: ao.collection_start_date, after_end_date: ao.collection_after_end_date}
+      date_ranges << this_date_range unless date_ranges.include? this_date_range
     end
 
+    # Collect the actual data
     ed_handling_values.each do |ed_handling|
       options[:elderly_and_disabled_only] = ed_handling[:filter_trips_for_ed_only]
       if ed_handling[:allocations] == :ed
