@@ -8,10 +8,12 @@ FlexReport.apply_to_leaves!(@report.results, @report.group_fields.size) do |row|
   rows[key] = row
 end
 
+group_fields_to_display = @report.group_fields - ['month']
+
 rows.sort_by{|k,v| k }.each do |key, row|
   csv_row = []
 
-  @report.group_fields.each do |group_field|
+  group_fields_to_display.each do |group_field|
     label = row.send(group_field)
     csv_row << (label.present? ? label : "#{FlexReport::GroupMappings[group_field]} Not Specified")
   end
@@ -21,7 +23,7 @@ rows.sort_by{|k,v| k }.each do |key, row|
   csv_row << nil
   csv_row << row.total_elderly_and_disabled_trips
   csv_row << number_with_precision(row.total_elderly_and_disabled_cost, :precision => 2)
-  csv_row << @report.start_date.year
-  csv_row << @report.start_date.month
+  csv_row << row.calendar_year
+  csv_row << row.calendar_month
   csv << csv_row
 end

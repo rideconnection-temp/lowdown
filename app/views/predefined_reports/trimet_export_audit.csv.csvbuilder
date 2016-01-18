@@ -10,7 +10,9 @@ columns = [
   'Vehicle Miles',
   'Honored Costs',
   'Other Costs',
-  'Total Cost'
+  'Total Cost',
+  'Month',
+  'Year'
 ]
 
 csv << columns
@@ -36,6 +38,8 @@ rows.sort_by{|k,v| k }.each do |key, row|
   csv_row << number_with_precision(row.total_elderly_and_disabled_cost, :precision => 2)
   csv_row << number_with_precision(row.total_non_elderly_and_disabled_cost, :precision => 2)
   csv_row << number_with_precision(row.total_elderly_and_disabled_cost + row.total_non_elderly_and_disabled_cost, :precision => 2)
+  csv_row << row.calendar_year
+  csv_row << row.calendar_month
 
   csv << csv_row
 end
