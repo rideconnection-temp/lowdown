@@ -326,12 +326,12 @@ class PredefinedReportsController < ApplicationController
     ].map(&:to_s)
     @report.elderly_and_disabled_only = true
     if params[:output] == 'Audit'
-      @report.group_by = "provider_name,allocation_name,month"
+      @report.group_by = "provider_name,allocation_name"
       template_name = "trimet_export_audit.csv"
       allocation_instance = Allocation.not_vehicle_maintenance_only
       @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Audit Report.csv"
     else
-      @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier"
+      @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier,month"
       template_name = "trimet_export.csv"
       allocation_instance = Allocation.has_trimet_provider
       @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Report.csv"

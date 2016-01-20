@@ -179,11 +179,11 @@ class ReportRow
   end
 
   def calendar_year
-    allocation.period_start_date.year
+    allocation.period_start_date.try(:year) || allocation.collection_start_date.try(:year)
   end
 
   def calendar_month
-    allocation.period_start_date.month
+    allocation.period_start_date.try(:month) || allocation.collection_start_date.try(:month)
   end
 
   def year
