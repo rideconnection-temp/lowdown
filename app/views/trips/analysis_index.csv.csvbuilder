@@ -37,7 +37,10 @@ csv << [
     'Funding Source',
     'F.E. Project #',
     'F.E. Project Name',
-    'Allocation Name'
+    'Allocation Name',
+    'Case Manager',
+    'Case Manager Office',
+    'Customer Approved Rides'
   ]
 
 @trips.each do |trip|
@@ -80,6 +83,9 @@ csv << [
     trip.allocation.project.try(:funding_source).try(:name),
     trip.allocation.project.try(:project_number),
     trip.allocation.project.try(:name),
-    trip.allocation.name
+    trip.allocation.name,
+    trip.case_manager,
+    trip.case_manager_office,
+    trip.approved_rides
   ]
 end
