@@ -105,7 +105,7 @@
   <% end %>
   <% if columns.include? 'total_requests' %>
     <td class="number total">
-      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.total_requests.to_i) %>
+      <%= number_with_delimiter(row.total_requests.to_i) %>
     </td>
   <% end %>
   <% if columns.include? 'mileage' %>

@@ -239,6 +239,10 @@ class Allocation < ActiveRecord::Base
     @trip_purpose
   end
 
+  def service_type_name
+    service_type.try :name
+  end
+
   private
 
   def require_consistent_provider_fields

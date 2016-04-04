@@ -3,6 +3,9 @@ csv << [
     'Trip Date',
     'First Name',
     'Last Name',
+    'Birth Date',
+    'Gender',
+    'Race',
     'Start Time',
     'End Time',
     'Apportioned Hours',
@@ -18,6 +21,7 @@ csv << [
     'Mobility Type',
     'RM Trip Purpose',
     'Trip Purpose',
+    'Original Override',
     'Override',
     'County',
     'Pickup Name',
@@ -37,7 +41,10 @@ csv << [
     'Funding Source',
     'F.E. Project #',
     'F.E. Project Name',
-    'Allocation Name'
+    'Allocation Name',
+    'Case Manager',
+    'Case Manager Office',
+    'Customer Approved Rides'
   ]
 
 @trips.each do |trip|
@@ -46,6 +53,9 @@ csv << [
     trip.date,
     trip.customer.first_name,
     trip.customer.last_name,
+    trip.customer.birthdate,
+    trip.customer.sex,
+    trip.customer.race,
     trip.start_at.to_s(:time_only_csv),
     trip.end_at.to_s(:time_only_csv),
     seconds_to_hours_colon_minutes_colon_seconds(trip.apportioned_duration),
@@ -61,6 +71,7 @@ csv << [
     trip.mobility,
     trip.purpose_type,
     trip.summary_purpose,
+    trip.original_override,
     trip.allocation.override.try(:name),
     trip.allocation.county,
     trip.pickup_address.try(:common_name),
@@ -80,6 +91,9 @@ csv << [
     trip.allocation.project.try(:funding_source).try(:name),
     trip.allocation.project.try(:project_number),
     trip.allocation.project.try(:name),
-    trip.allocation.name
+    trip.allocation.name,
+    trip.case_manager,
+    trip.case_manager_office,
+    trip.approved_rides
   ]
 end

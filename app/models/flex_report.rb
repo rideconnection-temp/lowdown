@@ -669,7 +669,9 @@ class FlexReport < ActiveRecord::Base
                 ELSE 0
                 END)/3600.0 AS driver_volunteer_hours,
               0 AS escort_volunteer_hours"
+    select += ", purpose_type" if options[:trip_purpose]
     results = common_filters(Trip, select, allocations, these_date_ranges, options)
+    results = results.group(:purpose_type) if options[:trip_purpose]
     results = results.completed
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
     apply_results_to_report_rows(results)
@@ -713,7 +715,9 @@ class FlexReport < ActiveRecord::Base
     select = "SUM(apportioned_fare) AS funds,
               0 AS agency_other,
               0 AS donations"
+    select += ", purpose_type" if options[:trip_purpose]
     results = common_filters(Trip, select, allocations, these_date_ranges, options)
+    results = results.group(:purpose_type) if options[:trip_purpose]
     results = results.elderly_and_disabled_only if options[:elderly_and_disabled_only]
     apply_results_to_report_rows(results)
 

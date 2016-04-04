@@ -166,8 +166,12 @@
         <p></p>
         <ol>
           <li>
-            <%= f.label :start_date, "Month" %>
+            <%= f.label :start_date, "Start Month" %>
             <%= f.date_select :start_date, start_year: 2012, end_year: Time.now.year, order: [:month, :year] %>
+          </li>
+          <li>
+            <%= f.label :end_month, "End Month" %>
+            <%= f.date_select :end_month, start_year: 2012, end_year: Time.now.year, order: [:month, :year] %>
           </li>
         </ol>
         <input type="submit" name="output" value="Data Entry Export">

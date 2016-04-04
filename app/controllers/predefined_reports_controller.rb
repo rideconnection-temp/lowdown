@@ -66,7 +66,7 @@ class ReportQuery
   private
 
   def date_from_params(params_in,attribute_name)
-    Date.new( params_in["#{attribute_name}(1i)"].to_i, params_in["#{attribute_name}(2i)"].to_i, params_in["#{attribute_name}(3i)"].to_i ) 
+    Date.new( params_in["#{attribute_name}(1i)"].to_i, params_in["#{attribute_name}(2i)"].to_i, params_in["#{attribute_name}(3i)"].to_i )
   end
 end
 
@@ -154,7 +154,7 @@ class PredefinedReportsController < ApplicationController
       end
       @customer_rows[office_key] = {} unless @customer_rows.has_key?(office_key)
       unless @offices.has_key?(office_key)
-        @offices[office_key] = {} 
+        @offices[office_key] = {}
         @offices[office_key][:approved_rides]   = 0
         @offices[office_key][:billed_rides]     = 0
         @offices[office_key][:billable_mileage] = BigDecimal.new("0")
@@ -169,8 +169,8 @@ class PredefinedReportsController < ApplicationController
         @customer_count += 1
         @approved_rides += trip.approved_rides.to_i
         row = {customer:          trip.customer,
-               billed_rides:      0, 
-               billable_mileage:  BigDecimal.new("0"), 
+               billed_rides:      0,
+               billable_mileage:  BigDecimal.new("0"),
                fare:              BigDecimal.new("0"),
                mobility:          trip.wheelchair?,
                date_enrolled:     trip.date_enrolled,
@@ -214,7 +214,7 @@ class PredefinedReportsController < ApplicationController
     end
     if params[:output] == 'CSV'
       @filename = "#{@query.county} Medicaid Nonmedical Report #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
-      render "medicaid_nonmedical.csv" 
+      render "medicaid_nonmedical.csv"
     end
   end
 
@@ -244,13 +244,13 @@ class PredefinedReportsController < ApplicationController
     @trip_purposes = TripPurposeRow.trip_purposes
     if params[:output] == 'CSV'
       @filename = "Trip Purpose Report #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
-      render "trip_purpose.csv" 
+      render "trip_purpose.csv"
     end
   end
 
   def development_summary
     @query = ReportQuery.new(params[:report_query])
-   
+
     @report = FlexReport.new
     @report.start_date = @query.start_date
     @report.end_date = @query.end_date
@@ -317,7 +317,7 @@ class PredefinedReportsController < ApplicationController
 
     @report = FlexReport.new
     @report.start_date = @query.start_date
-    @report.end_month = @query.start_date # One month only
+    @report.end_month = @query.end_month
     @report.fields = [
       :total_elderly_and_disabled_trips,
       :mileage,
@@ -331,7 +331,7 @@ class PredefinedReportsController < ApplicationController
       allocation_instance = Allocation.not_vehicle_maintenance_only
       @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Audit Report.csv"
     else
-      @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier"
+      @report.group_by = "trimet_provider_name,trimet_program_name,trimet_provider_identifier,trimet_program_identifier,month"
       template_name = "trimet_export.csv"
       allocation_instance = Allocation.has_trimet_provider
       @filename = "#{@report.start_date.to_s(:ym)} Ride Connection E & D Performance Report.csv"
@@ -344,7 +344,7 @@ class PredefinedReportsController < ApplicationController
   def age_and_ethnicity
     @query = ReportQuery.new(params[:report_query])
     # We need new riders this month, where new means "first time this fy"
-    # so, for each trip this month, find the customer, then find out whether 
+    # so, for each trip this month, find the customer, then find out whether
     # there was a previous trip for this customer this fy
 
     trip_customers = Trip.current_versions.select("DISTINCT customer_id").completed
@@ -379,7 +379,7 @@ class PredefinedReportsController < ApplicationController
         @this_month_less_than_sixty += 1
         @this_year_less_than_sixty += 1
       end
-      
+
       ethnicity = customer.race || "Unspecified"
       if ! @counts_by_ethnicity.member? ethnicity
         @counts_by_ethnicity[ethnicity] = {'month' => 0, 'year' => 0}
@@ -388,7 +388,7 @@ class PredefinedReportsController < ApplicationController
       @counts_by_ethnicity[ethnicity]['year'] += 1
     end
 
-    #now the customers who appear earlier in the year 
+    #now the customers who appear earlier in the year
     for customer in earlier_customers
       age = customer.age_in_years(fiscal_year_start_date(@query.start_date))
       if age.nil?
@@ -418,7 +418,7 @@ class PredefinedReportsController < ApplicationController
     if params[:output] == 'Summary'
       @report.populate_results!
     elsif params[:output] == 'Details'
-      @report.collect_allocation_objects! 
+      @report.collect_allocation_objects!
       a_ids = @report.allocation_objects.map{|a| a.id }
       @trips = Trip.current_versions.completed.for_allocation_id(a_ids).
         for_date_range(@query.start_date,@query.after_end_date).
@@ -431,7 +431,7 @@ class PredefinedReportsController < ApplicationController
       render "bpa_invoice_details.html"
     end
   end
-  
+
   def allocation_summary
     @query = ReportQuery.new(params[:report_query])
     group_by = @query.group_by.split(",")
@@ -441,18 +441,18 @@ class PredefinedReportsController < ApplicationController
     all_nodes = Allocation.group(@groupings.map{|x| x[0] }, allocations)
     @flattened_nodes = flatten_nodes([], all_nodes, 0)
   end
-  
+
   private
 
   def flatten_nodes(node_list, node_in, level)
-    if node_in.is_a?(Hash) 
+    if node_in.is_a?(Hash)
       node_in.sort_by {|k,v| row_sort(k)}.each do |this_key, this_value|
         this_node = {}
         this_node[:level] = level
         this_node[:allocation] = Allocation.member_allocation(this_value)
         this_node[:member_count] = Allocation.count_members(this_value, @groupings.size - level - 1)
         node_list << this_node
-        flatten_nodes node_list, this_value, level + 1 
+        flatten_nodes node_list, this_value, level + 1
       end
       node_list
     end

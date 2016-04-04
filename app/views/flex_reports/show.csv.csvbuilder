@@ -1,6 +1,6 @@
 header_row = @report.group_fields.map{|f| f.titleize}
 
-columns = %w{funds agency_other vehicle_maint administrative operations donations total in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips volunteer_driver_trips paid_driver_trips total_trips mileage driver_volunteer_hours driver_paid_hours driver_total_hours cost_per_trip cost_per_customer cost_per_mile cost_per_hour miles_per_ride miles_per_customer turn_downs undup_riders escort_volunteer_hours admin_volunteer_hours total_volunteer_hours}
+columns = %w{funds agency_other vehicle_maint administrative operations donations total in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips volunteer_driver_trips paid_driver_trips total_trips turn_downs no_shows cancellations unmet_need other_results total_requests mileage driver_volunteer_hours driver_paid_hours driver_total_hours cost_per_trip cost_per_customer cost_per_mile cost_per_hour miles_per_ride miles_per_customer undup_riders escort_volunteer_hours admin_volunteer_hours total_volunteer_hours}
 
 columns.each {|column| header_row << column.titleize if @report.fields.include? column }
 csv << header_row
@@ -61,6 +61,24 @@ rows.sort_by{|k,v| k }.each do |key, row|
   if @report.fields.include? 'total_trips'
     csv_row << number_with_delimiter(row.total_trips.to_i)
   end
+  if @report.fields.include? 'turn_downs'
+    csv_row << number_with_delimiter(row.turn_downs.to_i)
+  end
+  if @report.fields.include? 'no_shows'
+    csv_row << number_with_delimiter(row.no_shows.to_i)
+  end
+  if @report.fields.include? 'cancellations'
+    csv_row << number_with_delimiter(row.cancellations.to_i)
+  end
+  if @report.fields.include? 'unmet_need'
+    csv_row << number_with_delimiter(row.unmet_need.to_i)
+  end
+  if @report.fields.include? 'other_results'
+    csv_row << number_with_delimiter(row.other_results.to_i)
+  end
+  if @report.fields.include? 'total_requests'
+    csv_row << number_with_delimiter(row.total_requests.to_i)
+  end
   if @report.fields.include? 'mileage'
     csv_row << number_with_delimiter(row.mileage.round)
   end
@@ -90,9 +108,6 @@ rows.sort_by{|k,v| k }.each do |key, row|
   end
   if @report.fields.include? 'miles_per_customer'
     csv_row << number_with_precision(row.miles_per_customer, :precision => 1, :delimiter => ",")
-  end
-  if @report.fields.include? 'turn_downs'
-    csv_row << number_with_delimiter(row.turn_downs.to_i)
   end
   if @report.fields.include? 'undup_riders'
     csv_row << number_with_delimiter(row.undup_riders.to_i)

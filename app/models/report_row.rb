@@ -178,6 +178,14 @@ class ReportRow
     end
   end
 
+  def calendar_year
+    allocation.period_start_date.try(:year) || allocation.collection_start_date.try(:year)
+  end
+
+  def calendar_month
+    allocation.period_start_date.try(:month) || allocation.collection_start_date.try(:month)
+  end
+
   def year
     "FY #{allocation.year.to_s}-#{(allocation.year + 1).to_s[-2,2]}"
   end
