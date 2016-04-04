@@ -51,7 +51,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.4.0)
     arel (6.0.3)
-    bcrypt (3.1.10)
+    bcrypt (3.1.11)
     builder (3.2.2)
     byebug (8.2.2)
     capistrano (3.4.0)
@@ -91,11 +91,11 @@ GEM
     diff-lcs (1.2.5)
     dynamic_form (1.1.4)
     erubis (2.7.0)
-    eventmachine (1.0.9.1)
+    eventmachine (1.2.0.1)
     exception_notification (4.1.4)
       actionmailer (~> 4.0)
       activesupport (~> 4.0)
-    faker (1.6.2)
+    faker (1.6.3)
       i18n (~> 0.5)
     fixjour (0.5.3)
       activerecord
@@ -119,7 +119,7 @@ GEM
     minitest (5.8.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
-    net-ssh (3.0.2)
+    net-ssh (3.1.1)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     orm_adapter (0.5.0)
@@ -153,9 +153,9 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (11.1.2)
     ref (2.0.0)
-    responders (2.1.1)
+    responders (2.1.2)
       railties (>= 4.2.0, < 5.1)
-    rspec-core (3.4.3)
+    rspec-core (3.4.4)
       rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -172,7 +172,7 @@ GEM
       rspec-mocks (~> 3.4.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
-    spring (1.6.3)
+    spring (1.6.4)
     sprockets (3.5.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -181,7 +181,7 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     sqlite3 (1.3.11)
-    sshkit (1.8.1)
+    sshkit (1.9.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     therubyracer (0.12.2)
@@ -212,24 +212,24 @@ DEPENDENCIES
   capistrano-rvm (~> 0.1)
   capistrano-secrets-yml (~> 1.0.0)
   capybara
-  csv_builder
-  devise
-  dynamic_form
-  exception_notification
+  csv_builder (~> 2.1.0)
+  devise (~> 3.5.0)
+  dynamic_form (~> 1.1.0)
+  exception_notification (~> 4.1.0)
   faker
   fixjour
-  jc-validates_timeliness
-  jquery-ui-rails
+  jc-validates_timeliness (~> 3.1.0)
+  jquery-ui-rails (~> 5.0.0)
   pg
   point_in_time!
   rails (~> 4.2.0)
   rspec-rails
   spring
   sqlite3
-  therubyracer
+  therubyracer (~> 0.12.0)
   thin
   userstamp!
-  will_paginate
+  will_paginate (~> 3.1.0)
 
 BUNDLED WITH
    1.10.6
