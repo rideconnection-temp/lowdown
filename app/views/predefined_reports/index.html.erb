@@ -1,176 +1,219 @@
-<% content_for :head do -%>
-  <%= javascript_tag do -%>
-    $(document).ready(function(){
-      $('.predefined-report fieldset').css('clear', 'none');
-      $('.predefined-report').css('margin-left', '235px');
-
-      var $menu = $('<ul id="reports-menu">');
-      $menu.css({
-        'float':      'left',
-        'list-style': 'none',
-        'margin':     '0',
-        'padding':    '0',
-        'width':      '215px'
-      });
-      $('#page-header').after($menu);
-      
-      var $reports = $('.predefined-report h2').sort(function(a, b){return $(a).text().toLowerCase() > $(b).text().toLowerCase() ? 1 : -1;});
-      $reports.each(function(){
-        $li = $('<li>');
-        $a = $('<a>');
-        $a.text($(this).text());
-        $a.data('target', $(this).closest('.predefined-report'));
-        $li.append($a)
-        $menu.append($li);
-        $a.click(function(){
-          $this = $(this);
-          $('.predefined-report:visible').hide();
-          $('#reports-menu li').css('background-color', '#eee');
-          $this.closest('li').css('background-color', '#ccc');
-          $this.data('target').fadeIn('fast');
-        });
-      });
-      
-      $menu.find('li a').css({
-        'color':       '#000 !important',
-        'cursor':      'pointer',
-        'display':     'block',
-        'font-weight': 'bold'
-      });
-
-      $menu.find('li').css({
-        '-moz-border-radius':    '5px',
-        '-webkit-border-radius': '5px',
-        'background-color':      '#eee',
-        'border':                '1px solid #bbb',
-        'border-radius':         '5px',
-        'margin':                '4px 0',
-        'padding':               '5px'
-      });
-      
-      $('.predefined-report').hide();
-      $menu.before('<h2>Available Reports:</h2>');
-      $menu.find('li:first').css('background-color', '#ccc').find('a').click();
-    });
-  <% end -%>
-<% end -%>
-
 <div id="page-header">
   <h1>Predefined Reports</h1>
 </div>
 
-<div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :spd } do |f| %>
-    <fieldset>
-      <h2 class="report-header">SPD Report</h2>
-      <p></p>
-      <ol>
-        <li>
-          <label>Start date:</label>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :spd_start_date, :required => :required %>
-        </li>
-        <li>
-          <label>End date:</label>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :spd_end_date, :required => :required %>
-        </li>
-      </ol>
-      <input type="submit" name="report" value="Report">
-      <input type="submit" name="output" value="CSV">
-    </fieldset>
-  <% end %>
+<div id="all-reports">
+  <div class="predefined-report" data-name="monthly">
+    <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: medicaid_nonmedical_predefined_reports_path do |f| %>
+      <fieldset>
+        <h1 class="report-header">Medicaid Waivered Nonmedical</h1>
+        <p></p>
+        <ol>
+          <li>
+            <%= f.label :start_date, for: :medicaid_nonmedical_start_date %>
+            <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :medicaid_nonmedical_start_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :end_date, for: :medicaid_nonmedical_end_date %>
+            <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :medicaid_nonmedical_end_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :county %>
+            <%= f.select :county, %w(Multnomah Washington) %>
+          </li>
+        </ol>
+        <input type="submit" name="report" value="Report">
+        <input type="submit" name="output" value="CSV">
+      </fieldset>
+    <% end %>
+  </div>
+
+  <div class="predefined-report" data-name="monthly">
+    <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: trip_purpose_predefined_reports_path do |f| %>
+      <fieldset>
+        <h1 class="report-header">Trip Purposes</h1>
+        <p></p>
+        <ol>
+          <li>
+            <%= f.label :start_date %>
+            <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :purpose_start_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :end_date %>
+            <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :purpose_end_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :reporting_agency_id, 'Reporting Agency' %>
+            <%= f.select :reporting_agency_id, options_for_select([['<All Reporting Agencies>','']] + Provider.reporting_agencies.default_order.to_a.map { |p| [p.name, p.id] }) %>
+          </li>
+        </ol>
+        <input type="submit" name="report" value="Report">
+        <input type="submit" name="output" value="CSV">
+      </fieldset>
+    <% end %>
+  </div>
+
+  <div class="predefined-report" data-name="monthly">
+    <%= form_for @fiscal_year_to_date_query, html: { :class => "run-report", method: 'get' }, url: quarterly_narrative_predefined_reports_path do |f| %>
+      <fieldset>
+        <h1 class="report-header">Quarterly Narrative</h1>
+        <p></p>
+        <ol>
+          <li>
+            <%= f.label :start_date %>
+            <%= f.date_select :start_date, start_year: 2012, end_year: Time.now.year, order: [:month,:year] %>
+          </li>
+          <li>
+            <%= f.label :end_month, "End date" %>
+            <%= f.date_select :end_month, start_year: 2012, end_year: Time.now.year, order: [:month,:year] %>
+          </li>
+          <li>
+            <%= f.label :provider_id, 'Reporting Agency' %>
+            <%= f.select :provider_id, options_for_select([['<All Reporting Agencies>','']] + Provider.reporting_agencies.default_order.to_a.map { |p| [p.name, p.id] }) %>
+          </li>
+        </ol>
+        <input type="submit" name="report" value="Report">
+      </fieldset>
+    <% end %>
+  </div>
+
+  <div class="predefined-report" data-name="monthly">
+    <%= form_for @semimonth_query, html: { :class => "run-report", method: 'get' }, url: bpa_invoice_predefined_reports_path do |f| %>
+      <fieldset>
+        <h1 class="report-header">BPA Invoice</h1>
+        <p></p>
+        <ol>
+          <li>
+            <%= f.label :start_date %>
+            <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :bpa_invoice_start_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :end_date %>
+            <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :bpa_invoice_end_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :provider_id, 'Provider' %>
+            <%= f.select :provider_id, options_for_select(Provider.bpa_providers.default_order.to_a.map { |p| [p.name, p.id] }) %>
+          </li>
+        </ol>
+        <input type="submit" name="output" value="Summary">
+        <input type="submit" name="output" value="Details">
+      </fieldset>
+    <% end %>
+  </div>
+
+  <div class="predefined-report" data-name="monthly">
+    <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: age_and_ethnicity_predefined_reports_path do |f| %>
+      <fieldset>
+        <h1 class="report-header">Age & Ethnicity</h1>
+        <p></p>
+        <ol>
+          <li>
+            <%= f.label :start_date %>
+            <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :narrative_start_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :end_date %>
+            <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :narrative_end_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :provider %>
+            <%= f.select :provider_id, options_for_select([['<All Providers>','']] + Provider.default_order.with_trip_data.map { |p| [p.name, p.id] }) %>
+          </li>
+          <li>
+            <%= f.label :reporting_agency %>
+            <%= f.select :reporting_agency_id, options_for_select([['<All Reporting Agencies>','']] + Provider.default_order.with_trip_data_as_reporting_agency.map { |p| [p.name, p.id] }) %>
+          </li>
+        </ol>
+        <input type="submit" name="report" value="Report">
+      </fieldset>
+    <% end %>
+  </div>
+
+  <div class="predefined-report" data-name="monthly">
+    <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: premium_service_billing_predefined_reports_path do |f| %>
+      <fieldset>
+        <h1 class="report-header">Premium Service Billing</h1>
+        <p></p>
+        <ol>
+          <li>
+            <%= f.label :start_date %>
+            <%= f.text_field :start_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :ads_start_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :end_date %>
+            <%= f.text_field :end_date, :class => "datepicker", placeholder: "yyyy-mm-dd", id: :ads_end_date, required: :required %>
+          </li>
+          <li>
+            <%= f.label :county %>
+            <%= f.select :county, %w(Multnomah Washington) %>
+          </li>
+          <li>
+            <%= f.label :provider %>
+            <%= f.select :provider_id, [['<All Providers>',nil]] + Provider.for_multnomah_ads.default_order.map {|p| [p.name, p.id] } %>
+          </li>
+        </ol>
+        <input type="submit" name="output" value="Report">
+        <input type="submit" name="output" value="CSV">
+      </fieldset>
+    <% end %>
+  </div>
+
+  <div class="predefined-report" data-name="monthly">
+    <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: trimet_export_predefined_reports_path do |f| %>
+      <fieldset>
+        <h1 class="report-header">TriMet E&D</h1>
+        <p></p>
+        <ol>
+          <li>
+            <%= f.label :start_date, "Start Month" %>
+            <%= f.date_select :start_date, start_year: 2012, end_year: Time.now.year, order: [:month, :year] %>
+          </li>
+          <li>
+            <%= f.label :end_month, "End Month" %>
+            <%= f.date_select :end_month, start_year: 2012, end_year: Time.now.year, order: [:month, :year] %>
+          </li>
+        </ol>
+        <input type="submit" name="output" value="Data Entry Export">
+        <input type="submit" name="output" value="Audit">
+      </fieldset>
+    <% end %>
+  </div>
+
+  <div class="predefined-report" data-name="monthly">
+    <%= form_for @query, html: { :class => "run-report", method: 'get' }, url: allocation_summary_predefined_reports_path do |f| %>
+      <fieldset>
+        <h1 class="report-header">Allocation Summary</h1>
+        <p></p>
+        <div class="sortable" >
+          <h3>
+            Selected groups
+            <a href="#" id="unselect-all">Unselect All</a>
+          </h3>
+          <ul id="sortable-selected" class="connectedSortable">
+            <% @selected_groupings.each do |this_grouping| %>
+              <%= content_tag :li, :class => "sortable-item", "data-group" => this_grouping do %>
+                <%= FlexReport::GroupMappings[this_grouping] %>
+              <% end %>
+            <% end %>
+          </ul>
+        </div>
+        <div class="sortable" >
+          <h3>
+            Unselected groups
+          </h3>
+          <ul id="sortable-unselected" class="connectedSortable">
+            <% FlexReport::GroupMappings.reject{|k,v| FlexReport::TimePeriods.include?(k) || @selected_groupings.include?(k) }.
+              sort_by{|k,v| v }.each do |k,v| %>
+              <%= content_tag :li, :class => "sortable-item", "data-group" => k do %>
+                <%= v %>
+              <% end %>
+            <% end %>
+          </ul>
+        </div>
+        <%= f.hidden_field :group_by %>
+        <input type="submit" name="output" value="Report">
+      </fieldset>
+    <% end %>
+  </div>
 </div>
-
-<div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :ride_purpose } do |f| %>
-    <fieldset>
-      <h2 class="report-header">Ride Purpose Report</h2>
-      <p></p>
-      <ol>
-        <li>
-          <%= f.label :start_date %>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :purpose_start_date, :required => :required %>
-        </li>
-        <li>
-          <%= f.label :end_date %>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :purpose_end_date, :required => :required %>
-        </li>
-      </ol>
-      <input type="submit" name="report" value="Report">
-    </fieldset>
-  <% end %>
-</div>
-
-<div class="predefined-report" data-name="monthly">
-  <%= form_for @quarterly_query, :html => { :class => "run-report"}, :url => { :action => :quarterly_narrative } do |f| %>
-    <fieldset>
-      <h2 class="report-header">Quarterly Narrative Report</h2>
-      <p></p>
-      <ol>
-        <li>
-          <%= f.label :start_date %>
-          <%= f.date_select :start_date, :order=>[:month,:year] %>
-        </li>
-        <li>
-          <%= f.label :end_date %>
-          <%= f.date_select :end_date, :order=>[:month,:year] %>
-        </li>
-        <li>
-          <%= f.label :provider_id %>
-          <%= f.select :provider_id, options_for_select([['<All Providers>','']] + Provider.default_order.all.map { |p| [p.name, p.id] }) %>
-        </li>
-      </ol>
-      <input type="submit" name="report" value="Report">
-    </fieldset>
-  <% end %>
-</div>
-
-<div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :age_and_ethnicity } do |f| %>
-    <fieldset>
-      <h2 class="report-header">Age & Ethnicity Report</h2>
-      <p></p>
-      <ol>
-        <li>
-          <%= f.label :start_date %>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :narrative_start_date, :required => :required %>
-        </li>
-        <li>
-          <%= f.label :end_date %>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :narrative_end_date, :required => :required %>
-        </li>
-        <li>
-          <%= f.label :provider %>
-          <%= f.select :provider, Provider.default_order.map {|x| x.name}.uniq %>
-        </li>
-      </ol>
-      <input type="submit" name="report" value="Report">
-    </fieldset>
-  <% end %>
-</div>
-
-<div class="predefined-report" data-name="monthly">
-  <%= form_for @query, :html => { :class => "run-report"}, :url => { :action => :multnomah_ads } do |f| %>
-    <fieldset>
-      <h2 class="report-header">Multnomah ADS Report</h2>
-      <p></p>
-      <ol>
-        <li>
-          <%= f.label :start_date %>
-          <%= f.text_field :start_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :ads_start_date, :required => :required %>
-        </li>
-        <li>
-          <%= f.label :end_date %>
-          <%= f.text_field :end_date, :class => "datepicker", :placeholder => "yyyy-mm-dd", :id => :ads_end_date, :required => :required %>
-        </li>
-        <li>
-          <%= f.label :provider %>
-          <%= f.collection_select :provider_id, Provider.for_multnomah_ads.default_order, :id, :name, :include_blank => true %>
-        </li>
-      </ol>
-      <input type="submit" name="output" value="Report">
-      <input type="submit" name="output" value="CSV">
-    </fieldset>
-  <% end %>
-</div>
-
-

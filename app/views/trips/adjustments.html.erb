@@ -1,12 +1,19 @@
 <div id="page-header">
   <h1>Trip Adjustment History</h1>
 </div>
+
+<%= render 'search', allow_csv: false, action: :adjustments %>
+
 <%= will_paginate @adjustments %>
+
 <table>
   <tr>
     <th>Change Date & Time</th>
+    <th>Trip Date Range</th>
+    <th>Source Allocation</th>
+    <th>Destination Allocation (if different)</th>
+    <th class="number">Completed Trip Count</th>
     <th>Adjustment Notes</th>
-    <th>Record Count</th>
     <th></th>
   </tr>
   <% for adjustment in @adjustments %>
@@ -15,16 +22,29 @@
         <%= adjustment.valid_start.in_time_zone("Pacific Time (US & Canada)").strftime('%D %I:%M %p') %>
       </td>
       <td>
-        <%= truncate(adjustment.adjustment_notes) %>
+        <%= adjustment['min_date'].to_date.to_s(:mdy) %> 
+        <% if adjustment['max_date'] != adjustment['min_date'] -%>
+          through <%= adjustment['max_date'].to_date.to_s(:mdy) %>
+        <% end -%>
       </td>
       <td>
-        <%= adjustment['cnt'] %>
+        <% trip = Trip.find(adjustment.id) %>
+        <%= trip.previous.try(:allocation).try(:name) %>
+      </td>
+      <td>
+        <%= trip.allocation.name if trip.previous.try(:allocation).try(:name) != trip.allocation.name %>
+      </td>
+      <td class="number">
+        <%= Trip.completed_trip_count_for_valid_start(adjustment.valid_start) %>
+      </td>
+      <td>
+        <%= adjustment.adjustment_notes %>
       </td>
       <td>
         <% if adjustment['cnt'] == '1' -%>
-          <%= link_to "View", {:action => :show, :id => adjustment.id}, :class => :details %>
+          <%= link_to "View", adjustment, :class => :details %>
         <% else -%>
-          <%= link_to "View", {:action => :list, "trip_query[valid_start]" => adjustment.valid_start}, :class => :details %>
+          <%= link_to "View", trips_path("q[valid_start]" => adjustment.valid_start), :class => :details %>
         <% end -%>
       </td>
     </tr>

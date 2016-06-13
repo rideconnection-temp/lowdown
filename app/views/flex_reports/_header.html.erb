@@ -1,57 +1,71 @@
+<% rf = columns -%>
 <thead>
   <tr>
-    <% (@report.groups.size - 1).times do %>
+    <% (report_group_fields.size).times do %>
       <th class="indent">&nbsp;</th>
     <% end %>
     <th rowspan="2" class="wrap text"><%= @report.group_fields[-1].sub("_id","").sub("_"," ").titleize %></th>
-    <% column_count = (@report.results_fields.keys & ['funds','agency_other','vehicle_maint','administrative','operations','donations','total']).count %>
+    <% column_count = (rf & %w{funds agency_other vehicle_maint administrative operations donations total}).count %>
     <% if column_count > 0 %>
-      <th class="column-group" colspan="<%= column_count %>">Costs</th>
+      <th class="column-group" colspan="<%= column_count %>">Funding</th>
     <% end %>
-    <% column_count = (@report.results_fields.keys & ['in_district_trips','out_of_district_trips','total_trips','total_last_year']).count %>
+    <% column_count = (rf & %w{in_district_trips out_of_district_trips customer_trips guest_and_attendant_trips volunteer_driver_trips paid_driver_trips total_trips turn_downs no_shows cancellations unmet_need other_results total_requests}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Trips</th>
     <% end %>
-    <% if @report.results_fields.member? 'mileage' %><th rowspan="2" class="wrap number">Mileage</th><% end %>
-    <% column_count = (@report.results_fields.keys & ['driver_volunteer_hours','driver_paid_hours','driver_total_hours']).count %>
+    <% if rf.include? 'mileage' %><th rowspan="2" class="wrap number">Mileage</th><% end %>
+    <% column_count = (rf & %w{driver_volunteer_hours driver_paid_hours driver_total_hours}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Driver Hours</th>
     <% end %>
-    <% column_count = (@report.results_fields.keys & ['cost_per_trip','cost_per_mile','cost_per_hour','miles_per_ride']).count %>
+    <% column_count = (rf & %w{cost_per_trip cost_per_customer cost_per_mile cost_per_hour miles_per_ride miles_per_customer}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Metrics</th>
     <% end %>
-    <% if @report.results_fields.member? 'turn_downs' %><th rowspan="2" class="wrap number">Turn Downs</th><% end %>
-    <% if @report.results_fields.member? 'undup_riders' %><th rowspan="2" class="wrap number">Undup Riders</th><% end %>
-    <% column_count = (@report.results_fields.keys & ['escort_volunteer_hours','admin_volunteer_hours','total_volunteer_hours']).count %>
+    <% if rf.include? 'undup_riders' %><th rowspan="2" class="wrap number">Undup Riders</th><% end %>
+    <% column_count = (rf & %w{escort_volunteer_hours admin_volunteer_hours total_volunteer_hours}).count %>
     <% if column_count > 0 %>
       <th class="column-group" colspan="<%= column_count %>">Volunteer Hours</th>
     <% end %>
+    <th rowspan="2" class="no-print">
+      Details
+    </th>
   </tr>
   <tr>
-    <% (@report.groups.size - 1).times do %>
+    <% (report_group_fields.size).times do %>
       <th class="indent">&nbsp;</th>
     <% end %>
-    <% if @report.results_fields.member? 'funds' %><th class="wrap number">RC Funds</th><% end %>
-    <% if @report.results_fields.member? 'agency_other' %><th class="wrap number">Agency Other</th><% end %>
-    <% if @report.results_fields.member? 'vehicle_maint' %><th class="wrap number">Vehicle Maint.</th><% end %>
-    <% if @report.results_fields.member? 'administrative' %><th class="wrap number">Admin</th><% end %>
-    <% if @report.results_fields.member? 'operations' %><th class="wrap number">Operations</th><% end %>
-    <% if @report.results_fields.member? 'donations' %><th class="wrap number">Donations</th><% end %>
-    <% if @report.results_fields.member? 'total' %><th class="wrap number">Total</th><% end %>
-    <% if @report.results_fields.member? 'in_district_trips' %><th class="wrap number">In District</th><% end %>
-    <% if @report.results_fields.member? 'out_of_district_trips' %><th class="wrap number">Out of District</th><% end %>
-    <% if @report.results_fields.member? 'total_trips' %><th class="wrap number">Total</th><% end %>
-    <% if @report.results_fields.member? 'total_last_year' %><th class="wrap number">Total Last Year</th><% end %>
-    <% if @report.results_fields.member? 'driver_volunteer_hours' %><th class="wrap number">Volunteer</th><% end %>
-    <% if @report.results_fields.member? 'driver_paid_hours' %><th class="wrap number">Paid</th><% end %>
-    <% if @report.results_fields.member? 'driver_total_hours' %><th class="wrap number">Total</th><% end %>
-    <% if @report.results_fields.member? 'cost_per_trip' %><th class="wrap number">Cost/Trip</th><% end %>
-    <% if @report.results_fields.member? 'cost_per_mile' %><th class="wrap number">Cost/Mile</th><% end %>
-    <% if @report.results_fields.member? 'cost_per_hour' %><th class="wrap number">Cost/Hour</th><% end %>
-    <% if @report.results_fields.member? 'miles_per_ride' %><th class="wrap number">Miles/Trip</th><% end %>
-    <% if @report.results_fields.member? 'escort_volunteer_hours' %><th class="wrap number">Escort</th><% end %>
-    <% if @report.results_fields.member? 'admin_volunteer_hours' %><th class="wrap number">Admin</th><% end %>
-    <% if @report.results_fields.member? 'total_volunteer_hours' %><th class="wrap number">Total</th><% end %>
+    <% if rf.include? 'funds' %><th class="wrap number">RC Funds</th><% end %>
+    <% if rf.include? 'agency_other' %><th class="wrap number">Agency Other</th><% end %>
+    <% if rf.include? 'vehicle_maint' %><th class="wrap number">Vehicle Maint.</th><% end %>
+    <% if rf.include? 'administrative' %><th class="wrap number">Admin</th><% end %>
+    <% if rf.include? 'operations' %><th class="wrap number">Operations</th><% end %>
+    <% if rf.include? 'donations' %><th class="wrap number">Donations</th><% end %>
+    <% if rf.include? 'total' %><th class="wrap number">Total</th><% end %>
+    <% if rf.include? 'in_district_trips' %><th class="wrap number">In District</th><% end %>
+    <% if rf.include? 'out_of_district_trips' %><th class="wrap number">Out of District</th><% end %>
+    <% if rf.include? 'customer_trips' %><th class="wrap number">Customers</th><% end %>
+    <% if rf.include? 'guest_and_attendant_trips' %><th class="wrap number">Guests and Attendants</th><% end %>
+    <% if rf.include? 'volunteer_driver_trips' %><th class="wrap number">Volunteer Driver Trips</th><% end %>
+    <% if rf.include? 'paid_driver_trips' %><th class="wrap number">Paid Driver Trips</th><% end %>
+    <% if rf.include? 'total_trips' %><th class="wrap number">Completed</th><% end %>
+    <% if rf.include? 'turn_downs' %><th class="wrap number">Turn Downs</th><% end %>
+    <% if rf.include? 'no_shows' %><th class="wrap number">No Shows</th><% end %>
+    <% if rf.include? 'cancellations' %><th class="wrap number">Cancel&shy;lations</th><% end %>
+    <% if rf.include? 'unmet_need' %><th class="wrap number">Unmet Need</th><% end %>
+    <% if rf.include? 'other_results' %><th class="wrap number">Other</th><% end %>
+    <% if rf.include? 'total_requests' %><th class="wrap number">Total Trips Requested</th><% end %>
+    <% if rf.include? 'driver_volunteer_hours' %><th class="wrap number">Volunteer</th><% end %>
+    <% if rf.include? 'driver_paid_hours' %><th class="wrap number">Paid</th><% end %>
+    <% if rf.include? 'driver_total_hours' %><th class="wrap number">Total</th><% end %>
+    <% if rf.include? 'cost_per_trip' %><th class="wrap number">Cost/Trip</th><% end %>
+    <% if rf.include? 'cost_per_customer' %><th class="wrap number">Cost/Cust</th><% end %>
+    <% if rf.include? 'cost_per_mile' %><th class="wrap number">Cost/Mile</th><% end %>
+    <% if rf.include? 'cost_per_hour' %><th class="wrap number">Cost/Hour</th><% end %>
+    <% if rf.include? 'miles_per_ride' %><th class="wrap number">Miles/Trip</th><% end %>
+    <% if rf.include? 'miles_per_customer' %><th class="wrap number">Miles/Cust</th><% end %>
+    <% if rf.include? 'escort_volunteer_hours' %><th class="wrap number">Escort</th><% end %>
+    <% if rf.include? 'admin_volunteer_hours' %><th class="wrap number">Admin</th><% end %>
+    <% if rf.include? 'total_volunteer_hours' %><th class="wrap number">Total</th><% end %>
   </tr>
 </thead>

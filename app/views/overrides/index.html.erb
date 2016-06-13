@@ -14,7 +14,7 @@
   <% @overrides.each do |override| %>
     <tr>
       <td><%= link_to override.name, edit_override_path(override) %></td>
-      <td><%= link_to "Delete", override_url(override), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this override?" if current_user.is_admin && override.allocations.empty? %></td>
+      <td><%= link_to "Delete", override_url(override), :class => "delete", :method => "delete", data: { confirm: "Are you sure you want to delete this override?" } if current_user.is_admin && override.allocations.empty? %></td>
     </tr>
   <% end %>
 </table>

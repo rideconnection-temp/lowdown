@@ -12,28 +12,28 @@
       <% for version in @versions %>
         <li>
           <% if version == @summary %>
-            <%= time_ago_in_words version.valid_start %> ago
-            <% else %>
-            <%= link_to time_ago_in_words(version.valid_start), :action=>:edit, :id=>version.id %> ago
+            <%= version.valid_start.localtime.to_s(:full) %>
+          <% else %>
+            <%= link_to version.valid_start.localtime.to_s(:full), edit_summary_path(version.id) %>
           <% end %>
           by <span class="update-user"><%= version.updater.email %></span> 
-          <%= link_to "", delete_summary_version_path(version), :class => "delete", :method => :post, :confirm => "Are you sure you want to delete this version?" unless version.latest? %>
-          <%= link_to "", delete_summary_path(version), :class => "delete", :method => :delete, :confirm => "Are you sure you want to delete this summary?" if @versions.size == 1 %>
+          <%= link_to "", delete_version_summary_path(version), :class => "delete", method: :delete, data: { confirm: "Are you sure you want to delete this version?" } if !version.latest? && current_user.is_admin %>
+          <%= link_to "", delete_summary_path(version), :class => "delete", method: :delete, data: { confirm: "Are you sure you want to delete this summary?" } if @versions.size == 1 && current_user.is_admin %>
         </li>
       <% end %>
     </ul>
 
     <% if ! @summary.latest? %>
-    <br />
-    <div class="notice">You are viewing an old version created on <%= @summary.valid_start.to_s(:pretty) %></div>
+      <br />
+      <div class="notice">You are viewing an old version created on <%= @summary.valid_start.to_s(:pretty) %></div>
     <% end %>
 
   </div><!-- /#history -->
 
-  <%= form_for @summary, :url=>{:action=>:update} do |f| %>
-    <%= render :partial => "form", :locals=>{:f=>f} %>
+  <%= form_for @summary do |f| %>
+    <%= render "form", f: f %>
 
-    <% if @summary.latest? -%>
+    <% if @summary.latest? && current_user.is_admin -%>
       <div class="actions">
         <%= submit_tag 'Update' %>
       </div>

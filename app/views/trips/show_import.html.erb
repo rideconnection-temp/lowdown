@@ -1,26 +1,56 @@
 <div id="page-header">
-  <h1>Import Trips</h1>
+  <% if current_user.is_admin %>
+    <h1>Import Trips</h1>
+  <% else %>
+    <h1>Past Imports</h1>
+  <% end %>
 </div>
 
-<%=form_tag url_for(:action=>:import), :method=>:post, :multipart => true %>
+<% if current_user.is_admin %>
+  <%= form_tag import_trips_path, method: :post, multipart: true %>
+    <fieldset>
+
+      <ol class="section first">
+        <li>
+          <label for="file-import">Import file</label>
+          <input id="file-import" name="file-import" type="file" value="" size="100" />
+        </li>
+        <li>
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" rows="3" cols="60"></textarea>
+        </li>
+      </ol>
+
+      <div class="actions">
+        <input id="trip-import" type="submit" value="Import" />
+      </div>
+
+    </fieldset>
+  </form>
+
+  <h1>Past Imports</h1>
+<% end %>
+
+<%= form_for @query, as: :q, html: {id: "trip-filter", method: :get}, url: show_import_trips_path do |f| %>
   <fieldset>
-
     <ol class="section first">
-      <li><input id="file-import" name="file-import" type="file" value="" size="100" /></li>
+      <li>
+        <%= f.label :provider_id, "Provider:" %> 
+        <%= f.collection_select :provider_id, @providers, :id, :to_s, include_blank: true %>
+      </li>
     </ol>
-
     <div class="actions">
-      <input id="trip-import" type="submit" value="Import" />
+      <%= f.submit "Search", id: "trip-search" %>
     </div>
-
   </fieldset>
-</form>
-<h1>Past Imports</h1>
+<% end %>
+
 <table>
   <tr>
     <th>Imported At</th>
     <th>File Name</th>
-    <th>Trip Count</th>
+    <th>Notes</th>
+    <th>Records</th>
     <th></th>
   </tr>
   <% for trip_import in @trip_imports %>
@@ -32,10 +62,13 @@
         <%= trip_import.file_name || '<File name not recorded>' %>
       </td>
       <td>
+        <%= trip_import.notes %>
+      </td>
+      <td>
         <%= trip_import.trips.count %>
       </td>
       <td>
-        <%= link_to "View", {:action => :list, "trip_query[trip_import_id]" => trip_import.id}, :class => :details %>
+        <%= link_to "View", trips_path("q[trip_import_id]" => trip_import.id), :class => :details %>
       </td>
     </tr>
   <% end %>

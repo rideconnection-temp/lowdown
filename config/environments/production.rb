@@ -4,6 +4,7 @@ Lowdown::Application.configure do
   # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
   config.cache_classes = true
+  config.eager_load = true
 
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
@@ -12,6 +13,8 @@ Lowdown::Application.configure do
   # Specifies the header that your server uses for sending files
   config.action_dispatch.x_sendfile_header = "X-Sendfile"
 
+  config.assets.precompile += %w( application-print.css )
+
   # For nginx:
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
@@ -19,7 +22,7 @@ Lowdown::Application.configure do
   # just comment this out and Rails will serve the files
 
   # See everything in the log (default is :info)
-  # config.log_level = :debug
+  config.log_level = :info
 
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
@@ -29,7 +32,7 @@ Lowdown::Application.configure do
 
   # Disable Rails's static asset server
   # In production, Apache or nginx will already do this
-  config.serve_static_assets = false
+  config.serve_static_files = false
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -47,11 +50,9 @@ Lowdown::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  # Needed for sending new users' confirmation email
-  config.action_mailer.default_url_options = { :host => 'apps.rideconnection.org/service' }
+  config.action_mailer.default_url_options = { :host => 'apps.rideconnection.org' }
 
 end
 
 # Turn off auto TLS for e-mail
 ActionMailer::Base.smtp_settings[:enable_starttls_auto] = false
-

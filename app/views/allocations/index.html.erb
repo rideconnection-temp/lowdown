@@ -1,17 +1,24 @@
 <ul id="subnav" class="selfclear">
-  <li><%= link_to 'Download full list as CSV', allocations_path(:format => :csv) %></li>
+  <li><%= link_to 'TriMet Report Groupings', trimet_groupings_allocations_path(:format => :csv), :class => :csv %></li>
+  <li><%= link_to 'Allocations Export', allocations_path(:format => :csv), :class => :csv %></li>
   <li><%= link_to 'New Allocation', new_allocation_path, :class => :add if current_user.is_admin %></li>
 </ul>
 <div id="page-header">
   <h1>Listing Allocations</h1>
 </div>
-
-<%= will_paginate @allocations %>
+<div class="pagination">
+  <% @provider_index.each do |x| %>
+    <%=
+      link_to_unless_current x, allocations_path(filter: x) do
+        content_tag(:em, x, class: :current)
+      end
+    %>
+  <% end %>
+</div>
 <table>
   <% @grouped_allocations.each do |provider_name, group| %>
-
     <tr>
-      <th><%= provider_name %> Allocations</th>
+      <th><%= provider_name %></th>
       <th>Activated On</th>
       <th>Inactivated On</th>
       <th>Program</th>
@@ -19,19 +26,16 @@
       <th>County</th>
       <th></th>
     </tr>
-
     <% group.each do |allocation| %>
       <tr>
         <td><%= link_to allocation.name, edit_allocation_path(allocation) %></td>
         <td><%= allocation.activated_on %></td>
         <td><%= allocation.inactivated_on %></td>
-        <td><%= allocation.program %></td>
-        <td><%= allocation.project_name %></td>
+        <td><%= allocation.program.try(:name) %></td>
+        <td><%= allocation.project.try(:number_and_name) %></td>
         <td><%= allocation.county %></td>
-        <td><%= link_to "Delete", allocation_url(allocation), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this allocation?" if current_user.is_admin && !(allocation.trips.exists? || allocation.summaries.exists?) %></td>
+        <td><%= link_to "Delete", allocation_url(allocation), :class => "delete", :method => "delete", data: { confirm: "Are you sure you want to delete this allocation?" } if current_user.is_admin && @allocations_without_trips_or_summaries.include?(allocation.id) %></td>
       </tr>
     <% end %>
   <% end %>
 </table>
-<%= will_paginate @allocations %>
-

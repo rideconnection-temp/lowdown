@@ -7,23 +7,34 @@
 <% end %>
 
 <ul id="all-reports">
-  <% for report in @reports %>
-    <li class="flex-report" data-id="<%= report.id %>">
-      <%= form_for report, :html => { :method => 'delete' } do |f| %>
-        <span class="handle">[Reorder]</span>
-      
-        <%= link_to "Edit Report", edit_flex_report_path(report), :class => "edit" %>
-        <input type="hidden" name="report[id]" value="<%= report.id %>" />
-        <%= f.submit "Delete Report", :confirm=>"Are you sure you want to delete this report?", :class=>'delete-report' %>
-      <% end %>
+  <% categorized_reports = @reports.group_by{|r| r.report_category.try(:name)} %>
+  <% categorized_reports.keys.sort_by{|k| k || ''}.each do |category| %>
+    <div class="report-category">
+      <h1><%= category || "Unspecified Category" %></h1>
+      <% categorized_reports[category].sort_by{|r| r.name.downcase }.each do |report| %>
+        <li class="flex-report">
+          <% if current_user.is_admin %>
+            <%= link_to "Edit Report", edit_flex_report_path(report), :class => "edit" %>
+          <% else %>
+            <%= link_to "View Report Definition", edit_flex_report_path(report), :class => "details" %>
+          <% end %>
 
-      <%= form_for report, :html => { :class => "run-report" } do |f| %>
-        <fieldset>
-          <h2 class="report-header"><%= report.name %></h2>
-          <%= content_tag :p, report.description if report.description.present? %>
-          <%= render "run_form", :f => f, :report => report, :ol_class => "" %>
-        </fieldset>
+          <%= form_for report, :html => { :class => "run-report", :method => :get } do |f| %>
+            <fieldset class="report-form">
+              <h2 class="report-header"><%= report.name %></h2>
+              <div class="subtitle"><%= report.subtitle %></div>
+              <%= 
+                content_tag(
+                  :div, 
+                  "Grouping: #{group_by_label(report.group_fields)}",
+                  :class => "grouping-description"
+                ) if report.group_fields.present? 
+              %>
+              <%= render "run_form", :f => f, :report => report, :ol_class => "index" %>
+            </fieldset>
+          <% end %>
+        </li>
       <% end %>
-    </li>
+    </div>
   <% end %>
 </ul>

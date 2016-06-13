@@ -4,9 +4,9 @@
       <h2><%= pluralize(@provider.errors.count, "error") %> prohibited this provider from being saved:</h2>
 
       <ul>
-      <% @provider.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
+        <% @provider.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
       </ul>
     </div>
   <% end %>
@@ -17,33 +17,21 @@
         <%= form.label :name %>
         <%= form.text_field :name %>
       </li>
-      
       <li class="selfclear">
         <%= form.label :short_name %>
         <%= form.text_field :short_name %>
       </li>
-      
       <li class="selfclear">
         <%= form.label :provider_type %>
         <%= form.select :provider_type, options_for_select(@provider_types.map {|pt| [pt,pt]}, @provider.provider_type) %>
       </li>
-      
-      <li class="selfclear">
-        <%= form.label :agency %>
-        <%= form.text_field :agency %>
-      </li>
-      
-      <li class="selfclear">
-        <%= form.label :branch %>
-        <%= form.text_field :branch %>
-      </li>
     </ol>
     
-    <div class="actions">
-      <%= form.submit %>
-    </div>
-
+    <% if current_user.is_admin %>
+      <div class="actions">
+        <%= form.submit %>
+      </div>
+    <% end %>
   </fieldset>
-
 
 <% end %>

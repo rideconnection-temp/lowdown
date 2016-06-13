@@ -1,0 +1,58 @@
+<div id="page-header">
+  <h1>BPA Invoice</h1>
+</div>
+<h2>
+  <%= Provider.find(@query.provider_id).try(:name) %> &mdash; 
+  <%= describe_date_range(@report.start_date, @report.end_date) %>
+</h2>
+<div class="report-wrapper">
+  <table id="trip-results">
+    <thead>
+      <tr>
+        <th rowspan="2">Trip Date</th>
+        <th rowspan="2">First Name</th>
+        <th rowspan="2">Last Name</th>
+        <th rowspan="2">Start Time</th>
+        <th colspan="3" class="column-group">Apportioned Amounts</th>
+        <th rowspan="2">Trips</th>
+        <th rowspan="2">Project #</th>
+        <th rowspan="2">F.E. Project Name</th>
+        <th rowspan="2">RouteMatch Override</th>
+        <th rowspan="2" class="no-print"></th>
+      </tr>
+      <tr>
+        <th>Hours</th>
+        <th>Miles</th>
+        <th>Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @trips.each do |trip| %>
+        <tr>
+          <td><%= trip.date.to_s(:mdy) %></td>
+          <td class="nobreak"><%= truncate(trip.customer.first_name, length: 15, separator: ' ') %></td>
+          <td class="nobreak"><%= trip.customer.last_name %></td>
+          <td class="nobreak"><%= trip.start_at.to_s(:time_only) %></td>
+          <td class="number"><%= seconds_to_hours_colon_minutes_colon_seconds(trip.apportioned_duration) %></td>
+          <td class="number"><%= number_with_precision(trip.apportioned_mileage, precision: 2) %></td>
+          <td class="number"><%= number_to_currency(trip.apportioned_fare) %></td>
+          <td class="number"><%= trip.customers_served %></td>
+          <td><%= trip.try(:allocation).try(:project).try(:project_number) %></td>
+          <td class="nobreak"><%= trip.try(:allocation).try(:project).try(:name) %></td>
+          <td class="nobreak"><%= trip.try(:allocation).try(:override).try(:name) %></td>
+          <td class="no-print">
+            <%= link_to "Details", trip, {title: "View details for this trip", :class => :details} %>
+          </td>
+        </tr>
+      <% end %>
+      <tr class="totals">
+        <td colspan="4" class="number">Total:</td>
+        <td class="number"><%= seconds_to_hours_colon_minutes_colon_seconds(@total_apportioned_duration) %></td>
+        <td class="number"><%= number_with_precision(@total_apportioned_mileage, precision: 2, delimiter: ",") %></td>
+        <td class="number"><%= number_to_currency(@total_apportioned_fare) %></td>
+        <td class="number"><%= number_with_delimiter(@total_customers_served) %></td>
+        <td colspan="5"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

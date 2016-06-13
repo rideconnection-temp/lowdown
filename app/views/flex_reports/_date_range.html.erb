@@ -1,0 +1,17 @@
+<h2 class="section-header" id="date-range-header">Date Range</h2>
+<div id="report-date-range-area">
+  <ol class="section">
+    <li>
+      <%= f.label :start_date %>
+      <%= f.date_select :start_date, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
+    </li>
+    <li>
+      <%= f.label :end_month, "End date" %>
+      <%= f.date_select :end_month, :start_year => 2012, :end_year => Time.now.year, :order => [:month, :year] %>
+    </li>
+    <li>
+      <%= f.check_box :pending %>
+      <%= f.label :pending, "Include pending" %>
+    </li>
+  </ol>
+</div>

@@ -9,6 +9,7 @@
   <tr>
     <th>Name</th>
     <th>TriMet Identifier</th>
+    <th>Notes</th>
     <th></th>
   </tr>
 
@@ -16,10 +17,10 @@
     <tr>
       <td><%= link_to trimet_program.name, edit_trimet_program_path(trimet_program) %></td>
       <td><%= trimet_program.trimet_identifier %></td>
-      <td><%= link_to "Delete", trimet_program_url(trimet_program), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this program?" if current_user.is_admin && trimet_program.allocations.empty? %></td>
+      <td><%= trimet_program.notes %></td>
+      <td><%= link_to "Delete", trimet_program_url(trimet_program), :class => "delete", :method => "delete", data: { confirm: "Are you sure you want to delete this program?" } if current_user.is_admin && trimet_program.allocations.empty? %></td>
     </tr>
   <% end %>
 </table>
 
 <%= will_paginate @trimet_programs %>
-

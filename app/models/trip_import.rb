@@ -25,7 +25,7 @@ class CSV
         f
       end
     },
-    money:  lambda { |f| 
+    money:  lambda { |f|
       begin
         f =~ /^\d+\.\d\d$/ ? BigDecimal.new(f) : f
       rescue
@@ -43,34 +43,37 @@ class TripImport < ActiveRecord::Base
   has_many :trips
   has_many :runs
 
-  before_create :import_file, :apportion_imported_shared_rides 
-  after_create :associate_records_with_trip_import
-private
+  before_create :import_file, :apportion_imported_shared_rides
+  after_create :associate_records_with_trip_import, :mark_record_data_entry_complete, :update_volunteer_runs
+
+  scope :for_provider_id, lambda {|provider_id| where('id IN (SELECT trip_import_id FROM trips WHERE allocation_id IN (SELECT id FROM allocations WHERE provider_id = ?))', provider_id)}
+
+  private
 
   def import_file
 
-    headers = [:routematch_customer_id, :last_name, :first_name, :middle_initial, 
+    headers = [:routematch_customer_id, :last_name, :first_name, :middle_initial,
         :sex, :race, :mobility, :veteran_status,
-        :telephone_1, :telephone_1_ext, :telephone_2, :telephone_2_ext, 
-        :home_routematch_address_id, :home_common_name, :home_building_name, 
-        :home_address_1, :home_address_2, :home_city, :home_state, :home_postal_code, 
-        :home_x_coordinate, :home_y_coordinate, :home_in_trimet_district, 
+        :telephone_1, :telephone_1_ext, :telephone_2, :telephone_2_ext,
+        :home_routematch_address_id, :home_common_name, :home_building_name,
+        :home_address_1, :home_address_2, :home_city, :home_state, :home_postal_code,
+        :home_x_coordinate, :home_y_coordinate, :home_in_trimet_district,
         :language_preference, :birthdate, :email, :customer_type, :monthly_household_income, :household_size,
         :prime_number, :case_manager, :case_manager_office, :date_enrolled, :service_end, :approved_rides,
         :routematch_run_id, :run_name, :run_start_at, :run_end_at, :run_odometer_start, :run_odometer_end, :escort_count,
-        :routematch_trip_id, :date, 
-        :provider_code, :provider_name, :provider_type, 
+        :routematch_trip_id, :date,
+        :provider_code, :provider_name, :provider_type,
         :result_code, :start_at, :end_at, :odometer_start, :odometer_end,
         :trip_duration, :trip_mileage,
-        :fare, :customer_pay, :trip_purpose_type, :guest_count, :attendant_count, :trip_mobility, 
-        :calculated_bpa_fare, :bpa_driver_name, :volunteer_trip, :in_trimet_district, 
+        :fare, :customer_pay, :trip_purpose_type, :guest_count, :attendant_count, :trip_mobility,
+        :calculated_bpa_fare, :bpa_driver_name, :volunteer_trip, :in_trimet_district,
         :bpa_billing_distance, :routematch_share_id, :override, :original_override,
-        :pickup_routematch_address_id, :pickup_common_name, :pickup_building_name, 
-        :pickup_address_1, :pickup_address_2, :pickup_city, :pickup_state, :pickup_postal_code, 
-        :pickup_x_coordinate, :pickup_y_coordinate, :pickup_in_trimet_district, 
-        :dropoff_routematch_address_id, :dropoff_common_name, :dropoff_building_name, 
-        :dropoff_address_1, :dropoff_address_2, :dropoff_city, :dropoff_state, :dropoff_postal_code, 
-        :dropoff_x_coordinate, :dropoff_y_coordinate, :dropoff_in_trimet_district, 
+        :pickup_routematch_address_id, :pickup_common_name, :pickup_building_name,
+        :pickup_address_1, :pickup_address_2, :pickup_city, :pickup_state, :pickup_postal_code,
+        :pickup_x_coordinate, :pickup_y_coordinate, :pickup_in_trimet_district,
+        :dropoff_routematch_address_id, :dropoff_common_name, :dropoff_building_name,
+        :dropoff_address_1, :dropoff_address_2, :dropoff_city, :dropoff_state, :dropoff_postal_code,
+        :dropoff_x_coordinate, :dropoff_y_coordinate, :dropoff_in_trimet_district,
         :estimated_trip_distance_in_miles]
     address_map = {}
     customer_map = {}
@@ -88,26 +91,36 @@ private
       @record_count += 1
       next if @record_count == 0
 
-      current_allocation = allocations.detect{|a| a.name == record[:override] && a.routematch_provider_code == record[:provider_code] && a.activated_on.to_date <= record[:date] && (a.inactivated_on.blank? || a.inactivated_on.to_date > record[:date])}
+      current_allocation = allocations.detect do |a|
+        a.name == record[:override] &&
+        a.routematch_provider_code == record[:provider_code] &&
+        a.activated_on.to_date <= record[:date] &&
+        (a.inactivated_on.blank? || a.inactivated_on.to_date > record[:date])
+      end
       if current_allocation.nil? && record[:result_code] != 'TD'
         import_errors_key = "#{record[:override]}|#{record[:provider_code]}"
-        unless import_errors.include?(import_errors_key) 
+        unless import_errors.include?(import_errors_key)
           import_errors << import_errors_key
-          self.problems << "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'.<br/>" 
+          self.problems << "No allocation found for override '#{record[:override]}' and provider '#{record[:provider_code]}'.<br/>"
         end
       end
     end
-    return false unless self.problems == ''
+    return false if self.problems.present?
 
     @record_count = -1
     if import_errors.blank?
       ActiveRecord::Base.transaction do
         CSV.foreach(file_path, headers: headers, converters: :all) do |record|
           @record_count += 1
-          next if @record_count == 0 
+          next if @record_count == 0
           next if record[:routematch_customer_id].nil?
 
-          current_allocation = allocations.detect{|a| a.name == record[:override] && a.routematch_provider_code == record[:provider_code] && a.activated_on <= record[:date] && (a.inactivated_on.blank? || a.inactivated_on > record[:date])}
+          current_allocation = allocations.detect do |a|
+            a.name == record[:override] &&
+            a.routematch_provider_code == record[:provider_code] &&
+            a.activated_on <= record[:date] &&
+            (a.inactivated_on.blank? || a.inactivated_on > record[:date])
+          end
           next if current_allocation.nil?
 
           # For each address in the import, make it overwrite the previous version in this database
@@ -116,7 +129,7 @@ private
           if address_map.has_key?(record[:home_routematch_address_id])
             current_home_id = address_map[record[:home_routematch_address_id]]
           else
-            current_home = Address.find_or_initialize_by_routematch_address_id(record[:home_routematch_address_id])
+            current_home = Address.find_or_initialize_by(routematch_address_id: record[:home_routematch_address_id])
             current_home.routematch_address_id = record[:home_routematch_address_id]
             current_home.common_name = record[:home_common_name]
             current_home.building_name = record[:home_building_name]
@@ -129,7 +142,7 @@ private
             current_home.y_coordinate = record[:home_y_coordinate]
             current_home.in_trimet_district = make_boolean(record[:home_in_trimet_district])
             current_home.save!
-            
+
             # Add this new address to the map cache
             current_home_id = current_home.id
             address_map[record[:home_routematch_address_id]] = current_home_id
@@ -139,7 +152,7 @@ private
           if customer_map.has_key?(record[:routematch_customer_id])
             current_customer_id = customer_map[record[:routematch_customer_id]]
           else
-            current_customer = Customer.find_or_initialize_by_routematch_customer_id(record[:routematch_customer_id])
+            current_customer = Customer.find_or_initialize_by(routematch_customer_id: record[:routematch_customer_id])
             current_customer.routematch_customer_id = record[:routematch_customer_id]
             current_customer.last_name = record[:last_name]
             current_customer.first_name = record[:first_name]
@@ -169,7 +182,7 @@ private
           if address_map.has_key?(record[:pickup_routematch_address_id])
             current_pickup_id = address_map[record[:pickup_routematch_address_id]]
           else
-            current_pickup = Address.find_or_initialize_by_routematch_address_id(record[:pickup_routematch_address_id])
+            current_pickup = Address.find_or_initialize_by(routematch_address_id: record[:pickup_routematch_address_id])
             current_pickup.routematch_address_id = record[:pickup_routematch_address_id]
             current_pickup.common_name = record[:pickup_common_name]
             current_pickup.building_name = record[:pickup_building_name]
@@ -190,7 +203,7 @@ private
           if address_map.has_key?(record[:dropoff_routematch_address_id])
             current_dropoff_id = address_map[record[:dropoff_routematch_address_id]]
           else
-            current_dropoff = Address.find_or_initialize_by_routematch_address_id(record[:dropoff_routematch_address_id])
+            current_dropoff = Address.find_or_initialize_by(routematch_address_id: record[:dropoff_routematch_address_id])
             current_dropoff.routematch_address_id = record[:dropoff_routematch_address_id]
             current_dropoff.common_name = record[:dropoff_common_name]
             current_dropoff.building_name = record[:dropoff_building_name]
@@ -210,12 +223,12 @@ private
 
           if current_allocation.present?
             # Don't collect runs when we don't collect anything about them.
-            if current_allocation.run_collection_method == 'runs' 
+            if current_allocation.run_collection_method == 'runs'
               if record[:routematch_run_id].present?
                 if run_map.has_key?(record[:routematch_run_id])
                   current_run_id = run_map[record[:routematch_run_id]]
                 else
-                  current_run = Run.find_or_initialize_by_routematch_id(record[:routematch_run_id])
+                  current_run = Run.current_versions.find_or_initialize_by(routematch_id: record[:routematch_run_id])
                   current_run.name = record[:run_name]
                   current_run.date = record[:date]
                   current_run.start_at = record[:run_start_at]
@@ -225,9 +238,9 @@ private
                   current_run.escort_count = record[:escort_count]
                   current_run.bulk_import = true
                   if current_run.changed?
-                    current_run.imported_at = import_start_time 
+                    current_run.imported_at = import_start_time
                     current_run.version_switchover_time = import_start_time
-                    current_run.save! 
+                    current_run.save!
                   end
 
                   current_run_id = current_run.id
@@ -242,9 +255,9 @@ private
                   current_run.name = 'Not completed ' + record[:date].to_time.strftime("%m-%d-%y")
                   current_run.date = record[:date]
                   if current_run.changed?
-                    current_run.imported_at = import_start_time 
+                    current_run.imported_at = import_start_time
                     current_run.version_switchover_time = import_start_time
-                    current_run.save! 
+                    current_run.save!
                   end
 
                   current_run_id = current_run.id
@@ -253,7 +266,7 @@ private
               end
             end
 
-            current_trip = Trip.find_or_initialize_by_routematch_trip_id(record[:routematch_trip_id])
+            current_trip = Trip.current_versions.find_or_initialize_by(routematch_trip_id: record[:routematch_trip_id])
             current_trip.routematch_trip_id = record[:routematch_trip_id]
             current_trip.date = record[:date]
             current_trip.result_code = record[:result_code]
@@ -269,14 +282,11 @@ private
             current_trip.guest_count = record[:guest_count]
             current_trip.attendant_count = record[:attendant_count]
             current_trip.mobility = record[:trip_mobility]
-            if record[:calculated_bpa_fare] =~ /^\d+\.\d\d;\d+\.\d\d$/
-              fare_parts = record[:calculated_bpa_fare].split(";")
-              current_trip.calculated_bpa_fare = BigDecimal.new(fare_parts[0])
-              current_trip.estimated_individual_fare = BigDecimal.new(fare_parts[1])
-            else
-              current_trip.calculated_bpa_fare = record[:calculated_bpa_fare]
+            if match = record[:calculated_bpa_fare].to_s.match(/^\$?(\d+\.\d\d);\$?(\d+\.\d\d);(.*)$/)
+              current_trip.calculated_bpa_fare, current_trip.estimated_individual_fare, current_trip.bpa_driver_name = match.captures
+            elsif match = record[:calculated_bpa_fare].to_s.match(/^\$?(\d+\.\d\d)$/)
+              current_trip.calculated_bpa_fare = match.captures.first
             end
-            current_trip.bpa_driver_name = record[:bpa_driver_name]
             current_trip.volunteer_trip = make_boolean(record[:volunteer_trip])
             current_trip.in_trimet_district = make_boolean(record[:in_trimet_district])
             current_trip.bpa_billing_distance = record[:bpa_billing_distance]
@@ -298,12 +308,12 @@ private
             current_trip.home_address_id = current_home_id
             current_trip.run_id = current_run_id
             current_trip.bulk_import = true
-            current_trip.imported_at = import_start_time 
+            current_trip.imported_at = import_start_time
             current_trip.version_switchover_time = import_start_time
             # apportionment for run-based trips is done before import.  This helps assure that the
             # Reporting Services reports and the Service DB reports match exactly.
             if current_allocation.run_collection_method == 'runs'
-              current_trip.apportioned_duration = record[:trip_duration]
+              current_trip.apportioned_duration = record[:trip_duration] * 60 if record[:trip_duration].present?
               current_trip.apportioned_mileage = record[:trip_mileage]
             end
             current_trip.save! if current_trip.new_record? || (current_trip.changed != ['imported_at'])
@@ -316,14 +326,14 @@ private
     run_map = nil
   end
 
-  #This should trigger the apportion_shared_rides callback in the trips model.  
+  #This should trigger the apportion_shared_rides callback in the trips model.
   def apportion_imported_shared_rides
-    trips = Trip.current_versions.where(:imported_at => self.import_start_time).completed.shared.order(:date,:routematch_share_id)
+    trips = Trip.current_versions.where(imported_at: self.import_start_time).completed.shared.order(:date,:routematch_share_id)
     trip_count = 0
     this_share_id = 0
     for trip in trips
-      if trip.routematch_share_id != this_share_id 
-        this_share_id = trip.routematch_share_id 
+      if trip.routematch_share_id != this_share_id
+        this_share_id = trip.routematch_share_id
         trip.do_not_version = true
         trip.save!
         trip_count += 1
@@ -333,9 +343,9 @@ private
     puts "Apportioned #{trip_count} shared rides"
   end
 
-  # Not needed, as apportioning is handled prior to import.
+  # Not needed, as apportioning of runs is handled prior to import.
   def apportion_imported_runs
-    runs = Run.current_versions.where(:imported_at => self.import_start_time).has_odometer_log.has_time_log
+    runs = Run.current_versions.where(imported_at: self.import_start_time).has_odometer_log.has_time_log
     run_count = 0
     for run in runs
       run.do_not_version = true
@@ -347,8 +357,22 @@ private
 
   # Add the trip import id after the import is complete, once the id has been generated
   def associate_records_with_trip_import
-    Run.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
-    Trip.where(:imported_at => self.import_start_time).update_all :trip_import_id => self.id
+    Run.where(imported_at: self.import_start_time).update_all trip_import_id: self.id
+    Trip.where(imported_at: self.import_start_time).update_all trip_import_id: self.id
+  end
+
+  def mark_record_data_entry_complete
+    Run.where(imported_at: self.import_start_time).update_all complete: true
+    Trip.where(imported_at: self.import_start_time).update_all complete: true
+  end
+
+  # If a trip belongs to a run with any trips marked as volunteer, all
+  # the trips in that run should be considered volunteer
+  def update_volunteer_runs
+    Run.
+      where(imported_at: self.import_start_time).
+      where('id IN (SELECT run_id FROM trips where volunteer_trip = true)').
+      update_all volunteer_run: true
   end
 
   # Source data can have 1 or -1 as true. 0 and nil are false

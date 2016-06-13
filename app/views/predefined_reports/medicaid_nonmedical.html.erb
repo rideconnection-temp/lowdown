@@ -1,0 +1,123 @@
+<% for office in @customer_rows.keys.sort %>
+  <div id="page-header">
+    <h1><%= @query.county %> County Waivered Nonmedical Report</h1>
+  </div>
+
+  <h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
+  <h3><%= office %></h3>
+
+  <table id="active-rider-results" class="results break-after">
+    <thead>
+      <tr>
+        <th>Case Manager</th>
+        <th>Date Enrolled</th>
+        <th>Customer</th>
+        <th>Prime Number</th>
+        <th>Service End</th>
+        <th class="number">Approved Rides</th>
+        <th class="number">Billed Rides</th>
+        <% if @query.county == 'Washington' %>
+          <th class="number">Billable Mileage</th>
+        <% else %>
+          <th class="number">Provider Reimbursement</th>
+          <th class="number">Average Reimbursement</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @customer_rows[office].values.sort_by {|a| a[:customer].name.downcase }.each do |customer_row| %>
+        <% customer = customer_row[:customer] %>
+        <tr>
+          <td><%= customer_row[:case_manager] %></td>
+          <td><%= customer_row[:date_enrolled].try(:strftime,'%m-%d-%Y') %></td>
+          <td><%= link_to customer.name, customer %></td>
+          <td><%= customer.prime_number %></td>
+          <td><%= customer_row[:service_end].try(:strftime,'%m-%d-%Y') %></td>
+          <td class="number"><%= customer_row[:approved_rides] %></td>
+          <td class="number"><%= customer_row[:billed_rides] %></td>
+          <% if @query.county == 'Washington' %>
+            <td class="number"><%= "%.2f" % customer_row[:billable_mileage] %></td>
+          <% else %>
+            <td class="number"><%= number_to_currency customer_row[:fare] %></td>
+            <td class="number"><%= number_to_currency(customer_row[:fare]/customer_row[:billed_rides]) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+      <tr class="sum-totals">
+        <td class="" colspan="5">Customer Count: <%= @offices[office][:customer_count] %></td>
+        <td class="number"><%= @offices[office][:approved_rides] %></td>
+        <td class="number"><%= @offices[office][:billed_rides] %></td>
+        <% if @query.county == 'Washington' %>
+          <td class="number"><%= "%.2f" % @offices[office][:billable_mileage] %></td>
+        <% else %>
+          <td class="number"><%= number_to_currency @offices[office][:fare] %></td>
+          <td class="number"><%= number_to_currency(@offices[office][:fare]/@offices[office][:billed_rides]) %></td>
+        <% end %>
+      </tr>
+  </table>
+<% end %>
+
+<table id="active-rider-results" class="totals">
+  <thead>
+    <tr>
+      <th>Mobility</th>
+      <th class="number">Approved Rides</th>
+      <th class="number">Billed Rides</th>
+      <% if @query.county == 'Washington' %>
+        <th class="number">Billable Mileage</th>
+      <% else %>
+        <th class="number">Provider Reimbursement</th>
+        <th class="number">Average Reimbursement</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Not Scooter or Wheelchair</td>
+      <td class="number"></td>
+      <td class="number"><%= @nonwc_billed_rides %></td>
+      <% if @query.county == 'Washington' %>
+        <td class="number"><%= "%.2f" % @nonwc_mileage %></td>
+      <% else %>
+        <td class="number"><%= number_to_currency @nonwc_fares %></td>
+        <td class="number"><%= (@nonwc_billed_rides == 0) ? raw('&mdash;') : number_to_currency(@nonwc_fares/@nonwc_billed_rides) %></td>
+      <% end %>
+    </tr>
+    <tr>
+      <td>Scooter or Wheelchair</td>
+      <td class="number"></td>
+      <td class="number"><%= @wc_billed_rides %></td>
+      <% if @query.county == 'Washington' %>
+        <td class="number"><%= "%.2f" % @wc_mileage %></td>
+      <% else %>
+        <td class="number"><%= number_to_currency @wc_fares %></td>
+        <td class="number"><%= (@wc_billed_rides == 0) ? raw('&mdash;') : number_to_currency(@wc_fares/@wc_billed_rides) %></td>
+      <% end %>
+    </tr>
+    <tr>
+      <td>Unknown Mobility</td>
+      <td class="number"></td>
+      <td class="number"><%= @unknown_billed_rides %></td>
+      <% if @query.county == 'Washington' %>
+        <td class="number"><%= "%.2f" % @unknown_mileage %></td>
+      <% else %>
+        <td class="number"><%= number_to_currency @unknown_fares %></td>
+        <td class="number"><%= (@unknown_billed_rides == 0) ? raw('&mdash;') : number_to_currency(@unknown_fares/@unknown_billed_rides) %></td>
+      <% end %>
+    </tr>
+    <tr>
+      <td>All Trips</td>
+      <td class="number"><%= @approved_rides %></td>
+      <td class="number"><%= @all_billed_rides %></td>
+      <% if @query.county == 'Washington' %>
+        <td class="number"><%= "%.2f" % @all_mileage %></td>
+      <% else %>
+        <td class="number"><%= number_to_currency @all_fares %></td>
+        <td class="number"><%= number_to_currency(@all_fares/@all_billed_rides) %></td>
+      <% end %>
+    </tr>
+    <tr>
+      <td>Total Customer Count: <%= @customer_count %></td>
+    </tr>
+  </tbody>
+</table>

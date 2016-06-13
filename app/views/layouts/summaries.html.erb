@@ -1,9 +1,10 @@
 <% content_for :menu_bar do %>
   <ul id="subnav" class="selfclear">
     <% if current_user.is_admin %>
-      <li><%= link_to "New Summary", {:action=>:new}, {:class => :add} %></li>
+      <li><%= link_to "Summary Adjustment History", adjustments_summaries_path, :class => :history %></li>
+      <li><%= link_to "New Summary", new_summary_path, :class => :add %></li>
     <% end %>
   </ul>
 <% end %>
 
-<%= render :file => 'layouts/application' %>
+<%= render file: 'layouts/application' %>

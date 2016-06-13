@@ -1,0 +1,49 @@
+columns = [
+  'Provider Name',
+  'Reporting Agency',
+  'Funding Source and Sub-source',
+  'Program',
+  'County',
+  'Provider Type',
+  'Allocation',
+  'TriMet Provider Name',
+  'TriMet Program Name',
+  'Honored Trips',
+  'Other Trips',
+  'Total Trips',
+  'Vehicle Miles',
+  'Honored Costs',
+  'Other Costs',
+  'Total Cost'
+]
+
+csv << columns
+
+rows = {}
+FlexReport.apply_to_leaves!(@report.results, @report.group_fields.size) do |row|
+  key = @report.group_fields.map {|group_field| row_sort(row.send(group_field)) }
+  rows[key] = row
+end
+
+rows.sort_by{|k,v| k }.each do |key, row|
+  csv_row = []
+
+  csv_row << row.provider_name
+  csv_row << row.reporting_agency_name
+  csv_row << row.funding_source_and_subsource
+  csv_row << row.program_name
+  csv_row << row.county
+  csv_row << row.provider_type
+  csv_row << row.allocation_name
+  csv_row << row.trimet_provider_name
+  csv_row << row.trimet_program_name
+  csv_row << row.total_elderly_and_disabled_trips
+  csv_row << row.total_non_elderly_and_disabled_trips
+  csv_row << (row.total_elderly_and_disabled_trips + row.total_non_elderly_and_disabled_trips)
+  csv_row << row.mileage.round
+  csv_row << number_with_precision(row.total_elderly_and_disabled_cost, :precision => 2)
+  csv_row << number_with_precision(row.total_non_elderly_and_disabled_cost, :precision => 2)
+  csv_row << number_with_precision(row.total_elderly_and_disabled_cost + row.total_non_elderly_and_disabled_cost, :precision => 2)
+
+  csv << csv_row
+end

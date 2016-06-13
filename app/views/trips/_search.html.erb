@@ -1,4 +1,4 @@
-<%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:list} do |f| %>
+<%= form_for @query, :as => :q, :html=>{:id=>"trip-filter", :method=>:get}, :url=>(action == :index ? trips_path : adjustments_trips_path) do |f| %>
   <fieldset>
     <ol class="section first">
       <li>
@@ -6,43 +6,83 @@
       </li>
       <div id="date_fields" <%= @query.all_dates ? "style='display:none'" : nil %>>
         <li>
-          <%= f.label :start_date, "Start Date:" %> 
+          <%= f.label :start_date, "Start date:" %>
           <%= f.text_field :start_date, :class=>"datepicker" %>
         </li>
         <li>
-          <%= f.label :end_date, "End Date:" %> 
+          <%= f.label :end_date, "End date:" %>
           <%= f.text_field :end_date, :class=>"datepicker" %>
         </li>
       </div>
       <li>
-        <%= f.label :customer_first_name, "Customer first name contains:" %> 
+        <%= f.label :customer_first_name, "Customer first name contains:" %>
         <%= f.text_field :customer_first_name %>
       </li>
       <li>
-        <%= f.label :customer_last_name, "Customer last name contains:" %> 
+        <%= f.label :customer_last_name, "Customer last name contains:" %>
         <%= f.text_field :customer_last_name %>
+      </li>
+      <li>
+        <%= f.label :reporting_agency_id, "Reporting agency:" %>
+        <%= f.collection_select :reporting_agency_id, @reporting_agencies, :id, :to_s, include_blank: true %>
+      </li>
+      <li>
+        <%= f.label :provider_id, "Provider:" %>
+        <%= f.collection_select :provider_id, @providers, :id, :to_s, include_blank: true %>
       </li>
     </ol>
 
     <ol class="section fourth">
       <li>
-        <%= f.label :provider, "Reporting Agency:" %> 
-        <%= f.collection_select :reporting_agency, @providers.partners, :id, :to_s, :include_blank => true %>
+        <%= f.label :program_id, "Program:" %>
+        <%= f.collection_select :program_id, @programs, :id, :name, include_blank: true %>
       </li>
       <li>
-        <%= f.label :provider, "Provider:" %> 
-        <%= f.collection_select :provider, @providers, :id, :to_s, :include_blank => true %>
+        <%= f.label :allocation_id, "Allocation:" %>
+        <% if @query.allocation_ids.present? %>
+          <%= f.collection_select :allocation_id, @allocations,
+              :id, :name, :include_blank => true %>
+        <% else %>
+          <%= f.grouped_collection_select :allocation_id, Provider.with_trip_data.default_order.includes(:allocations),
+              :allocations_with_trip_data, :name, :id, :select_label, include_blank: true %>
+        <% end %>
       </li>
       <li>
-        <%= f.label :allocation, "Allocation:" %> 
-        <%= f.grouped_collection_select :allocation, Provider.default_order.includes(:allocations).all, :allocations, :name, :id, :select_label, :include_blank => true %>
+        <%= f.label :trip_purpose, "Trip purpose:" %>
+        <%= f.select :trip_purpose, @trip_purposes, include_blank: true %>
+      </li>
+      <li>
+        <%= f.label :result_code, "Result code:" %>
+        <%= f.select :result_code, @result_codes, include_blank: true %>
+      </li>
+      <li>
+        <%= f.label :original_override, "Original override contains:" %>
+        <%= f.text_field :original_override %>
+        <%= f.hidden_field :allocation_id_list %>
+      </li>
+      <li>
+        <%= f.label :data_entry_complete, "Data entry marked complete:" %>
+        <%= f.select :data_entry_complete, ['Yes','No'], include_blank: true %>
       </li>
     </ol>
+    <% if @query.allocation_ids.present? %>
+      <ul class="search-scope">
+        <h2>This search is limited to the following allocations:</h2>
+        <% @allocations.each do |allocation| %>
+          <li>
+            <%= link_to allocation.name, edit_allocation_url(allocation) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
 
     <div class="actions">
       <%= f.submit "Search", :id => "trip-search" %>
-      <%= f.submit "Download All Fields as CSV" %>
-      <%= f.submit "Download BPA Invoice Data" %>
+      <% if allow_csv %>
+        <%= f.submit "Export All Data Fields" %>
+        <%= f.submit "Export BPA Invoice Data" %>
+        <%= f.submit "Export For Trip Analysis" %>
+      <% end %>
     </div>
 
   </fieldset>

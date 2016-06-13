@@ -1,0 +1,171 @@
+*
+ *
+ * Print Stylesheet
+ *
+ */
+
+/* Base Print Style Reset */
+* { background: transparent !important; color: #000 !important; text-shadow: none !important; 
+    -moz-box-shadow: none !important; -webkit-box-shadow: none !important; box-shadow: none !important;}
+a { text-decoration: none; }
+abbr:after { content: " (" attr(title) ")"; }
+.ir a:after { content: ""; }  /* Don't show links for images */
+pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+thead { display: table-header-group; } /* css-discuss.incutio.com/wiki/Printing_Tables */ 
+tr, img { page-break-inside: avoid; }
+@page { margin: 0.5cm; }
+p, h2, h3 { orphans: 3; widows: 3; }
+h2, h3{ page-break-after: avoid; }
+
+body {
+  font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;
+  background: white;
+  font-size: 9pt;
+}
+
+/* hide stuff */
+#crossbar,
+#login-area,
+#subnav,
+.action-bttn,
+#new_report,
+form.edit_report,
+.csv,
+.edit { display: none; clear: both; }
+
+.no-print {
+  display: none;
+  clear: both;
+}
+
+/* format stuff */
+#header {
+  margin: 0 auto 1em;
+}
+#header a {
+  text-decoration: none;
+}
+#main {
+  border-top: 1pt solid #000;
+}
+
+#logo {
+  display : none;
+}
+body.flex-reports #date-header {
+  float: left;
+  width: 50%;
+}
+body.flex-reports #report-description {
+  float: right;
+  width: 50%;
+}
+body.flex-reports #grouping-description {
+  clear: both;
+  margin-bottom: .5em;
+}
+h1 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+h2 {
+  margin: 0;
+}
+span.month-range {
+  font-size: 22px;
+}
+
+/* tables */
+table {
+  border-collapse: collapse;
+}
+thead {
+  border-bottom: 2pt solid #000;
+  vertical-align: bottom;
+}
+tr {
+}
+th {
+  padding: 0.1em 0.4em;
+  border: 1pt solid #000;
+}
+th.indent {
+  border: none;
+}
+th.text {
+  text-align: left;
+}
+tr.sub-header th {
+}
+td {
+  padding: 0.3em;
+  border-top: 1pt solid #ddd;
+}
+td.number, th.number {
+  text-align: right;
+}
+tr.report-item td {
+  border-top: 1pt solid #000;
+}
+td.report-item {
+  font-weight: bold;
+  text-align: left;
+}
+tr.sum-totals td {
+  border-top: 2pt solid #000;
+  padding-top: 1.5em;
+}
+table tr.totals td,
+table td.total {
+  font-weight: bold;
+}
+
+td.inner-most-field {
+  text-align : left;
+}
+
+div.report-wrapper th.indent,
+div.report-wrapper td.indent {
+  min-width : 0.1in;
+  padding: 0;
+} 
+
+.nobreak {
+  white-space: nowrap;
+}
+
+.break-before {
+  page-break-before:always;
+}
+
+.break-after {
+  page-break-after:always;
+}
+
+/* 
+ *
+ * Predefined Reports
+ *
+ */
+body.trip-purpose th.data {
+  width: 8%;
+}
+
+body.trip-purpose th.group {
+  border: 0;
+  border-bottom: 1pt solid black;
+}
+
+body.allocation-summary td {
+  border: 1pt solid #DDDDDD;
+  padding: 5px;
+}
+
+body.bpa-invoice  table#trip-results    td,
+body.trip-purpose table#purpose-results td {
+  padding: 0 0.4em;
+}
+
+body.quarterly-narrative h2.all-programs {
+  margin: 14px 0px;
+}

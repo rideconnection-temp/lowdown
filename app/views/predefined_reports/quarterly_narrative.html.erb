@@ -2,34 +2,39 @@
   <h1>Quarterly Narrative Report</h1>
 </div>
 
-<% for field, rows in @report.results %>
-<% allocation = get_row(rows).allocation %>
-<h2><%= allocation.provider_name %> &mdash; <%= describe_date_range(@report.start_date, @report.end_date) %></h2>
-<h3>Program: <%= allocation.name %></h3>
-<h3>County: <%= allocation.county %></h3>
-<h3>Funding Source: <%= allocation.funding_source %></h3>
-
-<div>Instructions: Please review the numbers provided for this funding
-source. If any discrepancies are found, they should be reported on the
-last page of this report. In the event there is a discrepancy with
-ride numbers, please indicate your corrections in terms of "in" and
-"out" of district rides and which Ride Purpose categories this change
-effects.</div>
-
-<div class="report-wrapper">
-<table>
-  <%= render "flex_reports/header" %>
-  <% for month, row in rows do %>
-    <%= render "flex_reports/row", :row => row, :label => month %>
+<% i = -1 %>
+<% @report.results.sort_by {|k,v| row_sort(k.try(:name))}.each do |reporting_agency, reporting_agency_rows| %>
+  <% reporting_agency_rows.sort_by {|k,v| row_sort(k.try(:name))}.each do |program, program_rows| %>
+    <% program_rows.sort_by {|k,v| row_sort(k)}.each do |county, county_rows| %>
+      <% allocation = get_row(county_rows).allocation %>
+      <h2>
+        <%= allocation.reporting_agency_name %> &mdash; 
+        <%= report_month_range(@report.start_date, @report.after_end_date) %>
+      </h2>
+      <h3>Program: <%= allocation.program.try(:name) || "Unspecified Program" %></h3>
+      <h3>County: <%= allocation.county || "Unspecified County" %></h3>
+      <h3>Funding Sources: 
+        <%= quarterly_report_funding_sources(allocation.reporting_agency_id,allocation.program_id,allocation.county,@report.start_date,@report.after_end_date) %>
+      </h3>
+      <% i += 1 %>
+      <%= render "flex_reports/report", 
+          :results      => county_rows, 
+          :columns      => @report.fields,
+          :group_fields => @report.group_fields[3..-1],
+          :section      => "section-#{i}"
+      %>
+      <hr style="page-break-after: always;"/>
+    <% end %>
   <% end %>
-  
-  <%= render 'flex_reports/totals', :row => rows, :group_fields => @report.group_fields %>
-  
-</table>
-</div>
-
-<br/>
-Signature: _______________________ </br>
-
-<hr style="page-break-after: always;"/>
+  <h2 class="all-programs">
+    <%= reporting_agency %> &mdash; 
+    <%= report_month_range(@report.start_date, @report.after_end_date) %> &mdash; All Programs
+  </h2>
+  <% i += 1 %>
+  <%= render "flex_reports/report", 
+      :results      => @summary_report.results[reporting_agency], 
+      :columns      => @report.fields,
+      :group_fields => @summary_report.group_fields[1..-1], 
+      :section      => "section-#{i}"
+  %>
 <% end %>

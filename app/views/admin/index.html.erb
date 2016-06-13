@@ -4,10 +4,21 @@
 
 <ul>
   <li><%= link_to "Allocations", :controller => "allocations" %></li>
+  <li><%= link_to "Programs", :controller => "programs" %></li>
+  <li><%= link_to "Service Types", :controller => "service_types" %></li>
   <li><%= link_to "Providers", :controller => "providers" %></li>
   <li><%= link_to "F.E. Projects", :controller => "projects" %></li>
+  <li><%= link_to "Funding Sources", :controller => "funding_sources" %></li>
   <li><%= link_to "RouteMatch Overrides", :controller => "overrides" %></li>
   <li><%= link_to "TriMet Providers", :controller => "trimet_providers" %></li>
   <li><%= link_to "TriMet Programs", :controller => "trimet_programs" %></li>
-  <li><%= link_to "TriMet Report Groups", :controller => "trimet_report_groups" %></li>
+  <li><%= link_to "Flex Report Categories", :controller => "report_categories" %></li>
+  <% if current_user.try :is_admin %>
+    <li><%= link_to "Users", :controller => "users" %></li>
+  <% end %>
+</ul>
+<h2>Version Information</h2>
+<ul>
+  <li>Ruby: <%= RUBY_VERSION %></li>
+  <li>Rails: <%= Rails.version %></li>
 </ul>

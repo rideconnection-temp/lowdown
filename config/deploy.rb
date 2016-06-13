@@ -1,42 +1,51 @@
-#-----Get Capistrano working with RVM-----
-require "rvm/capistrano"  # Load RVM's capistrano plugin.    
-set :rvm_ruby_string, '1.9.2'
-set :rvm_type, :user  # Don't use system-wide RVM
-#---------------------------------------------
+# config valid only for current version of Capistrano
+lock '3.4.0'
 
-#-----Get Capistrano working with Bundler-----
-require 'bundler/capistrano'
-#---------------------------------------------
-
-#-----Basic Recipe-----
-set :application, "lowdown"
-set :repository,  "http://github.com/rideconnection/lowdown.git"
-set :deploy_to, "/home/deployer/rails/lowdown"
-
-set :scm, :git
-set :branch, "master"
+set :application, 'lowdown'
+set :repo_url, 'git://github.com/rideconnection/lowdown.git'
 set :deploy_via, :remote_cache
+set :deploy_to, '/home/deployer/rails/lowdown'
 
-set :user, "deployer"  # The server's user for deployments
-set :use_sudo, false
+# RVM options
+set :rvm_type, :user
+set :rvm_ruby_version, '2.2.2@lowdown'
+set :rvm_roles, [:app, :web]
 
-role :web, "184.154.79.122"
-role :app, "184.154.79.122"
-role :db,  "184.154.79.122", :primary => true # This is where Rails migrations will run
+# Passenger options
+set :passenger_rvm_ruby_version, '2.2.1@passenger'
+
+# Rails options
+set :conditionally_migrate, false
+
+# Default branch is :master
+# ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+
+# Default value for :scm is :git
+# set :scm, :git
+
+# Default value for :format is :pretty
+# set :format, :pretty
+
+# Default value for :log_level is :debug
+set :log_level, :info
+
+# Default value for :pty is false
+set :pty, true
+
+# Default value for :linked_files is []
+set :linked_files, fetch(:linked_files, []).push('config/database.yml','config/app_config.yml')
+
+# Default value for linked_dirs is []
+# set :linked_dirs, fetch(:linked_dirs, []).push('bin', 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
+set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets')
+
+# Default value for default_env is {}
+# set :default_env, { path: "/opt/ruby/bin:$PATH" }
+
+# Default value for keep_releases is 5
+set :keep_releases, 20
 
 namespace :deploy do
-  task :start do ; end
-  task :stop do ; end
-  task :restart, :roles => :app, :except => { :no_release => true } do
-    run "touch #{File.join(current_path,'tmp','restart.txt')}"
-  end
+  after :migrate, :seed
+  after :publishing, :restart
 end
-
-task :link_database_yml do
-  puts "    (Link in database.yml file)"
-  run  "ln -nfs #{deploy_to}/shared/config/database.yml #{deploy_to}/current/config/database.yml"
-  puts "    Link in app_config.yml file"
-  run  "ln -nfs #{deploy_to}/shared/config/app_config.yml #{deploy_to}/current/config/app_config.yml"
-end
-
-after "deploy:symlink", :link_database_yml

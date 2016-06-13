@@ -1,0 +1,15 @@
+row = %w(County Provider Trip\ Purpose Trip\ Count)
+csv << row
+
+@results.keys.sort.each do |county|
+  @results[county].keys.sort_by{|provider| provider.try(:name) || "Unspecified" }.each do |provider|
+    for purpose in (@trip_purposes - ['Total'])
+      row = []
+      row << county
+      row << (provider.try(:name) || 'Unspecified')
+      row << purpose
+      row << number_with_delimiter(@results[county][provider].by_purpose[purpose])
+      csv << row
+    end 
+  end
+end

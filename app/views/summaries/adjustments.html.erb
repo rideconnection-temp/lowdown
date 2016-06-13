@@ -1,0 +1,54 @@
+<div id="page-header">
+  <h1>Summary Adjustment History</h1>
+</div>
+
+<%= render 'search', action: :adjustments %>
+
+<div class="list-wrapper">
+  <table id="summary-results">
+    <thead>
+      <tr>
+       <th rowspan="2">Change Date & Time</th>
+       <th rowspan="2">Allocation</th>
+       <th rowspan="2">Month</th>
+       <th colspan="9" class="column-group">Change Only</th>
+       <th rowspan="2">Adjustment Notes</th>
+       <th rowspan="2">&nbsp;</th>
+      </tr>
+      <tr>
+       <th class="number">Total Cost</th>
+       <th class="number">In</th>
+       <th class="number">Out</th>
+       <th class="number">Total Trips</th>
+       <th class="number">Miles</th>
+       <th class="number">Pd Hours</th>
+       <th class="number">Vol Hours</th>
+       <th class="number">Total Driver Hours</th>
+       <th class="number">Undup</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @summaries.each do |summary| %>
+        <tr>
+          <td>
+            <%= summary.valid_start.in_time_zone("Pacific Time (US & Canada)").strftime('%D %I:%M %p') %>
+          </td>
+          <td><%= summary.allocation.name %></td>
+          <td><%= summary.period_start.strftime("%b %Y") %></td>
+          <td class="number"><%= number_to_currency(attribute_difference(summary, :total_cost)) %></td>
+          <td class="number"><%= attribute_difference(summary, :in_district_trips)  %></td>
+          <td class="number"><%= attribute_difference(summary, :out_of_district_trips) %></td>
+          <td class="number"><%= attribute_difference(summary, :trips) %></td>
+          <td class="number"><%= attribute_difference(summary, :total_miles) %></td>
+          <td class="number"><%= attribute_difference(summary, :driver_hours_paid) %></td>
+          <td class="number"><%= attribute_difference(summary, :driver_hours_volunteer) %></td>
+          <td class="number"><%= attribute_difference(summary, :total_driver_hours) %></td>
+          <td class="number"><%= attribute_difference(summary, :unduplicated_riders) %></td>
+          <td><%= summary.adjustment_notes %></td>
+          <td><%= link_to 'Details', edit_summary_path(summary.id) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= will_paginate @summaries %>

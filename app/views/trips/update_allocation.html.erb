@@ -2,7 +2,7 @@
   <h1>Move Trips to a Different Allocation</h1>
 </div>
 
-<%= form_for @query, :html=>{:id=>"trip-filter", :method=>:get}, :url=>{:action=>:update_allocation} do |f| %>
+<%= form_for @query, as: :q, html: {id: "trip-filter"}, url: update_allocation_trips_path do |f| %>
   <fieldset>
     <ol class="section ">
       <li>
@@ -14,22 +14,32 @@
         <%= f.text_field :end_date, :class=>"datepicker" %>
       </li>
       <li>
-        <%= f.label :allocation, "Source Allocation" %>
-        <%= f.grouped_collection_select :allocation, @providers, :active_trip_allocations, :name, :id, :name, {:prompt => '<Select Allocation>'} %>
+        <%= f.label :allocation_id, "Source Allocation" %>
+        <%= f.select :allocation_id, 
+            Allocation.trip_collection_method.not_recently_inactivated.order(:name).map {|a|
+              [a.name, a.id, {"data-provider-id" => a.provider_id}]
+            }, include_blank: true
+        %>
       </li>
       <li>
         <input id="get-count" type="submit" value="Get Trip Count" name="commit"/>
-        <span id="trip-count">
-          Available for Transfer:
-          <%= Trip::RESULT_CODES.map {|key,value| pluralize(@trip_count[value], "#{key} Trip") }.join(", ") %> 
-        </span>
+        <% if @trip_count %>
+          <span id="trip-count">
+            Available for Transfer:
+            <%= Trip::RESULT_CODES.map {|key,value| pluralize(@trip_count[value], "#{key} Trip") }.join(", ") %> 
+          </span>
+        <% end %>
       </li>
       
     <hr>
       
       <li>
-        <%= f.label :dest_allocation, "Destination Allocation" %>
-        <%= f.grouped_collection_select :dest_allocation, @providers, :active_trip_allocations, :name, :id, :name, {:prompt => '<Select Allocation>'} %>
+        <%= f.label :dest_allocation_id, "Destination Allocation" %>
+        <%= f.select :dest_allocation_id, 
+            Allocation.trip_collection_method.not_recently_inactivated.order(:name).map {|a|
+              [a.name, a.id, {"data-provider-id" => a.provider_id}]
+            }, include_blank: true 
+        %>
       </li>
       
       <li id="transfer_count">

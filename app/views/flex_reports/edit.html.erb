@@ -1,26 +1,20 @@
 <div id="page-header">
-  <h1>Edit Flex Report</h1>
+  <% if current_user.is_admin %>
+    <h1>Edit Flex Report</h1>
+  <% else %>
+    <h1>Flex Report Definition</h1>
+  <% end %>
 </div>
 
-<%= form_for(@report, :html => {:class => "run-report"}) do |f| %>
-  <fieldset>
-    <h2>Run Report</h2>
-    <hr>
-    <%= render "run_form", :f => f, :report => @report, :ol_class => "section" %>
-  </fieldset>
-<% end %>
-
-<% if @report.errors.any? %>
-  <div id="error_explanation">
-    <h2><%= pluralize(@report.errors.count, "error") %> prohibited this report from being saved:</h2>
-    <ul>
-    <% @report.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
-    <% end %>
-    </ul>
-  </div>
-<% end %>
+<%= render "shared/error_messages", :target => @report %>
 
 <%= form_for @report do |form| %>
   <%= render "form", :f => form %>
+<% end %>
+
+<% if current_user.is_admin %>
+  <%= form_for @report, :html => { :method => 'delete' } do |f| %>
+    <input type="hidden" name="report[id]" value="<%= @report.id %>" />
+    <%= f.submit "Delete Report", data: { confirm: "Are you sure you want to delete this report?" }, :class=>'delete-report' %>
+  <% end %>
 <% end %>

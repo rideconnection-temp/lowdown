@@ -5,39 +5,95 @@
   <fieldset>
 
     <ol class="section summary-form-part-one">
-      <li>
+      <li<%= mark_if_changed(@summary,:allocation) %>>
         <%= f.label :allocation_id, "Allocation:" %> 
         <%= f.select :allocation_id, grouped_options_for_select(@grouped_allocations,@summary.allocation_id), {:prompt => '<Select Allocation>'}, {:tabindex=>1} %>
       </li>
-      <li>
+      <li<%= mark_if_changed(@summary,:period_start) %>>
         <label>Summary Month:</label> 
         <%= f.date_select( :period_start, {:end_year => Time.now.year, :order => [:month, :year], :default => Date.today.prev_month}, {:tabindex=>1} ) %>
       </li>
     </ol>
 
     <ol class="section summary-form-part-two">
-      <% if !f.object.new_record? %>
-      <%= f.label :adjustment_notes, "Adjustment Notes:" %><br/>
-      <%= f.text_area :adjustment_notes, {:rows=>7, :columns=>60, :tabindex=>1} %>
-      <% end %>
+      <li<%= mark_if_changed(@summary,:adjustment_notes) %>>
+        <% if !f.object.new_record? %>
+          <%= f.label :adjustment_notes, "Adjustment Notes:" %><br/>
+          <%= f.text_area :adjustment_notes, {:rows=>3, :columns=>60, :tabindex=>1, :class=>:autosize} %>
+        <% end %>
+      </li>
     </ol>
 
     <ol class="section summary-form-part-three">
-      <li><%= f.label :total_miles, "Total Miles:" %> <%= f.text_field :total_miles, :tabindex=>3 %></li>
-      <li><%= f.label :turn_downs, "Turn Downs:" %> <%= f.text_field :turn_downs, :tabindex=>3 %></li>
-
-      <li><%= f.label :unduplicated_riders, "Unduplicated Riders:" %> <%= f.text_field :unduplicated_riders, :tabindex=>3 %></li>
-      <li><%= f.label :driver_hours_paid, "Driver Hours: Paid" %> <%= f.text_field :driver_hours_paid, :tabindex=>3 %></li>
-      <li><%= f.label :driver_hours_volunteer, "Driver Hours: Volunteer" %> <%= f.text_field :driver_hours_volunteer, :tabindex=>3 %></li>
-      <li><%= f.label :escort_hours_volunteer, "Volunteer Escort Hours" %> <%= f.text_field :escort_hours_volunteer ,:tabindex=>3 %></li>
-      <li><%= f.label :administrative_hours_volunteer, "Volunteer Admin Hours:" %> <%= f.text_field :administrative_hours_volunteer, :tabindex=>3 %></li>
-      <li><%= f.label :funds, "RC Funds:" %> <%= f.text_field :funds, :tabindex=>3 %></li>
-      <li><%= f.label :donations, "Donations:" %> <%= f.text_field :donations, :tabindex=>3 %></li>
-      <li><%= f.label :agency_other, "Agency Other:" %> <%= f.text_field :agency_other, :tabindex=>3 %></li>
-      <li><%= f.label :administrative, "Administrative:" %> <%= f.text_field :administrative, :tabindex=>3 %></li>
-      <li><%= f.label :operations, "Operations:" %> <%= f.text_field :operations, :tabindex=>3 %></li>
-      <li><%= f.label :vehicle_maint, "Vehicle Maintenance:" %> <%= f.text_field :vehicle_maint, :tabindex=>3 %></li>
-      <li><%= f.label :complete, "Complete:" %><%= f.check_box :complete, :tabindex=>3 %></li>
+      <li<%= mark_if_changed(@summary,:total_miles) %>>
+        <%= f.label :total_miles, "Total Miles:" %>
+        <%= f.text_field :total_miles, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:total_miles) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:turn_downs) %>>
+        <%= f.label :turn_downs, "Turn Downs:" %>
+        <%= f.text_field :turn_downs, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:turn_downs) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:unduplicated_riders) %>>
+        <%= f.label :unduplicated_riders, "Unduplicated Riders:" %>
+        <%= f.text_field :unduplicated_riders, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:unduplicated_riders) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:driver_hours_paid) %>>
+        <%= f.label :driver_hours_paid, "Driver Hours: Paid" %>
+        <%= f.text_field :driver_hours_paid, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:driver_hours_paid) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:driver_hours_volunteer) %>>
+        <%= f.label :driver_hours_volunteer, "Driver Hours: Volunteer" %>
+        <%= f.text_field :driver_hours_volunteer, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:driver_hours_volunteer) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:escort_hours_volunteer) %>>
+        <%= f.label :escort_hours_volunteer, "Volunteer Escort Hours" %>
+        <%= f.text_field :escort_hours_volunteer ,:tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:escort_hours_volunteer) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:administrative_hours_volunteer) %>>
+        <%= f.label :administrative_hours_volunteer, "Volunteer Admin Hours:" %>
+        <%= f.text_field :administrative_hours_volunteer, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:administrative_hours_volunteer) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:funds) %>>
+        <%= f.label :funds, "RC Funds:" %>
+        <%= f.text_field :funds, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:funds) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:donations) %>>
+        <%= f.label :donations, "Donations:" %>
+        <%= f.text_field :donations, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:donations) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:agency_other) %>>
+        <%= f.label :agency_other, "Agency Other:" %>
+        <%= f.text_field :agency_other, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:agency_other) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:administrative) %>>
+        <%= f.label :administrative, "Administrative:" %>
+        <%= f.text_field :administrative, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:administrative) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:operations) %>>
+        <%= f.label :operations, "Operations:" %>
+        <%= f.text_field :operations, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:operations) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:vehicle_maint) %>>
+        <%= f.label :vehicle_maint, "Vehicle Maintenance:" %>
+        <%= f.text_field :vehicle_maint, :tabindex=>3, :autocomplete=>:off %>
+        <%= summary_attribute_change(@summary,:vehicle_maint) %>
+      </li>
+      <li<%= mark_if_changed(@summary,:complete) %>>
+        <%= f.label :complete, "Complete:" %>
+        <%= f.check_box :complete, :tabindex=>3, :autocomplete=>:off %>
+      </li>
     </ol>
 
     <ol class="section summary-form-part-four">
@@ -45,38 +101,87 @@
         <table id="summary-row-info">
           <thead>
             <tr>
-              <th>Purpose</th>
-              <th>In-District</th>
-              <th>Out of District</th>
+              <th class="label">Purpose</th>
+              <th class="number">In-District</th>
+              <th class="number">Change</th>
+              <th class="number">Out of District</th>
+              <th class="number">Change</th>
             </tr>
           </thead>
           <tbody>
             <%= f.fields_for :summary_rows do |row_form| %>
-              <%= row_form.hidden_field :purpose %>
               <tr>
-                <td><%= row_form.label row_form.object.purpose %></td>
-                <td><%= row_form.text_field :in_district_trips, :tabindex=>2, "data-district" => "in" %></td>
-                <td><%= row_form.text_field :out_of_district_trips, :tabindex=>2, "data-district" => "out" %></td>
+                <td class="label">
+                  <%= row_form.hidden_field :purpose %>
+                  <%= row_form.label row_form.object.purpose %>
+                </td>
+                <td<%= mark_if_summary_row_changed(row_form.object,:in_district_trips) %>>
+                  <%= row_form.text_field :in_district_trips, :size=>10, :tabindex=>2, :autocomplete=>:off, "data-district" => "in" %>
+                </td>
+                <%= summary_row_attribute_change row_form.object, :in_district_trips %>
+                <td<%= mark_if_summary_row_changed(row_form.object,:out_of_district_trips) %>>
+                  <%= row_form.text_field :out_of_district_trips, :size=>10, :tabindex=>2, :autocomplete=>:off, "data-district" => "out" %>
+                </td>
+                <%= summary_row_attribute_change row_form.object, :out_of_district_trips %>
               </tr>
             <% end %>
             <tr>
-	            <td>Total</td>
-	            <% if f.object.new_record? %>
-	              <td>
-	                <%= text_field_tag "in_district_total", "0", :size => 30, :disabled => true %>
-	              </td>
+              <td class="label">Total</td>
+              <% if f.object.new_record? %>
                 <td>
-                  <%= text_field_tag "out_district_total", "0", :size => 30, :disabled => true %>
+                  <%= text_field_tag "in_district_total", "0", :size => 10, :disabled => true %>
                 </td>
-	            <% else %>
-                <td><%= @summary.summary_rows.map {|x| x.in_district_trips || 0 } .inject(:+) %></td>
-                <td><%= @summary.summary_rows.map {|x| x.out_of_district_trips || 0 } .inject(:+) %></td>
+                <td></td>
+                <td>
+                  <%= text_field_tag "out_district_total", "0", :size => 10, :disabled => true %>
+                </td>
+                <td></td>
+              <% else %>
+                <% if !@summary.previous || @summary.in_district_trips == @summary.previous.in_district_trips -%>
+                  <td class="total">
+                    <%= @summary.in_district_trips %>
+                  </td>
+                  <td></td>
+                <% else -%>
+                  <td class="changed total">
+                    <%= @summary.in_district_trips %>
+                  </td>
+                  <td class="change">
+                    <%= @summary.in_district_trips - @summary.previous.in_district_trips %>
+                  </td>
+                <% end -%>
+                <% if !@summary.previous || @summary.out_of_district_trips == @summary.previous.out_of_district_trips -%>
+                  <td class="total">
+                    <%= @summary.out_of_district_trips %>
+                  </td>
+                  <td></td>
+                <% else -%>
+                  <td class="changed total">
+                    <%= @summary.out_of_district_trips %>
+                  </td>
+                  <td class="change">
+                    <%= @summary.out_of_district_trips - @summary.previous.out_of_district_trips %>
+                  </td>
+                <% end -%>
               </tr>
               <tr>
-                <td>Grand Total</td>
+                <td class="label">Grand Total</td>
                 <td>&nbsp;</td>
-                <td><%= @summary.summary_rows.map {|x| (x.in_district_trips || 0) + (x.out_of_district_trips || 0)} .inject(:+) %></td>
-	            <% end %>
+                <td></td>
+                <% if !@summary.previous || @summary.trips == @summary.previous.trips -%>
+                  <td class="total">
+                    <%= @summary.trips %>
+                  </td>
+                  <td></td>
+                <% else -%>
+                  <td class="changed total">
+                    <%= @summary.trips %>
+                  </td>
+                  <td class="change">
+                    <%= @summary.trips - @summary.previous.trips %>
+                  </td>
+                <% end -%>
+              <% end %>
             </tr>
           </tbody>
         </table>

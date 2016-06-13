@@ -1,14 +1,14 @@
 module ApplicationHelper
 
   def gmaps_address_link(address, klass)
-    escaped_address = URI.escape address.full_address 
-    
+    escaped_address = URI.escape address.full_address
+
     "<a class=\"#{klass}\" href=\"http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=#{escaped_address}&sll=#{address.y_coordinate},#{address.x_coordinate}&sspn=0.008708,0.017896&ie=UTF8&hq=&hnear=#{escaped_address}&t=h&z=16\" title=\"#{address.full_address}\">#{address.display_name}</a>"
   end
 
   def gmaps_route_link(start_address,end_address, klass)
-    escaped_start_address = URI.escape start_address.full_address 
-    escaped_end_address = URI.escape end_address.full_address 
+    escaped_start_address = URI.escape start_address.full_address
+    escaped_end_address = URI.escape end_address.full_address
     "<a class=\"#{klass}\" href=\"http://maps.google.com/maps?saddr=#{escaped_start_address}&daddr=#{escaped_end_address}\">Route</a>"
   end
 
@@ -16,7 +16,7 @@ module ApplicationHelper
    if flash[type]
       "<div id=\"flash\">
          <a class=\"closer\" href=\"#\">Close</a>
-         <div class=\"info\">#{flash[type]}</div>   
+         <div class=\"info\">#{flash[type]}</div>
       </div>"
     else
       ''
@@ -26,42 +26,53 @@ module ApplicationHelper
   def flash_messages
     return flash_type(:notice) + flash_type(:alert)
   end
-  
-  def report_month_range(start_date, end_date)
-    end_date = end_date - 1.month
+
+  def report_month_range(start_date, after_end_date)
+    end_date = after_end_date - 1.month
     if start_date.year == end_date.year && start_date.month == end_date.month
       start_date.strftime("%B %Y")
     else
       "#{start_date.strftime("%B %Y")} through #{end_date.strftime("%B %Y")}"
     end
   end
-  
-  def row_sort(k,v)
-    if k.blank?
+
+  def row_sort(k)
+    if    k == 'N/A'
+      [3, ""]
+    elsif k.blank?
+      [2, ""]
+    elsif k == "Unspecified"
       [2, ""]
     elsif k.class == Fixnum
       [1, ("%04d" % k)]
     else
-      [1, k.to_s]
+      [1, k.to_s.downcase]
     end
   end
 
+  def quarterly_report_funding_sources(reporting_agency_id,program_id,county,start_date,after_end_date)
+    return if program_id.blank? || reporting_agency_id.blank? || county.blank?
+    a = Allocation.where(program_id: program_id,reporting_agency_id: reporting_agency_id,county: county).
+      active_in_range(start_date,after_end_date)
+    a.map{|x| x.project.try(:funding_source).try(:name) }.compact.sort.uniq.join(", ")
+  end
+
+  def group_by_label(value)
+    value.map { |field| FlexReport::GroupMappings[field] || field.titlecase }.join(", ")
+  end
+
   def group_by_option_tag(value)
-    mappings = {
-      #"funding_subsource" => "Funding Sub-source", 
-      #"project_number"    => "Project Code",
-      #"agency"            => "Provider"
-    }
-    
-    fields     = value.split( "," ).map { |field| mappings[field] || field.titlecase }.join(", ")
-    attributes = { :value => value }
+    fields     = group_by_label(value.split(","))
+    attributes = { value: value }
     attributes[:selected] = "selected" if @report.group_by == value
-    
+
     content_tag :option, fields, attributes
   end
-  
+
   def checked?(field)
-    "checked" if @report.new_record? || @report.field_list.split(",").include?(field)
+    if @report.new_record? || @report.field_list.present?
+      "checked" if @report.new_record? || @report.field_list.split(",").include?(field)
+    end
   end
 
   def bodytag_class
@@ -71,7 +82,7 @@ module ApplicationHelper
   end
 
   def describe_date_range(start_date,end_date)
-    if start_date + 1.day == end_date
+    if start_date == end_date
       result = start_date.strftime('%A %B %e %Y')
     elsif start_date.day == 1 and (end_date + 1.day).day == 1
       if start_date + 1.month == end_date + 1.day # One calendar month
@@ -82,7 +93,7 @@ module ApplicationHelper
         result = "#{start_date.strftime('%B')} to #{end_date.strftime('%B')}, #{end_date.year}"
         result += " (#{fiscal_quarter.ordinalize} Quarter of Fiscal Year #{describe_fiscal_year start_date})"
       elsif start_date + 12.months == end_date + 1.day && start_date.month == 7 # Full fiscal year
-        result = "Fiscal Year #{start_date.year} through #{end_date.strftime('%B, %Y')}"
+        result = "#{start_date.strftime('%B')} #{start_date.year} to #{end_date.strftime('%B')} #{end_date.year} (Fiscal Year #{describe_fiscal_year start_date})"
       elsif start_date + 12.months == end_date + 1.day && start_date.month == 1 # Full calendar year
         result = "Calendar Year #{start_date.year}"
       elsif start_date.year == end_date.year # Full months, all in the same calendar year
@@ -101,7 +112,7 @@ module ApplicationHelper
   end
 
   def describe_fiscal_year(date)
-    date += 1.year if date.month > 6 
+    date += 1.year if date.month > 6
     "#{date.year-1}-#{date.strftime('%y')}"
   end
 
@@ -111,7 +122,7 @@ module ApplicationHelper
       Date.new(date.year, date.month, 15)
     else
       d = date + 1.month
-      Date.new(d.year, d.month, 1) - 1.day   
+      Date.new(d.year, d.month, 1) - 1.day
     end
   end
 
@@ -131,5 +142,61 @@ module ApplicationHelper
     return if record.previous.nil?
     return if record.send(attribute).blank? && record.previous.send(attribute).blank?
     ' class="changed"'.html_safe if record.send(attribute) != record.previous.send(attribute)
+  end
+
+  def mark_if_summary_row_changed(row,attribute)
+    return if row.summary.nil? || row.summary.previous.nil?
+    previous_row = row.summary.previous.summary_rows.detect{|prev| prev.purpose == row.purpose }
+    return if row.send(attribute).blank? && previous_row.send(attribute).blank?
+    ' class="changed"'.html_safe if row.send(attribute) != previous_row.send(attribute)
+  end
+
+  def summary_attribute_change(record,attribute)
+    return if record.previous.nil?
+    change = (record.send(attribute) || 0) - (record.previous.send(attribute) || 0)
+    return if change == 0
+    "<div class=\"change\">#{change}</div>".html_safe
+  end
+
+  def summary_row_attribute_change(row,attribute)
+    return '<td></td>'.html_safe if row.summary.nil? || row.summary.previous.nil?
+    previous_row = row.summary.previous.summary_rows.detect{|prev| prev.purpose == row.purpose }
+    change = (row.send(attribute) || 0) - (previous_row.send(attribute) || 0)
+    return '<td></td>'.html_safe if change == 0
+    "<td class=\"change\">#{change}</td>".html_safe
+  end
+
+  def attribute_difference(record, attribute)
+    return if record.previous.nil?
+    change = (record.send(attribute) || 0) - (record.previous.send(attribute) || 0)
+    change == 0 ? nil : change
+  end
+
+  def row_trip_link(row)
+    trip_allocations = ReportRowAllocation.select_trip_collection_methods(row.allocations)
+    if trip_allocations.present?
+      q_params = {
+        allocation_id_list: "#{trip_allocations.map{|a| a.id }.uniq.sort.join(' ')}",
+        start_date:         row.start_date,
+        end_date:           row.after_end_date - 1.day
+      }
+      if row.allocations.first.is_trip_purpose_allocation?
+        q_params[:trip_purpose] = row.allocations.first.trip_purpose
+      end
+      link_to "Trips", trips_path({q: q_params})
+    end
+  end
+
+  def row_summary_link(row)
+    summary_allocations = ReportRowAllocation.select_summary_collection_methods(row.allocations)
+    if summary_allocations.present?
+      link_to "Summaries", summaries_path(
+        q: {
+          allocation_id_list: "#{summary_allocations.map{|a| a.id }.uniq.sort.join(' ')}",
+          start_date:         row.start_date,
+          end_date:           row.after_end_date - 1.day
+        }
+      )
+    end
   end
 end

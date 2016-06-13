@@ -1,0 +1,10 @@
+csv << ['Program Name','Program ID','Provider Name','Provider ID','Related Allocations']
+@trimet_groups.sort_by{|k,v| [k[0].name, k[1].name] }.each do |key,value|
+  csv_row = []
+  csv_row << key[0].name
+  csv_row << key[0].trimet_identifier
+  csv_row << key[1].name
+  csv_row << key[1].trimet_identifier
+  value.sort_by{|a| a.name}.each {|allocation| csv_row << allocation.name } 
+  csv << csv_row
+end

@@ -1,0 +1,33 @@
+<div id="page-header">
+  <h1>Allocations Summary</h1>
+</div>
+<div class="report-wrapper">
+  <table id="trip-results">
+    <thead>
+      <tr>
+        <% @groupings.each do |group| %> 
+          <th>
+            <%= group[1] %>
+          </th>
+        <% end %>
+      </tr>
+    </thead>
+    <% current_values = {} %>
+    <tbody>
+      <tr>
+        <% previous_level = -1 %>
+        <% @flattened_nodes.each do |node| %>
+          <% if previous_level >= node[:level] %>
+            </tr>
+            <tr>
+          <% end %>
+          <%= content_tag :td, :rowspan => node[:member_count] do %>
+            <% node_value = node[:allocation].send(@groupings[node[:level]][0]) %>
+            <%= node_value.blank? ? "(Blank)" : node_value %>
+          <% end %>
+          <% previous_level = node[:level] %>
+        <% end %>
+      </tr>
+    </tbody>
+  </table>
+</div>

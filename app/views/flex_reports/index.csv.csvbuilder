@@ -1,0 +1,39 @@
+csv << [
+  "Report Category",
+  "Report Name",
+  "Subtitle",
+  "Description",
+  "Grouping",
+  "Reporting Agencies",
+  "Providers",
+  "Programs",
+  "Funding Sources",
+  "Reporting Agency Types",
+  "Provider Types",
+  "Counties",
+  "F.E. Projects",
+  "Service Types",
+  "Trip Collection Methods",
+  "Individual Allocations"
+]
+
+@reports.sort_by{|r| "#{r.report_category.try(:name)}:#{r.name}"}.each do |report|
+  csv << [
+    report.report_category.try(:name),
+    report.name,
+    report.subtitle,
+    report.description,
+    report.group_by.try(:titleize).try(:gsub,',',', '),
+    report.reporting_agencies.map{|ra| ra.name }.join(', '),
+    report.providers.map{|p| p.name }.join(', '),
+    report.programs.map{|p| p.name }.join(', '),
+    report.funding_sources.map{|fs| fs.name }.join(', '),
+    report.reporting_agency_type_names.join(', '),
+    report.provider_type_names.join(', '),
+    report.county_names.join(', '),
+    report.projects.map{|p| p.number_and_name }.join(', '),
+    report.service_types.map{|st| st.name }.join(', '),
+    report.trip_collection_methods.join(', '),
+    report.allocations.map{|a| a.name }.join(', ')
+  ]
+end

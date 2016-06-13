@@ -25,7 +25,7 @@
         <td><%= run.odometer_end %></td>
         <td><%= run.escort_count %></td>
         <td><span class="status-<%= (run.complete) ? "" : "in" %>complete"><%= run.complete %></span></td>
-        <td><%= link_to "Details", :action=>:show, :id=>run.id %></td>
+        <td><%= link_to "Details", run_path(run) %></td>
       </tr>
       <% end %>
     </tbody>

@@ -2,31 +2,6 @@
   <h1>View Summaries</h1>
 </div>
 
-<%= form_for @query, :html=>{:id=>"summary-filter", :method=>:get}, :url=>{:action=>:index} do |f| %>
-  <fieldset>
-
-    <ol class="section first">
-      <li><label>Start Date:</label> <%= f.date_select( :start_date, :end_year => Date.today.year, :order => [:month, :year] ) %></li>
-      <li><label>End Date:</label> <%= f.date_select( :end_date, :end_year => Date.today.year, :order => [:month, :year] ) %></li>
-
-    </ol>
-
-    <ol class="section fourth">
-      <li>
-        <label>Reporting Agencies:</label>
-        <%= f.collection_select :reporting_agency, @query.reporting_agencies, :id, :to_s, :include_blank => true %>
-      </li>
-      <li>
-        <label>Providers:</label>
-        <%= f.collection_select :provider, @query.providers, :id, :to_s, :include_blank => true %>
-      </li>
-    </ol>
-
-    <div class="actions">
-      <input id="summary-search" type="submit" value="Search" />
-    </div>
-
-  </fieldset>
-<% end %> 
+<%= render 'search', action: :index %>
 
 <%= render "summaries" %>

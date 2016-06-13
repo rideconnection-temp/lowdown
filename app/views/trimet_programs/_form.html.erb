@@ -11,10 +11,16 @@
         <%= form.label :trimet_identifier %>
         <%= form.text_field :trimet_identifier, :size => 5 %>
       </li>
+      <li class="selfclear">
+        <%= form.label :notes %>
+        <%= form.text_area :notes, :class => :autosize %>
+      </li>
     </ol>
     
-    <div class="actions">
-      <%= form.submit %>
-    </div>
+    <% if current_user.is_admin %>
+      <div class="actions">
+        <%= form.submit %>
+      </div>
+    <% end %>
   </fieldset>
 <% end %>

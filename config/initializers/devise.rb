@@ -3,7 +3,7 @@
 Devise.setup do |config|
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in DeviseMailer.
-  config.mailer_sender = "admin@rideconnection.org"
+  config.mailer_sender = APP_CONFIG[:devise_mailer_sender]
 
   # Configure the class responsible to send e-mails.
   # config.mailer = "Devise::Mailer"
@@ -38,31 +38,24 @@ Devise.setup do |config|
   # For bcrypt, this is the cost for hashing the password and defaults to 10. If
   # using other encryptors, it sets how many times you want the password re-encrypted.
   config.stretches = 10
-
-  # Define which will be the encryption algorithm. Devise also supports encryptors
-  # from others authentication tools as :clearance_sha1, :authlogic_sha512 (then
-  # you should set stretches above to 20 for default behavior) and :restful_authentication_sha1
-  # (then you should set stretches to 10, and copy REST_AUTH_SITE_KEY to pepper)
-  config.encryptor = :bcrypt
+  config.reset_password_within = 2.hours
+  config.case_insensitive_keys = [:email]
 
   # Setup a pepper to generate the encrypted password.
-  config.pepper = "88e6b6fed39f52112e9954c6c6551fe5c56ac28e8e7d170ff2153563495565aa137c6962b97b8317fb0a79263d12927a6b23bc3972b88ecfe260d3a7dd9f0f63"
+  # config.secret_key = APP_CONFIG[:devise_secret_key]
 
   # ==> Configuration for :confirmable
   # The time you want to give your user to confirm his account. During this time
   # he will be able to access your application without confirming. Default is nil.
-  # When confirm_within is zero, the user won't be able to sign in without confirming. 
+  # When allow_unconfirmed_access_for is zero, the user won't be able to sign in without confirming. 
   # You can use this to let your user access some features of your application 
   # without confirming the account, but blocking it after a certain period 
   # (ie 2 days). 
-  # config.confirm_within = 2.days
+  # Devise.allow_unconfirmed_access_for = 2.days
 
   # ==> Configuration for :rememberable
   # The time the user will be remembered without asking for credentials again.
   # config.remember_for = 2.weeks
-
-  # If true, a valid remember token can be re-used between multiple browsers.
-  # config.remember_across_browsers = true
 
   # If true, extends the user's remember period when remembered via cookie.
   # config.extend_remember_period = false
@@ -117,6 +110,8 @@ Devise.setup do |config|
   # By default sign_out is scoped (i.e. /users/sign_out affects only :user scope).
   # In case of sign_out_all_scopes set to true any logout action will sign out all active scopes.
   # config.sign_out_all_scopes = false
+  config.sign_out_via = :get
+  
 
   # ==> Navigation configuration
   # Lists the formats that should be treated as navigational. Formats like
@@ -139,4 +134,6 @@ Devise.setup do |config|
   #   end
   #   manager.default_strategies(:scope => :user).unshift :twitter_oauth
   # end
+  #
+  config.reset_password_within = 1.hour
 end

@@ -4,9 +4,11 @@ class TripQuery
   extend ActiveModel::Naming
   include ActiveModel::Conversion
 
-  attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider, :reporting_agency, 
-      :allocation, :customer_first_name, :customer_last_name, :dest_allocation, :commit, :trip_import_id,
-      :adjustment_notes, :display_search_form, :run_id, :share_id, :valid_start
+  attr_accessor :all_dates, :start_date, :end_date, :after_end_date, :provider_id, :reporting_agency_id, 
+      :allocation_id_list, :allocation_id, :allocation_ids, :customer_first_name, :customer_last_name, 
+      :dest_allocation_id, :commit, :trip_import_id, :adjustment_notes, :display_search_form, :run_id, 
+      :share_id, :valid_start, :result_code, :original_override, :program_id,
+      :trip_purpose, :data_entry_complete
 
   def initialize(params, commit = nil)
     params ||= {}
@@ -39,12 +41,19 @@ class TripQuery
       end
     end
     @after_end_date      = @end_date + 1.day
-    @provider            = params[:provider].to_i         if params[:provider].present? 
-    @reporting_agency    = params[:reporting_agency].to_i if params[:reporting_agency].present? 
-    @allocation          = params[:allocation].to_i       if params[:allocation].present? 
-    @dest_allocation     = params[:dest_allocation].to_i  if params[:dest_allocation].present? 
+    @provider_id         = params[:provider_id].to_i         if params[:provider_id].present? 
+    @program_id          = params[:program_id].to_i          if params[:program_id].present? 
+    @reporting_agency_id = params[:reporting_agency_id].to_i if params[:reporting_agency_id].present? 
+    @dest_allocation_id  = params[:dest_allocation_id].to_i  if params[:dest_allocation_id].present? 
+    @allocation_id       = params[:allocation_id].to_i       if params[:allocation_id].present? 
+    @allocation_id_list  = params[:allocation_id_list]       if params[:allocation_id_list].present?
+    @result_code         = params[:result_code]
     @customer_first_name = params[:customer_first_name]
     @customer_last_name  = params[:customer_last_name]
+    @original_override   = params[:original_override]
+    @trip_purpose        = params[:trip_purpose]
+    @data_entry_complete = (params[:data_entry_complete] == 'Yes' ? true : false) if params[:data_entry_complete].in?(%w{Yes No})
+    @allocation_ids      = @allocation_id_list.split.map{|al| al.to_i} if @allocation_id_list.present?
   end
 
   def persisted?
@@ -52,67 +61,127 @@ class TripQuery
   end
 
   def apply_conditions(trips)
-    trips = trips.for_date_range(start_date,after_end_date) if !all_dates
-    trips = trips.for_provider(provider) if provider.present?
-    trips = trips.for_valid_start(valid_start) if valid_start.present?
-    trips = trips.for_reporting_agency(reporting_agency) if reporting_agency.present?
-    trips = trips.for_allocation_id(allocation) if allocation.present?
-    trips = trips.for_import(trip_import_id) if trip_import_id.present?
-    trips = trips.for_run(run_id) if run_id.present?
-    trips = trips.for_share(share_id) if share_id.present?
+    trips = trips.for_date_range(start_date,after_end_date)         if !all_dates
+    trips = trips.for_provider(provider_id)                         if provider_id.present?
+    trips = trips.for_program_id(program_id)                        if program_id.present?
+    trips = trips.for_valid_start(valid_start)                      if valid_start.present?
+    trips = trips.for_reporting_agency(reporting_agency_id)         if reporting_agency_id.present?
+    trips = trips.for_allocation_id(allocation_id)                  if allocation_id.present?
+    trips = trips.for_allocation_id(allocation_ids)                 if allocation_ids.present?
+    trips = trips.for_import(trip_import_id)                        if trip_import_id.present?
+    trips = trips.for_run(run_id)                                   if run_id.present?
+    trips = trips.for_result_code(result_code)                      if result_code.present?
+    trips = trips.for_share(share_id)                               if share_id.present?
     trips = trips.for_customer_first_name_like(customer_first_name) if customer_first_name.present?
-    trips = trips.for_customer_last_name_like(customer_last_name) if customer_last_name.present?
+    trips = trips.for_customer_last_name_like(customer_last_name)   if customer_last_name.present?
+    trips = trips.for_original_override_like(original_override)     if original_override.present?
+    trips = trips.for_trip_purpose(trip_purpose)                    if trip_purpose.present?
+    trips = trips.where(complete: data_entry_complete)              unless data_entry_complete.nil?
     trips
   end
   
   def update_allocation?
-    @commit.try(:downcase) == "transfer trips" && @dest_allocation.present? && @dest_allocation != @allocation
+    @commit.try(:downcase) == "transfer trips" && 
+      @dest_allocation_id.present? && 
+      @dest_allocation_id != @allocation_id &&
+      Allocation.find(@allocation_id).try(:provider) == Allocation.find(@dest_allocation_id).try(:provider)
   end
 
   def format
     return if @commit.blank?
-    if @commit.downcase.include?("bpa")
+    if @commit == "Export BPA Invoice Data"
       "bpa"
-    elsif @commit.downcase.include?("csv")
+    elsif @commit == "Export All Data Fields"
       "general"
+    elsif @commit == "Export For Trip Analysis"
+      "analysis"
     end
   end
 end
 
-class TripsController < ApplicationController
-  before_filter :require_admin_user, :only=>[:import]
+class TripImportQuery
+  attr_accessor :provider_id
 
-  def index
-    redirect_to :action=>:list
+  def initialize(params)
+    params ||= {}
+    @provider_id = params[:provider_id].to_i if params[:provider_id].present? 
   end
 
-  def list
-    @query              = TripQuery.new params[:trip_query], params[:commit]
-    @providers          = Provider.default_order
-    @reporting_agencies = Provider.partners.default_order
-    @allocations        = Allocation.order(:name)
+  def apply_conditions(trip_imports)
+    trip_imports = trip_imports.for_provider_id(provider_id) if provider_id.present?
+    trip_imports
+  end
+end
 
-    @trips = Trip.current_versions.includes(:pickup_address, :dropoff_address, :run, :customer, :allocation => [:provider,:project,:override]).joins(:allocation).order(:date,:trip_import_id)
-    @trips = @query.apply_conditions(@trips)
+class TripsController < ApplicationController
+
+  before_filter :require_admin_user, except: [:index, :list, :show_import, :adjustments, :show]
+
+  def index
+    @query = TripQuery.new params[:q], params[:commit]
+    prep_search
+    @trips = @query.apply_conditions(Trip).
+        current_versions.
+        index_includes.
+        order(:date,:trip_import_id)
 
     if @query.format == 'general'
-      @filename = "trip_list.csv"
-      render "index.csv"
+      @filename = 'trip_list.csv'
+      render 'index.csv'
     elsif @query.format == 'bpa'
       @trips = @trips.completed
       @filename = 'bpa_index.csv'
-      render "bpa_index.csv"
+      render 'bpa_index.csv'
+    elsif @query.format == 'analysis'
+      render 'analysis_index.csv'
     else
-      @trips = @trips.paginate :page => params[:page], :per_page => 30
+      @trip_count = @query.apply_conditions(Trip).
+          current_versions.
+          trip_count.
+          where(result_code: 'COMP').
+          first['trip_count']
+      @trips = @trips.paginate page: params[:page], per_page: 30
     end
   end
   
+  def show
+    @trip = Trip.find(params[:id])
+    prep_edit
+  end
+  
+  def update
+    @trip = Trip.find(params[:id]).current_version
+    @trip.attributes = safe_params
+    if has_real_changes? @trip
+      if @trip.save  
+        redirect_to(@trip)
+      else
+        prep_edit
+        render :show
+      end
+    else
+      redirect_to(@trip)
+    end
+  end
+
+  def show_update_allocation
+    @query       = TripQuery.new params[:q], params[:commit]
+    @providers   = Provider.order(:name).with_trip_data
+    render :update_allocation
+  end
+
   def update_allocation
-    @query       = TripQuery.new params[:trip_query], params[:commit]
+    @query       = TripQuery.new params[:q], params[:commit]
     @providers   = Provider.order(:name).with_trip_data
     
     if @query.update_allocation?
-      @completed_trips_count = @query.apply_conditions(Trip).current_versions.select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").completed.first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
+      @completed_trips_count = @query.
+          apply_conditions(Trip).
+          current_versions.
+          select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").
+          completed.
+          reorder('').
+          first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
       @completed_transfer_count = params[:transfer_count].try(:to_i) || 0
       @transfer_all = (params[:transfer_all] == '1' || params[:transfer_all] == true)
       @adjustment_notes = params[:adjustment_notes]
@@ -131,19 +200,28 @@ class TripsController < ApplicationController
             if rc == 'COMP' && !@transfer_all
               this_transfer_count = @completed_transfer_count
             else
-              this_transfer_count = ((@query.apply_conditions(Trip).select("COALESCE(SUM(guest_count),0) AS g, COALESCE(SUM(attendant_count),0) AS a, COUNT(*) AS c").current_versions.where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
+              this_transfer_count = ((@query.
+                  apply_conditions(Trip).
+                  current_versions.
+                  select("COALESCE(SUM(guest_count),0) AS g, COALESCE(SUM(attendant_count),0) AS a, COUNT(*) AS c").
+                  where(result_code: rc).
+                  reorder('').
+                  first.attributes.values.inject(0) {|sum,x| sum + x.to_i }) * ratio).to_i
             end
 
             trips_remaining = this_transfer_count
             @trips_transferred[rc] = 0
             # This is the maximum number of trips we'll need, if there are no guest or attendants. 
             # It may be fewer when guests & attendants are counted below
-            trips = @query.apply_conditions(Trip).where(:result_code => rc).current_versions.limit(this_transfer_count)
+            trips = @query.apply_conditions(Trip).
+                current_versions.
+                where(result_code: rc).
+                limit(this_transfer_count)
             if trips.present?
               for trip in trips
                 passengers = (trip.guest_count || 0) + (trip.attendant_count || 0) + 1
                 if trips_remaining > 0 && passengers <= trips_remaining
-                  trip.allocation_id = @query.dest_allocation 
+                  trip.allocation_id = @query.dest_allocation_id 
                   trip.version_switchover_time = now
                   trip.adjustment_notes = @adjustment_notes if @adjustment_notes
                   trip.save!
@@ -155,80 +233,108 @@ class TripsController < ApplicationController
           end
         end
 
-        @allocation = Allocation.find @query.dest_allocation
+        @allocation = Allocation.find @query.dest_allocation_id
       end
     end
     @trip_count = {}
     Trip::RESULT_CODES.values.each do |rc|
-      @trip_count[rc] = @query.apply_conditions(Trip).select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").current_versions.where(:result_code => rc).first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
+      @trip_count[rc] = @query.
+          apply_conditions(Trip).
+          current_versions.
+          select("SUM(guest_count) AS g, SUM(attendant_count) AS a, COUNT(*) AS c").
+          where(result_code: rc).
+          reorder('').
+          first.attributes.values.inject(0) {|sum,x| sum + x.to_i }
     end
   end
 
   def show_import
-    @trip_imports = TripImport.order("trip_imports.created_at DESC").paginate :page => params[:page], :per_page => 30
+    @query        = TripImportQuery.new params[:q]
+    @providers    = Provider.with_trip_data.default_order
+    @trip_imports = @query.apply_conditions(TripImport).
+      order("trip_imports.created_at DESC").paginate(
+      page: params[:page], 
+      per_page: 30
+    )
   end
 
   def adjustments
-    @adjustments = Trip.grouped_by_adjustment.paginate :page => params[:page], :per_page => 30, :total_entries => Trip.version_group_count
+    prep_search
+    @query = TripQuery.new(params[:q])
+    @adjustments = @query.apply_conditions(Trip).grouped_by_adjustment.paginate(
+      page: params[:page], 
+      per_page: 30, 
+      total_entries: @query.apply_conditions(Trip).grouped_revisions.to_a.count
+    )
   end
 
   def import
-    if ! params['file-import']
-      redirect_to :action=>:show_import and return
+    if params['file-import'].present?
+      processed = TripImport.new(
+        file_path: params['file-import'].path,
+        file_name: params['file-import'].original_filename,
+        notes: params['notes']
+      )
+      if processed.save
+        flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
+      else
+        flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
+      end
     end
-    file = params['file-import'].tempfile
-    processed = TripImport.new(:file_path=>file,:file_name => params['file-import'].original_filename)
-    if processed.save
-      flash[:notice] = "Import complete - #{processed.record_count} records processed.</div>"
-      redirect_to :action => :show_import
-    else
-#     TODO: make into a flash error
-      flash[:notice] = "Import aborted due to the following error(s):<br/>#{processed.problems}"
-      redirect_to :action => :show_import
+    redirect_to show_import_trips_path
+  end
+
+  private
+
+  def safe_params
+    params.require(:trip).permit(
+      :customer_type,
+      :in_trimet_district,
+      :case_manager,
+      :case_manager_office,
+      :date_enrolled,
+      :service_end,
+      :approved_rides,
+      :odometer_start,
+      :odometer_end,
+      :fare,
+      :purpose_type,
+      :guest_count,
+      :attendant_count,
+      :mobility,
+      :bpa_driver_name,
+      :result_code,
+      :allocation_id,
+      :customer_pay,
+      :complete,
+      :adjustment_notes
+    )
+  end
+
+  def prep_search
+    @providers          = Provider.with_trip_data.default_order
+    @programs           = Program.with_trip_data.default_order
+    @reporting_agencies = Provider.with_trip_data_as_reporting_agency.default_order
+    @result_codes       = Trip::RESULT_CODES.sort
+    @trip_purposes      = TRIP_PURPOSE_TO_SUMMARY_PURPOSE.values.uniq.sort
+    if @query.try(:allocation_ids).present?
+      @allocations        = Allocation.where(id: @query.allocation_ids).order(:name)
     end
   end
 
-  def show
-    @trip = Trip.find(params[:id])
+  def prep_edit
     @customer = @trip.customer
     @home_address = @trip.home_address
     @pickup_address = @trip.pickup_address
     @dropoff_address = @trip.dropoff_address
     @updated_by_user = @trip.updated_by_user
     @result_codes = Trip::RESULT_CODES
-    @result_codes[@trip.result_code] = (@trip.result_code) if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
+    if @trip.result_code.present? && !@result_codes.has_value?(@trip.result_code)
+      @result_codes[@trip.result_code] = (@trip.result_code) 
+    end
     @allocations = Allocation.order(:name).active_on(@trip.date)
     if @allocations.detect{|a| a.id == @trip.allocation_id}.nil?
       @allocations.unshift Allocation.find(@trip.allocation_id)
     end
-  end
-  
-  def update
-    old_trip = Trip.find(params[:trip][:id])
-    @trip = old_trip.current_version
-    @trip.update_attributes(params[:trip]) ?
-      redirect_to(:action=>:show, :id=>@trip) : render(:action => :show)
-  end
-
-  def show_bulk_update
-    params[:trip_query] = {} if params[:trip_query].blank?
-    params[:trip_query][:date_range] = 'semimonthly'
-    @query     = TripQuery.new params[:trip_query]
-    @providers = [['Select a provider','']] + Provider.with_trip_data.default_order.map {|p| [p.to_s, p.id]}
-    @incomplete_trips = {}
-    Provider.with_trip_data.default_order.each do |p|
-      trip_count = Trip.for_date_range(@query.start_date,@query.after_end_date).for_provider(p.id).data_entry_not_complete.count
-      @incomplete_trips[p] = trip_count unless trip_count == 0
-    end
-  end
-
-  def bulk_update
-    @query = TripQuery.new params[:trip_query]
-    unless @query.provider.blank?
-      updated_runs = Run.current_versions.data_entry_not_complete.for_date_range(@query.start_date,@query.after_end_date).for_provider(@query.provider).update_all(:complete => true)
-      updated_trips = Trip.current_versions.data_entry_not_complete.for_date_range(@query.start_date,@query.after_end_date).for_provider(@query.provider).update_all(:complete => true)
-      flash[:notice] = "Updated #{updated_trips} trips records and #{updated_runs} run records"
-    end
-    redirect_to :action => :show_bulk_update, :trip_query => params[:trip_query]
   end
 end

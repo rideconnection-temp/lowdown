@@ -10,8 +10,6 @@
     <th>Name</th>
     <th>Short Name</th>
     <th>Type</th>
-    <th>Agency</th>
-    <th>Branch</th>
     <th/>
   </tr>
   <% @providers.each do |provider| %>
@@ -19,9 +17,7 @@
       <td><%= link_to provider.to_s, edit_provider_path(provider) %></td>
       <td><%= provider.short_name %></td>
       <td><%= provider.provider_type %></td>
-      <td><%= provider.agency %></td>
-      <td><%= provider.branch %></td>
-      <td><%= link_to "Delete", provider_url(provider), :class => "delete", :method => "delete", :confirm => "Are you sure you want to delete this provider?" if current_user.is_admin && provider.allocations.empty? %></td>
+      <td><%= link_to "Delete", provider_url(provider), :class => "delete", :method => "delete", data: { confirm: "Are you sure you want to delete this provider?" } if current_user.is_admin && provider.allocations.empty? && provider.allocations_as_reporting_agency.empty? %></td>
     </tr>
   <% end %>
 </table>

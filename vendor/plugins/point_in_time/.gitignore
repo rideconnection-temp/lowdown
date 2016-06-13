@@ -1,4 +1,0 @@
-test/*.log
-*.db
-pkg/*
-version_fu-*.gem

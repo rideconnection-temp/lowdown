@@ -1,0 +1,122 @@
+<div id="page-header">
+  <h1>
+    <%= @title %>
+    <% if @query.provider_id.present? %>
+      &mdash; <%= Provider.find(@query.provider_id).name %>
+    <% else %>
+      &mdash; All Providers
+    <% end %>
+  </h1>
+</div>
+
+<h2><%= describe_date_range(@query.start_date, @query.end_date) %></h2>
+
+<table id="active-rider-results" class="results">
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Service Date</th>
+      <th>Start Time</th>
+      <th>Pickup Address</th>
+      <th>Drop Off Address</th>
+      <th>District Center</th>
+      <th>Partner Cost</th>
+      <th>Taxi Cost</th>
+      <th>Scheduling Fee</th>
+      <th>Total Cost</th>
+      <th>Provider</th>
+      <th class="no-print">Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @run_groups.keys.sort{|a,b| a.start_at <=> b.start_at}.each do |run| %>
+      <tr>
+        <td>Hourly Trip</td>
+        <td><%= run.date.to_s(:mdy) %></td>
+        <td class="nobreak"><%= run.start_at.to_s(:time_only) %></td>
+        <td class="nobreak"><%= pluralize(run.ads_billable_hours, "billable hour") %></td>
+        <td></td>
+        <td></td>
+        <td class="number"><%= number_to_currency(run.ads_partner_cost) %></td>
+        <td></td>
+        <td class="number"><%= number_to_currency(run.ads_scheduling_fee) %></td>
+        <td class="number"><%= number_to_currency(run.ads_total_cost) %></td>
+        <td><%= run.trips.first.allocation.provider.name unless run.trips.blank? %></td>
+        <td class="no-print"><%= link_to "Run", run %></td>
+      </tr>
+      <% @run_groups[run].each do |t| %>
+        <tr>
+          <td><%= t.customer.name %></td>
+          <td class="nobreak"><%= t.date.to_s(:mdy) %></td>
+          <td class="nobreak"><%= t.start_at.to_s(:time_only) %></td>
+          <td><%= t.pickup_address.full_address %></td>
+          <td><%= t.dropoff_address.full_address %></td>
+          <td><%= t.case_manager_office %></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><%= t.allocation.provider.name %></td>
+          <td class="no-print"><%= link_to "Trip", t %></td>
+        </tr>
+      <% end %>
+    <% end %>
+    <% @trips_billed_per_trip.sort{|a,b| a.customer.name <=> b.customer.name}.each do |t| %>
+      <tr>
+        <td><%= t.customer.name %></td>
+        <td class="nobreak"><%= t.date.to_s(:mdy) %></td>
+        <td class="nobreak"><%= t.start_at.to_s(:time_only) %></td>
+        <td><%= t.pickup_address.full_address %> </td>
+        <td><%= t.dropoff_address.full_address %> </td>
+        <td><%= t.case_manager_office %></td>
+        <td class="number"><%= number_to_currency(t.ads_partner_cost) %></td>
+        <td class="number"><%= number_to_currency(t.ads_taxi_cost) %></td>
+        <td class="number"><%= number_to_currency(t.ads_scheduling_fee) %></td>
+        <td class="number"><%= number_to_currency(t.ads_total_cost) %></td>
+        <td><%= t.allocation.provider.name %></td>
+        <td class="no-print"><%= link_to "Trip", t %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <th colspan="6"></th>
+      <th class="number"><%= number_to_currency(@total_partner_cost) %></th>
+      <th class="number"><%= number_to_currency(@total_taxi_cost) %></th>
+      <th class="number"><%= number_to_currency(@total_scheduling_fee) %></th>
+      <th class="number"><%= number_to_currency(@total_cost) %></th>
+      <th></th>
+    </tr>
+    <tr>
+      <th colspan="2" class="text">Total Billable Hours</th>
+      <th class="number"><%= @total_billable_hours %></th>
+    </tr>
+    <% @grouped_trips_billed_per_hour.keys.sort_by{|a| a.name }.each do |provider| %>
+      <tr>
+        <td colspan="2"><%= provider %> Hours</td>
+        <td class="number">
+          <%= @grouped_trips_billed_per_hour[provider].keys.reduce(0){|s,r| s + r.ads_billable_hours} %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <th colspan="2" class="text">Total Taxi Trips</th>
+      <th class="number"><%= @taxi_trips.size %></th>
+    </tr>
+    <% @grouped_taxi_trips.keys.sort_by{|a| a.name }.each do |provider| %>
+      <tr>
+        <td colspan="2"><%= provider %> Trips</td>
+        <td class="number"><%= @grouped_taxi_trips[provider].size %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <th colspan="2" class="text">Total Partner Trips</th>
+      <th class="number"><%= @partner_trips.size %></th>
+    </tr>
+    <% @grouped_partner_trips.keys.sort_by{|a| a.name }.each do |provider| %>
+      <tr>
+        <td colspan="2"><%= provider %> Trips</td>
+        <td class="number"><%= @grouped_partner_trips[provider].size %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
