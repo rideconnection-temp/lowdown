@@ -630,8 +630,11 @@ class FlexReport < ActiveRecord::Base
 
   def collect_all_trips_by_summary(allocations, these_date_ranges, options = {})
     unless options[:elderly_and_disabled_only]
-      select = "SUM(in_district_trips) AS in_district_trips,
-                SUM(out_of_district_trips) AS out_of_district_trips"
+      select = "
+                SUM(in_district_trips) AS in_district_trips,
+                SUM(out_of_district_trips) AS out_of_district_trips,
+                SUM(in_district_trips + out_of_district_trips) AS customer_trips,
+                0 AS guest_and_attendant_trips"
       select += ", purpose" if options[:trip_purpose]
       results = common_filters(Summary, select, allocations, these_date_ranges, options)
       results = results.joins(:summary_rows)
