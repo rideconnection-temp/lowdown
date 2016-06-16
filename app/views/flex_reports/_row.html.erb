@@ -55,12 +55,12 @@
   <% end %>
   <% if columns.include? 'customer_trips' %>
     <td class="number">
-      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.customer_trips.to_i) %>
+      <%= number_with_delimiter(row.customer_trips.to_i) %>
     </td>
   <% end %>
   <% if columns.include? 'guest_and_attendant_trips' %>
     <td class="number">
-      <%= has_trips ? raw("&mdash;") : number_with_delimiter(row.guest_and_attendant_trips.to_i) %>
+      <%= number_with_delimiter(row.guest_and_attendant_trips.to_i) %>
     </td>
   <% end %>
   <% if columns.include? 'volunteer_driver_trips' %>
