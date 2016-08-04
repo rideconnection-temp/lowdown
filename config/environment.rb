@@ -25,6 +25,7 @@ TRIP_PURPOSE_TO_SUMMARY_PURPOSE = {
   "Personal Business"         => "Personal/Support Services",
   "Recreation"                => "Recreation",
   "Training / School"         => "School/Work",
+  "TRP Court/Legal"           => "Personal/Support Services",
   "Shopping"                  => "Shopping",
   "Supportive Services"       => "Personal/Support Services",
   "Volunteer Work"            => "Volunteer Work",
