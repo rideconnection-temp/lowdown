@@ -205,8 +205,12 @@ class Trip < ActiveRecord::Base
     end
   end
 
+  def billed_per_hour?
+    allocation.name.downcase.include? "hourly"
+  end
+
   def ads_partner_cost
-    if allocation.provider.provider_type != "BPA Provider" && !allocation.name.downcase.include?("hourly")
+    if allocation.provider.provider_type != "BPA Provider" && !billed_per_hour?
       BigDecimal.new("5")
     else
       nil
@@ -222,7 +226,7 @@ class Trip < ActiveRecord::Base
   end
 
   def ads_scheduling_fee
-    if allocation.name =~ /hourly/i
+    if billed_per_hour?
       nil
     else
       BigDecimal.new("2.46")

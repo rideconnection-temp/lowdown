@@ -84,42 +84,49 @@ class PredefinedReportsController < ApplicationController
 
   def premium_service_billing
     @query = ReportQuery.new(params[:report_query])
-    trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).
+    @trips = Trip.current_versions.completed.date_range(@query.start_date,@query.after_end_date).
             includes(:customer,{allocation: :provider},:pickup_address,:dropoff_address,:run).default_order
-    trips = trips.for_provider(@query.provider_id) if @query.provider_id.present?
+    @trips = @trips.for_provider(@query.provider_id) if @query.provider_id.present?
     case @query.county
     when "Multnomah"
-      trips = trips.multnomah_ads
-      @title = "Multnomah County ADS Premium Service Report"
+      @trips = @trips.multnomah_ads
+      @title = "Multnomah County ADS Premium Service"
     when "Washington"
-      trips = trips.washington_davs
-      @title = "Washington County DAVS Premium Service Report"
+      @trips = @trips.washington_davs
+      @title = "Washington County DAVS Premium Service"
     else
       redirect_to predefined_reports_path
     end
 
-    @trips_billed_per_trip          = trips.billed_per_trip
+    @trips_billed_per_trip          = @trips.billed_per_trip
 
-    trips_billed_per_hour           = trips.billed_per_hour
-    @run_groups                     = Allocation.group(['run'], trips_billed_per_hour)
-    runs                            = @run_groups.keys
+    @trips_billed_per_hour           = @trips.billed_per_hour
+    @run_groups                     = Allocation.group(['run'], @trips_billed_per_hour)
+    @runs                           = @run_groups.keys
 
     @total_partner_cost             = @trips_billed_per_trip.reduce(0){|s,t| s + (t.ads_partner_cost || 0)} +
-                                      runs.reduce(0){|s,r| s + r.ads_partner_cost}
+                                      @runs.reduce(0){|s,r| s + r.ads_partner_cost}
     @total_taxi_cost                = @trips_billed_per_trip.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
     @total_scheduling_fee           = @trips_billed_per_trip.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} +
-                                      runs.reduce(0){|s,r| s + r.ads_scheduling_fee}
+                                      @runs.reduce(0){|s,r| s + r.ads_scheduling_fee}
     @total_cost                     = @total_partner_cost + @total_taxi_cost + @total_scheduling_fee
-    @total_billable_hours           = runs.reduce(0){|s,r| s + r.ads_billable_hours}
+    @total_billable_hours           = @runs.reduce(0){|s,r| s + r.ads_billable_hours}
     @taxi_trips                     = @trips_billed_per_trip.select{|t| t.bpa_provider?}
     @partner_trips                  = @trips_billed_per_trip.reject{|t| t.bpa_provider?}
 
-    if params[:output] == 'CSV'
+    case params[:output]
+    when 'CSV'
       @filename = "#{@title} #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
       render "premium_service_billing.csv"
+    when 'Runs'
+      @filename = "#{@title} Runs #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
+      render "premium_service_runs.csv"
+    when 'Trips'
+      @filename = "#{@title} Trips #{@query.start_date.to_s(:mdy)} - #{@query.end_date.to_s(:mdy)}.csv"
+      render "premium_service_trips.csv"
     else
       # These are used for grouping totals by provider at the end of the report
-      @grouped_trips_billed_per_hour  = Allocation.group(['provider','run'], trips_billed_per_hour )
+      @grouped_trips_billed_per_hour  = Allocation.group(['provider','run'], @trips_billed_per_hour )
       @grouped_taxi_trips             = Allocation.group(['provider'],@taxi_trips)
       @grouped_partner_trips          = Allocation.group(['provider'],@partner_trips)
     end

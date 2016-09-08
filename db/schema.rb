@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151116202122) do
+ActiveRecord::Schema.define(version: 20160908211056) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -307,6 +307,7 @@ ActiveRecord::Schema.define(version: 20151116202122) do
     t.string   "customer_type",                    limit: 255
     t.decimal  "estimated_individual_fare",                    precision: 10, scale: 2
     t.string   "funding_source_customer_id",       limit: 50
+    t.string   "customer_identifier"
   end
 
   add_index "trips", ["base_id"], name: "index_trips_on_base_id", using: :btree

@@ -1,0 +1,22 @@
+headers = [
+  "ServiceDate",
+  "StartTime",
+  "GroupRideID",
+  "BillableUnits",
+  "PartnerCost",
+  "SchedulingFee",
+  "TotalCost"
+]
+csv << headers
+
+@runs.sort{|a,b| a.start_at <=> b.start_at}.each do |run|
+  csv << [
+    run.date.to_s(:mdy),
+    run.start_at.to_s(:time_only_csv),
+    run.id,
+    run.ads_billable_hours,
+    number_to_currency(run.ads_partner_cost),
+    number_to_currency(run.ads_scheduling_fee),
+    number_to_currency(run.ads_total_cost)
+  ]
+end

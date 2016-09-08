@@ -171,7 +171,6 @@ class TripImport < ActiveRecord::Base
             current_customer.customer_type = record[:customer_type]
             current_customer.monthly_household_income = record[:monthly_household_income]
             current_customer.household_size = record[:household_size]
-            current_customer.prime_number = record[:prime_number]
             current_customer.address_id = current_home_id
             current_customer.save!
 
@@ -296,6 +295,7 @@ class TripImport < ActiveRecord::Base
             current_trip.estimated_trip_distance_in_miles = record[:estimated_trip_distance_in_miles]
             current_trip.routematch_pickup_address_id = record[:pickup_routematch_address_id]
             current_trip.routematch_dropoff_address_id = record[:dropoff_routematch_address_id]
+            current_trip.customer_identifier = record[:prime_number]
             current_trip.case_manager = record[:case_manager]
             current_trip.approved_rides = record[:approved_rides]
             current_trip.date_enrolled = record[:date_enrolled]

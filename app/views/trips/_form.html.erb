@@ -115,6 +115,10 @@
         <% end %>
       </p>
     </li>
+    <li<%= mark_if_changed(@trip,:customer_identifier) %>>
+      <%= f.label :customer_identifier, "Customer Identifier:" %>
+      <%= f.text_field :customer_identifier %>
+    </li>
     <li<%= mark_if_changed(@trip,:case_manager) %>>
       <%= f.label :case_manager, "Case Manager:" %>
       <%= f.text_field :case_manager %>
