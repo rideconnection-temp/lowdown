@@ -211,7 +211,7 @@ class Trip < ActiveRecord::Base
 
   def ads_partner_cost
     if allocation.provider.provider_type != "BPA Provider" && !billed_per_hour?
-      BigDecimal.new("5")
+      BigDecimal.new("6.35")
     else
       nil
     end
@@ -229,7 +229,7 @@ class Trip < ActiveRecord::Base
     if billed_per_hour?
       nil
     else
-      BigDecimal.new("2.46")
+      BigDecimal.new("3.08")
     end
   end
 

@@ -21,13 +21,13 @@ class Run < ActiveRecord::Base
   point_in_time
 
   def has_hourly_trip?
-    trips.joins(:allocation).where('allocations.name ilike ?',"%hourly%").count > 0 
+    trips.joins(:allocation).where('allocations.name ilike ?',"%hourly%").count > 0
   end
 
   def created_by
     first_version.updated_by
   end
-  
+
   def updated_by_user
     self.updated_by.nil? ? User.find(:first) : User.find(self.updated_by)
   end
@@ -36,7 +36,7 @@ class Run < ActiveRecord::Base
     return name if name
     "unnamed run #{routematch_id} on #{date}"
   end
-  
+
   def chronological_versions
     self.versions.sort{|t1,t2|t1.updated_at <=> t2.updated_at}.reverse
   end
@@ -47,7 +47,7 @@ class Run < ActiveRecord::Base
 
   def ads_partner_cost
     if has_hourly_trip?
-      BigDecimal.new("25.17") * ads_billable_hours 
+      BigDecimal.new("43") * ads_billable_hours
     else
       BigDecimal.new("0")
     end
@@ -55,7 +55,8 @@ class Run < ActiveRecord::Base
 
   def ads_scheduling_fee
     if has_hourly_trip?
-      BigDecimal.new("8.61") * ads_billable_hours
+      # Hourly scheduling fee is currently included in ads_partner_cost
+      BigDecimal.new("0") * ads_billable_hours
     else
       BigDecimal.new("0")
     end
@@ -65,11 +66,11 @@ class Run < ActiveRecord::Base
     ads_partner_cost + ads_scheduling_fee
   end
   private
-  
+
   def create_new_version?
     !do_not_version?
   end
-  
+
   def do_not_version?
     do_not_version == true || do_not_version.to_i == 1 || !complete || !complete_was
   end
@@ -77,22 +78,22 @@ class Run < ActiveRecord::Base
   def apportion_run_based_trips
     unless bulk_import
       r = self.trips.current_versions.completed.includes(:allocation).where(allocations: {run_collection_method: 'runs'})
-      trip_count = r.count 
-      if trip_count > 0 
+      trip_count = r.count
+      if trip_count > 0
         ratio = 1 / trip_count.to_f
 
         unless end_at.nil? || start_at.nil?
-          run_duration = (end_at - start_at) 
+          run_duration = (end_at - start_at)
           trip_duration = (run_duration * ratio).floor
           run_duration_remaining = run_duration
         end
 
         unless odometer_start.nil? || odometer_end.nil?
-          run_mileage = odometer_end - odometer_start 
+          run_mileage = odometer_end - odometer_start
           trip_mileage = ((run_mileage * ratio) * 100).floor.to_f / 100
           run_mileage_remaining = run_mileage
         end
-        
+
         trip_position = 0
 
         for t in r
