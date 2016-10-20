@@ -55,8 +55,8 @@ class Run < ActiveRecord::Base
 
   def ads_scheduling_fee
     if has_hourly_trip?
-      # Hourly scheduling fee is currently included in ads_partner_cost
-      BigDecimal.new("0") * ads_billable_hours
+      # Hourly scheduling fee is now a flat rate, regardless of trip duration
+      BigDecimal.new("3.08")
     else
       BigDecimal.new("0")
     end
