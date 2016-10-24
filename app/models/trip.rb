@@ -210,8 +210,10 @@ class Trip < ActiveRecord::Base
   end
 
   def ads_partner_cost
-    if allocation.provider.provider_type != "BPA Provider" && !billed_per_hour?
+    if allocation.county == 'Multnomah' && allocation.provider.provider_type != "BPA Provider" && !billed_per_hour?
       BigDecimal.new("6.35")
+    elsif allocation.county == 'Washington' && allocation.provider.provider_type != "BPA Provider" && !billed_per_hour?
+      BigDecimal.new("5")
     else
       nil
     end
@@ -226,10 +228,12 @@ class Trip < ActiveRecord::Base
   end
 
   def ads_scheduling_fee
-    if billed_per_hour?
-      nil
-    else
+    if !billed_per_hour? && allocation.county == 'Multnomah'
       BigDecimal.new("3.08")
+    elsif !billed_per_hour? && allocation.county == 'Washington'
+      BigDecimal.new("2.46")
+    else
+      nil
     end
   end
 

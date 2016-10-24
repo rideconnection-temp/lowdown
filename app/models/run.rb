@@ -46,7 +46,7 @@ class Run < ActiveRecord::Base
   end
 
   def ads_partner_cost
-    if has_hourly_trip?
+    if has_hourly_trip? && allocation.county == 'Multnomah'
       BigDecimal.new("43") * ads_billable_hours
     else
       BigDecimal.new("0")
@@ -54,7 +54,7 @@ class Run < ActiveRecord::Base
   end
 
   def ads_scheduling_fee
-    if has_hourly_trip?
+    if has_hourly_trip? && allocation.county == 'Multnomah'
       # Hourly scheduling fee is now a flat rate, regardless of trip duration
       BigDecimal.new("3.08")
     else
@@ -65,6 +65,7 @@ class Run < ActiveRecord::Base
   def ads_total_cost
     ads_partner_cost + ads_scheduling_fee
   end
+
   private
 
   def create_new_version?
