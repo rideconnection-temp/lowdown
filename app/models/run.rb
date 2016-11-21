@@ -24,10 +24,6 @@ class Run < ActiveRecord::Base
     trips.joins(:allocation).where('allocations.name ilike ?',"%hourly%").count > 0
   end
 
-  def has_multnomah_county_trip?
-    trips.joins(:allocation).where(allocation: {name: "Multnomah"}).count > 0
-  end
-
   def created_by
     first_version.updated_by
   end
@@ -50,7 +46,7 @@ class Run < ActiveRecord::Base
   end
 
   def ads_partner_cost
-    if has_hourly_trip? && has_multnomah_county_trip?
+    if has_hourly_trip?
       BigDecimal.new("43") * ads_billable_hours
     else
       BigDecimal.new("0")
@@ -58,7 +54,7 @@ class Run < ActiveRecord::Base
   end
 
   def ads_scheduling_fee
-    if has_hourly_trip? && has_multnomah_county_trip?
+    if has_hourly_trip?
       # Hourly scheduling fee is now a flat rate, regardless of trip duration
       BigDecimal.new("3.08")
     else
