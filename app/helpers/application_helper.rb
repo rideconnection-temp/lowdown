@@ -135,7 +135,15 @@ module ApplicationHelper
   end
 
   def address_fields(address)
-    [address.common_name, address.building_name, address.address_1, address.address_2, address.city, address.state, address.postal_code]
+    [
+      address.try(:common_name),
+      address.try(:building_name),
+      address.try(:address_1),
+      address.try(:address_2),
+      address.try(:city),
+      address.try(:state),
+      address.try(:postal_code)
+    ]
   end
 
   def mark_if_changed(record,attribute)
