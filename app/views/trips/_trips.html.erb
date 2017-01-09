@@ -30,7 +30,7 @@
             <td><%= raw gmaps_address_link trip.pickup_address, "trip-pickup" %></td>
             <td><%= raw gmaps_address_link trip.dropoff_address, "trip-dropoff" %></td>
             <td class="number"><%= trip.customers_served %></td>
-            <td class="number"><%= number_to_currency trip.fare %></td>
+            <td class="number"><%= number_to_currency trip.apportioned_fare %></td>
             <td><%= link_to "Details", trip, {:title=>"View details for this trip", :class => :details} %></td>
           </tr>
         <% end %>
