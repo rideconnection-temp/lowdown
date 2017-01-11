@@ -1,4 +1,6 @@
+line_number = 1
 headers = [
+  "LineNumber",
   "PrimeNumber",
   "LastName",
   "FirstName",
@@ -17,7 +19,9 @@ headers = [
 csv << headers
 
 @trips.sort{|a,b| a.customer.name <=> b.customer.name}.each do |t|
+  line_number += 1
   csv << [
+    line_number,
     t.customer_identifier,
     t.customer.first_name,
     t.customer.last_name,

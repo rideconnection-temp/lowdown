@@ -1,4 +1,6 @@
+line_number = 1
 headers = [
+  "LineNumber",
   "ServiceDate",
   "StartTime",
   "GroupRideID",
@@ -10,7 +12,9 @@ headers = [
 csv << headers
 
 @runs.sort{|a,b| a.start_at <=> b.start_at}.each do |run|
+  line_number += 1
   csv << [
+    line_number,
     run.date.to_s(:mdy),
     run.start_at.to_s(:time_only_csv),
     run.id,
