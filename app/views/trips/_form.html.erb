@@ -320,6 +320,12 @@
         <% end %>
       </p>
     </li>
+    <li>
+      <%= f.label :updated_at, "Updated At:" %>
+      <p class="disabled-input">
+        <%= @trip.updated_at.in_time_zone("Pacific Time (US & Canada)").strftime('%D %I:%M %p') %>
+      </p>
+    </li>
   </ol>
 
   <ol class="section fourth">
