@@ -31,7 +31,7 @@
           <td><%= customer_row[:case_manager] %></td>
           <td><%= customer_row[:date_enrolled].try(:strftime,'%m-%d-%Y') %></td>
           <td><%= link_to customer.name, customer %></td>
-          <td><%= customer.prime_number %></td>
+          <td><%= customer_row[:prime_number] %></td>
           <td><%= customer_row[:service_end].try(:strftime,'%m-%d-%Y') %></td>
           <td class="number"><%= customer_row[:approved_rides] %></td>
           <td class="number"><%= customer_row[:billed_rides] %></td>

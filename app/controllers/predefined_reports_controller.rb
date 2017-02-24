@@ -183,7 +183,8 @@ class PredefinedReportsController < ApplicationController
                date_enrolled:     trip.date_enrolled,
                service_end:       trip.service_end,
                approved_rides:    trip.approved_rides,
-               case_manager:      trip.case_manager}
+               case_manager:      trip.case_manager,
+               prime_number:      trip.customer_identifier}
         @customer_rows[office_key][row_key] = row
         row[:trips] = []
       end
