@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160908211056) do
+ActiveRecord::Schema.define(version: 20170320225420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 20160908211056) do
     t.integer "program_id"
     t.string  "driver_type_collection_method", limit: 255
     t.integer "service_type_id"
+    t.string  "premium_billing_method",        limit: 255
   end
 
   create_table "customers", force: :cascade do |t|
