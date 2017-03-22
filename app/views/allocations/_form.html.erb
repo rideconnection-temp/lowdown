@@ -1,6 +1,6 @@
 <%= form_for(@allocation) do |form| %>
   <%= render "shared/error_messages", :target => @allocation %>
-  
+
   <fieldset>
     <ol class="section">
       <li class="selfclear">
@@ -81,13 +81,13 @@
           </li>
           <li class="selfclear">
             <%= form.label :routematch_provider_code, "RouteMatch provider code" %>
-            <%= form.text_field :routematch_provider_code, :size => 5 %>      
+            <%= form.text_field :routematch_provider_code, :size => 5 %>
           </li>
         </ol>
       </li>
 
       <li>
-        <h2>Flags for Special Allocations</h2>
+        <h2>Special Flags</h2>
         These attributes are used to designate allocations that in some way do not get treated as your average service allocation
         <ol class="section">
           <li class="selfclear">
@@ -101,6 +101,10 @@
           <li class="selfclear">
             <%= form.label :do_not_show_on_flex_reports, "Do not show on flex reports (unless specified individually)" %>
             <%= form.check_box :do_not_show_on_flex_reports %>
+          </li>
+          <li class="selfclear">
+            <%= form.label :premium_billing_method, "Premium billing method" %>
+            <%= form.select :premium_billing_method, Allocation::PREMIUM_BILLING_METHOD_OPTIONS, {:include_blank => true} %>
           </li>
         </ol>
       </li>
@@ -141,7 +145,7 @@
         <%= form.text_area :notes, :class => "autosize" %>
       </li>
     </ol>
-    
+
     <% if current_user.is_admin %>
       <div class="actions">
         <%= form.submit %>

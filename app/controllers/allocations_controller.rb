@@ -1,7 +1,7 @@
 class AllocationsController < ApplicationController
-  
+
   before_filter :require_admin_user, except: [:index, :edit]
-  
+
   def index
     @provider_index = Provider.pluck(:name).map{|n| n[0].upcase }.uniq.sort
     @allocations = Allocation.includes(:project, :provider, :override, :program).order('providers.name, allocations.name')
@@ -22,7 +22,7 @@ class AllocationsController < ApplicationController
     prep_edit
     @allocation = Allocation.new
   end
-  
+
   def create
     @allocation = Allocation.new safe_params
 
@@ -49,11 +49,11 @@ class AllocationsController < ApplicationController
       render :edit
     end
   end
-  
+
   def destroy
     @allocation = Allocation.find params[:id]
     @allocation.destroy if current_user.is_admin && !(@allocation.trips.exists? || @allocation.summaries.exists?)
-    
+
     redirect_to allocations_url
   end
 
@@ -71,7 +71,7 @@ class AllocationsController < ApplicationController
       end
     end
   end
-  
+
   private
 
     def safe_params
@@ -92,6 +92,7 @@ class AllocationsController < ApplicationController
         :admin_ops_data,
         :vehicle_maint_data,
         :do_not_show_on_flex_reports,
+        :premium_billing_method,
         :eligibility,
         :trimet_provider_id,
         :trimet_program_id,
@@ -100,7 +101,7 @@ class AllocationsController < ApplicationController
         :notes
       )
     end
-  
+
     def prep_edit
       @trimet_providers          = TrimetProvider.default_order
       @trimet_programs           = TrimetProgram.default_order
