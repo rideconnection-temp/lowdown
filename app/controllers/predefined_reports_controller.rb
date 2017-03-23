@@ -100,16 +100,16 @@ class PredefinedReportsController < ApplicationController
 
     @trips_billed_per_trip          = @trips.billed_per_trip
 
-    @trips_billed_per_hour           = @trips.billed_per_hour
+    @trips_billed_per_hour          = @trips.billed_per_hour
     @run_groups                     = Allocation.group(['run'], @trips_billed_per_hour)
     @runs                           = @run_groups.keys
 
     @total_partner_cost             = @trips_billed_per_trip.reduce(0){|s,t| s + (t.ads_partner_cost || 0)} +
                                       @runs.reduce(0){|s,r| s + r.ads_partner_cost}
     @total_taxi_cost                = @trips_billed_per_trip.reduce(0){|s,t| s + (t.ads_taxi_cost || 0)}
-    @total_scheduling_fee           = @trips_billed_per_trip.reduce(0){|s,t| s + (t.ads_scheduling_fee || 0)} +
-                                      @runs.reduce(0){|s,r| s + r.ads_scheduling_fee}
-    @total_cost                     = @total_partner_cost + @total_taxi_cost + @total_scheduling_fee
+    @total_scheduling_cost          = @trips_billed_per_trip.reduce(0){|s,t| s + (t.ads_scheduling_cost || 0)} +
+                                      @runs.reduce(0){|s,r| s + r.ads_scheduling_cost}
+    @total_cost                     = @total_partner_cost + @total_taxi_cost + @total_scheduling_cost
     @total_billable_hours           = @runs.reduce(0){|s,r| s + r.ads_billable_hours}
     @taxi_trips                     = @trips_billed_per_trip.select{|t| t.bpa_provider?}
     @partner_trips                  = @trips_billed_per_trip.reject{|t| t.bpa_provider?}

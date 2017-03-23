@@ -27,7 +27,7 @@ csv << headers
     nil,
     number_to_currency(run.ads_partner_cost),
     nil,
-    number_to_currency(run.ads_scheduling_fee),
+    number_to_currency(run.ads_scheduling_cost),
     number_to_currency(run.ads_total_cost),
     run.trips.first.allocation.provider.name
   ]
@@ -43,7 +43,7 @@ csv << headers
       nil,
       nil,
       nil,
-      t.allocation.provider.name,
+      t.allocation.provider.name + (t.premium_billing_method == 'Volunteer' ? ' (vol)' : ''),
       1,
       t.guest_count,
       t.attendant_count,
@@ -62,9 +62,9 @@ end
     t.case_manager_office,
     number_to_currency(t.ads_partner_cost),
     number_to_currency(t.ads_taxi_cost),
-    number_to_currency(t.ads_scheduling_fee),
+    number_to_currency(t.ads_scheduling_cost),
     number_to_currency(t.ads_total_cost),
-    t.allocation.provider.name,
+    t.allocation.provider.name + (t.premium_billing_method == 'Volunteer' ? ' (vol)' : ''),
     1,
     t.guest_count,
     t.attendant_count,
@@ -76,7 +76,7 @@ csv << [
   nil, nil, nil, nil, nil, nil,
   number_to_currency(@total_partner_cost),
   number_to_currency(@total_taxi_cost),
-  number_to_currency(@total_scheduling_fee),
+  number_to_currency(@total_scheduling_cost),
   number_to_currency(@total_cost),
   nil
 ]

@@ -21,7 +21,7 @@ class Run < ActiveRecord::Base
   point_in_time
 
   def has_hourly_trip?
-    trips.joins(:allocation).where('allocations.name ilike ?',"%hourly%").count > 0
+    trips.joins(:allocation).where('allocations.premium_billing_method = ?',"Per Hour").count > 0
   end
 
   def created_by
@@ -53,7 +53,7 @@ class Run < ActiveRecord::Base
     end
   end
 
-  def ads_scheduling_fee
+  def ads_scheduling_cost
     if has_hourly_trip?
       # Hourly scheduling fee is now a flat rate, regardless of trip duration
       BigDecimal.new("3.08")
@@ -63,7 +63,7 @@ class Run < ActiveRecord::Base
   end
 
   def ads_total_cost
-    ads_partner_cost + ads_scheduling_fee
+    ads_partner_cost + ads_scheduling_cost
   end
 
   private

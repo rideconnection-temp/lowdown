@@ -20,7 +20,7 @@ csv << headers
     run.id,
     run.ads_billable_hours,
     number_to_currency(run.ads_partner_cost),
-    number_to_currency(run.ads_scheduling_fee),
+    number_to_currency(run.ads_scheduling_cost),
     number_to_currency(run.ads_total_cost)
   ]
 end

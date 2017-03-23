@@ -205,17 +205,21 @@ class Trip < ActiveRecord::Base
     end
   end
 
-  def billed_per_hour?
-    allocation.name.downcase.include? "hourly"
+  def premium_billing_method
+    allocation.premium_billing_method
   end
 
   def ads_partner_cost
-    if allocation.county == 'Multnomah' && allocation.provider.provider_type != "BPA Provider" && !billed_per_hour?
-      BigDecimal.new("6.35")
-    elsif allocation.county == 'Washington' && allocation.provider.provider_type != "BPA Provider" && !billed_per_hour?
-      BigDecimal.new("5")
-    else
-      nil
+    if allocation.provider.provider_type != "BPA Provider"
+      if premium_billing_method == 'Per Trip'
+        if allocation.county == 'Multnomah'
+          BigDecimal.new("6.35")
+        elsif allocation.county == 'Washington'
+          BigDecimal.new("5")
+        end
+      elsif premium_billing_method == 'Volunteer'
+        BigDecimal.new("0")
+      end
     end
   end
 
@@ -227,19 +231,24 @@ class Trip < ActiveRecord::Base
     end
   end
 
-  def ads_scheduling_fee
-    if !billed_per_hour? && allocation.county == 'Multnomah'
-      BigDecimal.new("3.08")
-    elsif !billed_per_hour? && allocation.county == 'Washington'
-      BigDecimal.new("2.46")
-    else
-      nil
+  def ads_scheduling_cost
+    if premium_billing_method == 'Per Trip'
+      if allocation.county == 'Multnomah'
+        BigDecimal.new("3.08")
+      elsif allocation.county == 'Washington'
+        BigDecimal.new("2.46")
+      end
+    elsif premium_billing_method == 'Volunteer'
+      BigDecimal.new("0")
     end
   end
 
   def ads_total_cost
-    cost = (ads_partner_cost || 0) + (ads_taxi_cost || 0) + (ads_scheduling_fee || 0)
-    cost == 0 ? nil : BigDecimal.new(cost.to_s)
+    if ads_partner_cost.nil? && ads_taxi_cost.nil? && ads_scheduling_cost.nil?
+      nil
+    else
+      cost = BigDecimal.new((ads_partner_cost || 0) + (ads_taxi_cost || 0) + (ads_scheduling_cost || 0))
+    end
   end
 
   def provider

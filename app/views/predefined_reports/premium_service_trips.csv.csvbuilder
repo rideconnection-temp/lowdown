@@ -27,13 +27,13 @@ csv << headers
     t.customer.last_name,
     t.customer.middle_initial,
     t.date.to_s(:mdy),
-    (t.billed_per_hour? ? t.run_id : nil),
+    (t.premium_billing_method == 'Per Hour' ? t.run_id : nil),
     t.pickup_address.full_address,
     t.dropoff_address.full_address,
     t.case_manager_office,
     number_to_currency(t.ads_partner_cost),
     number_to_currency(t.ads_taxi_cost),
-    number_to_currency(t.ads_scheduling_fee),
+    number_to_currency(t.ads_scheduling_cost),
     number_to_currency(t.ads_total_cost),
     t.allocation.provider.name
   ]

@@ -39,7 +39,7 @@
         <td></td>
         <td class="number"><%= number_to_currency(run.ads_partner_cost) %></td>
         <td></td>
-        <td class="number"><%= number_to_currency(run.ads_scheduling_fee) %></td>
+        <td class="number"><%= number_to_currency(run.ads_scheduling_cost) %></td>
         <td class="number"><%= number_to_currency(run.ads_total_cost) %></td>
         <td><%= run.trips.first.allocation.provider.name unless run.trips.blank? %></td>
         <td class="no-print"><%= link_to "Run", run %></td>
@@ -56,7 +56,12 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><%= t.allocation.provider.name %></td>
+          <td>
+            <%= t.allocation.provider.name %>
+            <% if t.premium_billing_method == 'Volunteer' %>
+              (vol)
+            <% end %>
+          </td>
           <td class="no-print"><%= link_to "Trip", t %></td>
         </tr>
       <% end %>
@@ -71,9 +76,14 @@
         <td><%= t.case_manager_office %></td>
         <td class="number"><%= number_to_currency(t.ads_partner_cost) %></td>
         <td class="number"><%= number_to_currency(t.ads_taxi_cost) %></td>
-        <td class="number"><%= number_to_currency(t.ads_scheduling_fee) %></td>
+        <td class="number"><%= number_to_currency(t.ads_scheduling_cost) %></td>
         <td class="number"><%= number_to_currency(t.ads_total_cost) %></td>
-        <td><%= t.allocation.provider.name %></td>
+        <td>
+          <%= t.allocation.provider.name %>
+          <% if t.premium_billing_method == 'Volunteer' %>
+            (vol)
+          <% end %>
+        </td>
         <td class="no-print"><%= link_to "Trip", t %></td>
       </tr>
     <% end %>
@@ -81,7 +91,7 @@
       <th colspan="6"></th>
       <th class="number"><%= number_to_currency(@total_partner_cost) %></th>
       <th class="number"><%= number_to_currency(@total_taxi_cost) %></th>
-      <th class="number"><%= number_to_currency(@total_scheduling_fee) %></th>
+      <th class="number"><%= number_to_currency(@total_scheduling_cost) %></th>
       <th class="number"><%= number_to_currency(@total_cost) %></th>
       <th></th>
     </tr>
