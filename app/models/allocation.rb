@@ -13,12 +13,12 @@ class Allocation < ActiveRecord::Base
   DATA_OPTIONS = %w( Prohibited Required )
   SHORT_COUNTY_NAMES = {'Multnomah'=>'Mult','Clackamas'=>'Clack','Washington'=>'Wash'}
   ELIGIBILITIES = ['Elderly & Disabled','Unrestricted','Not Applicable']
-  PREMIUM_BILLING_METHOD_OPTIONS = ['Per Trip','Per Hour','Volunteer', nil]
+  PREMIUM_BILLING_METHOD_OPTIONS = ['Per Trip','Per Hour','Volunteer']
 
   validates :name, presence: true
   validates :admin_ops_data, inclusion: { in: DATA_OPTIONS }
   validates :vehicle_maint_data, inclusion: { in: DATA_OPTIONS }
-  validates :premium_billing_method, inclusion: { in: PREMIUM_BILLING_METHOD_OPTIONS }
+  validates :premium_billing_method, allow_blank: true, inclusion: { in: PREMIUM_BILLING_METHOD_OPTIONS }
   validate  :require_consistent_trimet_fields
   validate  :require_consistent_provider_fields
   validates_date :activated_on
