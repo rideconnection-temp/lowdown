@@ -210,7 +210,7 @@ class Trip < ActiveRecord::Base
   end
 
   def ads_partner_cost
-    if allocation.provider.provider_type != "BPA Provider"
+    unless allocation.provider.provider_type == "BPA Provider"
       if premium_billing_method == 'Per Trip'
         if allocation.county == 'Multnomah'
           BigDecimal.new("6.35")
@@ -226,8 +226,6 @@ class Trip < ActiveRecord::Base
   def ads_taxi_cost
     if allocation.provider.provider_type == "BPA Provider"
       apportioned_fare
-    else
-      nil
     end
   end
 
@@ -244,9 +242,7 @@ class Trip < ActiveRecord::Base
   end
 
   def ads_total_cost
-    if ads_partner_cost.nil? && ads_taxi_cost.nil? && ads_scheduling_cost.nil?
-      nil
-    else
+    unless ads_partner_cost.nil? && ads_taxi_cost.nil? && ads_scheduling_cost.nil?
       cost = BigDecimal.new((ads_partner_cost || 0) + (ads_taxi_cost || 0) + (ads_scheduling_cost || 0))
     end
   end
