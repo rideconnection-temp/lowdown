@@ -113,18 +113,28 @@
     </tr>
     <% @grouped_taxi_trips.keys.sort_by{|a| a.name }.each do |provider| %>
       <tr>
-        <td colspan="2"><%= provider %> Trips</td>
+        <td colspan="2"><%= provider %></td>
         <td class="number"><%= @grouped_taxi_trips[provider].size %></td>
       </tr>
     <% end %>
     <tr>
-      <th colspan="2" class="text">Total Partner Trips</th>
+      <th colspan="2" class="text">Total Partner Paid Trips</th>
       <th class="number"><%= @partner_trips.size %></th>
     </tr>
     <% @grouped_partner_trips.keys.sort_by{|a| a.name }.each do |provider| %>
       <tr>
-        <td colspan="2"><%= provider %> Trips</td>
+        <td colspan="2"><%= provider %></td>
         <td class="number"><%= @grouped_partner_trips[provider].size %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <th colspan="2" class="text">Total Partner Volunteer Trips</th>
+      <th class="number"><%= @volunteer_trips.size %></th>
+    </tr>
+    <% @grouped_volunteer_trips.keys.sort_by{|a| a.name }.each do |provider| %>
+      <tr>
+        <td colspan="2"><%= provider %></td>
+        <td class="number"><%= @grouped_volunteer_trips[provider].size %></td>
       </tr>
     <% end %>
   </tbody>

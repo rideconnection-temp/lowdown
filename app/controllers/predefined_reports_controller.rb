@@ -112,7 +112,8 @@ class PredefinedReportsController < ApplicationController
     @total_cost                     = @total_partner_cost + @total_taxi_cost + @total_scheduling_cost
     @total_billable_hours           = @runs.reduce(0){|s,r| s + r.ads_billable_hours}
     @taxi_trips                     = @trips_billed_per_trip.select{|t| t.bpa_provider?}
-    @partner_trips                  = @trips_billed_per_trip.reject{|t| t.bpa_provider?}
+    @volunteer_trips                = @trips_billed_per_trip.select{|t| t.premium_billing_method == 'Volunteer' }
+    @partner_trips                  = @trips_billed_per_trip.reject{|t| t.bpa_provider? || t.premium_billing_method == 'Volunteer' }
 
     case params[:output]
     when 'CSV'
@@ -127,8 +128,9 @@ class PredefinedReportsController < ApplicationController
     else
       # These are used for grouping totals by provider at the end of the report
       @grouped_trips_billed_per_hour  = Allocation.group(['provider','run'], @trips_billed_per_hour )
-      @grouped_taxi_trips             = Allocation.group(['provider'],@taxi_trips)
-      @grouped_partner_trips          = Allocation.group(['provider'],@partner_trips)
+      @grouped_taxi_trips             = Allocation.group(['provider'],       @taxi_trips            )
+      @grouped_volunteer_trips        = Allocation.group(['provider'],       @volunteer_trips       )
+      @grouped_partner_trips          = Allocation.group(['provider'],       @partner_trips         )
     end
   end
 
