@@ -53,7 +53,7 @@
               options_for_select(TRIP_COLLECTION_METHODS.map {|tcm| [tcm, tcm]}, @allocation.trip_collection_method) %>
           </li>
           <li class="selfclear">
-            <%= form.label :run_collection_method %>
+            <%= form.label 'Hours and miles collection method' %>
             <%= form.select :run_collection_method,
               options_for_select(RUN_COLLECTION_METHODS.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>
           </li>
