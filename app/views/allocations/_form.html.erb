@@ -12,12 +12,12 @@
         These attributes are used for grouping and filtering report data
         <ol class="section">
           <li class="selfclear">
-            <%= form.label :program %>
+            <%= form.label :program_id %>
             <%= form.collection_select :program_id, Program.default_order, :id, :name, :include_blank => true %>
             <%= link_to "Details", [:edit, @allocation.program], :class => :details if @allocation.program %>
           </li>
           <li class="selfclear">
-            <%= form.label :service_type %>
+            <%= form.label :service_type_id %>
             <%= form.collection_select :service_type_id, ServiceType.default_order, :id, :name, :include_blank => true %>
             <%= link_to "Details", [:edit, @allocation.service_type], :class => :details if @allocation.service_type %>
           </li>
@@ -53,7 +53,7 @@
               options_for_select(TRIP_COLLECTION_METHODS.map {|tcm| [tcm, tcm]}, @allocation.trip_collection_method) %>
           </li>
           <li class="selfclear">
-            <%= form.label 'Hours and miles collection method' %>
+            <%= form.label :run_collection_method, 'Hours and miles collection method' %>
             <%= form.select :run_collection_method,
               options_for_select(RUN_COLLECTION_METHODS.map {|rcm| [rcm, rcm]}, @allocation.run_collection_method) %>
           </li>
