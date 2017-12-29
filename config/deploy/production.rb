@@ -1,6 +1,6 @@
 set :branch, 'stable'
-set :rvm_ruby_version, '2.2.2@lowdown'
-set :passenger_rvm_ruby_version, '2.2.1@passenger'
+set :rvm_ruby_version, '2.2.9@lowdown'
+set :passenger_rvm_ruby_version, '2.2.9@passenger'
 set :deploy_to, '/home/deploy/rails/lowdown'
 set :default_env, { "RAILS_RELATIVE_URL_ROOT" => "/service" }
 
