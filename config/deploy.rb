@@ -8,11 +8,11 @@ set :deploy_to, '/home/deployer/rails/lowdown'
 
 # RVM options
 set :rvm_type, :user
-set :rvm_ruby_version, '2.2.2@lowdown'
+set :rvm_ruby_version, '2.2.9@lowdown'
 set :rvm_roles, [:app, :web]
 
 # Passenger options
-set :passenger_rvm_ruby_version, '2.2.1@passenger'
+set :passenger_rvm_ruby_version, '2.2.9@passenger'
 
 # Rails options
 set :conditionally_migrate, false
