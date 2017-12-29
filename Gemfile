@@ -27,7 +27,7 @@ group :development do
   gem 'spring'
 
   # Use Capistrano for deployment
-  gem 'capistrano',             '~> 3.3'
+  gem 'capistrano',             '~> 3.4.0'
   gem 'capistrano-rvm',         '~> 0.1', require: false
   gem 'capistrano-rails',       '~> 1.1', require: false
   gem 'capistrano-secrets-yml', '~> 1.0.0', require: false
